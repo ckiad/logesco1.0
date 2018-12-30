@@ -1,0 +1,56 @@
+@CHARSET "UTF-8";
+.reculeverticalement{
+	margin-top: 145px;
+}
+
+.reculeverticalementformlogin{
+	margin-top: 115px;
+}
+
+.reculeverticalementbar{
+	margin-top: 20px;
+}
+
+.reculeverticalementmodifpasswordform{
+	margin-top: 20px;
+}
+
+.reculeformdeconnecter{
+	margin-top: 70px;
+}
+
+.reculeverticalementmodifdonneepersoform{
+	margin-top: 50px;
+}
+
+
+.reculeverticalementdate{
+	margin-top: 14px;
+}
+
+.reculehorizontalement{
+	margin-left: 400px;
+}
+
+.reculehorizontalementdate{
+	margin-left: 100px;
+}
+
+.redcolor{
+	color:red;
+}
+
+.greencolor{
+	color:green;
+}
+
+.bluecolor{
+	color:blue;
+	
+}
+
+.div-header{
+	border-style:groove;
+	border-radius: 11px;
+}
+

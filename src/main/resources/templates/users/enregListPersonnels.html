@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="users/userslayout">
+<head>
+<meta charset="UTF-8"/>
+<title>Importer la liste des membres du personnels</title>
+</head>
+<body>
+<div layout:fragment="formactionusers">
+	<!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
+	<div class="col-md-6  col-md-offset-3  reculeverticalementmodifpasswordform">
+		<div class="panel panel-primary">
+			 <div class="panel-heading">
+					<h4>Importer liste du personnel à partir d'un fichier Excel </h4>
+			</div>
+			<div class="panel-body">
+				<form action="#"  th:action="@{/logesco/users/chefetab/postenregListPersonnels}" 
+						method="post" enctype="multipart/form-data" >
+				
+						<fieldset th:if="${erreurDansFichier}" class="alert alert-danger">
+							<legend class="text-primary">Le fichier envoyé contient des erreurs</legend>
+							<label th:inline="text">[[${erreurDansFichier}]]</label>
+						</fieldset>
+						
+						<fieldset th:if="${listofErrorEnreg}" class="alert alert-danger">
+							<legend class="text-primary">Le fichier envoyé contient des erreurs</legend>
+							les personnels suivant vont créer des confilts dans la base de données.
+							<ul th:each="error:${listofErrorEnreg}">
+								<li  th:inline="text">[[${error}]]</li>
+							</ul>
+						</fieldset>
+						
+						<fieldset th:if="${enregListSucces}" class="alert alert-success">
+							<legend class="text-primary">Enregistrement effectué avec succès</legend>
+							<label th:inline="text">Les personnels de la liste spécifiées ont été enregistré 
+							 avec succès.</label>
+						</fieldset>
+				
+					<fieldset >
+							NB: Sélectionner la classe et envoyer un fichier selon le modèle 
+	                       			 décrit dans le fichier ci-joint 
+						<a class="btn btn-default btn-sm pull-right" href="modeles/model personnel.xlsx" 
+				      			role="button" target="_blank"
+				      			th:href="@{/modeles/model personnel.xlsx}">Télécharger le modèle(.xlsx)</a>
+					</fieldset>
+					
+					<fieldset class="col-md-12">
+							<legend class="text-primary">Uploader le modèle rempli</legend>
+							<div class="form-group">
+									<label for="filecheminFichier"> Uploader le fichier: </label> 
+									<input type="file" name="filecheminFichier" id="filecheminFichier" 
+										class="form-control-file" placeholder="Envoyer le fichier" 
+										accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"/>
+								</div>
+					</fieldset>
+					<button type="submit" class="btn btn-primary  pull-right">Envoyer</button>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
+</div>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="users/userslayout">
+<head>
+<meta charset="UTF-8"/>
+<title>Rapport des évaluations</title>
+</head>
+<body>
+<div layout:fragment="formactionusers">
+<!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
+<div class="col-md-12    reculeverticalementmodifdonneepersoform">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h4>Génération du rapport des évaluations d'une séquence dans une classe</h4>
+		</div>
+		<div class="panel-body">
+			
+			<form action="#" th:action="@{/logesco/users/censeur/postrapportEvalSeq}" 
+				method="post"   class="form-inline col-md-offset-2" th:object="${getrapportEvalSeqForm}">
+				
+				
+				
+				<fieldset class="col-md-12" >
+					<legend class="text-primary">Choisir la classe dont le rapport des évaluations doit être consulté</legend>
+					
+					<div class="form-group">
+						<label for="idclasseRapport"> Classe à consulter: <span
+										class="redcolor">*</span></label> 
+						
+						<select class="form-control" name="idclasseRapport"
+									id="idclasseRapport"  th:value="*{idclasseRapport}">
+
+							<optgroup th:label="${n.codeNiveaux}" th:if="${listofNiveaux}"
+										th:each="n:${listofNiveaux}">
+
+								<option th:each="c:${n.listofClasses}"
+									th:value="${c.idClasses}" th:inline="text">
+									[[${c.codeClasses}]] [[${c.specialite.codeSpecialite}]]
+											[[${c.numeroClasses}]]</option>
+
+							</optgroup>
+
+						</select>
+						
+						<div class="form-group">
+							<label for="idsequenceRapport"> Séquence: <span
+								class="redcolor">*</span></label> 
+							
+							<select class="form-control" name="idsequenceRapport"
+									id="idsequenceRapport"  th:value="*{idsequenceRapport}">
+								
+								<option th:each="s:${listofSequence}"
+									th:value="${s.idPeriodes}" th:inline="text">
+									[[${s.numeroSeq}]]</option>
+								
+							</select>
+						</div> 
+						
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;		
+						<button type="submit" class="btn btn-primary  pull-right">Envoyer</button>
+					</div>
+					
+				</fieldset>
+			</form>
+				
+			<fieldset  class="col-md-12" th:if="${session.erreurcoursRapportEvalSeq}">
+				<hr/>
+				<h4 align="justify" class="alert alert-warning">
+					Aucun cours n'existe dans la classe sélectionnée.
+				</h4>
+			</fieldset>
+			
+			<!-- Affichage de la liste des classes pages par pages en indiquant pour chacune le montant de la scolarité spécifié -->
+			<fieldset  class="col-md-12" th:if="${session.listcoursofClassesRapportEvalSeq}">
+				<table class="table table-striped">
+					<caption>Liste des cours et des évaluations dèjà enregistrées pour chaque cours</caption>
+					<thead class="thead-light">
+						<tr>
+							<th scope="col">COURS</th>
+							<th scope="col">ENSEIGNANT </th>
+							<th scope="col" >EVALUATIONS PASSEES </th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="cours:${session.listcoursofClassesRapportEvalSeq}">
+							<td th:inline="text">
+								[[${cours.matiere.codeMatiere}]] [[${cours.codeCours}]] 
+							</td>
+							<td th:inline="text">
+								 [[${cours.proffesseur.nomsPers}]] ([[${cours.proffesseur.numtel1Pers}]]/[[${cours.proffesseur.numtel2Pers}]])
+							</td>
+							<td>
+								<table class="table table-bordered">
+									<tbody>
+										<tr th:each="eval:${session.listofEvalSeqRapportEvalSeq}" th:if="${eval.cours.idCours == cours.idCours}">
+											<td th:inline="text">[[${eval.typeEval}]] </td>
+											<td th:inline="text">[[${eval.proportionEval}]] </td>
+											<td th:inline="text">[[${#dates.format(eval.dateenregEval,"dd-MM-yyyy")}]] </td>
+											<td th:inline="text">
+												<a class="btn btn-primary btn-sm pull-left" href="#" 
+													th:href="@{/logesco/users/getprocesverbalNotes(idEval=${eval.idEval})}"
+													 role="button">Voir le procès verbal</a>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				
+				
+				<!-- <a class="btn btn-primary btn-lg pull-right" href="#" 
+			      						th:href="@{/logesco/users/intendant/exportlistClasses}" 
+			      						role="button">Exporter la liste des classes</a>-->
+				
+			</fieldset>
+		
+		</div>
+	</div>
+</div>
+<!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
+</div>
+</body>
+</html>

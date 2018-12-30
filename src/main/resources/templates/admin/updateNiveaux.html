@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="admin/adminlayout">
+<head>
+<meta charset="UTF-8"/>
+<title>Niveaux: Configuration</title>
+</head>
+<body>
+<div layout:fragment="formactionadmin">
+<!-- debut du FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
+<div class="col-md-6  col-md-offset-3  reculeverticalementmodifpasswordform">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h4>Enregistrement ou mise à jour des différents niveaux d'étude</h4>
+		</div>
+		<div class="panel-body">
+		<div class="col-md-5">
+			<form action="#" th:action="@{/logesco/admin/postupdateNiveaux}"
+						th:object="${updateNiveauxForm}" method="post">
+						
+				<div th:if="${param.updateniveauxsuccess}">
+						<h4 align="justify" class="alert alert-success">Niveau enregistré avec succès.</h4>
+				</div>
+				
+				<div th:if="${param.updateniveauxerrorNumeroOrdre}">
+						<h4 align="justify" class="alert alert-danger">Un niveau existe déjà avec ce numéro d'ordre .</h4>
+				</div>
+				
+				<div th:if="${param.updateniveauxerrorCode}">
+							<h4 align="justify" class="alert alert-danger">Un niveau existe déjà avec ce code .</h4>
+				</div>
+				
+				<fieldset>
+					<legend class="text-primary">Enregistrement des niveaux</legend>
+					
+					<div class="form-group">
+								<label for="numeroOrdreNiveaux"> Numéro d'ordre: <span
+									class="redcolor">*</span></label>
+									<select class="form-control" name="numeroOrdreNiveaux"  th:field="*{numeroOrdreNiveaux}"
+										 id="numeroOrdreNiveaux">
+										 <optgroup label="Sous système francophone">
+										 	<option value="1">1</option>
+								      		<option value="2">2</option>
+								      		<option value="3">3</option>
+								      		<option value="4">4</option>
+								      		<option value="5">5</option>
+								      		<option value="6">6</option>
+								      		<option value="7">7</option>
+										 </optgroup>
+								      	
+								      	<optgroup label="Anglophone sub-system">
+								      		<option value="8">1</option>
+								      		<option value="9">2</option>
+								      		<option value="10">3</option>
+								      		<option value="11">4</option>
+								      		<option value="12">5</option>
+								      		<option value="13">6</option>
+								      		<option value="14">7</option>
+								      	</optgroup>
+								    </select> 
+							</div>
+							<div th:if="${#fields.hasErrors('numeroOrdreNiveaux')}"
+								th:errors="*{numeroOrdreNiveaux}" class="redcolor">Erreur de numero d'ordre</div>
+								
+						<div class="form-group">
+								<label for="codeNiveaux"> Niveau: <span
+									class="redcolor">*</span></label> <input type="text" name="codeNiveaux"
+									id="codeNiveaux" class="form-control" th:value="*{codeNiveaux}" th:field="*{codeNiveaux}"
+									placeholder="Code du niveau" />
+						</div>
+						<div th:if="${#fields.hasErrors('codeNiveaux')}"
+								th:errors="*{codeNiveaux}" class="redcolor">Erreur de code niveau
+						</div>
+						
+						<div class="form-group">
+								<label for="codeCycles"> Cycle d'appartenance: <span
+									class="redcolor">*</span></label>
+									<select class="form-control" name="codeCycles"  th:field="*{codeCycles}"
+										 id="codeCycles" >
+										 
+										 	<option th:each="c:${listofCycles}" th:value="${c.codeCycles}"
+										 		th:text="${c.codeCycles}">1</option>
+										 
+									</select>
+						</div>
+						
+						<div class="form-group">
+								<label for="codeCycles"> Niveau immédiatement supérieur: <span
+									class="redcolor">*</span></label> 
+									<select class="form-control" name="codeNiveauxSup"  th:field="*{codeNiveauxSup}"
+										 id="codeNiveauxSup" >
+										 
+										 	<option value="aucun">Aucun</option>
+										 	<option th:each="n:${listofNiveaux}" th:value="${n.codeNiveaux}"
+										 		th:text="${n.codeNiveaux}">1</option>
+										 
+									</select>
+						</div>
+					
+				</fieldset>
+				
+				<button type="submit" class="btn btn-primary  pull-right">Envoyer</button>
+				<button type="reset" class="btn btn-danger">Effacer</button>
+				
+			</form>
+			</div>
+			<div class="col-md-7">
+				<div th:if="${param.supprimNiveauxerrorNiveaux}">
+							<h4 align="justify" class="alert alert-danger">Impossible de supprimer un niveau qui contient un sous niveau.</h4>
+				</div>
+				<div th:if="${param.supprimNiveauxerrorClasses}">
+							<h4 align="justify" class="alert alert-danger">Impossible de supprimer un niveau qui contient dèjà des classes.</h4>
+				</div>
+				<!-- ici on va placer le tableau qui affiche la liste des niveaux dèjà enregistré -->
+				<table class="table table-bordered">
+					<caption>Liste des niveaux existants</caption>
+				 	<thead>
+				 		<tr>
+						 	<th scope="col">Niveau</th>
+					      	<th scope="col">Niveau suivant</th>
+					      	<th scope="col">Cycle</th>
+					      	<th class="text-center" scope="col">Action</th>
+				      	</tr>
+			      	</thead>
+			      	<tbody>
+			      		<tr th:each="n:${listofNiveaux}">
+			      			<td th:inline="text">[[${n.numeroOrdreNiveaux}]]:[[${n.codeNiveaux}]]</td>
+			      			<td th:text="${n.niveau?.codeNiveaux}"></td>
+			      			<td th:text="${n.cycle?.codeCycles}"></td>
+			      			<td>
+			      				<div>
+			      					<a class="btn btn-danger btn-sm" href="#" 
+			      						th:href="@{/logesco/admin/getsupprimerNiveau(idNiveaux=${n.idNiveaux})}" 
+			      						role="button">Supprimer</a>
+			      				</div>
+			      			</td>
+			      		</tr>
+			      	</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- fin du FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
+</div>
+</body>
+</html>

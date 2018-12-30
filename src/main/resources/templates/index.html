@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="UTF-8"/>
+<title th:text="#{greeting}">Accueil LOGESCO</title><!--  -->
+
+<link rel="stylesheet"  type="text/css"  href="webjars/bootstrap/3.3.7/css/bootstrap.min.css"  
+ 	th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
+<link rel="stylesheet"  type="text/css"  href="../static/css/myStyle.css"  
+ 	th:href="@{/css/myStyle.css}"/>
+
+</head>
+<body onload="donneFocus()">
+<!-- debut de la partie entete de la page d'index -->
+<header> 
+	<div class=" col-md-12 div-header">
+	<div class="col-md-3 redcolor ">
+		<img alt="Ici le logo de l'application"  src="../static/images/logopng.png"  
+			th:src="@{/images/logopng.png}"/>
+		
+		
+		
+	</div>
+	
+	<div class="col-md-6 greencolor ">
+		<h1>Bannière de l'application</h1>
+		<div th:if="${param.logout}" class="greencolor alert alert-success">
+            <h4 align="center" th:text="#{message.deconnexion}">Vous vous êtes déconnecté avec succès.</h4>
+        </div>
+	</div>
+	
+	<div class="col-md-3">
+		<div  class="badge badge-light">
+		    <span th:text="${dfNameJour}">Nom du jour</span>&nbsp;
+			<!-- <span th:text="${dfJour}">Numero du jour dans le mois</span>&nbsp;
+			<span th:text="${dfmois}">Nom ou numero mois en cours</span>&nbsp;
+			<span th:text="${dfyear}">annee en cours</span> :&nbsp; -->
+			<span th:text="${dfheure}">Heure dans la journée</span> -->
+		</div>
+		<div>
+			<a th:href="@{/logesco/admin/index}" 
+				class="btn btn-default btn-sm pull-right reculeformdeconnecter" role="button">
+					Administrer l'application
+			</a>
+			<a th:href="@{/logesco/index?lang=fr}" class="btn btn-sm btn-link pull-right" >
+						Français
+			</a>
+			<a th:href="@{/logesco/index?lang=en}" class="btn btn-sm btn-link pull-right">
+						English
+			</a>
+		</div>
+	</div>
+	
+	</div>
+</header>
+<!-- fin de la partie entete de la page d'index -->
+
+
+<!-- debut de la partie contenu de la page d'index -->
+	<section> 
+		<!-- <p>Click <a th:href="@{/hello}">here</a> to open hello.</p><br/>
+		<p>Click <a th:href="@{/home}">here</a> to open home.</p>
+		<br/>
+		<p>Click 
+			<a th:href="@{/logesco/users/rapports/test2}" target="_blank">
+				RAPPORT TEST 2
+			</a>
+		</p> -->
+		
+		<div class="col-md-5  reculehorizontalement  reculeverticalement">
+		<div class=" panel  panel-primary" >
+			<div class="panel-heading">
+				<p align="center" th:text="#{titre_fen.titre_accueil}"> Bienvennue sur LOGESCO: Logiciel de Gestion Scolaire</p>
+			</div>
+			<div class="panel-body">
+				<!-- <p align="justify">Cliquer <a th:href="@{/logesco/users/index}">Ouvrir </a> pour ouvrir l'application</p> -->
+				<!-- <p align="justify">Cliquer  <a th:href="@{/logesco/admin/index}">Administrer </a>  pour paramétrer l'application</p> -->
+				<p align="center">
+					
+					<a th:href="@{/logesco/users/index}" 
+						class="btn btn-primary btn-sm" role="button" id="ouvrirlapplication" 
+						th:text="#{button.open}">
+						Cliquer ici pour ouvrir  l'application
+					</a>
+				</p> 
+			</div>
+			<div class="panel-footer">
+				<p align="center" th:text="#{label.confiance}">Merci de la confiance en nous accordée</p>
+			</div>
+		</div>
+		</div>
+		
+	</section>
+<!-- fin de la partie contenu de la page d'index -->
+	
+<!-- debut de la partie pied de la page d'index -->	
+	<footer>
+		<div class="navbar-fixed-bottom">
+			<small class="text-center">&nbsp; &copy; akcFreeTechSoft (678470262 / 695093228) kiadjeuc@gmail.com</small>
+		</div>
+	</footer>
+<!-- fin de la partie pied de la page d'index -->
+
+
+ <script src="webjars/jquery/1.11.1/jquery.min.js"></script>
+ <script src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+//alert("dd");
+	function donneFocus(){
+		//alert("donne focus");
+		document.getElementById('ouvrirlapplication').focus();
+	}
+</script>
+</body>
+</html>

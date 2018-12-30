@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+	
+<head>
+<meta charset="UTF-8"/>
+<title>Insert title here</title>
+
+<link rel="stylesheet" type="text/css"
+	href="webjars/bootstrap/3.3.7/css/bootstrap.min.css"
+	th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
+<!-- -->
+<link rel="stylesheet" type="text/css" href="../static/css/myStyle.css"
+	th:href="@{/css/myStyle.css}" />
+
+</head>
+<body>
+
+<!-- debut de la partie entete des pages de toutes session utilisateur -->
+<header> 
+	<div class=" col-md-12 div-header">
+		
+		<div class="col-md-3 redcolor ">
+			<img alt="Ici le logo de l'application"  src="../static/images/logopng.png"  
+				th:src="@{/images/logopng.png}"/>
+		</div>
+		
+		<div class="col-md-6 greencolor ">
+			<h1 th:inline="text" align="center" class="alert alert-info">
+				[[#{label.bienvenue}]] &nbsp; [[${#httpServletRequest.remoteUser}]]!
+				<span class="card">
+					<img th:src="@{/logesco/users/getphotoPersonnelConnecte}" 
+						class="card-img-top" width="80" height="60"/>
+				</span>
+			</h1>
+			
+			<p layout:fragment="chemin">
+			
+			</p>
+			
+		</div>
+		
+		<div class="col-md-3">
+			<div  class="badge badge-light">
+				<span th:text="${session.dfNameJour}">Nom du jour</span>&nbsp;
+				<!-- <span th:text="${session.dfJour}">Numero du jour dans le mois</span>&nbsp;
+				<span th:text="${session.dfmois}">Nom ou numero mois en cours</span>&nbsp;
+				<span th:text="${session.dfyear}">annee en cours</span> à &nbsp; -->
+				<span th:text="${session.dfheure}">Heure dans la journée</span> 
+		 </div>
+		 <div class="reculeformdeconnecter">	
+		 <!-- @{/logout} dans le cas où on veut une deconnexion direct sans passe par un controleur -->
+			<form th:action="@{/logoute}" method="post">
+	            <input type="submit" class="btn btn-primary btn-sm  pull-right"  
+	            	value="Se déconnecter" th:value="#{button.deconnecter}"/>
+	        </form>
+	      </div>
+		</div>
+	</div>
+</header>
+<!-- fin de la partie entete de toutes session utilisateur -->
+<!-- debut de la partie contenu des pages des sessions users -->
+
+<section>
+
+<!-- DEBUT DE LA REALISATION DE LA BARRE DES MENUS DES USERS EN FONCTION DES ROLES-->
+<!-- <div sec:authorize="hasRole('ROLE_ADMIN')">
+Test de sécurité dans tymeleaf
+</div> -->
+<div class="container">
+			<div class="btn-group btn-group-justified">
+				
+				<div class="btn-group" sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_SUPERADMIN')">
+					<button type="button" class="btn btn-default dropdown-toggle"
+						data-toggle="dropdown"  th:inline="text">
+						[[#{menu.recrutements}]] &nbsp;&nbsp;<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li sec:authorize="hasAnyRole('ROLE_PROVISEUR')">
+							<a href="#"  th:href="@{/logesco/users/chefetab/getenregEleves}" th:inline="text">
+								[[#{sousmenu_recrutement.enregEleves}]]
+							</a>
+						</li>
+                        <li class="divider" sec:authorize="hasAnyRole('ROLE_PROVISEUR')"></li>
+                        <li sec:authorize="hasAnyRole('ROLE_PROVISEUR')">
+							<a href="#"  th:href="@{/logesco/users/chefetab/getenregListEleves}" th:inline="text">
+								[[#{sousmenu_recrutement.enregListEleves}]]
+							</a>
+						</li>
+						<li class="divider" sec:authorize="hasAnyRole('ROLE_PROVISEUR')"></li>
+						<li>
+							<a href="#"  th:href="@{/logesco/users/chefetab/getgestionEleves}" th:inline="text">
+								[[#{sousmenu_recrutement.gestionEleves}]]
+							</a>
+						</li>
+					</ul>
+				</div>
+				
+				<div class="btn-group" sec:authorize="hasAnyRole('ROLE_INTENDANT','ROLE_SUPERADMIN')">
+					<button type="button" class="btn btn-default dropdown-toggle"
+						data-toggle="dropdown"  th:inline="text">
+						[[#{menu.fraisscolarite}]]&nbsp;&nbsp;<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li>
+							<a href="#" th:href="@{/logesco/users/intendant/getconfigClasses}" th:inline="text">
+								[[#{sousmenu_fraisscolarite.configClasses}]]
+							</a>
+						</li>
+						<li class="divider" sec:authorize="hasAnyRole('ROLE_INTENDANT')"></li>
+						<li sec:authorize="hasAnyRole('ROLE_INTENDANT')">
+							<a href="#" th:href="@{/logesco/users/intendant/getinscriptionEleves}" th:inline="text">
+								[[#{sousmenu_fraisscolarite.inscriptionEleves}]]
+							</a>
+						</li>
+					</ul>
+				</div>
+			
+				<div class="btn-group" sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_INTENDANT','ROLE_CENSEUR','ROLE_SUPERADMIN')" >
+					<button type="button" class="btn btn-default dropdown-toggle"
+						data-toggle="dropdown"  th:inline="text">
+						[[#{menu.listes}]] &nbsp;&nbsp;<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						
+						<li>
+							<a href="#"  data-toggle="modal" data-target="#dialogsendMotifRechElv" th:inline="text">
+								[[#{sousmenu_listes.rechEleve}]]
+							</a>
+						</li>
+						<li class="divider" sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_INTENDANT','ROLE_SUPERADMIN')"></li>
+						<li sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_INTENDANT','ROLE_SUPERADMIN')">
+							<a href="#" th:href="@{/logesco/users/getlisteProvEleves}" th:inline="text">
+								[[#{sousmenu_listes.listprovEleve}]]
+							</a>
+						</li>
+						<li class="divider" sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_INTENDANT','ROLE_SUPERADMIN')"></li>
+						<li sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_INTENDANT','ROLE_SUPERADMIN')">
+							<a href="#" th:href="@{/logesco/users/getlisteDefEleves}" th:inline="text">
+								[[#{sousmenu_listes.listdefEleve}]]
+							</a>
+						</li>
+					</ul>
+				</div>
+	
+				<div class="btn-group" sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_SUPERADMIN')">
+					<button type="button" class="btn btn-default dropdown-toggle"
+						data-toggle="dropdown" th:inline="text">
+						[[#{menu.personnels}]] &nbsp;&nbsp;<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li>
+							<a href="#" th:href="@{/logesco/users/chefetab/getenregPersonnels}" th:inline="text">
+									[[#{sousmenu_personnels.enregPersonnels}]]
+							 </a>
+						</li>
+						<li class="divider"></li>
+						<li>
+							<a href="#" th:href="@{/logesco/users/chefetab/getenregListPersonnels}" th:inline="text">
+									[[#{sousmenu_personnels.enregListPersonnels}]]
+							 </a>
+						</li>
+						<li class="divider"></li>
+						<li>
+							<a href="#"   th:href="@{/logesco/users/chefetab/getconsulterCenseurs}" th:inline="text">
+									[[#{sousmenu_personnels.afficherListCenseurs}]]
+							 </a>
+						</li>
+						<li class="divider"></li>
+						<li>
+							<a href="#"   th:href="@{/logesco/users/chefetab/getconsulterEnseignants}" th:inline="text">
+									[[#{sousmenu_personnels.afficherListEnseignants}]]
+							 </a>
+						</li>
+						<li class="divider"></li>
+						<li>
+							<a href="#"   th:href="@{/logesco/users/chefetab/getconsulterIntendants}" th:inline="text">
+									[[#{sousmenu_personnels.afficherListIntendants}]]
+							 </a>
+						</li>
+						<li class="divider"></li>
+						<li>
+							<a href="#"   th:href="@{/logesco/users/chefetab/getconsulterPersonnels}" th:inline="text">
+									[[#{sousmenu_personnels.consulterPersonnels}]]
+							 </a>
+						</li>
+						<li class="divider" sec:authorize="hasAnyRole('ROLE_PROVISEUR')"></li>
+						<li sec:authorize="hasAnyRole('ROLE_PROVISEUR')">
+							<a href="#" th:href="@{/logesco/users/chefetab/getupdateProviseur}" th:inline="text">
+								[[#{sousmenu_personnels.updatePersonnels}]]
+							</a>
+						</li>
+						
+					</ul>
+				</div>
+				
+				<div class="btn-group" sec:authorize="hasRole('ROLE_PROVISEUR')">
+					<button type="button" class="btn btn-default dropdown-toggle"
+						data-toggle="dropdown" th:inline="text">
+						[[#{menu.periodes}]] &nbsp;&nbsp;<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li>
+							<a href="#" th:href="@{/logesco/users/censeur/getupdateSequence}" th:inline="text">
+								[[#{sousmenu_periodes.updateSequence}]]
+							</a>
+						</li>
+						<li class="divider"></li>
+						<li>
+							<a href="#" th:href="@{/logesco/users/censeur/getupdateTrimestre}" th:inline="text">
+								[[#{sousmenu_periodes.updateTrimestre}]]
+							</a>
+						</li>
+					</ul>
+				</div> 
+				
+				
+				<div class="btn-group" sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_SUPERADMIN')">
+					<button type="button" class="btn btn-default dropdown-toggle"
+						data-toggle="dropdown"  th:inline="text">
+						[[#{menu.classes}]] &nbsp;&nbsp;<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_SUPERADMIN')">
+							<a href="#" th:href="@{/logesco/users/censeur/getupdateTitulaire}" th:inline="text">
+								[[#{sousmenu_periodes.updateTrimestre}]]
+							</a>
+						</li>
+						<!--  <li class="divider" sec:authorize="hasAnyRole('ROLE_CENSEUR')"></li>
+						<li sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_TITULAIRE')">
+							<a href="#">
+								Rapport des évaluations et des notes
+							</a>
+						</li>-->
+						<!-- <li class="divider" sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_SUPERADMIN')"></li>
+						<li sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_SUPERADMIN')">
+							<a href="#">
+								Passer un conseil de classe séquentiel
+							</a>
+						</li>
+						<li class="divider" sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_SUPERADMIN')"></li>
+						<li sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_SUPERADMIN')">
+							<a href="#">
+								Passer un conseil de classe trimestriel
+							</a>
+						</li>
+						<li class="divider" sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_SUPERADMIN')"></li>
+						<li sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_SUPERADMIN')">
+							<a href="#">
+								Passer un conseil de classe annuel
+							</a>
+						</li>
+						 -->
+					</ul>
+				</div>
+				
+				<!-- <div class="btn-group" sec:authorize="hasRole('ROLE_CENSEUR')">
+					<button type="button" class="btn btn-default dropdown-toggle"
+						data-toggle="dropdown">
+						Enseignements &nbsp;<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						 <li> 
+							<a href="#"  data-toggle="modal" data-target="#dialogChoixClasse">
+								Configurer les cours dans les salles de classe
+							</a>
+						</li>
+						<li class="divider"></li>
+						<li><a href="#" >Exporter la configuration des cours d'une classe</a></li>
+						<li class="divider"></li>
+						<li><a href="#" th:href="@{/logesco/users/censeur/getupdateMatieres}">Gérer les Matières</a></li>
+						
+					</ul>
+				</div> -->
+				
+				<div class="btn-group" sec:authorize="hasAnyRole('ROLE_SG')">
+					<button type="button" class="btn btn-default dropdown-toggle"
+						data-toggle="dropdown"  th:inline="text">
+						[[#{menu.discipline}]] &nbsp;&nbsp;<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li>
+							<a href="#" th:href="@{/logesco/users/sg/getdonneesSaisieRAbsences}" th:inline="text">
+								[[#{sousmenu_discipline.donneessaisieRAbsence}]]
+							</a>
+						</li>
+						<li class="divider"></li>
+						<li>
+							<a href="#" th:href="@{/logesco/users/sg/getdonneesSaisieRDiscipline}" th:inline="text">
+								[[#{sousmenu_discipline.donneessaisieRAbsence}]]
+							</a>
+						</li>
+					</ul>
+				</div>
+				
+				<div class="btn-group" sec:authorize="hasAnyRole('ROLE_ENSEIGNANT','ROLE_CENSEUR','ROLE_TITULAIRE')">
+					<button type="button" class="btn btn-default dropdown-toggle"
+						data-toggle="dropdown"  th:inline="text">
+						[[#{menu.notes}]] &nbsp;&nbsp;<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li sec:authorize="hasAnyRole('ROLE_CENSEUR')">
+							<a href="#"  
+								data-toggle="modal" data-target="#dialogChoixClasseReleve" th:inline="text">
+									[[#{sousmenu_notes.releveNote}]]
+							</a>
+						</li>
+						<li class="divider" sec:authorize="hasAnyRole('ROLE_ENSEIGNANT')"></li>
+						<li sec:authorize="hasAnyRole('ROLE_ENSEIGNANT')">
+							<a href="#" th:href="@{/logesco/users/getdonneesSaisieNotes}" th:inline="text">
+								[[#{sousmenu_notes.gererNote}]]
+							</a>
+						</li>
+						<li class="divider" sec:authorize="hasAnyRole('ROLE_ENSEIGNANT')"></li>
+						<li sec:authorize="hasAnyRole('ROLE_ENSEIGNANT')">
+							<a href="#" th:href="@{/logesco/users/getdonneesSaisieNotesV1}" th:inline="text">
+								[[#{sousmenu_notes.gererNoteV1}]]
+							</a>
+						</li>
+						<li class="divider" sec:authorize="hasAnyRole('ROLE_TITULAIRE','ROLE_CENSEUR')"></li>
+						<li>	<a href="#" sec:authorize="hasAnyRole('ROLE_TITULAIRE','ROLE_CENSEUR')" 
+									th:href="@{/logesco/users/getlistprocesverbalEvalSeq}"  th:inline="text">
+									[[#{sousmenu_notes.procesverbalEvalSeq}]] 
+								</a>
+						</li>
+						
+						<li class="divider" sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_SUPERADMIN')"></li>
+						
+						<li>	<a href="#" sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_SUPERADMIN')" 
+									th:href="@{/logesco/users/censeur/getrapportEvalSeq}">
+									Rapport des évaluations séquentielles
+								</a>
+						</li>
+						
+						<li class="divider" sec:authorize="hasAnyRole('ROLE_TITULAIRE','ROLE_CENSEUR','ROLE_SUPERADMIN')"></li>
+						
+						<li>	<a href="#" sec:authorize="hasAnyRole('ROLE_TITULAIRE','ROLE_CENSEUR','ROLE_SUPERADMIN')" 
+										th:href="@{/logesco/users/getlistprocesverbalEvalTrim}">
+									Procès verbal trimestriel des notes
+							  	</a>
+						</li>
+						
+						<li class="divider" sec:authorize="hasAnyRole('ROLE_ENSEIGNANT','ROLE_SUPERADMIN')"></li>
+						
+						<li>
+							<a href="#"  sec:authorize="hasAnyRole('ROLE_ENSEIGNANT','ROLE_SUPERADMIN')"
+								th:href="@{/logesco/users/getlistcoursofEnseignant}">
+								Exporter ma liste des cours
+							</a>
+						</li>
+						
+						<li class="divider" sec:authorize="hasAnyRole('ROLE_ENSEIGNANT','ROLE_SUPERADMIN')"></li>
+						
+						<li>
+							<a href="#" sec:authorize="hasAnyRole('ROLE_ENSEIGNANT','ROLE_SUPERADMIN')"  
+								data-toggle="modal" data-target="#dialogsendMotifRechElv">
+								Rechercher un élève
+							</a>
+						</li>
+					</ul>
+				</div>
+				
+				<div class="btn-group" sec:authorize="hasAnyRole('ROLE_TITULAIRE','ROLE_SUPERADMIN')">
+					<button type="button" class="btn btn-default dropdown-toggle"
+						data-toggle="dropdown"  th:inline="text">
+						[[#{menu.bulletins}]] &nbsp;&nbsp;<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li>
+							<a href="#" th:href="@{/logesco/users/bulletins/getdonneesEditionsBulletinsSeq}">
+								Générer les bulletins séquentiels
+							</a>
+						</li>
+						<li class="divider"></li>
+						<li>
+							<a href="#" th:href="@{/logesco/users/bulletins/getdonneesEditionsBulletinsTrim}">
+								Générer les bulletins trimestriels
+							</a>
+						</li>
+						<li class="divider"></li>
+						<li>
+							<a href="#" th:href="@{/logesco/users/bulletins/getdonneesEditionsBulletinsTrimAn}">
+								Générer les bulletins trimestriels avec rapport annuel
+							</a>
+						</li>
+						<li class="divider"></li>
+						<li>
+							<a href="#" th:href="@{/logesco/users/bulletins/getdonneesEditionsBulletinsAn}">
+								Générer les bulletins annuels
+							</a>
+						</li>
+						
+					</ul>
+				</div>
+				
+			</div>
+		</div>
+<!-- FIN DE LA REALISATION DE LA BARRE DES MENUS DES USERS EN FONCTION DES ROLES-->
+		
+		<!-- Modal de Choix classe à configurer-->
+		<div class="modal fade" id="dialogChoixClasse" tabindex="-1" role="dialog" 
+				aria-labelledby="dialogChoixClasse"  aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+					
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Configuration des cours d'une classe</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							
+							<h4 align="center">Sélectionner la classe dont les cours seront paramétrés</h4>
+							
+							<form action="#" th:action="@{/logesco/users/censeur/getupdateCours}" 
+								method="get"  th:if="${session.listofNiveaux}">
+							
+								<div th:if="${session.listofNiveaux}">
+									<div class="form-group  col-md-6">
+										<select class="form-control" name="idClasseAssocie" id="idClasseAssocie">
+											<optgroup  th:each="n:${session.listofNiveaux}" th:label="${n.codeNiveaux}" 
+												th:if="${session.listofNiveaux}" >
+												<option th:each="c:${n.listofClasses}" th:value="${c.idClasses}"
+													th:inline="text">
+													 [[${c.codeClasses}]] [[${c.specialite.codeSpecialite}]] [[${c.numeroClasses}]]
+												</option>
+											</optgroup>
+										</select>
+									
+									</div>
+									<button type="submit" class="btn btn-primary  pull-right col-md-2">Configurer</button>
+										<br/>
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								</div>
+							</form>
+							
+						</div>
+						<div class="modal-footer">
+						
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+							
+							
+						</div>
+					</div>
+				</div>
+		</div>
+		<!-- FIN DE Modal de Choix classe à configurer-->
+		
+		<!-- Modal de dialog de saisi du motif de recherche-->
+		<div class="modal fade" id="dialogsendMotifRechElv" tabindex="-1" role="dialog" 
+				aria-labelledby="dialogsendMotifRechElv"  aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+					
+						<!-- <div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Recherche d'un élève à partir d'un motif</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+							</button>
+						</div> -->
+						
+						<div class="modal-body">
+							<h4 align="center">Saisir une partie du nom de l'élève recherché</h4>
+							<form action="#" th:action="@{/logesco/users/getrechercheEleve}" method="get">
+								<input type="text" name="motifrechercheEleve"
+									id="motifrechercheEleve" class="form-control" placeholder="Noms de l'élève recherché"  />
+								<br/>
+								<button type="submit" class="btn btn-primary   col-md-3">Rechercher</button>
+								<br/>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							</form>
+							
+							<div class="modal-footer">
+						
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+							
+							</div>
+							
+						</div>
+					</div>
+				</div>
+		</div>
+		<!-- FIN DE Modal de dialog de saisi du motif de recherche-->
+		
+		<div class="modal fade" id="dialogChoixClasseReleve" tabindex="-1" role="dialog" 
+				aria-labelledby="dialogChoixClasseReleve"  aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+					
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Formulaire de relévé de note</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							
+							<h4 align="center">Sélectionner la classe concernée</h4>
+							
+							<form action="#" th:action="@{/logesco/users/getdonneesReleveNotes}" 
+								method="get"  th:if="${session.listofNiveaux}" target="_blank">
+							
+								<div th:if="${session.listofNiveaux}">
+									<div class="form-group  col-md-6">
+										<select class="form-control" name="idClasseSelect" id="idClasseSelect">
+											<optgroup  th:each="n:${session.listofNiveaux}" th:label="${n.codeNiveaux}" 
+												th:if="${session.listofNiveaux}" >
+												<option th:each="c:${n.listofClasses}" th:value="${c.idClasses}"
+													th:inline="text">
+													 [[${c.codeClasses}]] [[${c.specialite.codeSpecialite}]] [[${c.numeroClasses}]]
+												</option>
+											</optgroup>
+										</select>
+									
+									</div>
+									<button type="submit" class="btn btn-primary  col-md-4">Générer le formulaire</button>
+										<br/>
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								</div>
+							</form>
+							
+						</div>
+						<div class="modal-footer">
+						
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+							
+							
+						</div>
+					</div>
+				</div>
+		</div>
+		
+		
+		
+		<div layout:fragment="formactionusers"> 
+
+		</div>
+		
+</section>
+
+
+<!-- fin de la partie contenu de la page d'indexAdmin -->
+
+
+<!-- debut de la partie pied de la page d'index -->	
+	<footer class=" navbar-fixed-bottom col-md-12">
+		<small>CopyRight SoftMind appeler le 678470262 en cas de souci</small>
+	</footer>
+<!-- fin de la partie pied de la page d'index -->
+
+<!-- <form>
+	<input type="text" id="t" name="t"    onkeyup="mykeyPress(event)"/>
+	<br/>
+	<input type="text" id="t" name="t"    onkeyup="mykeyPress(event)"/>
+	<br/>
+	<input type="text" id="t" name="t"    onkeyup="mykeyPress(event)"/>
+	<br/>
+	<input type="text" id="t" name="t"    onkeyup="mykeyPress(event)"/>
+	<br/>
+	<input type="text" id="t" name="t"    onkeyup="mykeyPress(event)"/>
+</form> -->
+
+<!-- zone d'insertion des fichiers javascript -->
+<script src="webjars/jquery/1.11.1/jquery.min.js" 
+	th:src="@{/webjars/jquery/1.11.1/jquery.min.js}" ></script>
+<script src="webjars/bootstrap/3.3.7/js/bootstrap.min.js" 
+	th:src="@{/webjars/bootstrap/3.3.7/js/bootstrap.min.js}" ></script>
+
+<script src="../static/js/myScript.js" 
+	th:src="@{/js/myScript.js}" ></script>	
+	
+<script>
+/* $('.dropdown-toggle').mouseover(function() {
+	$(this).dropdown('toggle');
+});  */
+</script>
+
+<script type="text/javascript">
+//alert("dd");
+	function donneFocus(){
+		//alert("donne focus");
+		document.getElementById('passwordCourant').focus();
+	}
+</script>
+
+</body>
+</html>
