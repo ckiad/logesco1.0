@@ -1,10 +1,18 @@
 @CHARSET "UTF-8";
 .reculeverticalement{
-	margin-top: 145px;
+	margin-top: 15px; /*50px*/
+}
+
+.reculelogoverticalement{
+    margin-top: 25px;
+}
+
+.reculehorizontalement{
+	margin-left: 400px;
 }
 
 .reculeverticalementformlogin{
-	margin-top: 115px;
+	margin-top: 25px;
 }
 
 .reculeverticalementbar{
@@ -26,10 +34,6 @@
 
 .reculeverticalementdate{
 	margin-top: 14px;
-}
-
-.reculehorizontalement{
-	margin-left: 400px;
 }
 
 .reculehorizontalementdate{
@@ -54,3 +58,10 @@
 	border-radius: 11px;
 }
 
+#div-principal{
+    background-image: url("../images/logopng.png");
+    background-position-x: center;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: auto;
+}

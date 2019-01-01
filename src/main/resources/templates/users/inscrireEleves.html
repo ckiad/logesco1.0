@@ -6,7 +6,7 @@
 	layout:decorator="users/userslayout">
 <head>
 <meta charset="UTF-8"/>
-<title>Inscrire un élève</title>
+<title th:text="#{inscrireEleves.titre_page}">Inscrire un élève</title>
 </head>
 <body>
 <div layout:fragment="formactionusers">
@@ -14,7 +14,9 @@
 <div class="col-md-12    reculeverticalementmodifdonneepersoform">
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h4>Rechercher un élève connaissant sa classe et le modifier</h4>
+			<h4 th:text="#{inscrireEleves.entete_panel}">
+				Rechercher un élève connaissant sa classe et le modifier
+			</h4>
 		</div>
 		<div class="panel-body">
 			
@@ -23,10 +25,12 @@
 				method="get"  th:if="${listofClasses}" class="form-inline">
 				
 				<fieldset class="col-md-12"  th:if="${listofNiveaux}">
-					<legend class="text-primary">Choisir la classe de l'élève à inscrire</legend>
+					<legend class="text-primary" th:text="#{inscrireEleves.label_choixclasse}">
+						Choisir la classe de l'élève à inscrire
+					</legend>
 					
 					<div class="form-group">
-						<label for="idClasseSelect"> Classe d'appartenance: <span
+						<label for="idClasseSelect" th:text="#{inscrireEleves.label_classe}"> Classe d'appartenance: <span
 										class="redcolor">*</span></label> 
 						<select class="form-control" name="idClasseSelect" id="idClasseSelect" >
 							
@@ -39,20 +43,16 @@
 												
 							</optgroup>
 										 
-							<!-- <option th:each="c:${listofClasses}" th:value="${c.idClasses}"
-									th:inline="text">
-									 [[${c.codeClasses}]] [[${c.specialite.codeSpecialite}]] [[${c.numeroClasses}]]</option> -->
-										 
+							
 						</select>
 						&nbsp;&nbsp;
-						<!-- <div class="form-group">
-							<label for="montantScolarite"> Montant de la scolarité: <span
-								class="redcolor">*</span></label> <input type="text" name="montantScolarite"
-								id="montantScolarite" class="form-control" placeholder="0" th:value="${montantScolarite}"/>
-						</div>  -->
+						
 						
 						&nbsp; 
-						<button type="submit" class="btn btn-primary  pull-right">Rechercher la liste des élèves</button>
+						<button type="submit" class="btn btn-primary  pull-right" 
+							th:text="#{inscrireEleves.bouton_listeleve}">
+							Rechercher la liste des élèves
+						</button>
 					</div>
 					
 				</fieldset>
@@ -63,17 +63,20 @@
 			</fieldset>
 			
 			<fieldset  class="col-md-12" th:if="${erreurClasseNonConfig}">
-				<p class="alert alert-danger">
-					 Veuillez définir le montant de la scolarité dans le menu inscription avant de reprendre l'action pour la classe de 
+				<p class="alert alert-danger" th:inline="text">
+					[[#{inscrireEleves.label_erreur_classenonconfig}]]
 					 <span th:inline="text">
 					 	[[${classeSelect.codeClasses}]] [[${classeSelect.specialite.codeSpecialite}]] [[${classeSelect.numeroClasses}]] 
-					 </span> choisi.
+					 </span> 
+					 <span>
+					 	[[#{inscrireEleves.label_erreur_classenonconfig_choisi}]]
+					 </span>
 				</p>
 			</fieldset>
 			
 			<fieldset  class="col-md-12" th:if="${erreurClasseVide}">
-				<p class="alert alert-warning">
-					 Aucun élève n'est enccore recruter dans cette classe de 
+				<p class="alert alert-warning" th:inline="text">
+					 [[#{inscrireEleves.label_erreur_classevide}]]
 					 <span th:inline="text">
 					 	[[${classeSelect.codeClasses}]] [[${classeSelect.specialite.codeSpecialite}]] [[${classeSelect.numeroClasses}]] 
 					 </span>.
@@ -81,14 +84,14 @@
 			</fieldset>
 			
 			<fieldset  class="col-md-12" th:if="${param.updateetatInsceleveserrorMt}">
-					<h4 align="justify" class="alert alert-danger">
+					<h4 align="justify" class="alert alert-danger" th:text="#{inscrireEleves.label_erreur_etatInsceleves}">
 						Erreur de montant: Le solde du compte d'inscription ne saurait être supérieur au montant de la scolarité.
 					</h4>
 			</fieldset>
 				
 			<fieldset th:if="${listofEleves}" class="col-md-12">
 				
-				<legend class="text-primary">Liste des élèves de la 
+				<legend class="text-primary" th:inline="text"> [[#{inscrireEleves.label_listeeleveclasse}]]
 					<span th:inline="text" th:if="${classeSelect}" class="greencolor"> [[${classeSelect.codeClasses}]] 
 						[[${classeSelect.specialite.codeSpecialite}]] [[${classeSelect.numeroClasses}]]</span> (Total:
 					<span th:text="${effectifprovClasse}" class="redcolor"></span>)
@@ -97,12 +100,12 @@
 				<table class="table table-striped">
 					<thead class="thead-light">
 						<tr>
-							<th scope="col">MATRICULE</th>
-							<th scope="col">NOMS ET PRENOMS</th>
-							<th scope="col">DATE ET LIEU DE NAISSANCE</th>
-							<th scope="col">ADRESSE</th>
-							<th scope="col">MONTANT VERSE</th>
-							<th class="text-center" scope="col">ACTION</th>
+							<th scope="col" th:text="#{inscrireEleves.th_matricule}">MATRICULE</th>
+							<th scope="col" th:text="#{inscrireEleves.th_nomsprenoms}">NOMS ET PRENOMS</th>
+							<th scope="col" th:text="#{inscrireEleves.th_datenaissance}">DATE ET LIEU DE NAISSANCE</th>
+							<th scope="col" th:text="#{inscrireEleves.th_adresse}">ADRESSE</th>
+							<th scope="col" th:text="#{inscrireEleves.th_montantverse}">MONTANT VERSE</th>
+							<th class="text-center" scope="col" th:text="#{inscrireEleves.th_action}">ACTION</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -112,7 +115,11 @@
 									
 							<td th:inline="text">[[${#strings.capitalize(eleve.nomsEleves)}]] [[${eleve.prenomsEleves}]] </td>
 									
-							<td th:inline="text">Né le [[${#dates.format(eleve.datenaissEleves,"dd-MM-yyyy")}]] à [[${eleve.lieunaissEleves}]]</td>
+							<td th:inline="text">
+								[[#{inscrireEleves.label_nele}]] 
+								[[${#dates.format(eleve.datenaissEleves,"dd-MM-yyyy")}]] 
+								[[#{inscrireEleves.label_a}]] [[${eleve.lieunaissEleves}]]
+							</td>
 									
 							<td th:inline="text">[[${eleve.numtel1Parent}]]</td>
 									
@@ -139,7 +146,10 @@
 									<input type="hidden" name="idClasseSelect"
 										id="idClasseSelect" class="form-control" th:value="${idClasseSelect}"/>
 											
-									<button type="submit" class="btn btn-primary  pull-right">Verser</button>
+									<button type="submit" class="btn btn-primary  pull-right" 
+										th:text="#{inscrireEleves.bouton_verser}">
+										Verser
+									</button>
 								</form>
 								
 							</td>
@@ -160,8 +170,10 @@
 						</div> 
 					
 					<a class="btn btn-default btn-sm pull-right" href="#" title="Dresser le rapport de versement pour imprimer"
-										th:href="@{/logesco/users/intendant/getrapportVersement(idClassesConcerne=${idClasseSelect})}" 
-										role="button">Dresser le recapitulatif des versements pour cette classe</a>
+							th:href="@{/logesco/users/intendant/getrapportVersement(idClassesConcerne=${idClasseSelect})}" 
+							role="button" th:text="#{inscrireEleves.bouton_dresserrecapversement}">
+								Dresser le recapitulatif des versements pour cette classe
+					</a>
 					
 					
 				</fieldset>

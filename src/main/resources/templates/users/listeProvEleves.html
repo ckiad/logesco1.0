@@ -6,7 +6,7 @@
 	layout:decorator="users/userslayout">
 <head>
 <meta charset="UTF-8"/>
-<title>Listes provisoires</title>
+<title th:text="#{listeProvEleves.titre_page}">Listes provisoires</title>
 </head>
 <body>
 <div layout:fragment="formactionusers">
@@ -14,27 +14,32 @@
 <div class="col-md-12    reculeverticalementmodifdonneepersoform">
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h4>Affichage des listes provisoires des différentes classes</h4>
+			<h4 th:text="#{listeProvEleves.entete_panel}">
+				Affichage des listes provisoires des différentes classes
+			</h4>
 		</div>
 		<div class="panel-body">
 			<p class="alert alert-warning">
-				<span style="text-decoration: underline;">IMPORTANT:</span> Sélectionner la classe et cliquer sur Afficher. Une fois
-				la liste affichée cliquer Exporter pour l'imprimer dans un fichier pdf qui peut être par la suite transporté ou imprimé. 
+				<span style="text-decoration: underline;" th:text="#{listeProvEleves.label_important}">
+					IMPORTANT:
+				</span> 
+				<span th:text="#{listeProvEleves.label_selectclasseaafficher}">
+					Sélectionner la classe et cliquer sur Afficher. Une fois la liste affichée cliquer Exporter 
+					pour l'imprimer dans un fichier pdf qui peut être par la suite transporté ou imprimé. 
+				</span>
 			</p>
 			
 			<form action="#" th:action="@{/logesco/users/getlisteProvEleves}" method="get"  
 				th:if="${listofClasses}">
 				<fieldset class="col-md-2"  th:if="${listofClasses}">
-					<legend class="text-primary">Choisir la classe</legend>
+					<legend class="text-primary" th:text="#{listeProvEleves.legend_choixclasse}">
+						Choisir la classe
+					</legend>
 					<div class="form-group">
-						<label for="idClasseSelect"> Classe : <span
+						<label for="idClasseSelect" th:text="#{listeProvEleves.label_classe}"> Classe : <span
 										class="redcolor">*</span></label> 
 						<select class="form-control" name="idClasseSelect" id="idClasseSelect" >
-										 
-							<!-- <option th:each="c:${listofClasses}" th:value="${c.idClasses}"
-									th:inline="text">
-									 [[${c.codeClasses}]] [[${c.specialite.codeSpecialite}]] [[${c.numeroClasses}]]</option> -->
-									 
+							
 							<optgroup th:label="${n.codeNiveaux}" th:if="${listofNiveaux}" th:each="n:${listofNiveaux}">
 											
 								<option th:each="c:${n.listofClasses}" th:value="${c.idClasses}"
@@ -47,13 +52,16 @@
 						</select>
 						<hr/>
 						
-						<button type="submit" class="btn btn-primary  pull-right">Envoyer</button>
+						<button type="submit" class="btn btn-primary  pull-right" 
+							th:text="#{listeProvEleves.bouton_envoyer}">
+							Envoyer
+						</button>
 					</div>
 					
 				</fieldset>
 					
 				<fieldset  class="col-md-10" th:if="${classeSelect}">
-					<legend class="text-primary" >Liste des élèves de la 
+					<legend class="text-primary" th:inline="text"> [[#{listeProvEleves.label_listeleve}]]
 					<span th:inline="text" th:if="${classeSelect}" class="greencolor"> [[${classeSelect.codeClasses}]] 
 					[[${classeSelect.specialite.codeSpecialite}]] [[${classeSelect.numeroClasses}]]</span> (Total:
 						<span th:text="${effectifprovClasse}" class="redcolor"></span>)
@@ -63,10 +71,10 @@
 						<table class="table table-striped">
 							<thead class="thead-light">
 								<tr>
-									<th scope="col">MATRICULE</th>
-									<th scope="col">NOMS ET PRENOMS</th>
-									<th scope="col">DATE ET LIEU DE NAISSANCE</th>
-									<th scope="col">N° TEL PARENT/TUTEUR</th>
+									<th scope="col" th:text="#{listeProvEleves.th_matricule}">MATRICULE</th>
+									<th scope="col" th:text="#{listeProvEleves.th_nomsprenoms}">NOMS ET PRENOMS</th>
+									<th scope="col" th:text="#{listeProvEleves.th_datenaissance}">DATE ET LIEU DE NAISSANCE</th>
+									<th scope="col" th:text="#{listeProvEleves.th_numtel}">N° TEL PARENT/TUTEUR</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -75,7 +83,11 @@
 								
 									<td th:inline="text">[[${#strings.capitalize(eleve.nomsEleves)}]] [[${eleve.prenomsEleves}]] </td>
 									
-									<td th:inline="text">Né le [[${eleve.datenaissEleves}]] à [[${eleve.lieunaissEleves}]]</td>
+									<td th:inline="text">
+										[[#{listeProvEleves.label_nele}]] 
+										[[${eleve.datenaissEleves}]] [[#{listeProvEleves.label_a}]] 
+										[[${eleve.lieunaissEleves}]]
+									</td>
 									
 									<td th:inline="text">[[${eleve.numtel1Parent}]]</td>
 								</tr>
@@ -98,8 +110,10 @@
 				</fieldset>
 				
 				<a class="btn btn-primary btn-sm pull-right" href="#" th:if="${classeSelect}"
-			      						th:href="@{/logesco/users/exportlistprovEleves(idClasseSelect=${idClasseSelect})}" 
-			      						 role="button" target="_blank">Exporter la liste en PDF</a>
+			      		th:href="@{/logesco/users/exportlistprovEleves(idClasseSelect=${idClasseSelect})}" 
+			      		role="button" target="_blank" th:text="#{listeProvEleves.bouton_export}">
+			      		Exporter la liste en PDF
+			     </a>
 				
 			</form>
 			

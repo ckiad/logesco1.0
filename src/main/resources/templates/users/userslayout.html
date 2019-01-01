@@ -20,44 +20,26 @@
 
 <!-- debut de la partie entete des pages de toutes session utilisateur -->
 <header> 
-	<div class=" col-md-12 div-header">
-		
-		<div class="col-md-3 redcolor ">
-			<img alt="Ici le logo de l'application"  src="../static/images/logopng.png"  
+	<div class=" col-md-12">
+		<div class="col-md-4 redcolor"></div>
+		<div class="col-md-4">
+			<div class="col-md-4"></div>
+			<div class="col-md-4 reculelogoverticalement">
+				<img alt="Ici le logo de l'application"  src="../static/images/logopng.png"  
 				th:src="@{/images/logopng.png}"/>
+			</div>
+			<div class="col-md-4 "></div>	
 		</div>
+	<div class="col-md-4"></div>
+	</div>
+	<div class=" col-md-12">
+		<div class="col-md-3 redcolor "></div>
 		
 		<div class="col-md-6 greencolor ">
-			<h1 th:inline="text" align="center" class="alert alert-info">
-				[[#{label.bienvenue}]] &nbsp; [[${#httpServletRequest.remoteUser}]]!
-				<span class="card">
-					<img th:src="@{/logesco/users/getphotoPersonnelConnecte}" 
-						class="card-img-top" width="80" height="60"/>
-				</span>
-			</h1>
-			
-			<p layout:fragment="chemin">
-			
-			</p>
 			
 		</div>
 		
-		<div class="col-md-3">
-			<div  class="badge badge-light">
-				<span th:text="${session.dfNameJour}">Nom du jour</span>&nbsp;
-				<!-- <span th:text="${session.dfJour}">Numero du jour dans le mois</span>&nbsp;
-				<span th:text="${session.dfmois}">Nom ou numero mois en cours</span>&nbsp;
-				<span th:text="${session.dfyear}">annee en cours</span> à &nbsp; -->
-				<span th:text="${session.dfheure}">Heure dans la journée</span> 
-		 </div>
-		 <div class="reculeformdeconnecter">	
-		 <!-- @{/logout} dans le cas où on veut une deconnexion direct sans passe par un controleur -->
-			<form th:action="@{/logoute}" method="post">
-	            <input type="submit" class="btn btn-primary btn-sm  pull-right"  
-	            	value="Se déconnecter" th:value="#{button.deconnecter}"/>
-	        </form>
-	      </div>
-		</div>
+		<div class="col-md-3"></div> 
 	</div>
 </header>
 <!-- fin de la partie entete de toutes session utilisateur -->
@@ -66,9 +48,7 @@
 <section>
 
 <!-- DEBUT DE LA REALISATION DE LA BARRE DES MENUS DES USERS EN FONCTION DES ROLES-->
-<!-- <div sec:authorize="hasRole('ROLE_ADMIN')">
-Test de sécurité dans tymeleaf
-</div> -->
+
 <div class="container">
 			<div class="btn-group btn-group-justified">
 				
@@ -228,52 +208,9 @@ Test de sécurité dans tymeleaf
 								[[#{sousmenu_periodes.updateTrimestre}]]
 							</a>
 						</li>
-						<!--  <li class="divider" sec:authorize="hasAnyRole('ROLE_CENSEUR')"></li>
-						<li sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_TITULAIRE')">
-							<a href="#">
-								Rapport des évaluations et des notes
-							</a>
-						</li>-->
-						<!-- <li class="divider" sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_SUPERADMIN')"></li>
-						<li sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_SUPERADMIN')">
-							<a href="#">
-								Passer un conseil de classe séquentiel
-							</a>
-						</li>
-						<li class="divider" sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_SUPERADMIN')"></li>
-						<li sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_SUPERADMIN')">
-							<a href="#">
-								Passer un conseil de classe trimestriel
-							</a>
-						</li>
-						<li class="divider" sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_SUPERADMIN')"></li>
-						<li sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_SUPERADMIN')">
-							<a href="#">
-								Passer un conseil de classe annuel
-							</a>
-						</li>
-						 -->
-					</ul>
-				</div>
-				
-				<!-- <div class="btn-group" sec:authorize="hasRole('ROLE_CENSEUR')">
-					<button type="button" class="btn btn-default dropdown-toggle"
-						data-toggle="dropdown">
-						Enseignements &nbsp;<span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu" role="menu">
-						 <li> 
-							<a href="#"  data-toggle="modal" data-target="#dialogChoixClasse">
-								Configurer les cours dans les salles de classe
-							</a>
-						</li>
-						<li class="divider"></li>
-						<li><a href="#" >Exporter la configuration des cours d'une classe</a></li>
-						<li class="divider"></li>
-						<li><a href="#" th:href="@{/logesco/users/censeur/getupdateMatieres}">Gérer les Matières</a></li>
 						
 					</ul>
-				</div> -->
+				</div>
 				
 				<div class="btn-group" sec:authorize="hasAnyRole('ROLE_SG')">
 					<button type="button" class="btn btn-default dropdown-toggle"
@@ -329,16 +266,16 @@ Test de sécurité dans tymeleaf
 						<li class="divider" sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_SUPERADMIN')"></li>
 						
 						<li>	<a href="#" sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_SUPERADMIN')" 
-									th:href="@{/logesco/users/censeur/getrapportEvalSeq}">
-									Rapport des évaluations séquentielles
+									th:href="@{/logesco/users/censeur/getrapportEvalSeq}" th:inline="text">
+									 [[#{sousmenu_notes.rapportEvaluationSequentiel}]] 
 								</a>
 						</li>
 						
 						<li class="divider" sec:authorize="hasAnyRole('ROLE_TITULAIRE','ROLE_CENSEUR','ROLE_SUPERADMIN')"></li>
 						
 						<li>	<a href="#" sec:authorize="hasAnyRole('ROLE_TITULAIRE','ROLE_CENSEUR','ROLE_SUPERADMIN')" 
-										th:href="@{/logesco/users/getlistprocesverbalEvalTrim}">
-									Procès verbal trimestriel des notes
+										th:href="@{/logesco/users/getlistprocesverbalEvalTrim}" th:inline="text">
+									[[#{sousmenu_notes.procesverbalTrimNotes}]]
 							  	</a>
 						</li>
 						
@@ -346,8 +283,8 @@ Test de sécurité dans tymeleaf
 						
 						<li>
 							<a href="#"  sec:authorize="hasAnyRole('ROLE_ENSEIGNANT','ROLE_SUPERADMIN')"
-								th:href="@{/logesco/users/getlistcoursofEnseignant}">
-								Exporter ma liste des cours
+								th:href="@{/logesco/users/getlistcoursofEnseignant}" th:inline="text">
+								[[#{sousmenu_notes.exportListCours}]]
 							</a>
 						</li>
 						
@@ -355,8 +292,8 @@ Test de sécurité dans tymeleaf
 						
 						<li>
 							<a href="#" sec:authorize="hasAnyRole('ROLE_ENSEIGNANT','ROLE_SUPERADMIN')"  
-								data-toggle="modal" data-target="#dialogsendMotifRechElv">
-								Rechercher un élève
+								data-toggle="modal" data-target="#dialogsendMotifRechElv" th:inline="text">
+								[[#{sousmenu_notes.rechercheEleve}]]
 							</a>
 						</li>
 					</ul>
@@ -369,26 +306,30 @@ Test de sécurité dans tymeleaf
 					</button>
 					<ul class="dropdown-menu" role="menu">
 						<li>
-							<a href="#" th:href="@{/logesco/users/bulletins/getdonneesEditionsBulletinsSeq}">
-								Générer les bulletins séquentiels
+							<a href="#"  th:href="@{/logesco/users/bulletins/getdonneesEditionsBulletinsSeq}"  
+								th:inline="text" >
+								[[#{sousmenu_bulletins.genererBulletinSequentiel}]]
 							</a>
 						</li>
 						<li class="divider"></li>
 						<li>
-							<a href="#" th:href="@{/logesco/users/bulletins/getdonneesEditionsBulletinsTrim}">
-								Générer les bulletins trimestriels
+							<a href="#" th:href="@{/logesco/users/bulletins/getdonneesEditionsBulletinsTrim}"
+								th:inline="text">
+								[[#{sousmenu_bulletins.genererBulletinTrimestriel}]]
 							</a>
 						</li>
 						<li class="divider"></li>
 						<li>
-							<a href="#" th:href="@{/logesco/users/bulletins/getdonneesEditionsBulletinsTrimAn}">
-								Générer les bulletins trimestriels avec rapport annuel
+							<a href="#" th:href="@{/logesco/users/bulletins/getdonneesEditionsBulletinsTrimAn}"
+								th:inline="text">
+								[[#{sousmenu_bulletins.genererBulletinTrimestrielAvecRapportAnnuel}]]
 							</a>
 						</li>
 						<li class="divider"></li>
 						<li>
-							<a href="#" th:href="@{/logesco/users/bulletins/getdonneesEditionsBulletinsAn}">
-								Générer les bulletins annuels
+							<a href="#" th:href="@{/logesco/users/bulletins/getdonneesEditionsBulletinsAn}"
+								th:inline="text">
+								[[#{sousmenu_bulletins.genererBulletinAnnuel}]]
 							</a>
 						</li>
 						
@@ -406,14 +347,18 @@ Test de sécurité dans tymeleaf
 					<div class="modal-content">
 					
 						<div class="modal-header">
-							<h5 class="modal-title" id="exampleModalLabel">Configuration des cours d'une classe</h5>
+							<h5 class="modal-title" id="exampleModalLabel" th:inline="text">
+								 [[#{boitedialogue_configcours.entete_configureCoursClasse}]]
+							</h5>
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 							</button>
 						</div>
 						<div class="modal-body">
 							
-							<h4 align="center">Sélectionner la classe dont les cours seront paramétrés</h4>
+							<h4 align="center" th:inline="text">
+								[[#{boitedialogue_configcours.titre_selectClasseCoursParam}]]
+							</h4>
 							
 							<form action="#" th:action="@{/logesco/users/censeur/getupdateCours}" 
 								method="get"  th:if="${session.listofNiveaux}">
@@ -431,7 +376,9 @@ Test de sécurité dans tymeleaf
 										</select>
 									
 									</div>
-									<button type="submit" class="btn btn-primary  pull-right col-md-2">Configurer</button>
+									<button type="submit" class="btn btn-primary  pull-right col-md-2" th:inline="text">
+										[[#{boitedialogue_configcours.bouton_configurer}]]
+									</button>
 										<br/>
 										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 								</div>
@@ -440,7 +387,9 @@ Test de sécurité dans tymeleaf
 						</div>
 						<div class="modal-footer">
 						
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal" th:inline="text">
+								[[#{boitedialogue_configcours.bouton_fermer}]]
+							</button>
 							
 							
 						</div>
@@ -455,27 +404,26 @@ Test de sécurité dans tymeleaf
 				<div class="modal-dialog modal-dialog-centered" role="document">
 					<div class="modal-content">
 					
-						<!-- <div class="modal-header">
-							<h5 class="modal-title" id="exampleModalLabel">Recherche d'un élève à partir d'un motif</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-							</button>
-						</div> -->
-						
 						<div class="modal-body">
-							<h4 align="center">Saisir une partie du nom de l'élève recherché</h4>
+							<h4 align="center" th:inline="text">
+								[[#{boitedialogue_recheleve.entete_motifrecherche}]]
+							</h4>
 							<form action="#" th:action="@{/logesco/users/getrechercheEleve}" method="get">
 								<input type="text" name="motifrechercheEleve"
 									id="motifrechercheEleve" class="form-control" placeholder="Noms de l'élève recherché"  />
 								<br/>
-								<button type="submit" class="btn btn-primary   col-md-3">Rechercher</button>
+								<button type="submit" class="btn btn-primary   col-md-3" th:inline="text">
+									[[#{boitedialogue_recheleve.bouton_rechercher}]]
+								</button>
 								<br/>
 								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							</form>
 							
 							<div class="modal-footer">
 						
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+								<button type="button" class="btn btn-secondary" data-dismiss="modal" th:inline="text">
+									[[#{boitedialogue_recheleve.bouton_fermer}]]
+								</button>
 							
 							</div>
 							
@@ -491,14 +439,18 @@ Test de sécurité dans tymeleaf
 					<div class="modal-content">
 					
 						<div class="modal-header">
-							<h5 class="modal-title" id="exampleModalLabel">Formulaire de relévé de note</h5>
+							<h5 class="modal-title" id="exampleModalLabel" th:inline="text">
+								[[#{boitedialogue_choixclassereleve.entete_choixclasse}]]
+							</h5>
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 							</button>
 						</div>
 						<div class="modal-body">
 							
-							<h4 align="center">Sélectionner la classe concernée</h4>
+							<h4 align="center" th:inline="text">
+								[[#{boitedialogue_selectclasse.label_choixclasse}]]
+							</h4>
 							
 							<form action="#" th:action="@{/logesco/users/getdonneesReleveNotes}" 
 								method="get"  th:if="${session.listofNiveaux}" target="_blank">
@@ -516,7 +468,9 @@ Test de sécurité dans tymeleaf
 										</select>
 									
 									</div>
-									<button type="submit" class="btn btn-primary  col-md-4">Générer le formulaire</button>
+									<button type="submit" class="btn btn-primary  col-md-4" th:inline="text">
+										[[#{boitedialogue_selectclasse.bouton_genererreleve}]]
+									</button>
 										<br/>
 										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 								</div>
@@ -525,7 +479,9 @@ Test de sécurité dans tymeleaf
 						</div>
 						<div class="modal-footer">
 						
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal" th:inline="text">
+								[[#{boitedialogue_selectclasse.bouton_fermer}]]
+							</button>
 							
 							
 						</div>
@@ -535,9 +491,43 @@ Test de sécurité dans tymeleaf
 		
 		
 		
-		<div layout:fragment="formactionusers"> 
-
-		</div>
+<div> 
+	<div class="col-md-10   col-md-offset-1 reculeverticalement">
+		<div class="panel panel-info">
+           <div class="panel-heading">
+               <h4 align="center"> 
+                    <span class="card pull-left">
+                                <img th:src="@{/logesco/users/getphotoPersonnelConnecte}" 
+                                    class="card-img-top" width="60" height="40"/>
+                            </span>
+                   <span layout:fragment="titre_boite"></span><!-- <h4>Modification du mot de passe</h4> -->
+                    <a th:href="@{/logout}" 
+                                    class="btn btn-default btn-sm pull-right" role="button">
+                                Se déconneter
+                    </a>
+                </h4>
+				
+				
+			</div>
+			<div class="panel-body">
+				<div layout:fragment="formactionusers">
+				
+				</div>
+				
+			</div>
+			<div class="panel-footer">
+				<p>&copy;<small th:text="#{label.confiance}"> 
+					 KiadjMind 2019 (678470262 / 695093228) merci de la confiance en nous accordée
+				</small>
+				<span  class="badge badge-light pull-right">
+				    <span th:text="${session.dfNameJour}">Nom du jour</span>&nbsp;
+				</span></p>
+            </div>
+            
+        </div>
+        
+	</div>
+</div>
 		
 </section>
 
@@ -547,21 +537,13 @@ Test de sécurité dans tymeleaf
 
 <!-- debut de la partie pied de la page d'index -->	
 	<footer class=" navbar-fixed-bottom col-md-12">
-		<small>CopyRight SoftMind appeler le 678470262 en cas de souci</small>
+		<small th:inline="text">
+			[[#{footer.footer_copyright}]]
+		</small>
 	</footer>
 <!-- fin de la partie pied de la page d'index -->
 
-<!-- <form>
-	<input type="text" id="t" name="t"    onkeyup="mykeyPress(event)"/>
-	<br/>
-	<input type="text" id="t" name="t"    onkeyup="mykeyPress(event)"/>
-	<br/>
-	<input type="text" id="t" name="t"    onkeyup="mykeyPress(event)"/>
-	<br/>
-	<input type="text" id="t" name="t"    onkeyup="mykeyPress(event)"/>
-	<br/>
-	<input type="text" id="t" name="t"    onkeyup="mykeyPress(event)"/>
-</form> -->
+
 
 <!-- zone d'insertion des fichiers javascript -->
 <script src="webjars/jquery/1.11.1/jquery.min.js" 

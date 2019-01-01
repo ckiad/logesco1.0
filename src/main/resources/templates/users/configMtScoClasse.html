@@ -6,7 +6,7 @@
 	layout:decorator="users/userslayout">
 <head>
 <meta charset="UTF-8"/>
-<title>Inscrire un élève</title>
+<title th:text="#{configMtScoClasse.titre_page}">Définir les montants de scolarité</title>
 </head>
 <body>
 <div layout:fragment="formactionusers">
@@ -14,7 +14,9 @@
 <div class="col-md-12    reculeverticalementmodifdonneepersoform">
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h4>Formulaire de fixation des montants de scolarité pour chaque classe</h4>
+			<h4 th:text="#{configMtScoClasse.entete_panel}">
+				Formulaire de fixation des montants de scolarité pour chaque classe
+			</h4>
 		</div>
 		<div class="panel-body">
 			
@@ -22,22 +24,30 @@
 				method="post"   class="form-inline" th:object="${updateMtScoClassesForm}">
 				
 				<div th:if="${param.updatemtclasseerrorclasse}">
-					<h4 align="justify" class="alert alert-danger">Erreur dans le choix de la classe à paramétrer</h4>
+					<h4 align="justify" class="alert alert-danger" th:text="#{configMtScoClasse.erreur_classe}">
+						Erreur dans le choix de la classe à paramétrer
+					</h4>
 				</div>
 				
 				<div th:if="${param.updatemtclassesuccess}">
-					<h4 align="justify" class="alert alert-success">Montant de la scolarité fixé avec succès.</h4>
+					<h4 align="justify" class="alert alert-success" th:text="#{configMtScoClasse.success_config}">
+						Montant de la scolarité fixé avec succès.
+					</h4>
 				</div>
 				
 				<div th:if="${param.updatemtclasseerror}">
-					<h4 align="justify" class="alert alert-danger">Vérifier le montant de la scolarité saisi</h4>
+					<h4 align="justify" class="alert alert-danger" th:text="#{configMtScoClasse.erreur_montant}">
+						Vérifier le montant de la scolarité saisi
+					</h4>
 				</div>
 				
 				<fieldset class="col-md-12" >
-					<legend class="text-primary">Choisir la classe dont le montant doit être défini</legend>
+					<legend class="text-primary" th:text="#{configMtScoClasse.choix_classe}">
+						Choisir la classe dont le montant doit être défini
+					</legend>
 					
 					<div class="form-group">
-						<label for="idClasseSelect"> Classe à configurer: <span
+						<label for="idClasseSelect" th:text="#{configMtScoClasse.classe_a_config}"> Classe à configurer: <span
 										class="redcolor">*</span></label> 
 						<input type="text" name="labelclasseAConfig"
 								id="labelclasseAConfig" class="form-control" th:value="*{labelclasseAConfig}" readonly=""/>
@@ -46,7 +56,8 @@
 								id="idclasseAConfig" class="form-control" th:value="*{idclasseAConfig}" />
 						&nbsp;&nbsp;
 						<div class="form-group">
-							<label for="montantScolarite"> Montant de la scolarité: <span
+							<label for="montantScolarite" th:text="#{configMtScoClasse.montant_sco}"> 
+								Montant de la scolarité: <span
 								class="redcolor">*</span></label> <input type="text" name="montantScolarite"
 								id="montantScolarite" class="form-control" placeholder="0" th:value="*{montantScolarite}" />
 						</div> 
@@ -54,7 +65,8 @@
 						<input type="hidden" name="numPageClasses"
 								id="numPageClasses" class="form-control" th:value="*{numPageClasses}" />
 								
-						<button type="submit" class="btn btn-primary  pull-right">Envoyer</button>
+						<button type="submit" class="btn btn-primary  pull-right" 
+							th:text="#{configMtScoClasse.bouton_envoyer}">Envoyer</button>
 					</div>
 					
 				</fieldset>
@@ -67,12 +79,14 @@
 			<!-- Affichage de la liste des classes pages par pages en indiquant pour chacune le montant de la scolarité spécifié -->
 			<fieldset  class="col-md-12" th:if="${listpageofClasses}">
 				<table class="table table-striped">
-					<caption>Liste des classes existantes avec les montants de scolarité respectifs</caption>
+					<caption th:text="#{configMtScoClasse.label_listeclasse}">
+						Liste des classes existantes avec les montants de scolarité respectifs
+					</caption>
 					<thead class="thead-light">
 						<tr>
-							<th scope="col">CLASSE</th>
-							<th scope="col">MONTANT DE LA SCOLARITE </th>
-						     <th class="text-center" scope="col">ACTION</th>
+							<th scope="col" th:text="#{configMtScoClasse.th_classe}">CLASSE</th>
+							<th scope="col" th:text="#{configMtScoClasse.th_montantsco}">MONTANT DE LA SCOLARITE </th>
+						     <th class="text-center" scope="col" th:text="#{configMtScoClasse.th_action}">ACTION</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -85,7 +99,7 @@
 			      					<a class="btn btn-primary btn-sm pull-right" href="#"  
 			      						th:href="@{/logesco/users/intendant/getmodifMtScoClasses(idClassesAConfig=${c.idClasses},
 			      						numPageClasses=${pageCourante})}" 
-			      						role="button">Modifier</a>
+			      						role="button" th:text="#{configMtScoClasse.bouton_modifier}">Modifier</a>
 			      				</span>
 			      				</div>
 			      			</td>
@@ -105,7 +119,7 @@
 				
 				<a class="btn btn-primary btn-lg pull-right" href="#" 
 			      						th:href="@{/logesco/users/intendant/exportlistClasses}" 
-			      						role="button">Exporter la liste des classes</a>
+			      						role="button" th:text="#{configMtScoClasse.bouton_export}">Exporter la liste des classes</a>
 				
 			</fieldset>
 		
