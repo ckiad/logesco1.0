@@ -65,3 +65,18 @@
     background-position: center;
     background-size: auto;
 }
+
+/* Partie CSS de la section des menus dans la page userslayout.html */
+.row{
+    margin-top:40px;
+    padding: 0 10px;
+}
+
+.clickable{
+    cursor: pointer;   
+}
+
+.panel-heading span {
+	margin-top: -20px;
+	font-size: 15px;
+}

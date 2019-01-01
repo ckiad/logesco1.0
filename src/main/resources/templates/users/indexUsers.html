@@ -16,16 +16,13 @@
          Modification du mot de passe
     </span>
 
-<div layout:fragment="formactionusers">
-    <div>
-        <div class="col-md-3"></div>
-        <div class="col-md-5">
-
+    <div layout:fragment="formactionusers">
+        <div class="col-md-2"></div> 
+        <div class="col-md-6">
             <div th:if="${param.usernameerreur}">
                 <h4 align="center" class="alert alert-danger">Nom
                         d'utilisateur invalide.</h4>
             </div>
-
             <div th:if="${param.passwordnotconfirm}">
                 <h4 align="center" class="alert alert-danger">Confirmation de
                     mot de passe invalide.</h4>
@@ -36,8 +33,6 @@
                         courant invalide.</h4>
             </div>
 
-
-        <div>
             <form action="#" th:action="@{/logesco/users/postupdatePassword}"
                     th:object="${modifpasswordForm}" method="post">
                 <div class="form-group">
@@ -77,18 +72,12 @@
 
                 <button type="submit" class="btn btn-primary  pull-right">Envoyer</button>
             </form>
-        </div>
-
-
-        </div>
-        <div class="col-md-4"></div>
-    </div>
-
-<!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
-
+            </div>
+             <div class="col-md-4"></div> 
 
 </div>
 
+<!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
 
 	
 </body>
