@@ -9,18 +9,18 @@
 <title>Saisie des rapports de discipline</title>
 </head>
 <body onload="donneFocus()">
+
+<span layout:fragment="titre_boite">
+        Formulaire de saisie des rapports d'absence de  la
+		<span th:inline="text" class="alert alert-warning"> Séquence  
+			[[${sequenceConcerneRabs.numeroSeq}]].</span>
+</span>
+
 <div layout:fragment="formactionusers">
 	<!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE   col-md-offset-1-->
-	<div class="col-md-8   reculeverticalementmodifpasswordform">
-		<div class="panel panel-primary">
-			<div class="panel-heading">
-					<h4 align="center">Formulaire de saisie des rapports d'absence de  la
-						<span th:inline="text" class="alert alert-warning"> Séquence  
-							[[${sequenceConcerneRabs.numeroSeq}]].</span>
-					</h4>
-			</div>
-			<div class="panel-body">
-				<form action="#" class="form-inline"
+	<div class="col-md-9">
+	<div class="col-md-7">
+			<form action="#" class="form-inline"
 						th:action="@{/logesco/users/sg/getUpdateRAbsences}" method="get">
 					
 					<div th:if="${param.updaterabssaisiError}">
@@ -177,8 +177,6 @@
 				<a class="btn btn-default btn-sm pull-left" href="#" title="Retourner à la page précédente"
 						th:href="@{/logesco/users/sg/getdonneesSaisieRAbsences}" role="button">Retourner</a>
 				
-			</div>
-		</div>
 	</div>
 	
 	<div class="col-md-4    reculeverticalementmodifpasswordform">
@@ -220,7 +218,7 @@
 			</div>
 		</div>
 	</div>
-	
+	</div>
 	<!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE   col-md-offset-1-->
 	<!-- On peut inserer du javascript ici ie le javascript qui concerne exclusivement cette page. -->
 

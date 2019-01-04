@@ -9,18 +9,16 @@
 <title>Paramètres de saisi des rapports d'absence</title>
 </head>
 <body>
+
+<span layout:fragment="titre_boite">
+        Paramètres de saisie des notes
+    </span>
+
 <div layout:fragment="formactionusers">
 	<!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
-	<div
-			class="col-md-9  col-md-offset-1  reculeverticalementmodifpasswordform">
-			
-			<div class="panel panel-primary">
-				<div class="panel-heading">
-					<h4>Paramètres de saisie des rapports d'absence</h4>
-				</div>
-				<div class="panel-body">
-					<form action="#"
-						th:action="@{/logesco/users/sg/getformSaisieRAbsences}" method="get"
+	<div class="col-md-9">
+		<form action="#"
+			th:action="@{/logesco/users/sg/getformSaisieRAbsences}" method="get"
 						class="form-inline">
 					
 						<div th:if="${listofNiveaux !=null and anneeActive != null}" >
@@ -69,8 +67,6 @@
 						</div>
 					
 					</form>
-				</div>
-			</div>
 			
 	</div>
 	<!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->

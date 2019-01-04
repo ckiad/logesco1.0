@@ -1,20 +1,28 @@
 /**
  * 
  */
-
+$(function() {
+	//alert("la fonction s'appelle ici");
+	$('.panel-heading span.clickable').parents('.panel-menu').find('.panel-body').slideUp();
+	$('.panel-heading span.clickable').addClass('panel-collapsed');
+	$('.panel-heading span.clickable').find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+	$('.panel-heading span.clickable').parents('.panel-form').find('.heading-form').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+	$('.panel-heading span.clickable').parents('.panel-form').find('.heading-form').removeClass('panel-collapsed')
 $(document).on('click', '.panel-heading span.clickable', function(e){
     var $this = $(this);
 	if(!$this.hasClass('panel-collapsed')) {
 		$this.parents('.panel-menu').find('.panel-body').slideUp();
+		$this.parents('.panel-form').find('.panel-body').slideUp();
 		$this.addClass('panel-collapsed');
 		$this.find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
 	} else {
 		$this.parents('.panel-menu').find('.panel-body').slideDown();
+		$this.parents('.panel-form').find('.panel-body').slideDown();
 		$this.removeClass('panel-collapsed');
 		$this.find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
 	}
-})
-
+});
+});
 /*function enreg(){
 	alert("ici");
 }*/

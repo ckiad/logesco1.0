@@ -9,16 +9,16 @@
 <title>Rapport des évaluations</title>
 </head>
 <body>
+
+<span layout:fragment="titre_boite">
+        Génération du rapport des évaluations d'une séquence dans une classe
+</span>
+
 <div layout:fragment="formactionusers">
 <!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
-<div class="col-md-12    reculeverticalementmodifdonneepersoform">
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h4>Génération du rapport des évaluations d'une séquence dans une classe</h4>
-		</div>
-		<div class="panel-body">
-			
-			<form action="#" th:action="@{/logesco/users/censeur/postrapportEvalSeq}" 
+<div class="col-md-9">
+		
+		<form action="#" th:action="@{/logesco/users/censeur/postrapportEvalSeq}" 
 				method="post"   class="form-inline col-md-offset-2" th:object="${getrapportEvalSeqForm}">
 				
 				
@@ -112,16 +112,7 @@
 					</tbody>
 				</table>
 				
-				
-				
-				<!-- <a class="btn btn-primary btn-lg pull-right" href="#" 
-			      						th:href="@{/logesco/users/intendant/exportlistClasses}" 
-			      						role="button">Exporter la liste des classes</a>-->
-				
 			</fieldset>
-		
-		</div>
-	</div>
 </div>
 <!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
 </div>

@@ -9,18 +9,15 @@
 <title th:text="#{configMtScoClasse.titre_page}">Définir les montants de scolarité</title>
 </head>
 <body>
+<span layout:fragment="titre_boite">
+        Formulaire de fixation des montants de scolarité pour chaque classe
+</span>
+
 <div layout:fragment="formactionusers">
 <!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
-<div class="col-md-12    reculeverticalementmodifdonneepersoform">
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h4 th:text="#{configMtScoClasse.entete_panel}">
-				Formulaire de fixation des montants de scolarité pour chaque classe
-			</h4>
-		</div>
-		<div class="panel-body">
-			
-			<form action="#" th:action="@{/logesco/users/intendant/postenregMtClasses}" 
+<div class="col-md-9">
+		
+		<form action="#" th:action="@{/logesco/users/intendant/postenregMtClasses}" 
 				method="post"   class="form-inline" th:object="${updateMtScoClassesForm}">
 				
 				<div th:if="${param.updatemtclasseerrorclasse}">
@@ -50,18 +47,20 @@
 						<label for="idClasseSelect" th:text="#{configMtScoClasse.classe_a_config}"> Classe à configurer: <span
 										class="redcolor">*</span></label> 
 						<input type="text" name="labelclasseAConfig"
-								id="labelclasseAConfig" class="form-control" th:value="*{labelclasseAConfig}" readonly=""/>
+								id="labelclasseAConfig" class="form-control" th:value="*{labelclasseAConfig}" readonly="readonly"/>
 								
 						<input type="hidden" name="idclasseAConfig"
 								id="idclasseAConfig" class="form-control" th:value="*{idclasseAConfig}" />
-						&nbsp;&nbsp;
-						<div class="form-group">
+					</div>
+					<div class="form-group">
 							<label for="montantScolarite" th:text="#{configMtScoClasse.montant_sco}"> 
-								Montant de la scolarité: <span
-								class="redcolor">*</span></label> <input type="text" name="montantScolarite"
+									Montant de la scolarité: <span
+									class="redcolor">*</span></label> 
+							<input type="text" name="montantScolarite"
 								id="montantScolarite" class="form-control" placeholder="0" th:value="*{montantScolarite}" />
-						</div> 
-						&nbsp; 
+					</div> 
+					
+					<div class="form-group">
 						<input type="hidden" name="numPageClasses"
 								id="numPageClasses" class="form-control" th:value="*{numPageClasses}" />
 								
@@ -123,8 +122,6 @@
 				
 			</fieldset>
 		
-		</div>
-	</div>
 </div>
 <!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
 </div>

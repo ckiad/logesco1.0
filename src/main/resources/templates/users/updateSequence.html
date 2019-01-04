@@ -9,16 +9,15 @@
 <title>Actualiser les séquences</title>
 </head>
 <body>
+
+<span layout:fragment="titre_boite">
+       Actualiser les périodes (séquence)
+</span>
+
 <div layout:fragment="formactionusers">
 <!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
-<div class="col-md-7  col-md-offset-2  reculeverticalementmodifpasswordform">
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h4>Actualiser les périodes</h4>
-		</div>
-		<div class="panel-body">
-		
-			<div th:if="${param.actualiserSeqerror}">
+<div class="col-md-9">
+		<div th:if="${param.actualiserSeqerror}">
 				<h4 align="justify" class="alert alert-danger">Erreur de changement d'état</h4>
 			</div>
 			
@@ -84,8 +83,6 @@
 					</ul>
 			</div> 
 			
-		</div>
-	</div>
 </div>
 <!-- fin DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
 </div>

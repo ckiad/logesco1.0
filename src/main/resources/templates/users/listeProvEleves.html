@@ -9,16 +9,12 @@
 <title th:text="#{listeProvEleves.titre_page}">Listes provisoires</title>
 </head>
 <body>
+<span layout:fragment="titre_boite">
+       Affichage des listes provisoires des différentes classes
+</span>
 <div layout:fragment="formactionusers">
 <!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
-<div class="col-md-12    reculeverticalementmodifdonneepersoform">
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h4 th:text="#{listeProvEleves.entete_panel}">
-				Affichage des listes provisoires des différentes classes
-			</h4>
-		</div>
-		<div class="panel-body">
+<div class="col-md-9">
 			<p class="alert alert-warning">
 				<span style="text-decoration: underline;" th:text="#{listeProvEleves.label_important}">
 					IMPORTANT:
@@ -29,14 +25,12 @@
 				</span>
 			</p>
 			
+		<div class="col-md-12">
 			<form action="#" th:action="@{/logesco/users/getlisteProvEleves}" method="get"  
-				th:if="${listofClasses}">
-				<fieldset class="col-md-2"  th:if="${listofClasses}">
-					<legend class="text-primary" th:text="#{listeProvEleves.legend_choixclasse}">
-						Choisir la classe
-					</legend>
+				th:if="${listofClasses}" class="form-inline" >
+					
 					<div class="form-group">
-						<label for="idClasseSelect" th:text="#{listeProvEleves.label_classe}"> Classe : <span
+						<label for="idClasseSelect" th:text="#{listeProvEleves.label_classe}"> Sélectionner la classe : <span
 										class="redcolor">*</span></label> 
 						<select class="form-control" name="idClasseSelect" id="idClasseSelect" >
 							
@@ -50,17 +44,21 @@
 							</optgroup>
 										 
 						</select>
-						<hr/>
-						
+						</div>
 						<button type="submit" class="btn btn-primary  pull-right" 
 							th:text="#{listeProvEleves.bouton_envoyer}">
 							Envoyer
 						</button>
-					</div>
 					
-				</fieldset>
 					
-				<fieldset  class="col-md-10" th:if="${classeSelect}">
+				</form>
+		</div>
+		
+		&nbsp;
+			
+				<form action="#" th:action="@{/logesco/users/getlisteProvEleves}" method="get"  
+						th:if="${listofClasses}">
+				<fieldset  class="col-md-12" th:if="${classeSelect}">
 					<legend class="text-primary" th:inline="text"> [[#{listeProvEleves.label_listeleve}]]
 					<span th:inline="text" th:if="${classeSelect}" class="greencolor"> [[${classeSelect.codeClasses}]] 
 					[[${classeSelect.specialite.codeSpecialite}]] [[${classeSelect.numeroClasses}]]</span> (Total:
@@ -71,7 +69,7 @@
 						<table class="table table-striped">
 							<thead class="thead-light">
 								<tr>
-									<th scope="col" th:text="#{listeProvEleves.th_matricule}">MATRICULE</th>
+									<!-- <th scope="col" th:text="#{listeProvEleves.th_matricule}">MATRICULE</th> -->
 									<th scope="col" th:text="#{listeProvEleves.th_nomsprenoms}">NOMS ET PRENOMS</th>
 									<th scope="col" th:text="#{listeProvEleves.th_datenaissance}">DATE ET LIEU DE NAISSANCE</th>
 									<th scope="col" th:text="#{listeProvEleves.th_numtel}">N° TEL PARENT/TUTEUR</th>
@@ -79,7 +77,7 @@
 							</thead>
 							<tbody>
 								<tr th:each="eleve:${listprovofEleves}">
-									<td th:inline="text">[[${eleve.matriculeEleves}]] </td>
+									<!-- <td th:inline="text">[[${eleve.matriculeEleves}]] </td> -->
 								
 									<td th:inline="text">[[${#strings.capitalize(eleve.nomsEleves)}]] [[${eleve.prenomsEleves}]] </td>
 									
@@ -117,8 +115,6 @@
 				
 			</form>
 			
-		</div>
-	</div>
 </div>
 <!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
 </div>

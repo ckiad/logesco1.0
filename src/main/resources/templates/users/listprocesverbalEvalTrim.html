@@ -9,16 +9,15 @@
 <title>Procès verbaux trimestriels</title>
 </head>
 <body>
+<span layout:fragment="titre_boite">
+        Génération des procès verbaux recapitulatif d'un trimestre
+</span>
 
 <div layout:fragment="formactionusers">
 <!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
-<div class="col-md-7  col-md-offset-2    reculeverticalementmodifdonneepersoform">
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h4>Génération des procès verbaux recapitulatif d'un trimestre</h4>
-		</div>
-		<div class="panel-body">
-			<form action="#" th:action="@{/logesco/users/postlistprocesverbalEvalTrim}" 
+<div class="col-md-7  col-md-offset-1">
+	
+	<form action="#" th:action="@{/logesco/users/postlistprocesverbalEvalTrim}" 
 				method="post"   class="form-inline" th:object="${getrapportEvalTrimForm}">
 			
 				<fieldset class="col-md-12" >
@@ -115,8 +114,6 @@
 				</table>
 			</fieldset>
 			
-		</div>
-	</div>
 </div>
 <!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
 </div>

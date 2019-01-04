@@ -448,6 +448,8 @@ public class UsersController {
 			double coefMontant = critere * 0.01;
 			double montantMin = classeSelect.getMontantScolarite() * coefMontant;
 			
+			model.addAttribute("montantMin", montantMin);
+			
 			/*
 			 * On place aussi toute la liste des eleves définitif selon le critere dans la session
 			 */

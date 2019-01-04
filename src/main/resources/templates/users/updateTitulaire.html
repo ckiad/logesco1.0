@@ -9,16 +9,15 @@
 <title>Attribution des titulaires de classe</title>
 </head>
 <body>
+	<span layout:fragment="titre_boite">
+        Attribuer des titulaires aux différentes classes
+    </span>
 <div layout:fragment="formactionusers">
 <!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
-<div class="col-md-7  col-md-offset-3 reculeverticalementmodifpasswordform">
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h4>Attribuer des titulaires aux différentes classes</h4>
-		</div>
-		<div class="panel-body">
-			<form action="#" th:action="@{/logesco/users/censeur/postupdateTitulaire}" 
-				method="post"   class="form-inline" th:object="${updateTitulaireForm}">
+<div class="col-md-1"></div>
+<div class="col-md-7">
+	<form action="#" th:action="@{/logesco/users/censeur/postupdateTitulaire}" 
+			method="post"   class="form-inline" th:object="${updateTitulaireForm}">
 				
 				<div th:if="${param.updatetutulaireerror}">
 					<h4 align="justify" class="alert alert-danger">Erreur lors de l'affectation du titulaire de la classe.</h4>
@@ -183,8 +182,6 @@
 			      						role="button">Exporter la liste des titulaires de classe</a>
 				
 			</form>
-		</div>
-	</div>
 </div>
 <!-- fin DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
 </div>

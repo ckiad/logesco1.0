@@ -9,20 +9,19 @@
 <title>Consulter la liste du personnel enregistrée</title>
 </head>
 <body>
+<span layout:fragment="titre_boite">
+       Formulaire d'enregistrement des membres du personnel
+</span>
+
 <div layout:fragment="formactionusers">
 <!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
-<div class="col-md-12    reculeverticalementmodifdonneepersoform">  <!-- col-md-6 col-md-offset-3 -->
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h4>Rechercher un personnel et cliquer sur l'action désirée</h4>
-		</div>
-		<div class="panel-body">
-			
-			<div th:if="${param.enregpersonnelswarningRole}">
+<div class="col-md-9">  <!-- col-md-6 col-md-offset-3 -->
+		
+		<div th:if="${param.enregpersonnelswarningRole}">
 				<h4 align="justify" class="alert alert-warning">Le changement de fonction n'a pas été effectué. 
 				En effet pour passé d'un niveau hierarchique à un autre il vaut mieux supprimer l'utilisateur dans le niveau initial
 				et l'enregistrer dans le niveau désiré.</h4>
-			</div>
+		</div>
 			
 			
 			<div th:if="${listofProviseur}">
@@ -116,7 +115,6 @@
 						</tr>
 					</tbody>
 				</table>
-			
 			</div>
 			
 			
@@ -151,25 +149,27 @@
 							</td>
 							<td>
 			      				<div>
-				      				<span class="col-md-4">
-				      					<a class="btn btn-primary btn-sm pull-left" href="#" 
+				      				<div>
+				      					<a class="btn btn-primary btn-sm" href="#" 
 												th:href="@{/logesco/users/chefetab/getupdatePersonnels(idUsers=${censeur.idUsers}, 
 												numPageCenseur=${pageCouranteCenseurs})}" role="button">Modifier</a>
-				      				</span>
-				      				<span class="col-md-4">
+				      				</div>
+				      				&nbsp;
+				      				<div >
 										<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" 
 											th:attr="data-target='#'+${censeur.idUsers}">
 										  Afficher
 										</button>
-				      				</span>
-				      				<span class="col-md-4">
+				      				</div>
+				      				&nbsp;
+				      				<div>
 				      					<!-- <a class="btn btn-danger btn-sm pull-right" href="#" 
 				      						role="button">Supprimer</a> -->
 				      					<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" 
 											data-target="#dialogSupprCenseur">
 										  Supprimer
 										</button>
-				      				</span>
+				      				</div>
 			      				</div>
 			      			</td>
 							
@@ -302,25 +302,25 @@
 							</td>
 							<td>
 			      				<div>
-			      					<span class="col-md-4">
-				      					<a class="btn btn-primary btn-sm pull-left" href="#" 
+			      					<div>
+				      					<a class="btn btn-primary btn-sm" href="#" 
 												th:href="@{/logesco/users/chefetab/getupdatePersonnels(idUsers=${sg.idUsers}, 
 												numPageSg=${pageCouranteSG})}" role="button">Modifier</a>
-				      				</span>
-				      				<span class="col-md-4">
+				      				</div>
+				      				&nbsp;
+				      				<div>
 										<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" 
 											th:attr="data-target='#'+${sg.idUsers}">
 										  Afficher
 										</button>
-				      				</span>
-				      				<span class="col-md-4">
-				      					<!-- <a class="btn btn-danger btn-sm pull-right" href="#" 
-				      						role="button">Supprimer</a> -->
+				      				</div>
+				      				&nbsp;
+				      				<div>
 				      					<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" 
 											data-target="#dialogSupprSg">
 										  Supprimer
 										</button>
-				      				</span>
+				      				</div>
 			      				
 			      				</div>
 			      			</td>
@@ -454,25 +454,25 @@
 							<td>
 			      				<div>
 			      				
-			      					<span class="col-md-4">
+			      					<div>
 				      					<a class="btn btn-primary btn-sm pull-left" href="#" 
 												th:href="@{/logesco/users/chefetab/getupdatePersonnels(idUsers=${intendant.idUsers}, 
 												numPageIntendant=${pageCouranteIntendant})}" role="button">Modifier</a>
-				      				</span>
-				      				<span class="col-md-4">
+				      				</div>
+				      				<br/>&nbsp;
+				      				<div>
 										<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" 
 											th:attr="data-target='#'+${intendant.idUsers}">
 										  Afficher
 										</button>
-				      				</span>
-				      				<span class="col-md-4">
-				      					<!-- <a class="btn btn-danger btn-sm pull-right" href="#" 
-				      						role="button">Supprimer</a> -->
+				      				</div>
+				      				&nbsp;
+				      				<div>
 				      					<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" 
 											data-target="#dialogSupprIntendant">
 										  Supprimer
 										</button>
-				      				</span>
+				      				</div>
 			      				
 			      				</div>
 			      			</td>
@@ -606,25 +606,27 @@
 			      				<div>
 			      				
 			      					
-			      					<span class="col-md-4">
+			      					<div>
 				      					<a class="btn btn-primary btn-sm pull-left" href="#" 
 												th:href="@{/logesco/users/chefetab/getupdatePersonnels(idUsers=${ens.idUsers}, 
 												numPageEns=${pageCouranteEnseignant})}" role="button">Modifier</a>
-				      				</span>
-				      				<span class="col-md-4">
+				      				</div>
+				      				<br/>&nbsp;
+				      				<div>
 										<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" 
 											th:attr="data-target='#'+${ens.idUsers}">
 										  Afficher
 										</button>
-				      				</span>
-				      				<span class="col-md-4">
+				      				</div>
+				      				<br/>&nbsp;
+				      				<div>
 				      					<!-- <a class="btn btn-danger btn-sm pull-right" href="#" 
 				      						role="button">Supprimer</a> -->
 				      					<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" 
 											data-target="#dialogSupprEns">
 										  Supprimer
 										</button>
-				      				</span>
+				      				</div>
 			      				
 			      				
 			      				</div>
@@ -735,11 +737,6 @@
 			      						
 			 
 			 
-			
-			 
-			
-		</div>
-	</div>
 </div>
 
 <!-- fin DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->

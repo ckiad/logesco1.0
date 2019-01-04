@@ -9,24 +9,19 @@
 <title>Résultats de la recherche</title>
 </head>
 <body>
+<span layout:fragment="titre_boite">
+       LISTE DES ELEVES CORRESPONDANT AU MOTIF SAISI
+</span>
 <div layout:fragment="formactionusers">
 <!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
-<div class="col-md-12    reculeverticalementmodifdonneepersoform">
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h4>LISTE DES ELEVES CORRESPONDANT AU MOTIF SAISI</h4>
-		</div>
-		<div class="panel-body">
-			<p class="alert alert-warning">
-				<span style="text-decoration: underline;">IMPORTANT:</span> Cliquer sur le bouton afficher pour voir toutes 
+<div class="col-md-9 ">
+		
+		<p class="alert alert-warning">
+			<span style="text-decoration: underline;">IMPORTANT:</span> Cliquer sur le bouton afficher pour voir toutes 
 				les données de l'élève choisi. 
-			</p>
+		</p>
 			
-			<fieldset class="col-md-2" >
-				
-			</fieldset>
-			
-			<fieldset  class="col-md-10" >
+			<fieldset  class="col-md-12" >
 				<legend class="text-primary">Liste des élèves trouvés</legend>
 				<div th:if="${listdefofEleves}" >
 					<table class="table table-striped table-hover">
@@ -151,8 +146,6 @@
 				</div>
 			</fieldset>
 			
-		</div>
-	</div>
 </div>
 <!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
 </div>

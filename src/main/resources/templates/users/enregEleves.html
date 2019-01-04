@@ -9,14 +9,14 @@
 <title>Enregistrement des élèves</title>
 </head>
 <body>
+
+	<span layout:fragment="titre_boite">
+        Formulaire d'enregistrement des élèves recrutés en vue de leurs inscriptions
+    </span>
+
 <div layout:fragment="formactionusers">
 <!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
-<div class="col-md-12    reculeverticalementmodifdonneepersoform">
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h4>Formulaire d'enregistrement des élèves recrutés en vue de leurs inscriptions</h4>
-		</div>
-		<div class="panel-body">
+<div class="col-md-9 ">
 			<p class="alert alert-warning">
 				<span style="text-decoration: underline;">IMPORTANT:</span>Pour modifier un enregistrement déjà effectué, il faut 
 				cliquer sur Modifier/Supprimer un élève
@@ -45,14 +45,6 @@
 				<fieldset class="col-md-4">
 					<legend class="text-primary">Paramètres personnels de l'élève</legend>
 					
-					<!-- <div class="form-group">
-						<label for="matriculeEleves"> Matricule de l'élève: <span
-							class="redcolor">*</span></label> <input type="text" name="matriculeEleves"
-							id="matriculeEleves" class="form-control" th:value="*{matriculeEleves}" th:field="*{matriculeEleves}"
-							placeholder="Le matricule de l'élève" />
-					</div>
-					<div th:if="${#fields.hasErrors('matriculeEleves')}"
-						th:errors="*{matriculeEleves}" class="redcolor">Erreur de matricule de l'élève</div> -->
 					
 					<div class="form-group">
 						<label for="nomsEleves"> Noms de l'élève: <span
@@ -101,7 +93,7 @@
 						th:errors="*{nationaliteEleves}" class="redcolor">Erreur de nationalité de l'élève</div>
 					
 					<div class="form-group">
-						<label for="sexeEleves" class="control-label col-sm-3 text-left"> Sexe: <span
+						<label for="sexeEleves" class="control-label text-left"> Sexe: <span
 							class="redcolor">*</span></label> 
 									
 						<div class="radio">
@@ -114,7 +106,7 @@
 					<div th:if="${#fields.hasErrors('sexeEleves')}"
 						th:errors="*{sexeEleves}" class="redcolor">erreur sexe Eleves</div>
 					
-					<div class="form-group col-md-8">
+					<div class="form-group ">
 						<label for="picturephotoEleves"> Photo: </label> <input type="file"
 							name="picturephotoEleves" id="picturephotoEleves" class="form-control-file" 
 							placeholder="Envoyer la photo" accept="image/*" />
@@ -122,10 +114,6 @@
 					<div th:if="${#fields.hasErrors('photoEleves')}"
 							th:errors="*{photoEleves}" class="redcolor">Erreur de photo Eleves
 					</div>
-					
-				
-					
-					
 					
 				</fieldset>
 				
@@ -196,9 +184,7 @@
 												
 							</optgroup>
 										 
-							<!-- <option th:each="c:${listofClasses}" th:value="${c.idClasses}"
-										 		th:inline="text"> [[${c.codeClasses}]] [[${c.specialite.codeSpecialite}]]
-										 		 [[${c.numeroClasses}]]</option> -->
+						
 										 
 						</select>&nbsp;
 					</div>
@@ -207,10 +193,6 @@
 					
 					<div th:if="${eleveEnreg}">
 					
-						<!-- <label th:inline="text">Effectif provisoire de  [[${classeConcerne.codeClasses}]] 
-						[[${classeConcerne.specialite.codeSpecialite}]] 	[[${classeConcerne.numeroClasses}]]: 
-						[[${effectifprovClasse}]]</label> -->
-						
 						<label th:inline="text">Effectif provisoire de  [[${classeConcerne.codeClasses}]] 
 							[[${classeConcerne.specialite.codeSpecialite}]] 	[[${classeConcerne.numeroClasses}]]: 
 							<span class="redcolor" th:inline="text">[[${effectifprovClasse}]]</span></label>
@@ -273,9 +255,7 @@
 											th:href="@{/logesco/users/chefetab/getenregEleves}" 
 											role="button">Initialiser le formulaire</a>
 			</form>
-			
-		</div>
-	</div>
+		
 </div>
 <!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
 </div>

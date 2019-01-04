@@ -9,19 +9,16 @@
 <title th:text="#{inscrireEleves.titre_page}">Inscrire un élève</title>
 </head>
 <body>
+
+<span layout:fragment="titre_boite">
+        Enregistrer les versements
+</span>
+
 <div layout:fragment="formactionusers">
 <!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
-<div class="col-md-12    reculeverticalementmodifdonneepersoform">
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h4 th:text="#{inscrireEleves.entete_panel}">
-				Rechercher un élève connaissant sa classe et le modifier
-			</h4>
-		</div>
-		<div class="panel-body">
-			
-			
-			<form action="#" th:action="@{/logesco/users/intendant/getinscriptionEleves}" 
+<div class="col-md-9 ">
+		
+		<form action="#" th:action="@{/logesco/users/intendant/getinscriptionEleves}" 
 				method="get"  th:if="${listofClasses}" class="form-inline">
 				
 				<fieldset class="col-md-12"  th:if="${listofNiveaux}">
@@ -100,10 +97,10 @@
 				<table class="table table-striped">
 					<thead class="thead-light">
 						<tr>
-							<th scope="col" th:text="#{inscrireEleves.th_matricule}">MATRICULE</th>
+							<!-- <th scope="col" th:text="#{inscrireEleves.th_matricule}">MATRICULE</th> -->
 							<th scope="col" th:text="#{inscrireEleves.th_nomsprenoms}">NOMS ET PRENOMS</th>
-							<th scope="col" th:text="#{inscrireEleves.th_datenaissance}">DATE ET LIEU DE NAISSANCE</th>
-							<th scope="col" th:text="#{inscrireEleves.th_adresse}">ADRESSE</th>
+							<!-- <th scope="col" th:text="#{inscrireEleves.th_datenaissance}">DATE ET LIEU DE NAISSANCE</th> -->
+							<!-- <th scope="col" th:text="#{inscrireEleves.th_adresse}">ADRESSE</th> -->
 							<th scope="col" th:text="#{inscrireEleves.th_montantverse}">MONTANT VERSE</th>
 							<th class="text-center" scope="col" th:text="#{inscrireEleves.th_action}">ACTION</th>
 						</tr>
@@ -111,17 +108,22 @@
 					<tbody>
 						<tr th:each="eleve:${listofEleves}">
 									
-							<td th:inline="text">[[${eleve.matriculeEleves}]] </td>
-									
-							<td th:inline="text">[[${#strings.capitalize(eleve.nomsEleves)}]] [[${eleve.prenomsEleves}]] </td>
+							<!-- <td th:inline="text">[[${eleve.matriculeEleves}]] </td> -->
 									
 							<td th:inline="text">
+								[[${#strings.capitalize(eleve.nomsEleves)}]] [[${eleve.prenomsEleves}]] <br/>
 								[[#{inscrireEleves.label_nele}]] 
 								[[${#dates.format(eleve.datenaissEleves,"dd-MM-yyyy")}]] 
 								[[#{inscrireEleves.label_a}]] [[${eleve.lieunaissEleves}]]
 							</td>
 									
-							<td th:inline="text">[[${eleve.numtel1Parent}]]</td>
+							<!-- <td th:inline="text">
+								[[#{inscrireEleves.label_nele}]] 
+								[[${#dates.format(eleve.datenaissEleves,"dd-MM-yyyy")}]] 
+								[[#{inscrireEleves.label_a}]] [[${eleve.lieunaissEleves}]]
+							</td> -->
+									
+							<!-- <td th:inline="text">[[${eleve.numtel1Parent}]]</td> -->
 									
 							<td th:inline="text">
 								[[${eleve.compteInscription.montant}]]/[[${classeSelect.montantScolarite}]]
@@ -178,8 +180,6 @@
 					
 				</fieldset>
 		
-		</div>
-	</div>
 </div>
 <!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
 </div>

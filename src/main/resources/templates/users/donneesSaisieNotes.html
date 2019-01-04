@@ -9,16 +9,14 @@
 <title>Paramètres de saisie des notes</title>
 </head>
 <body>
+	<span layout:fragment="titre_boite">
+        Paramètres de saisie des rapports d'absence
+    </span>
+    
 	<div layout:fragment="formactionusers">
 		<!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
-		<div
-			class="col-md-9  col-md-offset-1  reculeverticalementmodifpasswordform">
-			<div class="panel panel-primary">
-				<div class="panel-heading">
-					<h4>Paramètres de saisie des notes</h4>
-				</div>
-				<div class="panel-body">
-					<form action="#"
+		<div class="col-md-9">
+			<form action="#"
 						th:action="@{/logesco/users/getdonneesSaisieNotes}" method="get"
 						class="form-inline">
 						<div th:if="${listofNiveaux !=null and anneeActive != null}" >
@@ -202,9 +200,6 @@
 						
 					</form>
 					
-					
-				</div>
-			</div>
 		</div>
 		<!-- fin DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
 	</div>

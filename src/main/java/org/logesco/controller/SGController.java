@@ -225,10 +225,10 @@ public class SGController {
 			@RequestParam(name="idEleves[]", defaultValue="0") Long[] idEleves,
 			@RequestParam(name="nbreheureJustifie[]", defaultValue="0") String[] nbreheureJustifie,
 			@RequestParam(name="nbreheureNJustifie[]", defaultValue="0") String[] nbreheureNJustifie,
-			@RequestParam(name="consigne[]", defaultValue="0") String[] consigne,
+			/*@RequestParam(name="consigne[]", defaultValue="0") String[] consigne,
 			@RequestParam(name="jourExclusion[]", defaultValue="0") String[] jourExclusion,
 			@RequestParam(name="avertConduite[]", defaultValue="0") String[] avertConduite,
-			@RequestParam(name="blameConduite[]", defaultValue="0") String[] blameConduite,
+			@RequestParam(name="blameConduite[]", defaultValue="0") String[] blameConduite,*/
 			@RequestParam(name="idSequenceConcerne", defaultValue="0") Long idSequenceConcerne,
 			@RequestParam(name="idClassesConcerne", defaultValue="0") Long idClassesConcerne){
 		
@@ -236,10 +236,10 @@ public class SGController {
 		
 		int[] nbreHJustifie = new int[nbreheureJustifie.length];
 		int[] nbreHNJustifie = new int[nbreheureNJustifie.length];
-		int[] nbreHConsigne = new int[consigne.length];
+		/*int[] nbreHConsigne = new int[consigne.length];
 		int[] nbrejourExclusion = new int[jourExclusion.length];
 		boolean[] avert_conduite = new boolean[avertConduite.length];
-		boolean[] blame_conduite = new boolean[blameConduite.length];
+		boolean[] blame_conduite = new boolean[blameConduite.length];*/
 		
 		System.err.println("les tailles des tableaux==  "+nbreheureJustifie.length+
 				" les tailles des tableaux==  "+idEleves.length);
@@ -250,10 +250,10 @@ public class SGController {
 				
 				nbreHJustifie[i] = Integer.parseInt(nbreheureJustifie[i]);
 				nbreHNJustifie[i] = Integer.parseInt(nbreheureNJustifie[i]);
-				nbreHConsigne[i] = Integer.parseInt(consigne[i]);
+				/*nbreHConsigne[i] = Integer.parseInt(consigne[i]);
 				nbrejourExclusion[i] = Integer.parseInt(jourExclusion[i]);
 				avert_conduite[i] = avertConduite[i].equals("oui");
-				blame_conduite[i] = (blameConduite[i].equals("oui")?true:false);
+				blame_conduite[i] = (blameConduite[i].equals("oui")?true:false);*/
 				
 				
 			}
@@ -261,8 +261,10 @@ public class SGController {
 			int ret = 0;
 			for(int i=0; i<idEleves.length; i++){
 				ret = usersService.saveRAbsenceSeqEleve(idEleves[i], idSequenceConcerne, nbreHJustifie[i], 
-						nbreHNJustifie[i],	nbreHConsigne[i],	nbrejourExclusion[i], avert_conduite[i], blame_conduite[i]);
+						nbreHNJustifie[i],	0,	0, false, false);
 				
+				System.err.println("Enreg discipline de ==  "+idEleves[i]+
+						" nbHANJ==  "+nbreHNJustifie[i]+" nbHAJ==  "+nbreHJustifie[i]);
 			}
 			
 			if(ret == 0) return "redirect:/logesco/users/sg/getformSaisieRDiscipline?updateRDisciplineError"
@@ -272,6 +274,8 @@ public class SGController {
 			
 		}
 		catch(Exception e){
+			System.err.println("Exception généré "+e.getMessage());
+			e.printStackTrace();
 			return "redirect:/logesco/users/sg/getformSaisieRDiscipline?updateRDisciplineErrorConvert"
 					+ "&&idSequenceConcerne="+idSequenceConcerne
 					+ "&&idClassesConcerne="+idClassesConcerne;
