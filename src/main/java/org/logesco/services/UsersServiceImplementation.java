@@ -1209,6 +1209,22 @@ public class UsersServiceImplementation implements IUsersService {
 
 		return elevesRepository.findOne(idEleves);
 	}
+	
+	@Override
+	public Eleves findElevesSuivant(Long idEleve, Long idSequence) {
+		Eleves elv = this.findEleves(idEleve);
+		if(elv==null) return null;
+		Sequences seq = this.findSequences(idSequence);
+		int numero = elv.getNumero(seq);
+		//System.err.println("numero precedent "+numero);
+		int pos = numero+1;
+		//System.err.println("position suivant "+pos);
+		List<Eleves> listofEleveRegulierInSeq = (List<Eleves>) elv.getClasse().getListofEleves();
+		//System.err.println("taille liste  "+listofEleveRegulierInSeq.size());
+		Eleves elvSvt = this.findEleveDansListe(listofEleveRegulierInSeq, pos);
+		
+		return elvSvt;
+	}
 
 
 	@Override
@@ -2593,10 +2609,14 @@ public class UsersServiceImplementation implements IUsersService {
 		List<EleveBean2> listofEleve2 = new ArrayList<EleveBean2>();
 		List<EleveBean> listofEleveBean = new ArrayList<EleveBean>();
 		Classes classe = this.findClasses(idClasse);
+
+		SimpleDateFormat spd = new SimpleDateFormat("dd/MM/yyyy");
+		
 		for(Eleves eleve : classe.getListofEleves()){
 			EleveBean eb = new EleveBean();
 			eb.setNumero(eleve.getNumero((List<Eleves>) classe.getListofEleves()));
-			eb.setDate_naissance(eleve.getDatenaissEleves());
+			String date = spd.format(eleve.getDatenaissEleves());
+			eb.setDate_naissance(date);
 			eb.setLieu_naissance(eleve.getLieunaissEleves());
 			eb.setMatricule(eleve.getMatriculeEleves());
 			eb.setSexe(eleve.getSexeEleves());
@@ -2613,6 +2633,102 @@ public class UsersServiceImplementation implements IUsersService {
 	
 	
 	@Override
+	public Collection<PV_TrimestreBean> generatePVTrimestre(Long idClasse,	Long idCours, 
+			Long idTrimestre){
+		
+		System.out.println("Lancement de la methode generatePVTrimestre "
+				+ "avec idClasse="+idClasse+" idCours="+idCours+"idTrimestre="+idTrimestre);
+		
+		Classes classe = this.findClasses(idClasse);
+		
+		Trimestres trimestre = this.findTrimestres(idTrimestre);
+		
+		List<PV_TrimestreBean> listofPVTrimestreBean = new ArrayList<PV_TrimestreBean>();
+		
+		List<Eleves> listofElevesregulier = ub. getListofEleveRegulierTrimestre(classe, trimestre);
+		SimpleDateFormat spd1 = new SimpleDateFormat("dd/MM/yyyy");
+		
+		for(Eleves eleve : listofElevesregulier){
+			PV_TrimestreBean lignePV = new PV_TrimestreBean();
+			lignePV.setNumero(eleve.getNumero(listofElevesregulier));
+			lignePV.setMatricule(eleve.getMatriculeEleves());
+			String noms_prenoms = new String(" "+eleve.getNomsEleves()+" "+eleve.getPrenomsEleves());
+			lignePV.setNoms_prenoms(noms_prenoms.toUpperCase());
+			String datenaiss = spd1.format(eleve.getDatenaissEleves());
+			lignePV.setDate_naissance(datenaiss);
+			double noteF = 0;
+			double soenoteF = 0;
+			double nbreN = 0;
+			for(Sequences seq : trimestre.getListofsequence()){
+				double noteFseq =  this.getValeurNotesFinaleEleve(eleve.getIdEleves(), idCours, seq.getIdPeriodes());
+				if(noteFseq>=0) {
+					soenoteF +=noteFseq;
+					nbreN +=1;
+				}
+				if(seq.getNumeroSeq()%2==0){
+					if(noteFseq>=0) lignePV.setNoteSeq2(noteFseq); else lignePV.setNoteSeq2(0);
+				}
+				else{
+					if(noteFseq>=0) lignePV.setNoteSeq1(noteFseq); else lignePV.setNoteSeq1(0);
+				}
+			}
+			if(nbreN == 1) {
+				noteF = soenoteF;
+			}
+			
+			if(nbreN == 2) {
+				noteF = soenoteF*0.5;
+			}
+			
+			if(noteF>=0) lignePV.setNote_finale(noteF); else lignePV.setNote_finale(0);
+			
+			listofPVTrimestreBean.add(lignePV);
+		}
+		return listofPVTrimestreBean;
+	}
+	
+	@Override
+	public Collection<PV_NoteBean> generatePVEvalAvecListeNote(List<NotesEval> listofNotesEvalSeq){
+		List<PV_NoteBean> listofPVNoteBean = new ArrayList<PV_NoteBean>();
+		NotesEval n_eval = null;
+		Classes classe = null;
+		Sequences sequence = null;
+		if (listofNotesEvalSeq.size()>0) {
+			n_eval=listofNotesEvalSeq.get(0);
+			classe = n_eval.getEvaluation().getCours().getClasse();
+			sequence = n_eval.getEvaluation().getSequence();
+			
+			List<Eleves> listofElevesregulier = ub.getListofEleveRegulier(classe, sequence);
+			SimpleDateFormat spd1 = new SimpleDateFormat("dd/MM/yyyy");
+			
+			for(Eleves eleve : listofElevesregulier){
+				PV_NoteBean lignePV = new PV_NoteBean();
+				lignePV.setNumero(eleve.getNumero(listofElevesregulier));
+				lignePV.setMatricule(eleve.getMatriculeEleves());
+				String noms_prenoms = new String(" "+eleve.getNomsEleves()+" "+eleve.getPrenomsEleves());
+				lignePV.setNoms_prenoms(noms_prenoms.toUpperCase());
+				String datenaiss = spd1.format(eleve.getDatenaissEleves());
+				lignePV.setDate_naissance(datenaiss);
+				double val_note=0;
+				for(NotesEval ne : listofNotesEvalSeq){
+					if(ne.getEleve().getMatriculeEleves().equalsIgnoreCase(eleve.getMatriculeEleves())){
+						val_note = ne.getValeurnoteEval();
+						break;
+					}
+				}
+				lignePV.setNote_eval(val_note);
+				
+				listofPVNoteBean.add(lignePV);
+			}
+			
+		}
+		
+		
+		
+		return listofPVNoteBean;
+	}
+	
+	@Override
 	public Collection<PV_SequenceBean> generatePVSequence(Long idClasse,	Long idCours, 
 			Long idSequence){
 		log.log(Level.DEBUG, "Lancement de la methode generatePVSequence "
@@ -2623,7 +2739,7 @@ public class UsersServiceImplementation implements IUsersService {
 		List<PV_SequenceBean> listofPVSequenceBean = new ArrayList<PV_SequenceBean>();
 		
 		List<Eleves> listofElevesregulier = ub.getListofEleveRegulier(classe, sequence);
-		
+		SimpleDateFormat spd1 = new SimpleDateFormat("dd/MM/yyyy");
 		
 		for(Eleves eleve : listofElevesregulier){
 			PV_SequenceBean lignePV = new PV_SequenceBean();
@@ -2631,7 +2747,8 @@ public class UsersServiceImplementation implements IUsersService {
 			lignePV.setMatricule(eleve.getMatriculeEleves());
 			String noms_prenoms = new String(" "+eleve.getNomsEleves()+" "+eleve.getPrenomsEleves());
 			lignePV.setNoms_prenoms(noms_prenoms.toUpperCase());
-			lignePV.setDate_naissance(eleve.getDatenaissEleves());
+			String datenaiss = spd1.format(eleve.getDatenaissEleves());
+			lignePV.setDate_naissance(datenaiss);
 			
 			double noteF =  this.getValeurNotesFinaleEleve(eleve.getIdEleves(), idCours, idSequence);
 			List<NotesEval> listofnote = this.getListofnotesEvalDeSeq(eleve.getIdEleves(), idSequence);
@@ -2645,7 +2762,7 @@ public class UsersServiceImplementation implements IUsersService {
 					}
 				}
 			}
-			lignePV.setNote_finale(noteF);
+			if(noteF>=0) lignePV.setNote_finale(noteF); else lignePV.setNote_finale(0);
 			
 			listofPVSequenceBean.add(lignePV);
 		}
@@ -7682,9 +7799,12 @@ public class UsersServiceImplementation implements IUsersService {
 		List<EleveBean> collectionofEleveprovClasse = new ArrayList<EleveBean>();
 		List<Eleves> listofEleveDeClasse = (List<Eleves>) classeSelect.getListofEleves();
 		
+		SimpleDateFormat spd = new SimpleDateFormat("dd/MM/yyyy");
+		
 		for(Eleves eleve : listofEleveDeClasse){
 			EleveBean elv = new EleveBean();
-			elv.setDate_naissance(eleve.getDatenaissEleves());
+			String date = spd.format(eleve.getDatenaissEleves());
+			elv.setDate_naissance(date);
 			elv.setLieu_naissance(eleve.getLieunaissEleves());
 			elv.setMatricule(eleve.getMatriculeEleves());
 			String nomComplet = eleve.getNomsEleves().toUpperCase()+"  "+
@@ -7713,10 +7833,12 @@ public class UsersServiceImplementation implements IUsersService {
 		List<EleveBean> collectionofElevedefClasse = new ArrayList<EleveBean>();
 		
 		List<Eleves> listdefofEleves = this.findListElevesDefClasse(idClasse, montantMin);
+		SimpleDateFormat spd = new SimpleDateFormat("dd/MM/yyyy");
 		
 		for(Eleves eleve : listdefofEleves){
 			EleveBean elv = new EleveBean();
-			elv.setDate_naissance(eleve.getDatenaissEleves());
+			String date = spd.format(eleve.getDatenaissEleves());
+			elv.setDate_naissance(date);
 			elv.setLieu_naissance(eleve.getLieunaissEleves());
 			elv.setMatricule(eleve.getMatriculeEleves());
 			String nomComplet = eleve.getNomsEleves().toUpperCase()+"  "+
@@ -7956,6 +8078,8 @@ public class UsersServiceImplementation implements IUsersService {
 	/*********************
 	 * Fin des codes des différentes fonction qui entre dans la fabrication et l'édition des bulletins
 	 */
+	
+	
 	@Override
 	public double getValeurNotesFinaleEleve(Long idEleve, Long idCours, Long idSequence){
 		double noteFinale = -1;
@@ -7967,6 +8091,24 @@ public class UsersServiceImplementation implements IUsersService {
 			noteFinale = ub.getValeurNotesFinaleEleve(eleve, cours, sequence);
 		}
 		return noteFinale;
+	}
+	
+	@Override
+	public int getNbreNoteDansCourspourEvalDansListe(List<NotesEval> listofNotesEvalSeq){
+		int nbreNote = 0;
+		for(NotesEval ne : listofNotesEvalSeq){
+			if(ne.getValeurnoteEval()>=10) nbreNote +=1;
+		}
+		return nbreNote;
+	}
+	
+	@Override
+	public int getNbreSousNoteDansCourspourEvalDansListe(List<NotesEval> listofNotesEvalSeq){
+		int nbresousNote = 0;
+		for(NotesEval ne : listofNotesEvalSeq){
+			if(ne.getValeurnoteEval()<10) nbresousNote +=1;
+		}
+		return nbresousNote;
 	}
 	
 	@Override
@@ -7982,6 +8124,18 @@ public class UsersServiceImplementation implements IUsersService {
 	}
 	
 	@Override
+	public int getNbreNoteDansCourspourTrim(Long idClasse, Long idCours, 
+			Long idTrimestre){
+		Classes classe = this.findClasses(idClasse);
+		Cours cours = this.findCours(idCours);
+		Trimestres trimestre =  this.findTrimestres(idTrimestre);
+		
+		if(classe==null || cours==null || trimestre==null) return -1;
+		int nbre = ub.getNbreNoteDansCourspourTrim(classe, cours, trimestre);
+		return nbre;
+	}
+	
+	@Override
 	public int getNbreSousNoteDansCourspourSeq(Long idClasse, Long idCours, 
 			Long idSequence){
 		Classes classe = this.findClasses(idClasse);
@@ -7990,6 +8144,18 @@ public class UsersServiceImplementation implements IUsersService {
 		
 		if(classe==null || cours==null || sequence==null) return -1;
 		int nbre = ub.getNbreSousNoteDansCourspourSeq(classe, cours, sequence);
+		return nbre;
+	}
+	
+	@Override
+	public int getNbreSousNoteDansCourspourTrim(Long idClasse, Long idCours, 
+			Long idTrimestre){
+		Classes classe = this.findClasses(idClasse);
+		Cours cours = this.findCours(idCours);
+		Trimestres trimestre =  this.findTrimestres(idTrimestre);
+		
+		if(classe==null || cours==null || trimestre==null) return -1;
+		int nbre = ub.getNbreSousNoteDansCourspourTrim(classe, cours, trimestre);
 		return nbre;
 	}
 	

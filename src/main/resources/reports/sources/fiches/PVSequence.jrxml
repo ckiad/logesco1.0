@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BulletinSequence" pageWidth="595" pageHeight="842" columnWidth="547" leftMargin="24" rightMargin="24" topMargin="9" bottomMargin="7" uuid="e8673864-3cf8-4cb2-8672-af01395c8a06">
 	<property name="ireport.zoom" value="1.4641000000000006"/>
 	<property name="ireport.x" value="29"/>
@@ -74,7 +74,7 @@
 	<field name="numero" class="java.lang.Integer"/>
 	<field name="matricule" class="java.lang.String"/>
 	<field name="noms_prenoms" class="java.lang.String"/>
-	<field name="date_naissance" class="java.util.Date"/>
+	<field name="date_naissance" class="java.lang.String"/>
 	<field name="note_cc" class="java.lang.Double"/>
 	<field name="note_ds" class="java.lang.Double"/>
 	<field name="note_finale" class="java.lang.Double"/>
@@ -222,7 +222,7 @@
 				<textElement>
 					<font fontName="Arial Narrow" size="10"/>
 				</textElement>
-				<text><![CDATA[Classe: ]]></text>
+				<text><![CDATA[CLASSE: ]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="50" y="4" width="167" height="15" uuid="b997f9c5-cd30-43f3-a36d-9030af8047b7"/>
@@ -232,46 +232,25 @@
 				<textFieldExpression><![CDATA[$P{classe}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="238" y="5" width="42" height="15" uuid="e64a66e4-9d11-4990-a97c-97f9aa3309df"/>
+				<reportElement x="224" y="5" width="56" height="15" uuid="e64a66e4-9d11-4990-a97c-97f9aa3309df"/>
 				<textElement>
 					<font fontName="Arial Narrow"/>
 				</textElement>
-				<text><![CDATA[Matière:]]></text>
+				<text><![CDATA[MATIERE:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="280" y="5" width="264" height="15" uuid="f74053e8-079f-4712-934e-12699f095eac"/>
+				<reportElement x="280" y="5" width="268" height="15" uuid="f74053e8-079f-4712-934e-12699f095eac"/>
 				<textElement textAlignment="Left">
 					<font fontName="Arial Narrow" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{matiere}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="85" y="25" width="113" height="15" uuid="2aade134-ae27-4149-ab2a-c6d847546081"/>
-				<textElement textAlignment="Right">
-					<font fontName="Arial Narrow"/>
-				</textElement>
-				<text><![CDATA[Contrôle continu (CC) :]]></text>
-			</staticText>
 			<textField>
-				<reportElement x="200" y="25" width="48" height="15" uuid="5ca4bb6c-b8ff-4119-a34e-2d19d891b816"/>
-				<textElement textAlignment="Left">
+				<reportElement x="47" y="25" width="443" height="15" uuid="5ca4bb6c-b8ff-4119-a34e-2d19d891b816"/>
+				<textElement textAlignment="Center">
 					<font fontName="Arial Narrow" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{pourcc}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="251" y="25" width="95" height="15" uuid="17417494-853b-4f06-94f3-153799dac22d"/>
-				<textElement textAlignment="Right">
-					<font fontName="Arial Narrow"/>
-				</textElement>
-				<text><![CDATA[Devoir surveillé (DS):]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="350" y="25" width="48" height="15" uuid="ae5a4647-40dd-48ed-9b25-32bb75cb9d29"/>
-				<textElement textAlignment="Left">
-					<font fontName="Arial Narrow" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{pourds}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["DEVOIR N°1 (D1): "+$P{pourcc}+"  DEVOIR N°2 (D2): "+$P{pourds}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement mode="Opaque" x="0" y="56" width="30" height="15" backcolor="#CCCCCC" uuid="242f8574-fc33-4fc8-8afc-15e15eebadc5">
@@ -289,22 +268,7 @@
 				<text><![CDATA[N°]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="30" y="56" width="120" height="15" backcolor="#CCCCCC" uuid="cd2c8acf-8ba5-4f29-8fcf-1c3456a47d7d">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e3b15ee6-8d9f-4f7d-9250-26d755380f64"/>
-				</reportElement>
-				<box>
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Matricule]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="150" y="56" width="237" height="15" backcolor="#CCCCCC" uuid="2dd480bd-9537-4e35-9426-79581c756e81">
+				<reportElement mode="Opaque" x="30" y="56" width="320" height="15" backcolor="#CCCCCC" uuid="2dd480bd-9537-4e35-9426-79581c756e81">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6bdbeaf2-a832-455d-b4ff-51f1d891ecd8"/>
 				</reportElement>
 				<box>
@@ -316,10 +280,10 @@
 				<textElement textAlignment="Center">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Noms et prénoms]]></text>
+				<text><![CDATA[NOMS, PRENOMS ET DATE DE NAISSANCE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="387" y="56" width="50" height="15" backcolor="#CCCCCC" uuid="f93fb426-f043-45b5-84c7-8b403f222314">
+				<reportElement mode="Opaque" x="350" y="56" width="60" height="15" backcolor="#CCCCCC" uuid="f93fb426-f043-45b5-84c7-8b403f222314">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="401a3247-d996-4789-8804-b0d7807aaae9"/>
 				</reportElement>
 				<box>
@@ -331,10 +295,10 @@
 				<textElement textAlignment="Center">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Note CC]]></text>
+				<text><![CDATA[NOTE D1]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="437" y="56" width="50" height="15" backcolor="#CCCCCC" uuid="2b35ffb9-4fdb-4d65-8181-60fd1e125f89">
+				<reportElement mode="Opaque" x="410" y="56" width="60" height="15" backcolor="#CCCCCC" uuid="2b35ffb9-4fdb-4d65-8181-60fd1e125f89">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="77104b63-0347-43f0-8597-124ccb9fd169"/>
 				</reportElement>
 				<box>
@@ -346,10 +310,10 @@
 				<textElement textAlignment="Center">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Note DS]]></text>
+				<text><![CDATA[NOTE D2]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="487" y="56" width="61" height="15" backcolor="#CCCCCC" uuid="f7a47e9e-f7ee-4c38-b75b-a3ca49f29d15">
+				<reportElement mode="Opaque" x="470" y="56" width="78" height="15" backcolor="#CCCCCC" uuid="f7a47e9e-f7ee-4c38-b75b-a3ca49f29d15">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0d865a2f-9d46-4904-bdb1-61b937f081c7"/>
 				</reportElement>
 				<box>
@@ -361,7 +325,7 @@
 				<textElement textAlignment="Center">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Note finale]]></text>
+				<text><![CDATA[NOTE FINALE]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -383,22 +347,7 @@
 				<textFieldExpression><![CDATA[$F{numero}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="30" y="0" width="120" height="11" uuid="50419248-a8de-4906-bca1-3a6b0269e7d2">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e3b15ee6-8d9f-4f7d-9250-26d755380f64"/>
-				</reportElement>
-				<box>
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center">
-					<font fontName="Arial Narrow" size="9" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{matricule}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="150" y="0" width="237" height="11" uuid="35402dc4-7574-44c9-9e05-4d097bdc7c54">
+				<reportElement x="30" y="0" width="320" height="11" uuid="35402dc4-7574-44c9-9e05-4d097bdc7c54">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6bdbeaf2-a832-455d-b4ff-51f1d891ecd8"/>
 				</reportElement>
 				<box>
@@ -410,10 +359,10 @@
 				<textElement textAlignment="Justified">
 					<font fontName="Arial Narrow" size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{noms_prenoms}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{noms_prenoms}+" NE(E) LE "+$F{date_naissance}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="387" y="0" width="50" height="11" uuid="ef32a027-3f54-4024-92e2-4abd36344bba">
+				<reportElement x="350" y="0" width="60" height="11" uuid="ef32a027-3f54-4024-92e2-4abd36344bba">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="401a3247-d996-4789-8804-b0d7807aaae9"/>
 				</reportElement>
 				<box>
@@ -428,7 +377,7 @@
 				<textFieldExpression><![CDATA[$F{note_cc}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="437" y="0" width="50" height="11" uuid="76de782c-de88-434b-8c06-fa446203c005">
+				<reportElement x="410" y="0" width="60" height="11" uuid="76de782c-de88-434b-8c06-fa446203c005">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="77104b63-0347-43f0-8597-124ccb9fd169"/>
 				</reportElement>
 				<box>
@@ -443,7 +392,7 @@
 				<textFieldExpression><![CDATA[$F{note_ds}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="487" y="0" width="61" height="11" uuid="0fcf9322-5f24-4701-bb26-2bc2c23eb3d4">
+				<reportElement x="470" y="0" width="78" height="11" uuid="0fcf9322-5f24-4701-bb26-2bc2c23eb3d4">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0d865a2f-9d46-4904-bdb1-61b937f081c7"/>
 				</reportElement>
 				<box>
@@ -461,47 +410,26 @@
 	</detail>
 	<summary>
 		<band height="103">
-			<staticText>
-				<reportElement x="3" y="14" width="116" height="15" uuid="6df2a376-fa9a-4a18-a569-b8b3940042c6"/>
-				<textElement textAlignment="Justified">
-					<font fontName="Arial Narrow" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Nombre de moyenne:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="3" y="34" width="150" height="15" uuid="22419f1b-5372-41a6-a2af-303fed10397d"/>
-				<textElement textAlignment="Justified">
-					<font fontName="Arial Narrow" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Nombre de sous moyenne:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="2" y="54" width="78" height="15" uuid="7309b434-dfcb-498f-94b7-3184a279a779"/>
-				<textElement textAlignment="Justified">
-					<font fontName="Arial Narrow" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Taux de réussite:]]></text>
-			</staticText>
 			<textField>
-				<reportElement x="123" y="14" width="40" height="15" uuid="2995c1cc-4a72-4bdc-bea3-0b147fce2b7a"/>
+				<reportElement x="1" y="14" width="209" height="15" uuid="2995c1cc-4a72-4bdc-bea3-0b147fce2b7a"/>
 				<textElement textAlignment="Left">
 					<font fontName="Arial Narrow" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{nbre_moyennes}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Nombre de moyenne: "+$P{nbre_moyennes}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="155" y="34" width="40" height="15" uuid="aa4d2727-8c65-4ac7-9105-d379025a7413"/>
+				<reportElement x="0" y="34" width="210" height="15" uuid="aa4d2727-8c65-4ac7-9105-d379025a7413"/>
 				<textElement textAlignment="Left">
 					<font fontName="Arial Narrow" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{nbre_sous_moyennes}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Nombre de sous moyenne: "+$P{nbre_sous_moyennes}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="85" y="55" width="40" height="15" uuid="f25467b6-e30f-493d-84f1-eb8c683ea30d"/>
+				<reportElement x="0" y="55" width="140" height="15" uuid="f25467b6-e30f-493d-84f1-eb8c683ea30d"/>
 				<textElement textAlignment="Left">
 					<font fontName="Arial Narrow" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{pourR}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Taux de réussite: "+$P{pourR}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="276" y="15" width="150" height="15" uuid="28fb4db1-37a6-4de2-b5bd-6c4f991dd3f1"/>
@@ -514,7 +442,7 @@
 				<reportElement x="427" y="14" width="19" height="15" uuid="21f26b2f-161d-4dcb-bdc8-26c7778b809b"/>
 				<text><![CDATA[, Le]]></text>
 			</staticText>
-			<textField pattern="MMMMM dd, yyyy">
+			<textField pattern="dd/MM/yyyy">
 				<reportElement x="449" y="15" width="100" height="15" uuid="b1c046dc-b28e-43fa-9e38-9714564a9ca4"/>
 				<textElement textAlignment="Justified">
 					<font fontName="Arial Narrow" isBold="true"/>

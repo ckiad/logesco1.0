@@ -74,7 +74,7 @@
 					Aucun cours n'existe dans la classe sélectionnée.
 				</h4>
 			</fieldset>
-			
+			<h4>&nbsp;</h4>
 			<!-- Affichage des cours avec possibilité d'affichage des procès verbaux s'il existe déja ie si une évaluation par séquence
 			 est déjà enregistrée dans le trimestre pour le cours indiquée -->
 			<fieldset  class="col-md-12" th:if="${session.listcoursofClassesRapportTrim}">
@@ -87,7 +87,7 @@
 					<caption></caption>
 					<thead class="thead-light">
 						<tr>
-							<th scope="col">DEPARTEMENT ET COURS</th>
+							<th scope="col">MATIERE</th>
 							<th scope="col">ENSEIGNANT </th>
 							<th scope="col" >PROCES VERBAL </th>
 						</tr>
@@ -95,7 +95,7 @@
 					<tbody>
 						<tr th:each="cours:${session.listcoursofClassesRapportTrim}">
 							<td th:inline="text">
-								[[${cours.matiere.codeMatiere}]] [[${cours.codeCours}]] 
+								 [[${cours.codeCours}]] ([[${cours.intituleCours}]])
 							</td>
 							<td th:inline="text">
 								 [[${cours.proffesseur.nomsPers}]] ([[${cours.proffesseur.numtel1Pers}]]/[[${cours.proffesseur.numtel2Pers}]])
@@ -106,7 +106,7 @@
 										th:if="${cours.gettailleListEvalTrim(session.numerotrimdeRapportTrim, session.listofEvaltrim)} != 0"
 										th:href="@{/logesco/users/getprocesverbalresumeNotesTrim(idCours=${cours.idCours},
 										idTrimestre=${session.numerotrimdeRapportTrim})}"
-										role="button">Voir le procès verbal trimestriel</a>
+										role="button" target="_blank">Voir le procès verbal trimestriel</a>
 								
 							</td>
 						</tr>

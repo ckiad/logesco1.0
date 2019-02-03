@@ -22,7 +22,7 @@ public class EleveBean implements Serializable {
     private String noms_prenoms;
     private String sexe;
     private String statut;
-    private Date date_naissance;
+    private String date_naissance;
     private String lieu_naissance;
 
 	/**
@@ -32,7 +32,7 @@ public class EleveBean implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
-	public EleveBean(int numero, String matricule, String noms_prenoms, String sexe, String statut, Date date_naissance, String lieu_naissance) {
+	public EleveBean(int numero, String matricule, String noms_prenoms, String sexe, String statut, String date_naissance, String lieu_naissance) {
         this.numero = numero;
         this.matricule = matricule;
         this.noms_prenoms = noms_prenoms;
@@ -115,14 +115,14 @@ public class EleveBean implements Serializable {
 	/**
 	 * @return the date_naissance
 	 */
-	public Date getDate_naissance() {
+	public String getDate_naissance() {
 		return date_naissance;
 	}
 
 	/**
 	 * @param date_naissance the date_naissance to set
 	 */
-	public void setDate_naissance(Date date_naissance) {
+	public void setDate_naissance(String date_naissance) {
 		this.date_naissance = date_naissance;
 	}
 

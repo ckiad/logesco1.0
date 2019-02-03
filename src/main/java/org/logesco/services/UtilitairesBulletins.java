@@ -820,6 +820,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		return listofNotesEvalDeCoursSeq;
 	}
 	
+	
+	
 	/*********************
 	 * Cette methode retourne la valeur de la note finale séquentiel d'un élève pour un cours dans une 
 	 * sequence
@@ -849,6 +851,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 
 		if(possedeunenote == 1)	return noteFinale; else return -1;
 	}
+	
+	
 	
 	public double getValeurNotesFinaleEleveTrimestre(Eleves eleve, Cours cours, Trimestres trimestre){
 		double noteFinale = 0;
@@ -2935,6 +2939,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		}
 		return listofEleveRegulierCoursAn;
 	}
+	
 	
 	/****************************************************************
 	 * Cette methode retourne le nombre d'eleve d'une classe ayant une note >=10

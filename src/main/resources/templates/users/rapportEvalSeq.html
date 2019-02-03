@@ -96,7 +96,7 @@
 								<table class="table table-bordered">
 									<tbody>
 										<tr th:each="eval:${session.listofEvalSeqRapportEvalSeq}" th:if="${eval.cours.idCours == cours.idCours}">
-											<td th:inline="text">[[${eval.typeEval}]] </td>
+											<td th:inline="text">[[${eval.typeEval =='CC'?'D1':'D2'}]] </td>
 											<td th:inline="text">[[${eval.proportionEval}]] </td>
 											<td th:inline="text">[[${#dates.format(eval.dateenregEval,"dd-MM-yyyy")}]] </td>
 											<td th:inline="text">

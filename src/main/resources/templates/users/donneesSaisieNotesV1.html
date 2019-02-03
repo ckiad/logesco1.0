@@ -31,7 +31,7 @@
 										th:each="n:${listofNiveaux}">
 
 										<option th:each="c:${n.listofClasses}"
-											th:if="${c.estEnseignantDeClasse(profConnecte.idUsers)==1}"
+											th:if="${c.estEnseignantDeClasse(profConnecte.idUsers)==1 and c.geteffectifEleve()>0}"
 											th:value="${c.idClasses}" th:inline="text">
 										
 											 [[${c.codeClasses}]] [[${c.specialite.codeSpecialite}]] [[${c.numeroClasses}]]
@@ -125,7 +125,7 @@
 																					idSequenceConcerne=${s.idPeriodes}, 
 																					idClassesConcerne=${coursClasse.classe.idClasses}, 
 																					typeEval='CC',
-																					idCoursConcerne=${coursClasse.idCours})}" role="button">Saisir les notes de CC
+																					idCoursConcerne=${coursClasse.idCours})}" role="button">Saisir les notes D1
 																				</a>
 																			</span> 
 																			
@@ -135,7 +135,7 @@
 																					idSequenceConcerne=${s.idPeriodes}, 
 																					idClassesConcerne=${coursClasse.classe.idClasses}, 
 																					typeEval='DS',
-																					idCoursConcerne=${coursClasse.idCours})}" role="button">Saisir les notes de DS
+																					idCoursConcerne=${coursClasse.idCours})}" role="button">Saisir les notes D2
 																				</a>
 																			</span>
 																		</div>

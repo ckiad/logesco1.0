@@ -950,6 +950,17 @@ public class AdminServiceImplementation implements IAdminService {
 	}
 	
 	@Override
+	public Cycles findCycles(String codeCycles) {
+		try{
+			Cycles cycleRechercher=cyclesRepository.findByCodeCycles(codeCycles);
+			return cycleRechercher;
+		}
+		catch(Exception e){
+			return null;
+		}
+	}
+	
+	@Override
 	public Specialites findSpecialites(Long idSpecialite) {
 		try{
 			Specialites speRechercher=specialitesRepository.getOne(idSpecialite);
@@ -986,6 +997,24 @@ public class AdminServiceImplementation implements IAdminService {
 		Specialites speUpdate=specialitesRepository.save(speAModif);
 		
 		if(speUpdate!=null) return 1;
+		return -1;
+	}
+	
+	@Override
+	public int updateCycles(String codeCycleAModif, Cycles cycleModif){
+		Cycles cycleAModif=null;
+		
+		cycleAModif=this.findCycles(codeCycleAModif);
+		
+		if(cycleAModif==null) return 0;
+		
+		cycleAModif.setCodeCycles(cycleModif.getCodeCycles());
+		cycleAModif.setCodeCycles_en(cycleModif.getCodeCycles_en());
+		cycleAModif.setNumeroOrdreCycles(cycleModif.getNumeroOrdreCycles());
+		
+		Cycles cycleUpdate=cyclesRepository.save(cycleAModif);
+		
+		if(cycleUpdate!=null) return 1;
 		return -1;
 	}
 

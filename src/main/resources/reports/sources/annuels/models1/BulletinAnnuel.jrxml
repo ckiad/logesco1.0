@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BulletinAnnuel" pageWidth="595" pageHeight="842" columnWidth="547" leftMargin="24" rightMargin="24" topMargin="9" bottomMargin="7" uuid="e8673864-3cf8-4cb2-8672-af01395c8a06">
 	<property name="ireport.zoom" value="1.4641000000000006"/>
 	<property name="ireport.x" value="83"/>
@@ -331,25 +331,11 @@
 				<textFieldExpression><![CDATA[$F{prenom_eleve}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="77" y="134" width="37" height="10" forecolor="#2E6DAD" backcolor="#FFFFFF" uuid="33f00e35-0e67-4b8e-9ef9-c7f2e1faa122"/>
+				<reportElement x="77" y="134" width="180" height="10" forecolor="#2E6DAD" backcolor="#FFFFFF" uuid="33f00e35-0e67-4b8e-9ef9-c7f2e1faa122"/>
 				<textElement markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{date_naissance_eleve}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="113" y="134" width="10" height="10" uuid="20f89e8a-cfb8-4511-b1ee-074d45be9de7"/>
-				<textElement textAlignment="Center">
-					<font fontName="Arial Narrow" size="7" isBold="false"/>
-				</textElement>
-				<text><![CDATA[à]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="122" y="134" width="135" height="10" forecolor="#2E6DAD" backcolor="#FFFFFF" uuid="d38bbc1d-65b9-4798-b27c-dc9b5ee247b0"/>
-				<textElement markup="none">
-					<font fontName="Arial Narrow" size="7" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{lieu_naissance_eleve}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{date_naissance_eleve}+" à "+$F{lieu_naissance_eleve}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="314" y="116" width="109" height="10" forecolor="#2E6DAD" backcolor="#FFFFFF" uuid="be40f940-0da4-466b-a0af-026379db49ee"/>
@@ -1267,7 +1253,7 @@
 				<textFieldExpression><![CDATA[$V{result_tt_coef}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00;-###0.00">
-				<reportElement x="92" y="46" width="39" height="11" forecolor="#2E6DAD" backcolor="#FFFFFF" uuid="f5022f79-34c1-4080-a243-afa81be0c29a"/>
+				<reportElement x="92" y="46" width="39" height="11" forecolor="#FF580A" backcolor="#FFFFFF" uuid="f5022f79-34c1-4080-a243-afa81be0c29a"/>
 				<textElement markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
@@ -1464,14 +1450,14 @@
 				</graphicElement>
 			</rectangle>
 			<textField pattern="###0.00;-###0.00">
-				<reportElement x="475" y="37" width="44" height="11" forecolor="#2E6DAD" backcolor="#FFFFFF" uuid="46e9416f-15cf-4847-95b5-c806c5f4b697"/>
+				<reportElement x="475" y="37" width="44" height="11" forecolor="#FF580A" backcolor="#FFFFFF" uuid="46e9416f-15cf-4847-95b5-c806c5f4b697"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{r_moy_1}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="518" y="37" width="28" height="11" forecolor="#2E6DAD" backcolor="#FFFFFF" uuid="fdf190ec-e4ac-4205-9d46-1acd9204050f"/>
+				<reportElement x="518" y="37" width="28" height="11" forecolor="#2FAD39" backcolor="#FFFFFF" uuid="fdf190ec-e4ac-4205-9d46-1acd9204050f"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
@@ -1492,7 +1478,7 @@
 				<text><![CDATA[Rang annuel :]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="92" y="56" width="39" height="11" forecolor="#2E6DAD" backcolor="#FFFFFF" uuid="c7765469-f40d-407e-b202-9f9596473747"/>
+				<reportElement x="92" y="56" width="39" height="11" forecolor="#2FAD39" backcolor="#FFFFFF" uuid="c7765469-f40d-407e-b202-9f9596473747"/>
 				<textElement markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
@@ -1534,7 +1520,7 @@
 				<textFieldExpression><![CDATA[$F{taux_reussite}+" %"]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00;-###0.00">
-				<reportElement x="220" y="66" width="46" height="11" forecolor="#2E6DAD" backcolor="#FFFFFF" uuid="20337833-4a83-4bf9-a38a-e55ec3936b8b"/>
+				<reportElement x="220" y="66" width="46" height="11" forecolor="#FF580A" backcolor="#FFFFFF" uuid="20337833-4a83-4bf9-a38a-e55ec3936b8b"/>
 				<textElement markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
@@ -1863,14 +1849,14 @@
 				<textFieldExpression><![CDATA[$F{rappel_2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00;-###0.00">
-				<reportElement x="475" y="47" width="44" height="11" forecolor="#2E6DAD" backcolor="#FFFFFF" uuid="df0890bd-0a05-4f1e-bc6e-99df9a8dff44"/>
+				<reportElement x="475" y="47" width="44" height="11" forecolor="#FF580A" backcolor="#FFFFFF" uuid="df0890bd-0a05-4f1e-bc6e-99df9a8dff44"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{r_moy_2}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="518" y="47" width="28" height="11" forecolor="#2E6DAD" backcolor="#FFFFFF" uuid="70de466a-7717-4400-9b7b-72d155ae021f"/>
+				<reportElement x="518" y="47" width="28" height="11" forecolor="#2FAD39" backcolor="#FFFFFF" uuid="70de466a-7717-4400-9b7b-72d155ae021f"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
@@ -1889,14 +1875,14 @@
 				<textFieldExpression><![CDATA[$F{rappel_3}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00;-###0.00">
-				<reportElement x="475" y="57" width="44" height="11" forecolor="#2E6DAD" backcolor="#FFFFFF" uuid="419a6a41-03f4-4387-a56b-d2e20b746529"/>
+				<reportElement x="475" y="57" width="44" height="11" forecolor="#FF580A" backcolor="#FFFFFF" uuid="419a6a41-03f4-4387-a56b-d2e20b746529"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{r_moy_3}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="518" y="57" width="28" height="11" forecolor="#2E6DAD" backcolor="#FFFFFF" uuid="2eee36d0-1ba2-4883-8be2-270a2b9cb469"/>
+				<reportElement x="518" y="57" width="28" height="11" forecolor="#2FAD39" backcolor="#FFFFFF" uuid="2eee36d0-1ba2-4883-8be2-270a2b9cb469"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>

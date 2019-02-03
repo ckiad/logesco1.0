@@ -37,6 +37,10 @@ public class Cycles implements Serializable {
 	
 	@NotNull
 	@Column(unique=true)
+	private String codeCycles_en;
+	
+	@NotNull
+	@Column(unique=true)
 	private int numeroOrdreCycles;
 	
 	/******************************************
@@ -118,5 +122,21 @@ public class Cycles implements Serializable {
 	public void setNumeroOrdreCycles(int numeroOrdreCycles) {
 		this.numeroOrdreCycles = numeroOrdreCycles;
 	}
+
+	/**
+	 * @return the codeCycles_en
+	 */
+	public String getCodeCycles_en() {
+		return codeCycles_en;
+	}
+
+	/**
+	 * @param codeCycles_en the codeCycles_en to set
+	 */
+	public void setCodeCycles_en(String codeCycles_en) {
+		this.codeCycles_en = codeCycles_en;
+	}
+	
+	
 
 }

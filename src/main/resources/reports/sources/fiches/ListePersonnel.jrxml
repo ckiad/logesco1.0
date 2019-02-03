@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListePersonnel" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="10" bottomMargin="10" uuid="73021866-f7ad-4996-a622-7a2d89bf2808">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -322,7 +322,7 @@
 				<textFieldExpression><![CDATA[$F{noms_prenoms}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="175" y="15" width="95" height="15" uuid="77e725ae-70c9-432e-97cc-392f990ebc71">
+				<reportElement x="175" y="0" width="95" height="30" uuid="77e725ae-70c9-432e-97cc-392f990ebc71">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d4f8d1c0-b4d6-4a2d-855c-9e50230b19b0"/>
 				</reportElement>
 				<box>
@@ -334,7 +334,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial Narrow" size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{lieu_naiss}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{date_naiss}+"\n à"+$F{lieu_naiss}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="270" y="0" width="60" height="30" uuid="2da844ac-c605-488e-a8e6-5e02dce40c75">
@@ -352,7 +352,7 @@
 				<textFieldExpression><![CDATA[$F{numcni}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="330" y="0" width="80" height="15" uuid="85655598-ded6-4dfe-a588-75e721735ebc">
+				<reportElement x="330" y="0" width="80" height="30" uuid="85655598-ded6-4dfe-a588-75e721735ebc">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="248617b6-57a8-48c7-939f-920b64779b8c"/>
 				</reportElement>
 				<box>
@@ -364,10 +364,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial Narrow" size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{sexe}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{sexe}+"\n "+$F{nationalite}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="410" y="-1" width="100" height="15" uuid="ed0f9eca-5bb9-4f4f-a0d9-4c61bfd4ea2f">
+				<reportElement x="410" y="-1" width="100" height="31" uuid="ed0f9eca-5bb9-4f4f-a0d9-4c61bfd4ea2f">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="42bb997d-3656-4fe1-aa80-aa13097cbe10"/>
 				</reportElement>
 				<box>
@@ -379,10 +379,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial Narrow" size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{grade}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{grade}+"\n "+$F{statut}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="510" y="-1" width="100" height="15" uuid="66f56184-7236-4cf0-a0ce-f2053a9ed24c">
+				<reportElement x="510" y="-1" width="100" height="31" uuid="66f56184-7236-4cf0-a0ce-f2053a9ed24c">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="de73b244-0087-4a24-b963-1e20b46c3b7d"/>
 				</reportElement>
 				<box>
@@ -394,7 +394,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial Narrow" size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{diplome}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{diplome}+"\n"+$F{specialite}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="610" y="0" width="100" height="30" uuid="905be62f-a6e6-4342-be1a-eb8d99bdc0d1">
@@ -427,39 +427,6 @@
 				<textFieldExpression><![CDATA[$F{adresse}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="175" y="0" width="95" height="15" uuid="df0b55ac-e6fd-4dfa-b115-9ded7a1c3461">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d7035627-4626-48a4-be6e-c1699781b43a"/>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{date_naiss}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="410" y="15" width="100" height="15" uuid="033b37cf-55f2-492b-a994-436394dff43e">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f7a91b4c-adf0-47e1-af0a-756f467d0a25"/>
-				</reportElement>
-				<textElement textAlignment="Center">
-					<font fontName="Arial Narrow" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{statut}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="510" y="15" width="100" height="15" uuid="1bc93add-5fd5-4b37-b970-a7ed96225e4e">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f349c4fd-e0eb-417c-8975-237acb5eaaca"/>
-				</reportElement>
-				<textElement textAlignment="Center">
-					<font fontName="Arial Narrow" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{specialite}]]></textFieldExpression>
-			</textField>
-			<textField>
 				<reportElement x="710" y="0" width="112" height="10" uuid="2b267d28-e547-4a1b-bbda-708775090624">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fd1d55f3-5fc9-42e8-8f2f-f12cb9626ab1"/>
 				</reportElement>
@@ -476,15 +443,6 @@
 					<font fontName="Arial Narrow" size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{numtel2}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="330" y="15" width="80" height="15" uuid="0000233c-d78f-411d-9143-cb5a3d31759f">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ac708873-dd61-4bbc-8465-9a3c42f6b365"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{nationalite}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

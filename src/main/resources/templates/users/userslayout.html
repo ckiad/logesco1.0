@@ -446,11 +446,11 @@
 											[[#{sousmenu_notes.releveNote}]]
 									</a>
                             	</li>
-                            	<li class="list-group-item" sec:authorize="hasAnyRole('ROLE_ENSEIGNANT')">
+                            	<!-- <li class="list-group-item" sec:authorize="hasAnyRole('ROLE_ENSEIGNANT')">
                             		<a href="#" th:href="@{/logesco/users/getdonneesSaisieNotes}" th:inline="text">
 										[[#{sousmenu_notes.gererNote}]]
 									</a>
-                            	</li>
+                            	</li> -->
                             	<li class="list-group-item" sec:authorize="hasAnyRole('ROLE_ENSEIGNANT')">
                             		<a href="#" th:href="@{/logesco/users/getdonneesSaisieNotesV1}" th:inline="text">
 										[[#{sousmenu_notes.gererNoteV1}]]

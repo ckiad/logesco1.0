@@ -299,10 +299,32 @@ public class AdminController {
 	
 	@GetMapping(path="/getupdateCycles")
 	public String getupdateCycles(@ModelAttribute("updateCyclesForm") 
-	UpdateCyclesForm updateCyclesForm, 
+	UpdateCyclesForm updateCyclesForm, Long idCycles,
 	Model model, HttpServletRequest request){
 		
 		constructModelUpdateCycles(model);
+		
+		/*
+		 * Action par défaut à réaliser
+		 */
+		updateCyclesForm.setEnregOrmodif("enreg");
+		
+		/*
+		 * Si on n'a cliquer sur un bouton modifier alors le paramètre idSpecialite existe dans 
+		 * la requete donc 
+		 * On recherche la specialite a modifier et on met à jour le formulaire
+		 */
+		
+		if(idCycles!=null){
+			Cycles cycleAModif=adminService. getCyclesById(idCycles);
+			updateCyclesForm.setCodeCycles(cycleAModif.getCodeCycles());
+			updateCyclesForm.setCodeCycles_en(cycleAModif.getCodeCycles_en());
+			updateCyclesForm.setNumeroOrdreCycles(cycleAModif.getNumeroOrdreCycles());
+			updateCyclesForm.setEnregOrmodif("modif");
+
+			updateCyclesForm.setCodeCyclesAModif(cycleAModif.getCodeCycles());
+		}
+		
 		
 		return "admin/updateCycles";
 	}
@@ -557,6 +579,8 @@ public class AdminController {
 		}
 		
 	}
+	
+	
 	
 	@GetMapping(path="/getupdateSpecialites")
 	public String getupdateSpecialites(@ModelAttribute("updateSpecialitesForm") 
@@ -1241,16 +1265,18 @@ public class AdminController {
 		System.err.println("DEBUT DE POSTUPDATECYCLES");
 		
 		if (bindingResult.hasErrors()) {
-			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE");
+			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE "+bindingResult.getFieldError());
 			
 			this.constructModelUpdateCycles(model);
 			
 			return "admin/updateCycles";
 		}
-		
+
+		if(updateCyclesForm.getEnregOrmodif().equals("enreg")){
 		Cycles cycle=new Cycles();
 		cycle.setCodeCycles(updateCyclesForm.getCodeCycles());
 		cycle.setNumeroOrdreCycles(updateCyclesForm.getNumeroOrdreCycles());
+		cycle.setCodeCycles_en(updateCyclesForm.getCodeCycles_en());
 		System.err.println("AUCUNE ERREUR ET ON A LE CYCLE A ENREGISTRER");
 		int reponseServeur=adminService.saveCycles(cycle);
 		
@@ -1259,10 +1285,29 @@ public class AdminController {
 		if(reponseServeur==-1) 
 			return "redirect:/logesco/admin/getupdateCycles?updatecycleserrorCode";
 		
-		System.err.println("ON A ENREGISTRER LE CYCLE ET IL FAUT DONC RETOURNER");
+			System.err.println("ON A ENREGISTRER LE CYCLE ET IL FAUT DONC RETOURNER");
+			
+			
+		}
+		else if(updateCyclesForm.getEnregOrmodif().equals("modif")){
+
+			System.err.println("FAUT DONC EFFECTUER LA MODIFICATION du cycle");
+			System.err.println(updateCyclesForm.getCodeCycles());
+			System.err.println(updateCyclesForm.getCodeCycles_en());
+			
+			Cycles cycleModif=new Cycles();
+			cycleModif.setCodeCycles(updateCyclesForm.getCodeCycles());
+			cycleModif.setCodeCycles_en(updateCyclesForm.getCodeCycles_en());
+			cycleModif.setNumeroOrdreCycles(updateCyclesForm.getNumeroOrdreCycles());
+			
+			int repServeur=adminService.updateCycles(
+					updateCyclesForm.getCodeCyclesAModif(), cycleModif);
+			
+			if(repServeur==0) 
+				return "redirect:/logesco/admin/getupdateCycles?updatecycleserror";
 		
+		}
 		return "redirect:/logesco/admin/getupdateCycles?updatecyclessuccess";
-		
 	}
 	
 	/**************************************************************

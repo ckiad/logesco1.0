@@ -65,7 +65,7 @@
 										<div class="form-group" th:if="${evaluationConcerne}">
 											<label th:inline="text"> Type d'évaluation: <span
 												class="redcolor">[[${evaluationConcerne.typeEval}]]
-													([[${evaluationConcerne.typeEval=='DS'}?'Devoir Surveillé':'Contrôle Continue ' ]])</span></label>
+													([[${evaluationConcerne.typeEval=='DS'}?'Devoir 2':'Devoir 1 ' ]])</span></label>
 											
 											<input type="hidden" name="idEval" id="idEval" 
 												class="form-control" th:value="${evaluationConcerne.idEval}" />

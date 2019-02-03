@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListeEleveParClasse" pageWidth="595" pageHeight="842" columnWidth="547" leftMargin="24" rightMargin="24" topMargin="21" bottomMargin="21" uuid="e8673864-3cf8-4cb2-8672-af01395c8a06">
 	<property name="ireport.zoom" value="1.4641000000000006"/>
 	<property name="ireport.x" value="0"/>
@@ -226,19 +226,12 @@
 				<text><![CDATA[Type d'évaluation: ]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="49" y="123" width="235" height="15" uuid="160f3e46-5eed-4c35-a067-d61fe80d9c35"/>
+				<reportElement x="0" y="123" width="284" height="15" uuid="160f3e46-5eed-4c35-a067-d61fe80d9c35"/>
 				<textElement textAlignment="Left">
 					<font fontName="Arial Narrow" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{titulaire}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Titulaire: "+$P{titulaire}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="3" y="122" width="42" height="15" uuid="20d2d173-ee2b-43f2-a512-7c7c4542590f"/>
-				<textElement textAlignment="Left">
-					<font fontName="Arial Narrow" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Titulaire:]]></text>
-			</staticText>
 			<staticText>
 				<reportElement x="3" y="138" width="49" height="15" uuid="287c1fa0-1f22-49d6-9b23-95e933b9d350"/>
 				<textElement textAlignment="Left">
@@ -267,19 +260,12 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{titre_liste}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="207" y="203" width="45" height="15" uuid="bc85148b-52d1-4df6-81c8-fdb70e3d325d"/>
-				<textElement textAlignment="Right">
-					<font fontName="Arial Narrow" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Classe : ]]></text>
-			</staticText>
 			<textField>
-				<reportElement x="256" y="203" width="128" height="15" uuid="4a43ae5b-3b38-473f-9c87-5ad2286f93b7"/>
+				<reportElement x="190" y="203" width="194" height="15" uuid="4a43ae5b-3b38-473f-9c87-5ad2286f93b7"/>
 				<textElement>
 					<font fontName="Arial Narrow" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{classe}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Classe : "+$P{classe}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

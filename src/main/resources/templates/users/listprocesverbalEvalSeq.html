@@ -95,7 +95,7 @@
 					<caption></caption>
 					<thead class="thead-light">
 						<tr>
-							<th scope="col">DEPARTEMENT ET COURS</th>
+							<th scope="col">MATIERE</th>
 							<th scope="col">ENSEIGNANT </th>
 							<th scope="col" >PROCES VERBAL </th>
 						</tr>
@@ -103,7 +103,7 @@
 					<tbody>
 						<tr th:each="cours:${session.listcoursofClassesRapportSeq}">
 							<td th:inline="text">
-								[[${cours.matiere.codeMatiere}]] [[${cours.codeCours}]] 
+								 [[${cours.codeCours}]] ([[${cours.intituleCours}]])
 							</td>
 							<td th:inline="text">
 								 [[${cours.proffesseur.nomsPers}]] ([[${cours.proffesseur.numtel1Pers}]]/[[${cours.proffesseur.numtel2Pers}]])

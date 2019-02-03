@@ -628,6 +628,13 @@ public class Eleves implements Serializable {
 		}
 		return numEleve;
 	}
+	
+	public int getNumero(Sequences seq){
+		int numEleve = -1;
+		List<Eleves> listofElevesRegulierInSeq = this.getClasse().getListofEleveRegulier(seq.getIdPeriodes());
+		numEleve = this.getNumero(listofElevesRegulierInSeq);
+		return numEleve;
+	}
 
 	public List<NotesEval> getNotesEvalEleve(Long idCours, Long idSequence){
 		List<NotesEval> listofNotesEvalDeCoursSeq = new ArrayList<NotesEval>();

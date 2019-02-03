@@ -23,6 +23,9 @@
 		<form action="#" class="form-inline"
 				th:action="@{/logesco/users/getUpdateNoteSaisieV1}" method="get">
 					
+					<input type="hidden" name="effectifclasse" id="effectifclasse" 
+						class="form-control" th:value="${effectifclasse}"/>
+					
 					<div th:if="${param.updatenotesaisiErrorsaveEval}">
 						<h4 align="justify" class="alert alert-danger">
 							Vérifier que la proportion saisie est comprise entre 0 et  100 et si c'est le cas contacter l'administrateur.
@@ -37,6 +40,12 @@
 						<h4 align="justify" class="alert alert-danger">Valeur de note ou de proportion érronée.</h4>
 					</div>
 					
+					<div th:if="${param.updatenotesaisiError1}">
+						<h4 align="justify" class="alert alert-danger">
+							La note d'un l'élève est érronée.
+						</h4>
+					</div>
+					
 					<div th:if="${param.updatenotesaisiwarningElv}">
 						<h4 align="justify" class="alert alert-warning">Note enregistrée avec succès. Il y a pas d'élève suivant dans la liste.</h4>
 					</div>
@@ -46,7 +55,9 @@
 					</div>
 					
 					<div th:if="${param.updatenotesaisiSucces}">
-						<h4 align="justify" class="alert alert-success">Note enregistrée avec succès. Vous pouvez continuer</h4>
+						<h4 align="justify" class="alert alert-success">
+							Toutes les notes marquées d'un OK sont enregistrées avec succès.
+						</h4>
 					</div>
 					
 					<div th:if="${param.numeroElvErrone}">
@@ -62,9 +73,9 @@
 								<tr>
 									<th>
 										<div class="form-group" th:if="${evaluationConcerne}">
-											<label th:inline="text"> Type d'évaluation: <span
-												class="redcolor">[[${evaluationConcerne.typeEval}]]
-													([[${evaluationConcerne.typeEval=='DS'}?'Devoir Surveillé':'Contrôle Continue ' ]])</span></label>
+											<label th:inline="text"> Evaluation: <span
+												class="redcolor"><!-- [[${evaluationConcerne.typeEval}]] -->
+													[[${evaluationConcerne.typeEval=='DS'}?'Devoir 2':'Devoir 1 ' ]]</span></label>
 											
 											<input type="hidden" name="idEval" id="idEval" 
 												class="form-control" th:value="${evaluationConcerne.idEval}" />
@@ -83,7 +94,9 @@
 										<div>
 											<label th:inline="text" th:if="${evaluationAssocie}"> 
 												Donc <span class="redcolor">[[${evaluationAssocie.proportionEval}]]%</span>  
-												pour <span class="redcolor"> [[${evaluationAssocie.typeEval}]]</span> </label>
+												pour <span class="redcolor">
+													[[${evaluationAssocie.typeEval=='DS'}?'Devoir 2':'Devoir 1 ' ]]
+												 <!-- [[${evaluationAssocie.typeEval}]] --></span> </label>
 										</div>
 									</th>
 								</tr>
@@ -106,11 +119,13 @@
 									<td th:inline="text">
 										
 										<input type="text" th:name="noteSaisi+${eleve.idEleves}+${evaluationConcerne.idEval}"  
-																		th:id="noteSaisi+${eleve.idEleves}+${evaluationConcerne.idEval}"   
-																		th:onblur="'javascript:enreg('+${eleve.idEleves}+','+${evaluationConcerne.idEval}+')'"
+											th:id="noteSaisi+${eleve.idEleves}+${evaluationConcerne.idEval}"   
+											th:onblur="'javascript:enreg('+${eleve.idEleves}+','+${evaluationConcerne.idEval}+')'"
+											th:tabindex="${eleve.getNumero(listofAllEleve)}"
+											onkeyup="enterTab(this,event)"
 												class="form-control" th:value="${eleve.getNotesEvalCoursSeq(coursConcerne.idCours,sequenceConcerne.idPeriodes,typeEval) != null}?
 										${eleve.getNotesEvalCoursSeq(coursConcerne.idCours,sequenceConcerne.idPeriodes,typeEval).valeurnoteEval}:'0'" />
-									
+										
 										
 									
 									</td>
@@ -124,20 +139,21 @@
 								
 							</tbody>
 						</table>
-						<!-- <input type="text" id="valeurSaisi" /> 
-						<button type="submit" class="btn btn-primary btn-sm  pull-right">Enregistrer</button> -->
+						<!-- <input type="text" id="valeurSaisi" />
+						<button type="submit" class="btn btn-primary btn-sm  pull-right">Valider l'enregistrer</button>--> 
 				</form>
 				
 				<br/><br/>
 				
-				<a class="btn btn-primary btn-sm pull-left" href="#" 
+				<a class="btn btn-default btn-sm pull-left" href="#" 
 						th:href="@{/logesco/users/getNotesEvalClasse(idClasseConcerne=${evaluationConcerne.cours.classe.idClasses}, 
-						idEvalConcerne=${evaluationConcerne.idEval})}" role="button">Afficher le relevé</a>
+						idEvalConcerne=${evaluationConcerne.idEval})}" role="button" target="_blank">Afficher le relevé</a>
 				
-				<a class="btn btn-primary btn-sm pull-right" href="#" 
-						th:href="@{/logesco/users/getNotesFinaleClasse(idClasseConcerne=${evaluationConcerne.cours.classe.idClasses}, 
-						idCoursConcerne=${evaluationConcerne.cours.idCours},idSequenceConcerne=${sequenceConcerne.idPeriodes})}" 
-						role="button">Relevé de note séquentiel</a>
+				
+				<a class="btn btn-default btn-sm pull-right" href="#" 
+						th:href="@{/logesco/users/getNotesFinaleClasse(idClasse=${evaluationConcerne.cours.classe.idClasses}, 
+						idCours=${evaluationConcerne.cours.idCours},idSequence=${sequenceConcerne.idPeriodes})}" 
+						role="button" target="_blank">Relevé de note séquentiel</a>
 			
 				<br/><br/>
 				<a class="btn btn-default btn-sm pull-left" href="#" title="Retourner à la page précédente"
@@ -160,6 +176,7 @@
 		document.getElementById('noteSaisi').focus();
 	}
 	
+	
 	function enreg(idEleve, idEval){
 		//alert(idEleve+" "+idEval);
 		var idInput = "noteSaisi"+idEleve+""+idEval;
@@ -168,26 +185,64 @@
 		//var valeurSaisi = document.getElementById(idInput).val();
 		var valeurSaisi =  $('#'+idInput).val();
 		var proportionEval =  $('#proportionEval').val();
+		
 		//alert(valeurSaisi);proportionEval
 		/* $('#valeurSaisi').val(valeurSaisi); */
 		//var parametres="idEleves="+idEleve;
 		$.ajax({
 			type: 'GET',
-			url: '/logesco/users/ajaxrestusers/testAjax/'+idEleve+"/"+idEval+"/"+proportionEval+"/"+valeurSaisi,
+			url: '/logesco/users/ajaxrestusers/enregNote/'+idEleve+"/"+idEval+"/"+proportionEval+"/"+valeurSaisi,
 			success: function(result){
 				//alert(""+result);
-				
-				if(result == "1"){
+				$('#'+idresult).text(result);
+				/* if(result == "1"){
 					//alert('#'+idresult);
-					$('#'+idresult).text("OK");
+					//$('#'+idresult).text("EXCELLENT");
+					$('#'+idresult).text(mention(valeurSaisi));
 				}
 				else{
 					$('#'+idresult).text("KO");
-				} 
+				}  */
 			}
 		});
 		
 	}
+	
+	function enterTab(input,event){
+		//alert("autre test");
+		if( event.which == 13 ){
+			var tab = parseInt(input.getAttribute("tabindex"));
+			var tabp=tab;
+			var tab = tab+1;
+			var effectifclasse =  $('#effectifclasse').val();
+			//alert("autre test "+effectifclasse);
+			if(tabp == effectifclasse){
+				tab = 1;
+			}
+			
+			 var allFields = document.getElementsByTagName("input");
+			 //alert("les input "+allFields.length);
+		        for (var i=0; i!=allFields.length; i++) {
+		        	//alert("un de ces input "+parseInt(allFields[i].getAttribute("tabindex")));
+		            if (parseInt(allFields[i].getAttribute("tabindex")) == tab) {
+		            	//alert("le input qui doit prendre le focus "+allFields[i]);
+		                allFields[i].focus();
+		                allFields[i].select(); 
+		                //if (!undoSelect) { allFields[i].select(); }
+		            }
+		        }
+			}
+	}
+	
+	function enterpress(idEleve, idEval, event){
+		//alert("enter press in this input text");
+		if( event.which == 13 ){
+	        //On va au serveur chercher l'id de l'elve suivant
+	        
+			var idInput = "noteSaisi"+idEleve+""+idEval;
+			 document.getElementById(idInput).blur();
+	    }
+	}	
 </script>
 </div>
 </body>

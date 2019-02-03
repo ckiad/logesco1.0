@@ -38,7 +38,7 @@
 										th:each="n:${listofNiveauxDirigesEns}">
 									
 									<option th:each="c:${n.listofClasses}"
-											th:if="${c.estEnseignantTitulaireDeClasse(profConnecte.idUsers)==1 or patron!=null}"
+											th:if="${(c.estEnseignantTitulaireDeClasse(profConnecte.idUsers)==1 or patron!=null) and c.geteffectifEleve()>0}"
 											th:value="${c.idClasses}" th:inline="text">
 										
 											 [[${c.codeClasses}]] [[${c.specialite.codeSpecialite}]] [[${c.numeroClasses}]]

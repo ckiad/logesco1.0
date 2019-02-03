@@ -12,7 +12,9 @@ import org.logesco.entities.*;
 import org.logesco.modeles.EleveBean;
 import org.logesco.modeles.EleveBean2;
 import org.logesco.modeles.FicheConseilClasseBean;
+import org.logesco.modeles.PV_NoteBean;
 import org.logesco.modeles.PV_SequenceBean;
+import org.logesco.modeles.PV_TrimestreBean;
 import org.logesco.modeles.PersonnelBean;
 import org.springframework.data.domain.Page;
 
@@ -565,6 +567,16 @@ public interface IUsersService {
 	 * Elle retourne null si aucun eleves n'est trouve
 	 **************************************************/
 	public Eleves findEleves(String nomsEleves, String prenomsEleves, Date datenaissEleves);
+	
+	/******************************************
+	 * Methode permettant de retourner l'Eleves qui suit
+	 * celui dont l'id est passe en parametre
+	 *  dans la liste des élèves reguliers 
+	 * pour la séquence
+	 * à partir de son numero
+	 * Elle retourne null si aucun eleves n'est trouve
+	 ******************************************/
+	public Eleves findElevesSuivant(Long idEleve, Long idSequence);
 
 	/***************************************************************
 	 *Methode permettant d'enregistrer un élève nouvellement recruté dans la 
@@ -1157,6 +1169,10 @@ public interface IUsersService {
 
 	public Collection<PV_SequenceBean> generatePVSequence(Long idClasse,	Long idCours, Long idSequence);
 	
+	public Collection<PV_NoteBean> generatePVEvalAvecListeNote(List<NotesEval> listofNotesEvalSeq);
+
+	public Collection<PV_TrimestreBean> generatePVTrimestre(Long idClasse,	Long idCours, Long idTrimestre);
+	
 	public Collection<EleveBean2> generateReleveNote(Long idClasse);
 	
 	public List<NotesEval> getListofnotesEvalDeSeq(Long idEleve, Long idSequence);
@@ -1283,8 +1299,18 @@ public interface IUsersService {
 	public int getNbreNoteDansCourspourSeq(Long idClasse, Long idCours, 
 			Long idSequence);
 	
+	public int getNbreNoteDansCourspourEvalDansListe(List<NotesEval> listofNotesEvalSeq);
+	
+	public int getNbreSousNoteDansCourspourEvalDansListe(List<NotesEval> listofNotesEvalSeq);
+	
 	public int getNbreSousNoteDansCourspourSeq(Long idClasse, Long idCours, 
 			Long idSequence);
+	
+	public int getNbreNoteDansCourspourTrim(Long idClasse, Long idCours, 
+			Long idTrimestre);
+	
+	public int getNbreSousNoteDansCourspourTrim(Long idClasse, Long idCours, 
+			Long idTrimestre);
 	
 	
 }

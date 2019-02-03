@@ -4,7 +4,6 @@
 package org.logesco.modeles;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @author cedrickiadjeu
@@ -20,7 +19,7 @@ public class PV_SequenceBean implements Serializable {
 	private int numero;
 	private String matricule;
 	private String noms_prenoms;
-	private Date date_naissance;
+	private String date_naissance;
 	private double note_cc;
 	private double note_ds;
 	private double note_finale;
@@ -77,14 +76,14 @@ public class PV_SequenceBean implements Serializable {
 	/**
 	 * @return the date_naissance
 	 */
-	public Date getDate_naissance() {
+	public String getDate_naissance() {
 		return date_naissance;
 	}
 
 	/**
 	 * @param date_naissance the date_naissance to set
 	 */
-	public void setDate_naissance(Date date_naissance) {
+	public void setDate_naissance(String date_naissance) {
 		this.date_naissance = date_naissance;
 	}
 

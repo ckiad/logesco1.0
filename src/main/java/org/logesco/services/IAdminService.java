@@ -393,6 +393,12 @@ public interface IAdminService {
 	public Specialites findSpecialites(String codeSpe);
 	
 	/****
+	 * Retourne le cycle dont le code est envoye en parametre et null si ce cycle 
+	 * n'existe pas
+	 */
+	public Cycles findCycles(String codeCycle);
+	
+	/****
 	 * Retourne la specialité dont l'id est envoye en parametre et null si cette specialite 
 	 * n'existe pas
 	 */
@@ -413,6 +419,14 @@ public interface IAdminService {
 	 * 					-1 pour toutes autres erreur
 	 */
 	public int updateSpecialites(String codeSpeAModif, Specialites speModif);
+	
+	/******
+	 * Update une cycle
+	 * 	Retourne 	1 si tout s'est bien passe
+	 * 					0 si on veut modifier un cycle avec un code existant
+	 * 					-1 pour toutes autres erreur
+	 */
+	public int updateCycles(String codeCycleAModif, Cycles cycleModif);
 	
 	/**
 	 * Retourne la liste des classes qui sont de la specialites dont l'id est passe en paramètre

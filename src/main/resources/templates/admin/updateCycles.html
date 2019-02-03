@@ -27,7 +27,8 @@
 	 	<thead>
 	 		<tr>
 			 	<th scope="col">Numéro</th>
-		      	<th scope="col">Code</th>
+		      	<th scope="col">Code FR</th>
+		      	<th scope="col">Code EN</th>
 		      	<th class="text-center" scope="col">Action</th>
 	      	</tr>
       	</thead>
@@ -35,9 +36,13 @@
       		<tr th:each="c:${listofCycles}">
       			<td th:text="${c.numeroOrdreCycles}"></td>
       			<td th:text="${c.codeCycles}"></td>
+      			<td th:text="${c.codeCycles_en}"></td>
       			<td>
       				<div>
-      					<a class="btn btn-danger btn-sm" href="#" 
+      					<a class="btn btn-primary btn-sm" href="#" 
+      						th:href="@{/logesco/admin/getupdateCycles(idCycles=${c.idCycles})}" role="button">Modifier</a>
+      						
+      					<a class="btn btn-danger btn-sm pull-right" href="#" 
       						th:href="@{/logesco/admin/getsupprimerCycle(idCycles=${c.idCycles})}" role="button">Supprimer</a>
       				</div>
       			</td>
@@ -77,24 +82,39 @@
 										 	<option value="1">1</option>
 								      		<option value="2">2</option>
 										 </optgroup>
-								      	
-								      	<optgroup label="Anglophone sub-system">
-								      		<option value="3">1</option>
-								      		<option value="4">2</option>
-								      	</optgroup>
 								    </select> 
 							</div>
 							<div th:if="${#fields.hasErrors('numeroOrdreCycles')}"
 								th:errors="*{numeroOrdreCycles}" class="redcolor">Erreur de numero d'ordre</div>
 								
 							<div class="form-group">
-								<label for="codeCycles"> Appellation: <span
+								<label for="codeCycles"> Libellé: <span
 									class="redcolor">*</span></label> <input type="text" name="codeCycles"
 									id="codeCycles" class="form-control" th:value="*{codeCycles}" th:field="*{codeCycles}"
 									placeholder="Code du cycle" />
-						</div>
-						<div th:if="${#fields.hasErrors('codeCycles')}"
+							</div>
+							<div th:if="${#fields.hasErrors('codeCycles')}"
 								th:errors="*{codeCycles}" class="redcolor">Erreur de code cycle
+							</div>
+							
+							<div class="form-group">
+								<label for="codeCycles_en"> Wording: <span
+									class="redcolor">*</span></label> <input type="text" name="codeCycles_en"
+									id="codeCycles_en" class="form-control" th:value="*{codeCycles_en}" th:field="*{codeCycles_en}"
+									placeholder="Cycle code" />
+							</div>
+							<div th:if="${#fields.hasErrors('codeCycles_en')}"
+								th:errors="*{codeCycles_en}" class="redcolor">Code cycle error
+							</div>
+						
+						<div class="form-group"> 
+							<input type="hidden" name="codeCyclesAModif" id="codeCyclesAModif"
+										class="form-control"  th:value="*{codeCyclesAModif}"/>
+						</div>
+						
+						<div class="form-group"> 
+							<input type="hidden" name="enregOrmodif" id="enregOrmodif"
+										class="form-control"  th:value="*{enregOrmodif}"/>
 						</div>
 						
 				</fieldset>
@@ -104,6 +124,9 @@
 						<p class="text-justify alert alert-warning">
 							Un cycle correspond à un numéro d'ordre et un code unique.
 							<u>Exemple</u>:numero d'ordre=1 et code=Premier cycle
+							<br/>
+							A cycle must have an unique order number and unique code. 
+							<u>Example</u>:order number=1 et code=first cycle
 						</p>
 			    </fieldset>
 				

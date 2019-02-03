@@ -30,7 +30,7 @@
 										th:each="n:${listofNiveaux}">
 
 										<option th:each="c:${n.listofClasses}"
-											th:if="${c.estEnseignantDeClasse(profConnecte.idUsers)==1}"
+											th:if="${c.estEnseignantDeClasse(profConnecte.idUsers)==1 && c.geteffectifEleve()>0}"
 											th:value="${c.idClasses}" th:inline="text">
 										
 											 [[${c.codeClasses}]] [[${c.specialite.codeSpecialite}]] [[${c.numeroClasses}]]
@@ -57,7 +57,8 @@
 					<!-- ici on va afficher le form qui permettra de choisir la séquence et le cours pour lequel on veut saisir les notes -->
 					
 					<form action="#" class="form-inline"
-						th:action="@{/logesco/users/getformSaisieNotes}" method="get" th:if="${listofTrimestresAnnee != null and listofCoursClasse != null}">
+						th:action="@{/logesco/users/getformSaisieNotes}" method="get" 
+						th:if="${listofTrimestresAnnee != null and listofCoursClasse != null}">
 						
 						<div>
 							<h4>Classe Concernée: 
@@ -68,20 +69,14 @@
 							</h4>
 						</div>
 						
-						<table class="table table-striped" th:if="${listofTrimestresAnnee != null and listofCoursClasse != null}">
+						<table class="table table-striped" 
+							th:if="${listofTrimestresAnnee != null and listofCoursClasse != null}">
 							<tbody>
 								<tr th:each="t:${listofTrimestresAnnee}">
 									<td>
 										<kbd><span  th:inline="text">Trimestre <span
 										class="redcolor">N°<b>[[${t.numeroTrim}]]</b></span>&nbsp; &nbsp;&nbsp;
 										
-											<!-- Séquence <span class="redcolor">N°</span>
-											<select class="form-control" name="idSequenceConcerne" id="idSequenceConcerne">
-												<option th:each="s:${t.listofsequence}" th:value="${s.idPeriodes}"
-													th:inline="text">
-													 [[${s.numeroSeq}]]
-												</option>
-											</select> -->
 										</span></kbd>
 										
 										<table class="table table-striped"  th:if="${t.listofsequence != null}">
@@ -124,7 +119,7 @@
 																					idSequenceConcerne=${s.idPeriodes}, 
 																					idClassesConcerne=${coursClasse.classe.idClasses}, 
 																					typeEval='CC',
-																					idCoursConcerne=${coursClasse.idCours})}" role="button">Saisir les notes de CC
+																					idCoursConcerne=${coursClasse.idCours})}" role="button">Saisir les notes D1
 																				</a>
 																			</span> 
 																			
@@ -134,7 +129,7 @@
 																					idSequenceConcerne=${s.idPeriodes}, 
 																					idClassesConcerne=${coursClasse.classe.idClasses}, 
 																					typeEval='DS',
-																					idCoursConcerne=${coursClasse.idCours})}" role="button">Saisir les notes de DS
+																					idCoursConcerne=${coursClasse.idCours})}" role="button">Saisir les notes D2
 																				</a>
 																			</span>
 																		</div>

@@ -27,7 +27,9 @@ import org.logesco.entities.*;
 import org.logesco.form.*;
 import org.logesco.modeles.EleveBean;
 import org.logesco.modeles.EleveBean2;
+import org.logesco.modeles.PV_NoteBean;
 import org.logesco.modeles.PV_SequenceBean;
+import org.logesco.modeles.PV_TrimestreBean;
 import org.logesco.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -153,10 +155,10 @@ public class UsersController {
 	@RequestMapping(path="/getphotoPers", produces=MediaType.IMAGE_PNG_VALUE)
 	@ResponseBody
 	public byte[] getphotoPers(Long idPers){
-		System.out.println("DEPART DE LA RECHERCHE DE LA PHOTO  du personnel connecté"+idPers);
+		System.out.println("DEPART DE LA RECHERCHE DE LA PHOTO  du personnel connecté  "+idPers);
 		File f=new File(photoPersonnelsDir+idPers);
 		try{
-			System.out.println("nous voici ici et chemin fichier est ="+photoPersonnelsDir+idPers);
+			System.out.println("nous voici ici et chemin fichier est = "+photoPersonnelsDir+idPers);
 			return IOUtils.toByteArray(new FileInputStream(f));
 		}
 		catch(Exception e){
@@ -366,13 +368,24 @@ public class UsersController {
 		parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
 		parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
 		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
-		String nomClasse= classeSelect.getCodeClasses()+classeSelect.getSpecialite().getCodeSpecialite()+
-				classeSelect.getNumeroClasses();
-		parameters.put("titre_liste", "Liste provisoire des élèves de la classe "+nomClasse);
 		parameters.put("ville", etablissementConcerne.getVilleEtab());
 		
+		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
+		
+		String nomClasse= classeSelect.getCodeClasses()+classeSelect.getSpecialite().getCodeSpecialite()+
+				classeSelect.getNumeroClasses();
+		
 		JasperReportsPdfView view = new JasperReportsPdfView();
-		view.setUrl("classpath:/reports/compiled/fiches/ListeEleveParClasse.jasper");
+		
+		if(classeSelect.getLangueClasses().equalsIgnoreCase("fr")==true){
+			parameters.put("titre_liste", "LISTE PROVISOIRE DES ELEVES DE  "+nomClasse);
+			view.setUrl("classpath:/reports/compiled/fiches/ListeEleveParClasse.jasper");
+		}
+		else if(classeSelect.getLangueClasses().equalsIgnoreCase("en")==true){
+			parameters.put("titre_liste", "PROVISIONAL STUDENT'S LIST OF  "+nomClasse);
+			view.setUrl("classpath:/reports/compiled/fiches/ListeEleveParClasse.jasper");
+		}
+		
 		view.setApplicationContext(applicationContext);
 		
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -565,10 +578,6 @@ public class UsersController {
 			Long idClassesConcerne,  Long idAnneeActive, int numPageTrimAn, int taillePage, 
 			int numPageCoursClasse, int taillePageCoursClasse){
 		
-		/*
-		 * On a le idClasseConcerne mais on met plutôt la liste des niveaux dans le model pour l'amélioration du rendu
-		 * dans la page html
-		 */
 		String profConnect = request.getUserPrincipal().getName();
 		
 		Utilisateurs usersProf = usersService.findByUsername(profConnect);
@@ -768,6 +777,7 @@ public class UsersController {
 				numPageTrimAn, taillePage, numPageCoursClasse, taillePageCoursClasse);
 		
 		return "users/donneesSaisieNotesV1";
+		//return "users/donneesSaisieNotesV2";
 	}
 	
 	public void constructModelgetformSaisieNotes(Model model,	HttpServletRequest request, Long idEleves,  Long idSequenceConcerne,  
@@ -924,7 +934,7 @@ public class UsersController {
 	public void constructModelgetformSaisieNotesV1(Model model,	HttpServletRequest request, Long idSequenceConcerne,  
 			Long idCoursConcerne, String typeEval, Long idClassesConcerne){
 		
-		
+		System.err.println("depart de la fonction 1 ");
 		/*
 		 * Il faut donc la liste de tous les élèves de la classe dans le modele dans le même ordre qu'ils vont apparaitre dans les pages
 		 */
@@ -933,28 +943,31 @@ public class UsersController {
 		/*for(Eleves e : listofAllEleve){
 			System.out.println("AFFx  Noms "+e.getNomsEleves()+" ID: "+e.getIdEleves().longValue());
 		}*/
-		
+		System.err.println("depart de la fonction 2");
 		if(listofAllEleve != null){
 			model.addAttribute("effectifTotal", listofAllEleve.size());
-			
+			System.err.println("depart de la fonction 3 la taille "+listofAllEleve.size());
 			if((listofAllEleve.size() > 0)){
 				model.addAttribute("listofAllEleve", listofAllEleve);
-				
+				System.err.println("depart de la fonction 4");
 				Sequences sequenceConcerne = usersService.findSequences(idSequenceConcerne);
 				Cours coursConcerne = usersService.findCours(idCoursConcerne);
-				
+				System.err.println("chargement du modele initie "+sequenceConcerne.getNumeroSeq());
 				model.addAttribute("sequenceConcerne", sequenceConcerne);
 				model.addAttribute("coursConcerne", coursConcerne);
 				model.addAttribute("typeEval", typeEval);
-				
+				model.addAttribute("effectifclasse",listofAllEleve.size());
+				System.err.println("chargement du modele terminee");
 			}
 			
 		}
 		/*
 		 * Il faut placer dans le modele l'évaluation pour laquelle on veut enregistrer les notes
 		 */
+		System.err.println("depart de la fonction 5");
 		Evaluations eval = usersService.findEvaluations(idCoursConcerne, idSequenceConcerne, typeEval);
 		model.addAttribute("evaluationConcerne", eval);
+		System.err.println("depart de la fonction 6");
 	}
 	
 	
@@ -1015,7 +1028,7 @@ public class UsersController {
 		 * Ensuite il faut charger la liste des élèves dans le model avec pour chacun le moyen d'avoir 
 		 * sa note pour un type d'évaluation précis, dans un cours et une séquence donnée
 		 */
-		
+		System.err.println("deja avant la contruction du modele");
 		this.constructModelgetformSaisieNotesV1(model,	request, idSequenceConcerne,  idCoursConcerne,  typeEval,
 				idClassesConcerne);
 		
@@ -1185,17 +1198,64 @@ public class UsersController {
 			Model model, HttpServletRequest request,
 			@RequestParam(name="idEval", defaultValue="0") Long idEval,
 			@RequestParam(name="proportionEval", defaultValue="0") String proportionEval,
-			@RequestParam(name="noteSaisi[]") String noteSaisi[]){
+			@RequestParam(name="tabnotesaisi[]") String tabnotesaisi[],
+			@RequestParam(name="tabideleve[]") String tabideleve[]){
 		
-		System.out.println("proportionEvalproportionEvalproportionEval == "+noteSaisi.length);
+		System.out.println("proportionEvalproportionEvalproportionEval == "+tabnotesaisi.length);
 		
 		
-		
-		/*
-		 * Recuperer l'évaluation
-		 */
 		Evaluations evalConcerne = usersService.findEvaluations(idEval);
 		if(evalConcerne == null) System.out.println("yyyyyyyyyyyyyyyyy evalConcerne non trouve");
+		
+	
+		int numero = 1;
+		try{
+			System.err.println("proportion "+proportionEval);
+			int newproportionEval = Integer.parseInt(proportionEval);
+			System.err.println("proportion converti "+newproportionEval);
+			evalConcerne.setProportionEval(newproportionEval);
+			int r = usersService.saveEvaluation(evalConcerne.getContenuEval(), evalConcerne.getCours(), evalConcerne.getDateenregEval(), 
+					evalConcerne.getProportionEval(), evalConcerne.getSequence(), evalConcerne.getTypeEval());
+			int reponse=1;
+			System.err.println("evaluation enregistree "+r);
+			if(r>0){
+				for(String noteS : tabnotesaisi){
+					System.err.println("note en string "+noteS);
+					double valNoteSaisi = Double.parseDouble(noteS);
+					System.err.println("valNoteSaisi en int "+valNoteSaisi);
+					int i=numero-1;
+					String idEleveString = tabideleve[i];
+					long idEleve = Long.parseLong(idEleveString);
+					int ret = usersService.saveNoteEvalEleve(idEval, idEleve, valNoteSaisi);
+					System.err.println("enreg note eval "+valNoteSaisi+" pour eleve "+numero);
+					if(ret == 0) reponse = 0;
+					numero+=1;
+				}
+				System.err.println("Nous voici dans la suite ");
+				if(reponse == 0){
+					model.addAttribute("numero", numero);
+					return "redirect:/logesco/users/getformSaisieNotesV1?updatenotesaisiError1"
+							+ "&&idSequenceConcerne="+evalConcerne.getSequence().getIdPeriodes()
+							+ "&&idClassesConcerne="+evalConcerne.getCours().getClasse().getIdClasses()
+							+ "&&idCoursConcerne="+evalConcerne.getCours().getIdCours()
+							+ "&&typeEval="+evalConcerne.getTypeEval();
+				}
+		return "redirect:/logesco/users/getformSaisieNotesV1?updatenotesaisiSucces"
+				+ "&&idSequenceConcerne="+evalConcerne.getSequence().getIdPeriodes()
+				+ "&&idClassesConcerne="+evalConcerne.getCours().getClasse().getIdClasses()
+				+ "&&idCoursConcerne="+evalConcerne.getCours().getIdCours()
+				+ "&&typeEval="+evalConcerne.getTypeEval();
+			}
+		}
+		catch(Exception e){
+			System.err.println("exception gggg "+e.getMessage());
+			model.addAttribute("numero", numero);
+			return "redirect:/logesco/users/getformSaisieNotesV1?updatenotesaisiError1"
+					+ "&&idSequenceConcerne="+evalConcerne.getSequence().getIdPeriodes()
+					+ "&&idClassesConcerne="+evalConcerne.getCours().getClasse().getIdClasses()
+					+ "&&idCoursConcerne="+evalConcerne.getCours().getIdCours()
+					+ "&&typeEval="+evalConcerne.getTypeEval();
+		}
 		
 		return "redirect:/logesco/users/getformSaisieNotesV1?updatenotesaisiError"
 				+ "&&idSequenceConcerne="+evalConcerne.getSequence().getIdPeriodes()
@@ -1245,8 +1305,9 @@ public class UsersController {
 			
 			if(elvSvt == null) System.out.println("l'élève suivant n'est pas trouvable donc problème dans le code ou la requete");
 			
-			System.out.println("Cherchons l'élève suivant  de "+elv.getNomsEleves()+" id == "+elv.getIdEleves().longValue());
+			/*System.out.println("Cherchons l'élève suivant  de "+elv.getNomsEleves()+" id == "+elv.getIdEleves().longValue());
 			System.out.println("et c'est l'élève suivant  "+elvSvt.getNomsEleves()+" id == "+elvSvt.getIdEleves().longValue());
+			*/
 			
 			/*
 			 * On doit recalculer le numero de la page
@@ -1254,7 +1315,7 @@ public class UsersController {
 			int taillePage = 5;
 			int newnumPageEleves = usersService.getNumeroPageEleve(elvSvt.getIdEleves(),taillePage);
 			
-			System.out.println("le numero de page du nouvel eleve est "+newnumPageEleves);
+			//System.out.println("le numero de page du nouvel eleve est "+newnumPageEleves);
 			
 			return "redirect:/logesco/users/getformSaisieNotes?"
 					+ "&&idSequenceConcerne="+evalConcerne.getSequence().getIdPeriodes()
@@ -1472,7 +1533,7 @@ public class UsersController {
 		String titulaire = classeConcerne.getProffesseur().getNomsPers()+" "+
 				classeConcerne.getProffesseur().getPrenomsPers();
 		parameters.put("titulaire", titulaire.toUpperCase());
-		parameters.put("LOGO", "src/main/resources/static/images/logocsbnal.jpg");
+		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
 		parameters.put("datasource", listofEleve);
 		System.out.println("Aucun de ces truc n'est null vraiment  "+listofEleve.size());
 		JasperReportsPdfView view = new JasperReportsPdfView();
@@ -1514,7 +1575,7 @@ public class UsersController {
 
 		if(etablissementConcerne==null || classeConcerne==null || anneeScolaire==null || 
 				sequenceConcerne==null || cours==null || userconnecte==null) {
-			System.out.println("un de ces truc est null vraiment");
+			System.out.println("un de ces truc est null vraiment pour l'impression des pv de sequence");
 			return null;
 		}
 		
@@ -1536,7 +1597,7 @@ public class UsersController {
 		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
 		parameters.put("ville", etablissementConcerne.getVilleEtab());
 		
-		String titre_pv = "Procès verbal des notes: Séquence "+sequenceConcerne.getNumeroSeq();
+		String titre_pv = "PROCES VERBAL DES NOTES : Séquence "+sequenceConcerne.getNumeroSeq();
 		parameters.put("titre_pv", titre_pv);
 		String nomClasse= classeConcerne.getCodeClasses()+classeConcerne.getSpecialite().getCodeSpecialite()+
 				classeConcerne.getNumeroClasses();
@@ -1550,8 +1611,14 @@ public class UsersController {
 				idCoursConcerne, idSequenceConcerne);
 		int nbre_sous_moyennes = usersService.getNbreSousNoteDansCourspourSeq(idClasseConcerne, 
 				idCoursConcerne, idSequenceConcerne);
+		System.err.println("nbre_moyennes "+nbre_moyennes);
+		
+		if(nbre_moyennes<0) nbre_moyennes = 0;
 		parameters.put("nbre_moyennes", nbre_moyennes);
+		
+		if(nbre_sous_moyennes<0) nbre_sous_moyennes = 0;
 		parameters.put("nbre_sous_moyennes", nbre_sous_moyennes);
+		
 		double nbM=new Double(nbre_moyennes).doubleValue();
 		double nbSM=new Double(nbre_sous_moyennes).doubleValue();
 		double pourRr = (nbM/(nbM+nbSM))*100;
@@ -1591,7 +1658,8 @@ public class UsersController {
 		parameters.put("pourcc", pourcc);
 		parameters.put("pourds", pourds);
 		parameters.put("pourR", pourR);
-		parameters.put("LOGO", "src/main/resources/static/images/logocsbnal.jpg");
+		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.jpg");
+		//parameters.put("IMAGE_FOND", "src/main/resources/static/images/logobekoko.jpg");
 		parameters.put("datasource", listofPV);
 		System.out.println("Aucun de ces truc n'est null vraiment  "+listofPV.size());
 		JasperReportsPdfView view = new JasperReportsPdfView();
@@ -1600,6 +1668,134 @@ public class UsersController {
 		
 		
 		return new ModelAndView(view, parameters);
+		
+	}
+	
+	@GetMapping(path="/getprocesverbalresumeNotesTrim")
+	public ModelAndView getprocesverbalresumeNotesTrim(
+			@RequestParam(name="idCours", defaultValue="0") long idCoursConcerne,
+			@RequestParam(name="idTrimestre", defaultValue="0") long idTrimestreConcerne,
+			Model model, HttpServletRequest request){
+		
+		HttpSession session=request.getSession();
+		
+		Etablissement etablissementConcerne = usersService.getEtablissement();
+		
+		Annee anneeScolaire = usersService.findAnneeActive();
+		
+		Trimestres trimestreConcerne = usersService.findTrimestres(idTrimestreConcerne);
+		
+		Cours cours = usersService.findCours(idCoursConcerne);
+		
+		Classes classeConcerne = cours.getClasse();
+		Long idClasseConcerne = classeConcerne.getIdClasses();
+		
+		String username=(String)session.getAttribute("username");
+		
+		//System.out.println("l'user connecte est  "+username +" mais quel fonction occupe t'il dans le système?");
+		
+		Utilisateurs userconnecte = usersService.findByUsername(username);
+		
+		Proffesseurs profConnecte = usersService.findProffesseurs(userconnecte.getIdUsers());
+
+		if(etablissementConcerne==null || classeConcerne==null || anneeScolaire==null || 
+				trimestreConcerne==null || cours==null || userconnecte==null) {
+			System.out.println("un de ces truc est null vraiment dans l'impression du pv du trimestre "
+					+ "etablissementConcerne "+etablissementConcerne+
+					"classeConcerne "+classeConcerne+" anneeScolaire "+anneeScolaire+
+					"trimestreConcerne"+trimestreConcerne+" cours"+cours+" userconnecte"+userconnecte);
+			return null;
+		}
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		parameters.put("deleguation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
+		parameters.put("deleguation_en", etablissementConcerne.getDeleguationdeptuteleanglaisEtab().toUpperCase());
+		parameters.put("etablissement_fr", etablissementConcerne.getNomsEtab().toUpperCase());
+		parameters.put("etablissement_en", etablissementConcerne.getNomsanglaisEtab().toUpperCase());
+		String adresse = "BP "+etablissementConcerne.getBpEtab()+
+				"  TEL: "+etablissementConcerne.getNumtel1Etab();
+		parameters.put("adresse", adresse);
+		parameters.put("annee_scolaire_fr", "Année Académique "+anneeScolaire.getIntituleAnnee());
+		parameters.put("annee_scolaire_en", "Academic year "+anneeScolaire.getIntituleAnnee());
+		parameters.put("ministere_fr", etablissementConcerne.getMinisteretuteleEtab());
+		parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
+		parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
+		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
+		parameters.put("ville", etablissementConcerne.getVilleEtab());
+		
+		String titre_pv = "PROCES VERBAL DES NOTES : Trimestre "+trimestreConcerne.getNumeroTrim();
+		parameters.put("titre_pv", titre_pv);
+		String nomClasse= classeConcerne.getCodeClasses()+classeConcerne.getSpecialite().getCodeSpecialite()+
+				classeConcerne.getNumeroClasses();
+		parameters.put("classe", nomClasse);
+		
+		String matiere = cours.getIntituleCours()+" ("+cours.getMatiere().getIntituleMatiere()+")";
+		parameters.put("matiere", matiere);
+		String enseignant = profConnecte.getNomsPers()+" "+profConnecte.getPrenomsPers();
+		parameters.put("enseignant", enseignant);
+		
+		String labelSeq1="";
+		String labelSeq2="";
+		if(trimestreConcerne.getNumeroTrim() == 1){
+			labelSeq1 = "NOTE SEQ1";
+			labelSeq2 = "NOTE SEQ2";
+		}
+		else if(trimestreConcerne.getNumeroTrim() == 2){
+			labelSeq1 = "NOTE SEQ3";
+			labelSeq2 = "NOTE SEQ4";
+		}
+		else if(trimestreConcerne.getNumeroTrim() == 3){
+			labelSeq1 = "NOTE SEQ5";
+			labelSeq2 = "NOTE SEQ6";
+		}
+		
+		parameters.put("labelSeq1", labelSeq1);
+		parameters.put("labelSeq2", labelSeq2);
+		
+		int nbre_moyennes = usersService.getNbreNoteDansCourspourTrim(idClasseConcerne, 
+				idCoursConcerne, idTrimestreConcerne);
+		int nbre_sous_moyennes = usersService.getNbreSousNoteDansCourspourTrim(idClasseConcerne, 
+				idCoursConcerne, idTrimestreConcerne);
+		System.err.println("nbre_moyennes trim "+nbre_moyennes);
+		
+		if(nbre_moyennes<0) nbre_moyennes = 0;
+		parameters.put("nbre_moyennes", nbre_moyennes);
+		
+		if(nbre_sous_moyennes<0) nbre_sous_moyennes = 0;
+		parameters.put("nbre_sous_moyennes", nbre_sous_moyennes);
+		
+		double nbM=new Double(nbre_moyennes).doubleValue();
+		double nbSM=new Double(nbre_sous_moyennes).doubleValue();
+		double pourRr = (nbM/(nbM+nbSM))*100;
+		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		try {
+			pourRr =df.parse(df.format(pourRr)).doubleValue();
+			//System.out.println("pourcentagessss "+pourcentage);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String pourR = ""+pourRr+" %";
+		
+		/*
+		 * Liste des élèves avec pour chacun sa note finale pour le cours dans la sequence
+		 */
+		List<PV_TrimestreBean> listofPV = (List<PV_TrimestreBean>) usersService.generatePVTrimestre(idClasseConcerne, 
+				idCoursConcerne, idTrimestreConcerne);
+		
+		parameters.put("pourR", pourR);
+		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.jpg");
+		//parameters.put("IMAGE_FOND", "src/main/resources/static/images/logobekoko.jpg");
+		parameters.put("datasource", listofPV);
+		System.out.println("Aucun de ces truc n'est null vraiment  "+listofPV.size());
+		JasperReportsPdfView view = new JasperReportsPdfView();
+		view.setUrl("classpath:/reports/compiled/fiches/PVTrimestre.jasper");
+		view.setApplicationContext(applicationContext);
+		
+		
+		return new ModelAndView(view, parameters);
+		
 		
 	}
 	
@@ -1667,17 +1863,30 @@ public class UsersController {
 	 * Preparation des listes de toutes sortes à afficher
 	 */
 	@GetMapping(path="/getNotesEvalClasse")
-	public String getNotesEvalClasse(
+	public ModelAndView getNotesEvalClasse(
 			Model model, HttpServletRequest request,
 			@RequestParam(name="idClasseConcerne", defaultValue="0") long idClasseConcerne,
 			@RequestParam(name="idEvalConcerne", defaultValue="0") long idEvalConcerne){
 		
+		HttpSession session=request.getSession();
+		
 		Etablissement etablissementConcerne = usersService.getEtablissement();
+		
+		Annee anneeScolaire = usersService.findAnneeActive();
 		
 		Classes classeConcerne = usersService.findClasses(idClasseConcerne);
 		System.out.println("classeConcernelist "+classeConcerne.getCodeClasses());
 		
 		Evaluations evalConcerne =  usersService.findEvaluations(idEvalConcerne);
+		
+		Cours cours = evalConcerne.getCours();
+		
+		String username=(String)session.getAttribute("username");
+		
+		Utilisateurs userconnecte = usersService.findByUsername(username);
+		
+		Proffesseurs profConnecte = usersService.findProffesseurs(userconnecte.getIdUsers());
+		
 		System.out.println("classeConcernelist "+classeConcerne.getCodeClasses()+
 				"  evalConcernelist "+evalConcerne.getProportionEval()+"");
 		
@@ -1690,7 +1899,6 @@ public class UsersController {
 		//liste des élèves classé par ordre alphabetique
 		List<Eleves> listofAllEleveDeClasseConcerne = usersService.findListElevesClasse(classeConcerne.getIdClasses());
 		
-		HttpSession session=request.getSession();
 		
 		session.setAttribute("etablissementConcerne", etablissementConcerne);
 		session.setAttribute("listofNotesEvalSeq", listofNotesEvalSeq);
@@ -1701,15 +1909,91 @@ public class UsersController {
 		session.setAttribute("nbrenoteEvalEnregistre", listofNotesEvalSeq.size());
 		session.setAttribute("evalConcerneListofNotesEvalSeq", evalConcerne);
 		
-		return "users/procesverbalEvalSeq";
+		if(etablissementConcerne==null || classeConcerne==null || anneeScolaire==null || 
+				evalConcerne==null || cours==null || userconnecte==null) {
+			System.out.println("un de ces truc est null vraiment dans l'impression du pv du trimestre "
+					+ "etablissementConcerne "+etablissementConcerne+
+					"classeConcerne "+classeConcerne+" anneeScolaire "+anneeScolaire+
+					"evalConcerne "+evalConcerne+" cours"+cours+" userconnecte "+userconnecte);
+			return null;
+		}
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		parameters.put("deleguation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
+		parameters.put("deleguation_en", etablissementConcerne.getDeleguationdeptuteleanglaisEtab().toUpperCase());
+		parameters.put("etablissement_fr", etablissementConcerne.getNomsEtab().toUpperCase());
+		parameters.put("etablissement_en", etablissementConcerne.getNomsanglaisEtab().toUpperCase());
+		String adresse = "BP "+etablissementConcerne.getBpEtab()+
+				"  TEL: "+etablissementConcerne.getNumtel1Etab();
+		parameters.put("adresse", adresse);
+		parameters.put("annee_scolaire_fr", "Année Académique "+anneeScolaire.getIntituleAnnee());
+		parameters.put("annee_scolaire_en", "Academic year "+anneeScolaire.getIntituleAnnee());
+		parameters.put("ministere_fr", etablissementConcerne.getMinisteretuteleEtab());
+		parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
+		parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
+		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
+		parameters.put("ville", etablissementConcerne.getVilleEtab());
+		
+		String titre_pv = "PROCES VERBAL DES NOTES ";
+		parameters.put("titre_pv", titre_pv);
+		String nomClasse= classeConcerne.getCodeClasses()+classeConcerne.getSpecialite().getCodeSpecialite()+
+				classeConcerne.getNumeroClasses();
+		parameters.put("classe", nomClasse);
+		
+		String matiere = cours.getIntituleCours()+" ("+cours.getMatiere().getIntituleMatiere()+")";
+		parameters.put("matiere", matiere);
+		String enseignant = profConnecte.getNomsPers()+" "+profConnecte.getPrenomsPers();
+		parameters.put("enseignant", enseignant);
+		
+		int nbre_moyennes = usersService.getNbreNoteDansCourspourEvalDansListe(listofNotesEvalSeq);
+		int nbre_sous_moyennes = usersService.getNbreSousNoteDansCourspourEvalDansListe(listofNotesEvalSeq);
+		System.err.println("nbre_moyennes dans evaluation "+nbre_moyennes);
+		
+		if(nbre_moyennes<0) nbre_moyennes = 0;
+		parameters.put("nbre_moyennes", nbre_moyennes);
+		
+		if(nbre_sous_moyennes<0) nbre_sous_moyennes = 0;
+		parameters.put("nbre_sous_moyennes", nbre_sous_moyennes);
+		
+		double nbM=new Double(nbre_moyennes).doubleValue();
+		double nbSM=new Double(nbre_sous_moyennes).doubleValue();
+		double pourRr = (nbM/(nbM+nbSM))*100;
+		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		try {
+			pourRr =df.parse(df.format(pourRr)).doubleValue();
+			//System.out.println("pourcentagessss "+pourcentage);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String pourR = ""+pourRr+" %";
+		
+		List<PV_NoteBean> listofPV = (List<PV_NoteBean>) usersService.generatePVEvalAvecListeNote(listofNotesEvalSeq);
+		
+		String label_devoir=" EVALUATION COMPTANT POUR ";
+		
+		parameters.put("pourd", evalConcerne.getProportionEval()+"%");
+		parameters.put("pourR", pourR);
+		parameters.put("label_devoir", label_devoir);
+		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.jpg");
+		//parameters.put("IMAGE_FOND", "src/main/resources/static/images/logobekoko.jpg");
+		parameters.put("datasource", listofPV);
+		System.out.println("Aucun de ces truc n'est null vraiment  "+listofPV.size());
+		JasperReportsPdfView view = new JasperReportsPdfView();
+		view.setUrl("classpath:/reports/compiled/fiches/PVNoteEval.jasper");
+		view.setApplicationContext(applicationContext);
+		
+		
+		return new ModelAndView(view, parameters);
 	}
 	
 	@GetMapping(path="/getNotesFinaleClasse")
-	public String getNotesFinaleClasse(
+	public ModelAndView getNotesFinaleClasse(
 			Model model, HttpServletRequest request,
-			@RequestParam(name="idClasseConcerne", defaultValue="0") long idClasseConcerne,
-			@RequestParam(name="idCoursConcerne", defaultValue="0") long idCoursConcerne,
-			@RequestParam(name="idSequenceConcerne", defaultValue="0") long idSequenceConcerne){
+			@RequestParam(name="idClasse", defaultValue="0") long idClasseConcerne,
+			@RequestParam(name="idCours", defaultValue="0") long idCoursConcerne,
+			@RequestParam(name="idSequence", defaultValue="0") long idSequenceConcerne){
 		
 		Etablissement etablissementConcerne = usersService.getEtablissement();
 		
@@ -1740,8 +2024,102 @@ public class UsersController {
 		session.setAttribute("effectifclasseConcerneListofNotesEvalSeq", classeConcerne.getListofEleves().size());
 		session.setAttribute("classeConcerneListofNotesEvalSeq", classeConcerne);
 		
+		Annee anneeScolaire = usersService.findAnneeActive();
 		
-		return "users/procesverbalSeq";
+		String username=(String)session.getAttribute("username");
+		Utilisateurs userconnecte = usersService.findByUsername(username);
+		
+		Proffesseurs profConnecte = usersService.findProffesseurs(userconnecte.getIdUsers());
+		
+		if(etablissementConcerne==null || classeConcerne==null || anneeScolaire==null || 
+				coursConcerne==null || userconnecte==null) {
+			System.out.println("un de ces truc est null vraiment dans l'impression du pv du trimestre "
+					+ "etablissementConcerne "+etablissementConcerne+
+					"classeConcerne "+classeConcerne+" anneeScolaire "+anneeScolaire
+					+" cours  "+coursConcerne+" userconnecte "+userconnecte);
+			return null;
+		}
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		parameters.put("deleguation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
+		parameters.put("deleguation_en", etablissementConcerne.getDeleguationdeptuteleanglaisEtab().toUpperCase());
+		parameters.put("etablissement_fr", etablissementConcerne.getNomsEtab().toUpperCase());
+		parameters.put("etablissement_en", etablissementConcerne.getNomsanglaisEtab().toUpperCase());
+		String adresse = "BP "+etablissementConcerne.getBpEtab()+
+				"  TEL: "+etablissementConcerne.getNumtel1Etab();
+		parameters.put("adresse", adresse);
+		parameters.put("annee_scolaire_fr", "Année Académique "+anneeScolaire.getIntituleAnnee());
+		parameters.put("annee_scolaire_en", "Academic year "+anneeScolaire.getIntituleAnnee());
+		parameters.put("ministere_fr", etablissementConcerne.getMinisteretuteleEtab());
+		parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
+		parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
+		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
+		parameters.put("ville", etablissementConcerne.getVilleEtab());
+		
+		String titre_pv = "PROCES VERBAL SEQUENTIEL DES NOTES ";
+		parameters.put("titre_pv", titre_pv);
+		String nomClasse= classeConcerne.getCodeClasses()+classeConcerne.getSpecialite().getCodeSpecialite()+
+				classeConcerne.getNumeroClasses();
+		parameters.put("classe", nomClasse);
+		
+		String matiere = coursConcerne.getIntituleCours()+" ("+coursConcerne.getMatiere().getIntituleMatiere()+")";
+		parameters.put("matiere", matiere);
+		String enseignant = profConnecte.getNomsPers()+" "+profConnecte.getPrenomsPers();
+		parameters.put("enseignant", enseignant);
+		
+		int nbre_moyennes = usersService.getNbreNoteDansCourspourSeq(classeConcerne.getIdClasses(), 
+				coursConcerne.getIdCours(),seqConcerne.getIdPeriodes());
+		int nbre_sous_moyennes = usersService.getNbreSousNoteDansCourspourSeq(classeConcerne.getIdClasses(), 
+				coursConcerne.getIdCours(),seqConcerne.getIdPeriodes());
+		System.err.println("nbre_moyennes dans Sequence "+nbre_moyennes);
+		
+		if(nbre_moyennes<0) nbre_moyennes = 0;
+		parameters.put("nbre_moyennes", nbre_moyennes);
+		
+		if(nbre_sous_moyennes<0) nbre_sous_moyennes = 0;
+		parameters.put("nbre_sous_moyennes", nbre_sous_moyennes);
+		
+		double nbM=new Double(nbre_moyennes).doubleValue();
+		double nbSM=new Double(nbre_sous_moyennes).doubleValue();
+		double pourRr = (nbM/(nbM+nbSM))*100;
+		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		try {
+			pourRr =df.parse(df.format(pourRr)).doubleValue();
+			//System.out.println("pourcentagessss "+pourcentage);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String pourR = ""+pourRr+" %";
+		
+		List<PV_SequenceBean> listofPVSeq = (List<PV_SequenceBean>) usersService.generatePVSequence(classeConcerne.getIdClasses(), 
+				coursConcerne.getIdCours(),seqConcerne.getIdPeriodes());
+		
+		int pourds=0;
+		int pourcc=0;
+		for(Evaluations eval: listofEvalSeq){
+			if(eval.getTypeEval().equalsIgnoreCase("CC")){
+				pourcc = eval.getProportionEval();
+			}
+			if(eval.getTypeEval().equalsIgnoreCase("DS")){
+				pourds = eval.getProportionEval();
+			}
+		}
+	
+		parameters.put("pourds", pourds+"%");
+		parameters.put("pourcc", pourcc+"%");
+		parameters.put("pourR", pourR);
+		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.jpg");
+		//parameters.put("IMAGE_FOND", "src/main/resources/static/images/logobekoko.jpg");
+		parameters.put("datasource", listofPVSeq);
+		System.out.println("Aucun de ces truc n'est null vraiment  "+listofPVSeq.size());
+		JasperReportsPdfView view = new JasperReportsPdfView();
+		view.setUrl("classpath:/reports/compiled/fiches/PVSequence.jasper");
+		view.setApplicationContext(applicationContext);
+		
+		
+		return new ModelAndView(view, parameters);
 	}
 	
 	
