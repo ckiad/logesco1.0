@@ -122,7 +122,9 @@
 							</td>
 							
 							<td>
-								<button type="submit" class="btn btn-primary  pull-right">Envoyer</button>
+								<button type="submit" class="btn btn-primary  pull-right">
+									<span class="glyphicon glyphicon-save"></span> Envoyer
+								</button>
 							</td>
 							
 						</tr>
@@ -156,7 +158,8 @@
 										<a class="btn btn-primary btn-sm pull-left" href="#" 
 											th:href="@{/logesco/users/censeur/getupdateTitulaire(idClasseAModif=${classe.idClasses}, 
 											idUsersTitulaire=${classe.proffesseur==null}?0:${classe.proffesseur.idUsers}, 
-											numPageNiveaux=${pageCouranteNiveaux})}" role="button">Modifier
+											numPageNiveaux=${pageCouranteNiveaux})}" role="button">
+											<span class="glyphicon glyphicon-edit"></span> Modifier
 										</a>
 									</span>
 								</div>
@@ -179,7 +182,9 @@
 				
 				<a class=" pull-right" href="#" 
 			      						th:href="@{/logesco/users/censeur/exportlistTitulaireClasse}" 
-			      						role="button">Exporter la liste des titulaires de classe</a>
+			      						role="button">
+			      				<span class="glyphicon glyphicon-list-alt"></span> Exporter la liste des titulaires de classe
+			    </a>
 				
 			</form>
 </div>

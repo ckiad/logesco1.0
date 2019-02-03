@@ -50,7 +50,9 @@
 									class="form-control" th:value="${anneeActive.idPeriodes}" />
 							</div>
 							
-							<button type="submit" class="btn btn-primary  pull-right">Envoyer</button>
+							<button type="submit" class="btn btn-primary  pull-right">
+								<span class="glyphicon glyphicon-send"></span> Envoyer
+							</button>
 						</div>
 						
 					</form>
@@ -125,7 +127,8 @@
 																					idSequenceConcerne=${s.idPeriodes}, 
 																					idClassesConcerne=${coursClasse.classe.idClasses}, 
 																					typeEval='CC',
-																					idCoursConcerne=${coursClasse.idCours})}" role="button">Saisir les notes D1
+																					idCoursConcerne=${coursClasse.idCours})}" role="button">
+																					<span class="glyphicon glyphicon-pencil"></span> Saisir les notes D1
 																				</a>
 																			</span> 
 																			
@@ -135,7 +138,8 @@
 																					idSequenceConcerne=${s.idPeriodes}, 
 																					idClassesConcerne=${coursClasse.classe.idClasses}, 
 																					typeEval='DS',
-																					idCoursConcerne=${coursClasse.idCours})}" role="button">Saisir les notes D2
+																					idCoursConcerne=${coursClasse.idCours})}" role="button">
+																					<span class="glyphicon glyphicon-pencil"></span> Saisir les notes D2
 																				</a>
 																			</span>
 																		</div>

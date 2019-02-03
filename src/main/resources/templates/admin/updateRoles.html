@@ -49,7 +49,9 @@
 						<input type="hidden" name="roleAModif" id="roleAModif"
 									class="form-control"  th:value="*{roleAModif}"/>
 					</div>
-					<button type="submit" class="btn btn-primary  pull-right">Envoyer</button>
+					<button type="submit" class="btn btn-primary  pull-right">
+						<span class="glyphicon glyphicon-save"></span> Envoyer
+					</button>
 			</fieldset>
 			
 			</form>
@@ -79,7 +81,8 @@
 			      					<a class="btn btn-danger btn-sm pull-right" href="#" 
 			      						th:href="@{/logesco/admin/getupdateRoles(role=${r.role},
 			      						numPage=${pageCourante})}" 
-			      						role="button">Modifier l'alias</a>
+			      						role="button">
+			      						<span class="glyphicon glyphicon-edit"></span> Modifier l'alias</a>
 			      				</span>
 			      				</div>
 			      		</td> 

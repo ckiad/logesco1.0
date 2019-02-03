@@ -147,18 +147,24 @@
 				
 				<a class="btn btn-default btn-sm pull-left" href="#" 
 						th:href="@{/logesco/users/getNotesEvalClasse(idClasseConcerne=${evaluationConcerne.cours.classe.idClasses}, 
-						idEvalConcerne=${evaluationConcerne.idEval})}" role="button" target="_blank">Afficher le relevé</a>
+						idEvalConcerne=${evaluationConcerne.idEval})}" role="button" target="_blank">
+						<span class="glyphicon glyphicon-cloud-download"></span> Afficher le relevé
+				</a>
 				
 				
 				<a class="btn btn-default btn-sm pull-right" href="#" 
 						th:href="@{/logesco/users/getNotesFinaleClasse(idClasse=${evaluationConcerne.cours.classe.idClasses}, 
 						idCours=${evaluationConcerne.cours.idCours},idSequence=${sequenceConcerne.idPeriodes})}" 
-						role="button" target="_blank">Relevé de note séquentiel</a>
+						role="button" target="_blank">
+					<span class="glyphicon glyphicon-cloud-download"></span> Relevé de note séquentiel
+				</a>
 			
 				<br/><br/>
 				<a class="btn btn-default btn-sm pull-left" href="#" title="Retourner à la page précédente"
 						th:href="@{/logesco/users/getdonneesSaisieNotesV1(idClassesConcerne=${evaluationConcerne.cours.classe.idClasses}, 
-						idAnneeActive=${sequenceConcerne.trimestre.annee.idPeriodes})}" role="button">Retourner</a>
+						idAnneeActive=${sequenceConcerne.trimestre.annee.idPeriodes})}" role="button">
+						<span class="glyphicon glyphicon-menu-left"></span> Retourner
+					</a>
 				
 				
 	</div>

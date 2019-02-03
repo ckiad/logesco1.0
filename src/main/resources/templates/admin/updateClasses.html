@@ -137,7 +137,9 @@
 									class="form-control"  th:value="*{idSpecialiteAModif}"/>
 					</div>
 					<br/><br/>
-					<button type="submit" class="btn btn-primary  pull-right">Envoyer</button>
+					<button type="submit" class="btn btn-primary  pull-right">
+						<span class="glyphicon glyphicon-save"></span> Envoyer
+					</button>
 				</fieldset>
 					
 			</form>
@@ -170,12 +172,16 @@
 			      					<a class="btn btn-primary btn-sm pull-left" href="#"  
 			      						th:href="@{/logesco/admin/getupdateClasses(idClasses=${c.idClasses},
 			      						numPage=${pageCourante})}" 
-			      						role="button">Modifier</a>
+			      						role="button"><span class="glyphicon glyphicon-edit"></span>Modifier
+			      					</a>
 			      				</span>
 			      				<span>
 			      					<a class="btn btn-danger btn-sm pull-right" href="#" 
 			      						th:href="@{/logesco/admin/getsupprimerClasses(idClasses=${c.idClasses})}" 
-			      						role="button">Supprimer</a>
+			      						role="button">
+			      						<span class="glyphicon glyphicon-trash"></span>
+			      						Supprimer
+			      					</a>
 			      				</span>
 			      				</div>
 			      			</td>
@@ -195,7 +201,10 @@
 				
 				<a class="btn btn-primary btn-lg pull-right" href="#" 
 			      						th:href="@{/logesco/admin/exportlistClasses}" 
-			      						role="button">Exporter la liste des classes</a>
+			      						role="button">
+			      						<span class="glyphicon glyphicon-list"></span> 
+			      						Exporter la liste des classes
+			     </a>
 				
 			</div>
 			

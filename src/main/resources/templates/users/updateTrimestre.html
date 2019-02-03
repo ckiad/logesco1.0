@@ -67,7 +67,8 @@
 			      					<a class="btn btn-primary btn-sm" href="#" 
 			      						th:href="@{/logesco/users/censeur/getactualiserTrimestre(idPeriodes=${t.idPeriodes}, 
 											numPageAn=${pageCouranteAnnee})}" 
-			      						role="button" th:text="${t.etatPeriodes==false}?'Activer':'Désactiver'">Actualiser</a>
+			      						role="button" th:text="${t.etatPeriodes==false}?'Activer':'Désactiver'">
+			      						<span class="glyphicon glyphicon-refresh"></span> Actualiser</a>
 			      				</div>
 			      		</td>
 						

@@ -64,7 +64,9 @@
 				</div>
 				
 				
-				<button type="submit" class="btn btn-primary  pull-right">Envoyer</button>
+				<button type="submit" class="btn btn-primary  pull-right">
+					<span class="glyphicon glyphicon-save"></span> Envoyer
+				</button>
 				</fieldset>
 			</form>
 			<div th:if="${listofSpecialites}">
@@ -87,12 +89,16 @@
 			      					<a class="btn btn-primary btn-sm pull-left" href="#"  
 			      						th:href="@{/logesco/admin/getupdateSpecialites(idSpecialite=${s.idSpecialite},
 			      						numPage=${pageCourante})}" 
-			      						role="button">Modifier</a>
+			      						role="button">
+			      						<span class="glyphicon glyphicon-edit"></span> Modifier
+			      					</a>
 			      				</span>
 			      				<span>
 			      					<a class="btn btn-danger btn-sm pull-right" href="#" 
 			      						th:href="@{/logesco/admin/getsupprimerSpecialites(idSpecialite=${s.idSpecialite})}" 
-			      						role="button">Supprimer</a>
+			      						role="button">
+			      						<span class="glyphicon glyphicon-trash"></span> Supprimer
+			      					</a>
 			      				</span>
 			      				</div>
 			      		</td>

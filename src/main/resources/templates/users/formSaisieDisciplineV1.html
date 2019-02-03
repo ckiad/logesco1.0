@@ -83,7 +83,9 @@
 							</tr>
 						</thead>
 						<tbody th:if="${listofAllEleve}">
-							<button type="submit" class="btn btn-primary btn-sm  pull-right">Enregistrer </button>
+							<button type="submit" class="btn btn-primary btn-sm  pull-right">
+								<span class="glyphicon glyphicon-save"></span> Enregistrer 
+							</button>
 							<tr th:each="eleve:${listofAllEleve}" >
 								<td th:inline="text">
 									<b>[[${eleve.getNumero(listofAllEleve)}]]</b> 
@@ -146,7 +148,9 @@
 						</tbody>
 					</table>
 					
-					<button type="submit" class="btn btn-primary btn-sm  pull-right">Enregistrer </button>
+					<button type="submit" class="btn btn-primary btn-sm  pull-right">
+						<span class="glyphicon glyphicon-save"></span> Enregistrer 
+					</button>
 				</form>
 </div>
 <!-- fin DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE   col-md-offset-1-->

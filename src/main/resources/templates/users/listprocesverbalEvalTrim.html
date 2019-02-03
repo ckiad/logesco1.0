@@ -63,7 +63,9 @@
 						</div>
 						
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;		
-						<button type="submit" class="btn btn-primary  pull-right">Envoyer</button>
+						<button type="submit" class="btn btn-primary  pull-right">
+							<span class="glyphicon glyphicon-send"></span>Envoyer
+						</button>
 					</div>
 				</fieldset>
 			
@@ -106,7 +108,9 @@
 										th:if="${cours.gettailleListEvalTrim(session.numerotrimdeRapportTrim, session.listofEvaltrim)} != 0"
 										th:href="@{/logesco/users/getprocesverbalresumeNotesTrim(idCours=${cours.idCours},
 										idTrimestre=${session.numerotrimdeRapportTrim})}"
-										role="button" target="_blank">Voir le procès verbal trimestriel</a>
+										role="button" target="_blank">
+										<span class="glyphicon glyphicon-list-all"></span>Voir le procès verbal trimestriel
+								</a>
 								
 							</td>
 						</tr>

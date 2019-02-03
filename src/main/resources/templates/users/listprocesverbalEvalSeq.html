@@ -72,7 +72,9 @@
 						</div> 
 						
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;		
-						<button type="submit" class="btn btn-primary  pull-right">Envoyer</button>
+						<button type="submit" class="btn btn-primary  pull-right">
+							<span class="glyphicon glyphicon-send"></span> Envoyer
+						</button>
 					</div>
 					
 				</fieldset>
@@ -113,7 +115,9 @@
 										th:href="@{/logesco/users/getprocesverbalfinalNotesSeq(idCours=${cours.idCours},
 										idSequence=${session.numeroseqdeRapportSeq},	
 										idClasse=${session.classeRapport.idClasses})}"
-										role="button" target="_blank">Voir le procès verbal final</a>
+										role="button" target="_blank">
+										<span class="glyphicon glyphicon-list-all"></span> Voir le procès verbal final
+								</a>
 								
 								[[${cours.gettailleListEvalSeq(session.numeroseqdeRapportSeq)==0}?'Procès verbal non disponible':' ']]
 								

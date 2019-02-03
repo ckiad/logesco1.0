@@ -48,7 +48,7 @@
 						&nbsp; 
 						<button type="submit" class="btn btn-primary  pull-right" 
 							th:text="#{inscrireEleves.bouton_listeleve}">
-							Rechercher la liste des élèves
+							<span class="glyphicon glyphicon-search"></span> Rechercher la liste des élèves
 						</button>
 					</div>
 					
@@ -150,7 +150,7 @@
 											
 									<button type="submit" class="btn btn-primary  pull-right" 
 										th:text="#{inscrireEleves.bouton_verser}">
-										Verser
+										<span class="glyphicon glyphicon-save"></span> Verser
 									</button>
 								</form>
 								
@@ -174,7 +174,7 @@
 					<a class="btn btn-default btn-sm pull-right" href="#" title="Dresser le rapport de versement pour imprimer"
 							th:href="@{/logesco/users/intendant/getrapportVersement(idClassesConcerne=${idClasseSelect})}" 
 							role="button" th:text="#{inscrireEleves.bouton_dresserrecapversement}">
-								Dresser le recapitulatif des versements pour cette classe
+								<span class="glyphicon glyphicon-list-all"></span> Dresser le recapitulatif des versements pour cette classe
 					</a>
 					
 					

@@ -54,7 +54,7 @@
 				      				<span class="col-md-4">
 										<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" 
 											th:attr="data-target='#'+${proviseur.idUsers}">
-										  Afficher
+										  <span class="glyphicon glyphicon-eye-open"></span> Afficher
 										</button>
 				      				</span>
 				      				
@@ -104,7 +104,9 @@
 							        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
 							        <a class="btn btn-primary btn-sm" href="#" 
 											th:href="@{/logesco/users/chefetab/getimprimerPersonnels(idUsers=${proviseur.idUsers})}" 
-											role="button">Imprimer</a>
+											role="button">
+											<span class="glyphicon glyphicon-print"></span> Imprimer
+									</a>
 							      </div>
 							    </div>
 							  </div>
@@ -152,13 +154,15 @@
 				      				<div>
 				      					<a class="btn btn-primary btn-sm" href="#" 
 												th:href="@{/logesco/users/chefetab/getupdatePersonnels(idUsers=${censeur.idUsers}, 
-												numPageCenseur=${pageCouranteCenseurs})}" role="button">Modifier</a>
+												numPageCenseur=${pageCouranteCenseurs})}" role="button">
+												<span class="glyphicon glyphicon-edit"></span> Modifier
+										</a>
 				      				</div>
 				      				&nbsp;
 				      				<div >
 										<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" 
 											th:attr="data-target='#'+${censeur.idUsers}">
-										  Afficher
+										  <span class="glyphicon glyphicon-eye-open"></span> Afficher
 										</button>
 				      				</div>
 				      				&nbsp;
@@ -167,7 +171,7 @@
 				      						role="button">Supprimer</a> -->
 				      					<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" 
 											data-target="#dialogSupprCenseur">
-										  Supprimer
+										  <span class="glyphicon glyphicon-trash"></span> Supprimer
 										</button>
 				      				</div>
 			      				</div>
@@ -217,7 +221,9 @@
 							        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
 							        <a class="btn btn-primary btn-sm" href="#"  
 											th:href="@{/logesco/users/chefetab/getimprimerPersonnels(idUsers=${censeur.idUsers})}" 
-											role="button">Imprimer</a>
+											role="button">
+											<span class="glyphicon glyphicon-print"></span>Imprimer
+									</a>
 							      </div>
 							    </div>
 							  </div>
@@ -243,7 +249,9 @@
 							        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
 							        <a class="btn btn-danger btn-sm" href="#" 
 											th:href="@{/logesco/users/chefetab/getsuppressionPersonnels(idUsers=${censeur.idUsers})}" 
-											role="button">Continuer</a>
+											role="button">
+											<span class="glyphicon glyphicon-menu-right"></span> Continuer
+									</a>
 							      </div>
 							    </div>
 							  </div>
@@ -305,20 +313,22 @@
 			      					<div>
 				      					<a class="btn btn-primary btn-sm" href="#" 
 												th:href="@{/logesco/users/chefetab/getupdatePersonnels(idUsers=${sg.idUsers}, 
-												numPageSg=${pageCouranteSG})}" role="button">Modifier</a>
+												numPageSg=${pageCouranteSG})}" role="button">
+												<span class="glyphicon glyphicon-edit"></span> Modifier
+										</a>
 				      				</div>
 				      				&nbsp;
 				      				<div>
 										<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" 
 											th:attr="data-target='#'+${sg.idUsers}">
-										  Afficher
+										 <span class="glyphicon glyphicon-eye-open"></span>  Afficher
 										</button>
 				      				</div>
 				      				&nbsp;
 				      				<div>
 				      					<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" 
 											data-target="#dialogSupprSg">
-										  Supprimer
+										  <span class="glyphicon glyphicon-trash"></span> Supprimer
 										</button>
 				      				</div>
 			      				
@@ -369,7 +379,9 @@
 							        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
 							        <a class="btn btn-primary btn-sm" href="#" 
 											th:href="@{/logesco/users/chefetab/getimprimerPersonnels(idUsers=${sg.idUsers})}" 
-											role="button">Imprimer</a>
+											role="button">
+											<span class="glyphicon glyphicon-print"></span> Imprimer
+									</a>
 							      </div>
 							    </div>
 							  </div>
@@ -457,20 +469,22 @@
 			      					<div>
 				      					<a class="btn btn-primary btn-sm pull-left" href="#" 
 												th:href="@{/logesco/users/chefetab/getupdatePersonnels(idUsers=${intendant.idUsers}, 
-												numPageIntendant=${pageCouranteIntendant})}" role="button">Modifier</a>
+												numPageIntendant=${pageCouranteIntendant})}" role="button">
+												<span class="glyphicon glyphicon-edit"></span> Modifier
+										</a>
 				      				</div>
 				      				<br/>&nbsp;
 				      				<div>
 										<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" 
 											th:attr="data-target='#'+${intendant.idUsers}">
-										  Afficher
+										  <span class="glyphicon glyphicon-eye-open"></span> Afficher
 										</button>
 				      				</div>
 				      				&nbsp;
 				      				<div>
 				      					<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" 
 											data-target="#dialogSupprIntendant">
-										  Supprimer
+										  <span class="glyphicon glyphicon-trash"></span> Supprimer
 										</button>
 				      				</div>
 			      				
@@ -521,7 +535,9 @@
 							        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
 							        <a class="btn btn-primary btn-sm" href="#" 
 											th:href="@{/logesco/users/chefetab/getimprimerPersonnels(idUsers=${intendant.idUsers})}" 
-											role="button">Imprimer</a>
+											role="button">
+											<span class="glyphicon glyphicon-print"></span> Imprimer
+									</a>
 							      </div>
 							    </div>
 							  </div>
@@ -609,13 +625,15 @@
 			      					<div>
 				      					<a class="btn btn-primary btn-sm pull-left" href="#" 
 												th:href="@{/logesco/users/chefetab/getupdatePersonnels(idUsers=${ens.idUsers}, 
-												numPageEns=${pageCouranteEnseignant})}" role="button">Modifier</a>
+												numPageEns=${pageCouranteEnseignant})}" role="button">
+												<span class="glyphicon glyphicon-edit"></span> Modifier
+										</a>
 				      				</div>
 				      				<br/>&nbsp;
 				      				<div>
 										<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" 
 											th:attr="data-target='#'+${ens.idUsers}">
-										  Afficher
+										  <span class="glyphicon glyphicon-eye-open"></span> Afficher
 										</button>
 				      				</div>
 				      				<br/>&nbsp;
@@ -624,7 +642,7 @@
 				      						role="button">Supprimer</a> -->
 				      					<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" 
 											data-target="#dialogSupprEns">
-										  Supprimer
+										  <span class="glyphicon glyphicon-trash"></span> Supprimer
 										</button>
 				      				</div>
 			      				
@@ -676,7 +694,7 @@
 							        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
 							        <a class="btn btn-primary btn-sm" href="#" 
 											th:href="@{/logesco/users/chefetab/getimprimerPersonnels(idUsers=${ens.idUsers})}" 
-											role="button">Imprimer</a>
+											role="button"><span class="glyphicon glyphicon-print"></span>Imprimer</a>
 							      </div>
 							    </div>
 							  </div>

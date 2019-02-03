@@ -40,10 +40,12 @@
       			<td>
       				<div>
       					<a class="btn btn-primary btn-sm" href="#" 
-      						th:href="@{/logesco/admin/getupdateCycles(idCycles=${c.idCycles})}" role="button">Modifier</a>
+      						th:href="@{/logesco/admin/getupdateCycles(idCycles=${c.idCycles})}" role="button">
+      						 <span class="glyphicon glyphicon-edit"></span> Modifier</a>
       						
       					<a class="btn btn-danger btn-sm pull-right" href="#" 
-      						th:href="@{/logesco/admin/getsupprimerCycle(idCycles=${c.idCycles})}" role="button">Supprimer</a>
+      						th:href="@{/logesco/admin/getsupprimerCycle(idCycles=${c.idCycles})}" role="button">
+      						<span class="glyphicon glyphicon-trash"></span> Supprimer</a>
       				</div>
       			</td>
       		</tr>
@@ -131,8 +133,12 @@
 						</p>
 			    </fieldset>
 				
-				<button type="submit" class="btn btn-primary  pull-right">Envoyer</button>
-				<button type="reset" class="btn btn-danger">Effacer</button>
+				<button type="submit" class="btn btn-primary  pull-right">
+					<span class="glyphicon glyphicon-save"></span> Envoyer
+				</button>
+				<button type="reset" class="btn btn-danger">
+					<span class="glyphicon glyphicon-erase"></span> Effacer
+				</button>
 				
 			</form>
 		</div>

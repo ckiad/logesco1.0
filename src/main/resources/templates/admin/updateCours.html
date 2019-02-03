@@ -209,7 +209,9 @@
 										th:errors="*{idUsersAssocie}" class="redcolor">Erreur de Users pour cours</div>
 								</div>
 						<div class="form-group">
-							<button type="submit" class="btn btn-primary  pull-right">Envoyer</button>
+							<button type="submit" class="btn btn-primary  pull-right">
+								<span class="glyphicon glyphicon-save"></span> Envoyer
+							</button>
 						</div>
 				
 				</fieldset>
@@ -257,13 +259,14 @@
 									<span>
 										<a class="btn btn-primary btn-sm pull-left" href="#" 
 											th:href="@{/logesco/admin/getupdateCours(idCours=${cours.idCours}, idClasseAssocie=${cours.classe.idClasses},
-											numPageCours=${pageCouranteCours})}" role="button">Modifier
+											numPageCours=${pageCouranteCours})}" role="button">
+											<span class="glyphicon glyphicon-edit"></span> Modifier
 										</a>
 									
 										<a class="btn btn-danger btn-sm pull-right" href="#" 
 											th:href="@{/logesco/admin/getsupprimerCours(idCours=${cours.idCours}, 
 												idClasseAssocie=${cours.classe.idClasses})}" role="button">
-												Supprimer
+												<span class="glyphicon glyphicon-trash"></span> Supprimer
 										</a>
 									</span>
 								</div>
@@ -286,7 +289,9 @@
 				
 				<a class=" pull-right" href="#" 
 			      						th:href="@{/logesco/admin/exportlistCours}" 
-			      						role="button">Exporter la configuration des cours</a>
+			      						role="button">
+			       <span class="glyphicon glyphicon-list"></span> 	Exporter la configuration des cours
+			     </a>
 				
 			</form>
 		</div>

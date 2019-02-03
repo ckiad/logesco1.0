@@ -201,7 +201,7 @@
 							<span class="col-md-4">
 								<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" 
 										th:attr="data-target='#'+${eleveEnreg.idEleves}">
-										  Afficher le coupon d'inscription
+										  <span class="glyphicon glyphicon-eye-open"></span> Afficher le coupon d'inscription
 								</button>
 				      		</span>
 				     </div>
@@ -236,11 +236,15 @@
 										
 							      </div>
 							      <div class="modal-footer">
-							        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+							        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+							        	Fermer <span class="glyphicon glyphicon-remove"></span>
+							        </button>
 							        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
 							        <a class="btn btn-primary btn-sm" href="#" 
 											th:href="@{/logesco/users/chefetab/getimprimerCoupon(idEleves=${eleveEnreg.idEleves})}" 
-											role="button">Imprimer</a>
+											role="button">
+											<span class="glyphicon glyphicon-print"></span> Imprimer
+									</a>
 							      </div>
 							    </div>
 							  </div>
@@ -250,10 +254,14 @@
 					</div>
 					
 				</fieldset>
-					<button type="submit" class="btn btn-primary  pull-right">Envoyer</button>
+					<button type="submit" class="btn btn-primary  pull-right">
+						<span class="glyphicon glyphicon-save"></span> Envoyer
+					</button>
 					<a class="btn btn-danger pull-left" href="#" 
 											th:href="@{/logesco/users/chefetab/getenregEleves}" 
-											role="button">Initialiser le formulaire</a>
+											role="button">
+								<span class="glyphicon glyphicon-erase"></span> Initialiser le formulaire
+					</a>
 			</form>
 		
 </div>

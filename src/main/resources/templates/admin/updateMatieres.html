@@ -11,7 +11,7 @@
 <body>
 <div layout:fragment="formactionadmin">
 <!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
-<div class="col-md-7  col-md-offset-2  reculeverticalementmodifpasswordform">
+<div class="col-md-8  col-md-offset-2  reculeverticalementmodifpasswordform">
 	<div class="panel panel-primary">
 		<div class="panel-heading">
 			<h4>Gérer les départements</h4>
@@ -85,7 +85,9 @@
 							</td>
 							
 							<td>
-								<button type="submit" class="btn btn-primary  pull-right">Envoyer</button>
+								<button type="submit" class="btn btn-primary  pull-right">
+									<span class="glyphicon glyphicon-save"></span> Envoyer
+								</button>
 							</td>
 							
 						</tr>
@@ -110,11 +112,13 @@
 									<span>
 										<a class="btn btn-primary btn-sm pull-left" href="#" 
 											th:href="@{/logesco/admin/getupdateMatieres(idMatiere=${mat.idMatiere}, 
-											numPageMatiere=${pageCouranteMatiere})}" role="button">Modifier</a>
+											numPageMatiere=${pageCouranteMatiere})}" role="button">
+											<span class="glyphicon glyphicon-edit"></span> Modifier
+										</a>
 									
 										<a class="btn btn-danger btn-sm pull-right" href="#" 
 											th:href="@{/logesco/admin/getsupprimerMatieres(idMatiere=${mat.idMatiere})}" role="button">
-												Supprimer
+												<span class="glyphicon glyphicon-trash"></span> Supprimer
 										</a>
 									</span>
 								</div>

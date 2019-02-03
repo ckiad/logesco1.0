@@ -60,7 +60,7 @@
 											<span class="col-md-4">
 												<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" 
 													th:attr="data-target='#'+${eleve.idEleves}">
-												  Afficher
+												 <span class="glyphicon glyphicon-eye-open"></span> Afficher
 												</button>
 											</span>
 										</div>
@@ -118,11 +118,14 @@
 											     	
 											     </div>
 											     <div class="modal-footer">
-											        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+											        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+											        	Fermer <span class="glyphicon glyphicon-remove"></span> 
+											        </button>
 											        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
 											        <a class="btn btn-primary btn-sm" href="#" 
 															th:href="@{/logesco/users/getimprimerEleves(idEleves=${eleve.idEleves})}" 
-															role="button">Imprimer</a>
+															role="button">
+															<span class="glyphicon glyphicon-print"></span> Imprimer</a>
 											      </div>
 											</div>
 										</div>

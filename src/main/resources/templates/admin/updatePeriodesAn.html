@@ -68,8 +68,12 @@
 						
 					</fieldset>
 					
-					<button type="submit" class="btn btn-primary  pull-right">Envoyer</button>
-					<button type="reset" class="btn btn-danger">Effacer</button>
+					<button type="submit" class="btn btn-primary  pull-right">
+						<span class="glyphicon glyphicon-save"></span> Envoyer
+					</button>
+					<button type="reset" class="btn btn-danger">
+						<span class="glyphicon glyphicon-erase"></span>Effacer
+					</button>
 					
 			</form>
 		</div>
@@ -104,7 +108,7 @@
 			      				
 			      					<a class="btn btn-danger btn-sm pull-right" href="#" 
 			      						th:href="@{/logesco/admin/getsupprimerAnnee(idPeriodes=${a.idPeriodes})}" 
-			      						role="button">Supprimer</a>
+			      						role="button"><span class="glyphicon glyphicon-trash"></span> Supprimer</a>
 			      				</div>
 			      			</td>
 			      		</tr>

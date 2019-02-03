@@ -47,7 +47,7 @@
 						</div>
 						<button type="submit" class="btn btn-primary  pull-right" 
 							th:text="#{listeProvEleves.bouton_envoyer}">
-							Envoyer
+							<span class="glyphicon glyphicon-send"></span> Envoyer
 						</button>
 					
 					
@@ -110,7 +110,7 @@
 				<a class="btn btn-primary btn-sm pull-right" href="#" th:if="${classeSelect}"
 			      		th:href="@{/logesco/users/exportlistprovEleves(idClasseSelect=${idClasseSelect})}" 
 			      		role="button" target="_blank" th:text="#{listeProvEleves.bouton_export}">
-			      		Exporter la liste en PDF
+			      		<span class="glyphicon glyphicon-list-all"></span> Exporter la liste en PDF
 			     </a>
 				
 			</form>

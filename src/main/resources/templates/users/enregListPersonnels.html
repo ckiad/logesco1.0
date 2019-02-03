@@ -42,7 +42,10 @@
 	                       			 décrit dans le fichier ci-joint 
 						<a class="btn btn-default btn-sm pull-right" href="modeles/model personnel.xlsx" 
 				      			role="button" target="_blank"
-				      			th:href="@{/modeles/model personnel.xlsx}">Télécharger le modèle(.xlsx)</a>
+				      			th:href="@{/modeles/model personnel.xlsx}">
+				      			<span class="glyphicon glyphicon-cloud-download"></span>
+				      			Télécharger le modèle(.xlsx)
+				      	</a>
 					</fieldset>
 					
 					<fieldset class="col-md-12">
@@ -54,7 +57,9 @@
 										accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"/>
 								</div>
 					</fieldset>
-					<button type="submit" class="btn btn-primary  pull-right">Envoyer</button>
+					<button type="submit" class="btn btn-primary  pull-right">
+						<span class="glyphicon glyphicon-save"></span> Envoyer
+					</button>
 				</form>
 	</div>
 	<!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->

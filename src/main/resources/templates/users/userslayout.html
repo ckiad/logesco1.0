@@ -86,7 +86,7 @@
 									
 									</div>
 									<button type="submit" class="btn btn-primary  pull-right col-md-2" th:inline="text">
-										[[#{boitedialogue_configcours.bouton_configurer}]]
+										<span class="glyphicon glyphicon-wrench"></span> [[#{boitedialogue_configcours.bouton_configurer}]]
 									</button>
 										<br/>
 										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -97,7 +97,7 @@
 						<div class="modal-footer">
 						
 							<button type="button" class="btn btn-secondary" data-dismiss="modal" th:inline="text">
-								[[#{boitedialogue_configcours.bouton_fermer}]]
+								[[#{boitedialogue_configcours.bouton_fermer}]] <span class="glyphicon glyphicon-remove"></span> 
 							</button>
 							
 							
@@ -122,7 +122,7 @@
 									id="motifrechercheEleve" class="form-control" placeholder="Noms de l'élève recherché"  />
 								<br/>
 								<button type="submit" class="btn btn-primary   col-md-3" th:inline="text">
-									[[#{boitedialogue_recheleve.bouton_rechercher}]]
+									<span class="glyphicon glyphicon-search"></span> [[#{boitedialogue_recheleve.bouton_rechercher}]]
 								</button>
 								<br/>
 								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -131,7 +131,7 @@
 							<div class="modal-footer">
 						
 								<button type="button" class="btn btn-secondary" data-dismiss="modal" th:inline="text">
-									[[#{boitedialogue_recheleve.bouton_fermer}]]
+									[[#{boitedialogue_recheleve.bouton_fermer}]] <span class="glyphicon glyphicon-remove"></span> 
 								</button>
 							
 							</div>
@@ -178,7 +178,7 @@
 									
 									</div>
 									<button type="submit" class="btn btn-primary  col-md-4" th:inline="text">
-										[[#{boitedialogue_selectclasse.bouton_genererreleve}]]
+										<span class="glyphicon glyphicon-print"></span> [[#{boitedialogue_selectclasse.bouton_genererreleve}]]
 									</button>
 										<br/>
 										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -189,7 +189,7 @@
 						<div class="modal-footer">
 						
 							<button type="button" class="btn btn-secondary" data-dismiss="modal" th:inline="text">
-								[[#{boitedialogue_selectclasse.bouton_fermer}]]
+								[[#{boitedialogue_selectclasse.bouton_fermer}]] <span class="glyphicon glyphicon-remove"></span> 
 							</button>
 							
 							
@@ -212,7 +212,7 @@
                    <span layout:fragment="titre_boite"></span><!-- <h4>Modification du mot de passe</h4> -->
                     <a th:href="@{/logout}" 
                                     class="btn btn-default btn-sm pull-right" role="button">
-                                Se déconneter
+                                Se déconneter  <span class="glyphicon glyphicon-log-out"></span> 
                     </a>
                 </h4>
 				
@@ -232,21 +232,21 @@
                             <ul class="list-group">
                                 <li class="list-group-item" sec:authorize="hasAnyRole('ROLE_PROVISEUR')">
                                     <a href="#"  th:href="@{/logesco/users/chefetab/getenregEleves}" th:inline="text">
-                                        [[#{sousmenu_recrutement.enregEleves}]]
+                                        <span class="glyphicon glyphicon-education"></span> [[#{sousmenu_recrutement.enregEleves}]]
                                     </a>
                                 </li>
                                <!--  <li class="divider" sec:authorize="hasAnyRole('ROLE_PROVISEUR')"></li> -->
 
                                 <li class="list-group-item" sec:authorize="hasAnyRole('ROLE_PROVISEUR')">
                                     <a href="#"  th:href="@{/logesco/users/chefetab/getenregListEleves}" th:inline="text">
-                                        [[#{sousmenu_recrutement.enregListEleves}]]
+                                        <span class="glyphicon glyphicon-list-alt"></span> [[#{sousmenu_recrutement.enregListEleves}]]
                                     </a>
                                 </li>
                                 <!-- <li class="divider" sec:authorize="hasAnyRole('ROLE_PROVISEUR')"></li> -->
 
                                 <li class="list-group-item" sec:authorize="hasAnyRole('ROLE_PROVISEUR')">
                                     <a href="#"  th:href="@{/logesco/users/chefetab/getgestionEleves}" th:inline="text">
-                                       [[#{sousmenu_recrutement.gestionEleves}]]
+                                      <span class="glyphicon glyphicon-wrench"></span> [[#{sousmenu_recrutement.gestionEleves}]]
                                     </a>
                                 </li>
 
@@ -264,13 +264,13 @@
                             <ul class="list-group">
                                 <li class="list-group-item" sec:authorize="hasAnyRole('ROLE_INTENDANT')">
                                     <a href="#" th:href="@{/logesco/users/intendant/getconfigClasses}" th:inline="text">
-                                        [[#{sousmenu_fraisscolarite.configClasses}]]
+                                        <span class="glyphicon glyphicon-wrench"></span> [[#{sousmenu_fraisscolarite.configClasses}]]
                                     </a>
                                 </li>
 						        <!-- <li class="divider" sec:authorize="hasAnyRole('ROLE_INTENDANT')"></li> -->
                                 <li class="list-group-item" sec:authorize="hasAnyRole('ROLE_INTENDANT')">
                                     <a href="#" th:href="@{/logesco/users/intendant/getinscriptionEleves}" th:inline="text">
-                                        [[#{sousmenu_fraisscolarite.inscriptionEleves}]]
+                                       <span class="glyphicon glyphicon-refresh"></span> [[#{sousmenu_fraisscolarite.inscriptionEleves}]]
                                     </a>
                                 </li>
                             </ul>
@@ -288,20 +288,20 @@
                             <ul class="list-group">
                                 <li class="list-group-item" >
                                     <a href="#"  data-toggle="modal" data-target="#dialogsendMotifRechElv" th:inline="text">
-                                        [[#{sousmenu_listes.rechEleve}]]
+                                        <span class="glyphicon glyphicon-search"></span> [[#{sousmenu_listes.rechEleve}]]
                                     </a>
                                 </li>
 						        <!-- <li class="divider" sec:authorize="hasAnyRole('ROLE_INTENDANT')"></li> -->
                                 <li class="list-group-item" sec:authorize="hasAnyRole('ROLE_PROVISEUR',
                                         'ROLE_INTENDANT','ROLE_SUPERADMIN')">
                                     <a href="#" th:href="@{/logesco/users/getlisteProvEleves}" th:inline="text">
-                                        [[#{sousmenu_listes.listprovEleve}]]
+                                       <span class="glyphicon glyphicon-list-alt"></span> [[#{sousmenu_listes.listprovEleve}]]
                                     </a>
                                 </li>
                                 <li class="list-group-item" sec:authorize="hasAnyRole('ROLE_PROVISEUR',
                                          'ROLE_INTENDANT','ROLE_SUPERADMIN')">
                                     <a href="#" th:href="@{/logesco/users/getlisteDefEleves}" th:inline="text">
-                                        [[#{sousmenu_listes.listdefEleve}]]
+                                       <span class="glyphicon glyphicon-list-alt"></span> [[#{sousmenu_listes.listdefEleve}]]
                                     </a>
                                 </li>
                             </ul>
@@ -318,18 +318,18 @@
                             <ul class="list-group">
                                 <li class="list-group-item" >
                                     <a href="#" th:href="@{/logesco/users/chefetab/getenregPersonnels}" th:inline="text">
-										[[#{sousmenu_personnels.enregPersonnels}]]
+										<span class="glyphicon glyphicon-save"></span> [[#{sousmenu_personnels.enregPersonnels}]]
 									 </a>
                                 </li>
 						        <!-- <li class="divider" sec:authorize="hasAnyRole('ROLE_INTENDANT')"></li> -->
                                 <li class="list-group-item">
                                     <a href="#" th:href="@{/logesco/users/chefetab/getenregListPersonnels}" th:inline="text">
-											[[#{sousmenu_personnels.enregListPersonnels}]]
+											<span class="glyphicon glyphicon-list-alt"></span> [[#{sousmenu_personnels.enregListPersonnels}]]
 								   </a>
                                 </li>
                                 <li class="list-group-item" sec:authorize="hasAnyRole('ROLE_PROVISEUR')">
                                     <a href="#" th:href="@{/logesco/users/chefetab/getupdateProviseur}" th:inline="text">
-										[[#{sousmenu_personnels.updatePersonnels}]]
+										<span class="glyphicon glyphicon-edit"></span> [[#{sousmenu_personnels.updatePersonnels}]]
 									</a>
                                 </li>
                             </ul>
@@ -346,22 +346,22 @@
                             <ul class="list-group">
                                 <li class="list-group-item">
                                     <a href="#"   th:href="@{/logesco/users/chefetab/getconsulterCenseurs}" th:inline="text">
-											[[#{sousmenu_personnels.afficherListCenseurs}]]
+										<span class="glyphicon glyphicon-sunglasses"></span>	[[#{sousmenu_personnels.afficherListCenseurs}]]
 									</a>
                                 </li>
                                 <li class="list-group-item">
                                     <a href="#"   th:href="@{/logesco/users/chefetab/getconsulterEnseignants}" th:inline="text">
-											[[#{sousmenu_personnels.afficherListEnseignants}]]
+										<span class="glyphicon glyphicon-sunglasses"></span>	[[#{sousmenu_personnels.afficherListEnseignants}]]
 								    </a>
                                 </li>
                                 <li class="list-group-item">
                                     <a href="#"   th:href="@{/logesco/users/chefetab/getconsulterIntendants}" th:inline="text">
-											[[#{sousmenu_personnels.afficherListIntendants}]]
+										<span class="glyphicon glyphicon-sunglasses"></span>	[[#{sousmenu_personnels.afficherListIntendants}]]
 									 </a>
                                 </li>
                                 <li class="list-group-item">
                                     <a href="#"   th:href="@{/logesco/users/chefetab/getconsulterPersonnels}" th:inline="text">
-											[[#{sousmenu_personnels.consulterPersonnels}]]
+										<span class="glyphicon glyphicon-sunglasses"></span>	[[#{sousmenu_personnels.consulterPersonnels}]]
 									 </a>
                                 </li>
                                 
@@ -378,12 +378,12 @@
                             <ul class="list-group">
                             	<li class="list-group-item">
                                     <a href="#" th:href="@{/logesco/users/censeur/getupdateSequence}" th:inline="text">
-										[[#{sousmenu_periodes.updateSequence}]]
+										<span class="glyphicon glyphicon-wrench"></span> [[#{sousmenu_periodes.updateSequence}]]
 									</a>
                                 </li>
                                 <li class="list-group-item">
                                     <a href="#" th:href="@{/logesco/users/censeur/getupdateTrimestre}" th:inline="text">
-										[[#{sousmenu_periodes.updateTrimestre}]]
+										<span class="glyphicon glyphicon-wrench"></span> [[#{sousmenu_periodes.updateTrimestre}]]
 									</a>
                                 </li>
                             </ul>
@@ -401,7 +401,7 @@
                             	<li class="list-group-item" 
                             			sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_SUPERADMIN')">
                             			<a href="#" th:href="@{/logesco/users/censeur/getupdateTitulaire}" th:inline="text">
-											[[#{sousmenu_periodes.updateTitulaire}]]
+											<span class="glyphicon glyphicon-wrench"></span> [[#{sousmenu_periodes.updateTitulaire}]]
 										</a>
                             	</li>
                             	
@@ -443,7 +443,7 @@
                             	<li class="list-group-item" sec:authorize="hasAnyRole('ROLE_CENSEUR')">
                             		<a href="#"  
 										data-toggle="modal" data-target="#dialogChoixClasseReleve" th:inline="text">
-											[[#{sousmenu_notes.releveNote}]]
+										<span class="glyphicon glyphicon-cloud-download"></span>	[[#{sousmenu_notes.releveNote}]]
 									</a>
                             	</li>
                             	<!-- <li class="list-group-item" sec:authorize="hasAnyRole('ROLE_ENSEIGNANT')">
@@ -453,38 +453,38 @@
                             	</li> -->
                             	<li class="list-group-item" sec:authorize="hasAnyRole('ROLE_ENSEIGNANT')">
                             		<a href="#" th:href="@{/logesco/users/getdonneesSaisieNotesV1}" th:inline="text">
-										[[#{sousmenu_notes.gererNoteV1}]]
+										<span class="glyphicon glyphicon-wrench"></span> [[#{sousmenu_notes.gererNoteV1}]]
 									</a>
                             	</li>
                             	<li class="list-group-item" 
                             			sec:authorize="hasAnyRole('ROLE_TITULAIRE','ROLE_CENSEUR')">
                             		<a href="#" th:href="@{/logesco/users/getlistprocesverbalEvalSeq}"  th:inline="text">
-										[[#{sousmenu_notes.procesverbalEvalSeq}]] 
+										<span class="glyphicon glyphicon-list-alt"></span> [[#{sousmenu_notes.procesverbalEvalSeq}]]
 									</a>
                             	</li>
                             	<li class="list-group-item" 
                             			sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_SUPERADMIN')" >
                             		<a href="#" th:href="@{/logesco/users/censeur/getrapportEvalSeq}" th:inline="text">
-										 [[#{sousmenu_notes.rapportEvaluationSequentiel}]] 
+										<span class="glyphicon glyphicon-list-alt"></span>  [[#{sousmenu_notes.rapportEvaluationSequentiel}]]
 									</a>
                             	</li>
                             	<li class="list-group-item" 
                             			sec:authorize="hasAnyRole('ROLE_TITULAIRE','ROLE_CENSEUR','ROLE_SUPERADMIN')"  >
                             		<a href="#" th:href="@{/logesco/users/getlistprocesverbalEvalTrim}" th:inline="text">
-										[[#{sousmenu_notes.procesverbalTrimNotes}]]
+										<span class="glyphicon glyphicon-list-alt"></span> [[#{sousmenu_notes.procesverbalTrimNotes}]]
 								  	</a>
                             	</li>
                             	<li class="list-group-item" 
                             			sec:authorize="hasAnyRole('ROLE_ENSEIGNANT','ROLE_SUPERADMIN')"  >
                             		<a href="#"  th:href="@{/logesco/users/getlistcoursofEnseignant}" 
                             			th:inline="text" target="_blank">
-										[[#{sousmenu_notes.exportListCours}]]
+										<span class="glyphicon glyphicon-cloud-download"></span> [[#{sousmenu_notes.exportListCours}]]
 									</a>
                             	</li>
                             	<li class="list-group-item" 
                             			sec:authorize="hasAnyRole('ROLE_ENSEIGNANT','ROLE_SUPERADMIN')" >
                             		<a href="#" data-toggle="modal" data-target="#dialogsendMotifRechElv" th:inline="text">
-										[[#{sousmenu_notes.rechercheEleve}]]
+										<span class="glyphicon glyphicon-search"></span> [[#{sousmenu_notes.rechercheEleve}]]
 									</a>
                             	</li>
                            </ul>
@@ -502,25 +502,25 @@
                             	<li class="list-group-item">
                             		<a href="#"  th:href="@{/logesco/users/bulletins/getdonneesEditionsBulletinsSeq}"  
 										th:inline="text" >
-										[[#{sousmenu_bulletins.genererBulletinSequentiel}]]
+										<span class="glyphicon glyphicon-cloud-download"></span> [[#{sousmenu_bulletins.genererBulletinSequentiel}]]
 									</a>
                             	</li>
                             	<li class="list-group-item">
                             		<a href="#" th:href="@{/logesco/users/bulletins/getdonneesEditionsBulletinsTrim}"
 										th:inline="text">
-										[[#{sousmenu_bulletins.genererBulletinTrimestriel}]]
+										<span class="glyphicon glyphicon-cloud-download"></span> [[#{sousmenu_bulletins.genererBulletinTrimestriel}]]
 									</a>
                             	</li>
                             	<li class="list-group-item">
                             		<a href="#" th:href="@{/logesco/users/bulletins/getdonneesEditionsBulletinsTrimAn}"
 										th:inline="text">
-										[[#{sousmenu_bulletins.genererBulletinTrimestrielAvecRapportAnnuel}]]
+										<span class="glyphicon glyphicon-cloud-download"></span> [[#{sousmenu_bulletins.genererBulletinTrimestrielAvecRapportAnnuel}]]
 									</a>
                             	</li>
                             	<li class="list-group-item">
                             		<a href="#" th:href="@{/logesco/users/bulletins/getdonneesEditionsBulletinsAn}"
 										th:inline="text">
-										[[#{sousmenu_bulletins.genererBulletinAnnuel}]]
+										<span class="glyphicon glyphicon-cloud-download"></span> [[#{sousmenu_bulletins.genererBulletinAnnuel}]]
 									</a>
                             	</li>
                             	

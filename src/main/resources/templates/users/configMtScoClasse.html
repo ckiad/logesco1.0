@@ -65,7 +65,9 @@
 								id="numPageClasses" class="form-control" th:value="*{numPageClasses}" />
 								
 						<button type="submit" class="btn btn-primary  pull-right" 
-							th:text="#{configMtScoClasse.bouton_envoyer}">Envoyer</button>
+							th:text="#{configMtScoClasse.bouton_envoyer}">
+							Envoyer <span class="glyphicon glyphicon-save"></span>
+						</button>
 					</div>
 					
 				</fieldset>
@@ -98,7 +100,9 @@
 			      					<a class="btn btn-primary btn-sm pull-right" href="#"  
 			      						th:href="@{/logesco/users/intendant/getmodifMtScoClasses(idClassesAConfig=${c.idClasses},
 			      						numPageClasses=${pageCourante})}" 
-			      						role="button" th:text="#{configMtScoClasse.bouton_modifier}">Modifier</a>
+			      						role="button" th:text="#{configMtScoClasse.bouton_modifier}">
+			      						<span class="glyphicon glyphicon-edit"></span> Modifier
+			      					</a>
 			      				</span>
 			      				</div>
 			      			</td>
@@ -118,7 +122,9 @@
 				
 				<a class="btn btn-primary btn-lg pull-right" href="#" 
 			      						th:href="@{/logesco/users/intendant/exportlistClasses}" 
-			      						role="button" th:text="#{configMtScoClasse.bouton_export}">Exporter la liste des classes</a>
+			      						role="button" th:text="#{configMtScoClasse.bouton_export}">
+			      						<span class="glyphicon glyphicon-list-alt"></span> Exporter la liste des classes
+			    </a>
 				
 			</fieldset>
 		

@@ -70,7 +70,9 @@
 									class="form-control" th:value="${anneeActive.idPeriodes}" />
 						</div>
 							
-						<button type="submit" class="btn btn-primary  pull-right">Envoyer</button>
+						<button type="submit" class="btn btn-primary  pull-right">
+							<span class="glyphicon glyphicon-send"></span> Envoyer
+						</button>
 						
 					</div>	
 					</form>
@@ -86,7 +88,7 @@
 						<fieldset class="col-md-12" th:if="${session.getrapporttrim}">
 							<legend class="text-primary">Bouton de génération du rapport de conseil</legend>
 							<button type="submit" class="btn btn-primary">
-								Générer le rapport de conseil de classe trimestriel
+								<span class="glyphicon glyphicon-cloud-download"></span> Générer le rapport de conseil de classe trimestriel
 							</button>
 						</fieldset>
 						
