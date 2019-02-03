@@ -477,6 +477,16 @@ public class AdminServiceImplementation implements IAdminService {
 	public Cycles getCyclesById(Long idCycles) {
 		return cyclesRepository.getOne(idCycles);
 	}
+	
+	@Override
+	public Sections getSectionsById(Long idSections){
+		return sectionsRepository.getOne(idSections);
+	}
+	
+	@Override
+	public Niveaux getNiveauById(Long idNiveaux){
+		return niveauxRepository.getOne(idNiveaux);
+	}
 
 	@Override
 	public List<Niveaux> findListNiveauxCycles(Long idCycles) {
@@ -504,6 +514,25 @@ public class AdminServiceImplementation implements IAdminService {
 		niveauxRepository.save(niveau);
 		
 		return 1;
+	}
+	
+	@Override
+	public int updateNiveaux(String codeNiveauxAModif, Niveaux niveauModif){
+		Niveaux niveauAModif=null;
+		niveauAModif=this.findNiveau(codeNiveauxAModif);
+		
+		if(niveauAModif==null) return 0;
+		
+		niveauAModif.setCodeNiveaux(niveauModif.getCodeNiveaux());
+		niveauAModif.setCodeNiveaux_en(niveauModif.getCodeNiveaux_en());
+		niveauAModif.setCycle(niveauModif.getCycle());
+		niveauAModif.setNiveau(niveauModif.getNiveau());
+		niveauAModif.setNumeroOrdreNiveaux(niveauModif.getNumeroOrdreNiveaux());
+		
+		Niveaux niveauUpdate=niveauxRepository.save(niveauAModif);
+		
+		if(niveauUpdate!=null) return 1;
+		return -1;
 	}
 
 	@Override
@@ -557,6 +586,28 @@ public class AdminServiceImplementation implements IAdminService {
 		sectionsRepository.save(sections);
 		return 1;
 	}
+	
+	@Override
+	public int updateSections(String codeSectionAModif, Sections sectionModif){
+		Sections sectionAModif=null;
+		
+		sectionAModif=this.findSections(codeSectionAModif);
+		
+		if(sectionAModif==null) return 0;
+		
+		
+		sectionAModif.setCodeSections(sectionModif.getCodeSections());
+		sectionAModif.setCodeSections_en(sectionModif.getCodeSections_en());
+		sectionAModif.setIntituleSections(sectionModif.getIntituleSections());
+		sectionAModif.setIntituleSections_en(sectionModif.getIntituleSections_en());
+		
+		Sections sectionUpdate=sectionsRepository.save(sectionAModif);
+		
+		if(sectionUpdate!=null) return 1;
+		return -1;
+	}
+	
+	
 
 	@Override
 	public List<Classes> findListClassesSections(Long idSections) {
@@ -1008,6 +1059,7 @@ public class AdminServiceImplementation implements IAdminService {
 		
 		if(cycleAModif==null) return 0;
 		
+		
 		cycleAModif.setCodeCycles(cycleModif.getCodeCycles());
 		cycleAModif.setCodeCycles_en(cycleModif.getCodeCycles_en());
 		cycleAModif.setNumeroOrdreCycles(cycleModif.getNumeroOrdreCycles());
@@ -1090,6 +1142,18 @@ public class AdminServiceImplementation implements IAdminService {
 		}
 		catch(Exception e){
 			log.log(Level.WARN, "**** EXCEPTION DANS findSections **** "+e.getMessage());
+			return null;
+		}
+	}
+	
+	@Override
+	public Niveaux findNiveau(String codeNiveaux){
+		try{
+			Niveaux niveauRechercher=niveauxRepository.findByCodeNiveaux(codeNiveaux);
+			return niveauRechercher;
+		}
+		catch(Exception e){
+			log.log(Level.WARN, "**** EXCEPTION DANS findNiveaux **** "+e.getMessage());
 			return null;
 		}
 	}

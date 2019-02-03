@@ -11,13 +11,13 @@
 <body>
 <div layout:fragment="formactionadmin">
 <!-- debut du FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
-<div class="col-md-6  col-md-offset-3  reculeverticalementmodifpasswordform">
+<div class="col-md-10  col-md-offset-1  reculeverticalementmodifpasswordform">
 	<div class="panel panel-primary">
 		<div class="panel-heading">
 			<h4>Enregistrement ou mise à jour des différentes sections d'étude</h4>
 		</div>
 		<div class="panel-body">
-		<div class="col-md-5">
+		<div class="col-md-4">
 			<form action="#" th:action="@{/logesco/admin/postupdateSections}"
 						th:object="${updateSectionsForm}" method="post">
 						
@@ -43,6 +43,16 @@
 						</div>
 						
 						<div class="form-group">
+								<label for="codeSections_en"> Code en anglais: <span
+									class="redcolor">*</span></label> <input type="text" name="codeSections_en"
+									id="codeSections_en" class="form-control" th:value="*{codeSections_en}" th:field="*{codeSections_en}"
+									placeholder="Code de la section en anglais" />
+						</div>
+						<div th:if="${#fields.hasErrors('codeSections_en')}"
+								th:errors="*{codeSections_en}" class="redcolor">Erreur de code section
+						</div>
+						
+						<div class="form-group">
 								<label for="intituleSections"> Libellé: <span
 									class="redcolor">*</span></label> <input type="text" name="intituleSections"
 									id="intituleSections" class="form-control" th:value="*{intituleSections}" th:field="*{intituleSections}"
@@ -52,6 +62,26 @@
 								th:errors="*{intituleSections}" class="redcolor">Erreur de libelle section
 						</div>
 						
+						<div class="form-group">
+								<label for="intituleSections_en"> Wording: <span
+									class="redcolor">*</span></label> <input type="text" name="intituleSections_en"
+									id="intituleSections_en" class="form-control" th:value="*{intituleSections_en}" th:field="*{intituleSections_en}"
+									placeholder="School section wording" />
+						</div>
+						<div th:if="${#fields.hasErrors('intituleSections_en')}"
+								th:errors="*{intituleSections_en}" class="redcolor">Erreur de libelle section
+						</div>
+						
+						<div class="form-group"> 
+							<input type="hidden" name="codeSectionsAModif" id="codeSectionsAModif"
+										class="form-control"  th:value="*{codeSectionsAModif}"/>
+						</div>
+						
+						<div class="form-group"> 
+							<input type="hidden" name="enregOrmodif" id="enregOrmodif"
+										class="form-control"  th:value="*{enregOrmodif}"/>
+						</div>
+						
 					</fieldset>
 					
 					<button type="submit" class="btn btn-primary  pull-right">Envoyer</button>
@@ -59,7 +89,7 @@
 						
 			</form>
 		</div>
-		<div class="col-md-7">
+		<div class="col-md-8">
 			<div th:if="${param.supprimSectionserrorClasses}">
 				<h4 align="justify" class="alert alert-danger">Impossible de supprimer un niveau qui englobe des classes.</h4>
 			</div>
@@ -69,17 +99,25 @@
 				 	<thead>
 				 		<tr>
 						 	<th scope="col">Code</th>
-					      	<th scope="col">Libellé</th>
+					      	<th scope="col">Libellé/Wording</th>
 					      	<th class="text-center" scope="col">Action</th>
 				      	</tr>
 			      	</thead>
 			      	<tbody>
 			      		<tr th:each="s:${listofSections}">
-			      			<td th:text="${s.codeSections}"></td>
-			      			<td th:text="${s.intituleSections}"></td>
+			      			<td th:inline="text">
+			      				[[${s.codeSections}]]/[[${s.codeSections_en}]] 
+			      			</td>
+			      			<td th:inline="text">
+			      				[[${s.intituleSections}]]/[[${s.intituleSections_en}]]
+			      			</td>
 			      			<td>
 			      				<div>
-			      					<a class="btn btn-danger btn-sm" href="#" 
+			      					<a class="btn btn-primary btn-sm" href="#" 
+      									th:href="@{/logesco/admin/getupdateSections(idSections=${s.idSections})}" 
+      									role="button">Modifier</a>
+      						
+			      					<a class="btn btn-danger btn-sm pull-right" href="#" 
 			      						th:href="@{/logesco/admin/getsupprimerSection(idSections=${s.idSections})}" 
 			      						role="button">Supprimer</a>
 			      				</div>

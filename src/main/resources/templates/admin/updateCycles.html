@@ -66,9 +66,10 @@
 							<h4 align="justify" class="alert alert-danger">Un cycle existe déjà avec ce code .</h4>
 					</div>
 					
-					<div th:if="${param.updatecycleserrorInForm}">
-							<h4 align="justify" class="alert alert-danger">Erreur de remplissage dans le formulaire .</h4>
+					<div th:if="${param.updatecycleserrormodif}">
+							<h4 align="justify" class="alert alert-danger">Echec de modification: verifier vos données .</h4>
 					</div>
+					
 			
 				<fieldset class="col-md-6">
 						<legend class="text-primary">Enregistrement des cycles</legend>

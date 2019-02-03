@@ -4,7 +4,6 @@
 package org.logesco.modeles;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @author cedrickiadjeu

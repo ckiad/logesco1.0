@@ -43,6 +43,9 @@ public class Niveaux implements Serializable {
 	@Column(unique=true)
 	private int numeroOrdreNiveaux;
 	
+	@NotNull
+	private String codeNiveaux_en;
+	
 	/******************************************
 	 * Mapping des associations avec les autres tables
 	 ******************************************/
@@ -188,6 +191,20 @@ public class Niveaux implements Serializable {
 	 */
 	public void setNiveau(Niveaux niveau) {
 		this.niveau = niveau;
+	}
+
+	/**
+	 * @return the codeNiveaux_en
+	 */
+	public String getCodeNiveaux_en() {
+		return codeNiveaux_en;
+	}
+
+	/**
+	 * @param codeNiveaux_en the codeNiveaux_en to set
+	 */
+	public void setCodeNiveaux_en(String codeNiveaux_en) {
+		this.codeNiveaux_en = codeNiveaux_en;
 	}
 
 	

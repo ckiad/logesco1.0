@@ -545,11 +545,45 @@ public interface IAdminService {
 	 */
 	public Sections findSections(String codeSection);
 	
+	/**
+	 * Recherche une section dans la base de données à partir de son id
+	 * Retourne la section trouve ou null
+	 */
+	public Sections getSectionsById(Long idSections);
+	
+	/******
+	 * Update une section
+	 * 	Retourne 	1 si tout s'est bien passe
+	 * 					0 si on veut modifier une section avec un code existant 
+	 * 					-1 pour toutes autres erreur
+	 */
+	public int updateSections(String codeSectionAModif, Sections sectionModif);
+	
+	/**
+	 * Recherche un niveau dans la base de données à partir de son id
+	 * Retourne le niveau trouve ou null
+	 */
+	public Niveaux getNiveauById(Long idNiveaux);
+	
 	/****
 	 * Retourne le Niveau dont le numero d'ordre est envoyé en parametre 
-	 * et null si cette section n'existe pas
+	 * et null si ce niveau n'existe pas
 	 */
 	public Niveaux findNiveau(int numeroOrdreNiveaux);
+	
+	/****
+	 * Retourne le Niveau dont le code est envoyé en parametre 
+	 * et null si ce niveau n'existe pas
+	 */
+	public Niveaux findNiveau(String codeNiveaux);
+	
+	/******
+	 * Update un niveau
+	 * 	Retourne 	1 si tout s'est bien passe
+	 * 					0 si on veut modifier un niveau avec un code existant 
+	 * 					-1 pour toutes autres erreur
+	 */
+	public int updateNiveaux(String codeNiveauxAModif, Niveaux niveauModif);
 	
 	/*****************************************************************************
 	 * Enregistre une classe

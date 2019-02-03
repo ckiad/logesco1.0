@@ -36,7 +36,6 @@ public class Cycles implements Serializable {
 	private String codeCycles;
 	
 	@NotNull
-	@Column(unique=true)
 	private String codeCycles_en;
 	
 	@NotNull

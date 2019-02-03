@@ -310,9 +310,9 @@ public class AdminController {
 		updateCyclesForm.setEnregOrmodif("enreg");
 		
 		/*
-		 * Si on n'a cliquer sur un bouton modifier alors le paramètre idSpecialite existe dans 
+		 * Si on n'a cliquer sur un bouton modifier alors le paramètre idCycles existe dans 
 		 * la requete donc 
-		 * On recherche la specialite a modifier et on met à jour le formulaire
+		 * On recherche le cycle a modifier et on met à jour le formulaire
 		 */
 		
 		if(idCycles!=null){
@@ -365,10 +365,40 @@ public class AdminController {
 	
 	@GetMapping(path="/getupdateNiveaux")
 	public String getupdateNiveaux(@ModelAttribute("updateNiveauxForm") 
-	UpdateNiveauxForm updateNiveauxForm, 
+	UpdateNiveauxForm updateNiveauxForm, Long idNiveaux,
 	Model model, HttpServletRequest request){
 		
 		constructModelUpdateNiveaux(model);
+		
+		/*
+		 * Action par défaut à réaliser
+		 */
+		updateNiveauxForm.setEnregOrmodif("enreg");
+		
+		/*
+		 * Si on n'a cliquer sur un bouton modifier alors le paramètre idNiveaux existe dans 
+		 * la requete donc 
+		 * On recherche le niveaux a modifier et on met à jour le formulaire
+		 */
+		
+		if(idNiveaux!=null){
+			Niveaux niveauAModif=adminService. getNiveauById(idNiveaux);
+			
+			updateNiveauxForm.setCodeCycles(niveauAModif.getCycle().getCodeCycles());
+			updateNiveauxForm.setCodeNiveaux(niveauAModif.getCodeNiveaux());
+			updateNiveauxForm.setCodeNiveaux_en(niveauAModif.getCodeNiveaux_en());
+			/*
+			 * Un niveau superieur peut etre null comme normalement avec la terminale
+			 */
+			if(niveauAModif.getNiveau()!=null){
+				updateNiveauxForm.setCodeNiveauxSup(niveauAModif.getNiveau().getCodeNiveaux());
+			}
+			updateNiveauxForm.setNumeroOrdreNiveaux(niveauAModif.getNumeroOrdreNiveaux());
+			updateNiveauxForm.setEnregOrmodif("modif");
+			
+			updateNiveauxForm.setCodeNiveauxAModif(niveauAModif.getCodeNiveaux());
+		}
+		
 		
 		return "admin/updateNiveaux";
 	}
@@ -407,10 +437,33 @@ public class AdminController {
 	
 	@GetMapping(path="/getupdateSections")
 	public String getupdateSections(@ModelAttribute("updateSectionsForm") 
-	UpdateSectionsForm updateSectionsForm, 
+	UpdateSectionsForm updateSectionsForm, Long idSections,
 	Model model, HttpServletRequest request){
 		
 		this.constructModelUpdateSections(model);
+		
+		/*
+		 * Action par défaut à réaliser
+		 */
+		updateSectionsForm.setEnregOrmodif("enreg");
+		
+		/*
+		 * Si on n'a cliquer sur un bouton modifier alors le paramètre idSections existe dans 
+		 * la requete donc 
+		 * On recherche la sections a modifier et on met à jour le formulaire
+		 */
+		
+		if(idSections!=null){
+			Sections sectionAModif=adminService. getSectionsById(idSections);
+			
+			updateSectionsForm.setCodeSections(sectionAModif.getCodeSections());
+			updateSectionsForm.setCodeSections_en(sectionAModif.getCodeSections_en());
+			updateSectionsForm.setIntituleSections(sectionAModif.getIntituleSections());
+			updateSectionsForm.setIntituleSections_en(sectionAModif.getIntituleSections_en());
+			updateSectionsForm.setEnregOrmodif("modif");
+			
+			updateSectionsForm.setCodeSectionsAModif(sectionAModif.getCodeSections());
+		}
 		
 		return "admin/updateSections";
 	}
@@ -1304,7 +1357,9 @@ public class AdminController {
 					updateCyclesForm.getCodeCyclesAModif(), cycleModif);
 			
 			if(repServeur==0) 
-				return "redirect:/logesco/admin/getupdateCycles?updatecycleserror";
+				return "redirect:/logesco/admin/getupdateCycles?updatecycleserrormodif";
+			if(repServeur==-1) 
+				return "redirect:/logesco/admin/getupdateCycles?updatecycleserrorCode";
 		
 		}
 		return "redirect:/logesco/admin/getupdateCycles?updatecyclessuccess";
@@ -1321,36 +1376,63 @@ public class AdminController {
 					throws ParseException, Exception{
 		System.err.println("DEBUT DE POSTUPDATENIVEAU");
 		if (bindingResult.hasErrors()) {
-			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE");
+			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE "+bindingResult.getFieldError());
+			
 			constructModelUpdateNiveaux(model);
 			return "admin/updateNiveaux";
 		}
 		
-		Niveaux niveau=new Niveaux();
-		niveau.setCodeNiveaux(updateNiveauxForm.getCodeNiveaux());
-		niveau.setNumeroOrdreNiveaux(updateNiveauxForm.getNumeroOrdreNiveaux());
-		System.err.println("RECUPERATION DU CYCLE SAISI POUR LE NIVEAU");
-		Cycles cycle=adminService.getCyclesByCodeCycles(updateNiveauxForm.getCodeCycles());
-		if(cycle!=null) niveau.setCycle(cycle);
-		
-		Niveaux niveauSup=adminService.getNiveauxByCodeNiveaux(
-					updateNiveauxForm.getCodeNiveauxSup());
-		
-		if(niveauSup!=null)System.err.println("NIVEAUX SUP TROUVE EST "+
-				niveauSup.toString()+" POUR LE CODE "+
-				updateNiveauxForm.getCodeNiveauxSup());
-		
-		niveau.setNiveau(niveauSup);
+		if(updateNiveauxForm.getEnregOrmodif().equals("enreg")){
+			Niveaux niveau=new Niveaux();
+			niveau.setCodeNiveaux(updateNiveauxForm.getCodeNiveaux());
+			niveau.setNumeroOrdreNiveaux(updateNiveauxForm.getNumeroOrdreNiveaux());
+			System.err.println("RECUPERATION DU CYCLE SAISI POUR LE NIVEAU");
+			Cycles cycle=adminService.getCyclesByCodeCycles(updateNiveauxForm.getCodeCycles());
+			if(cycle!=null) niveau.setCycle(cycle);
 			
-		System.err.println("AUCUNE ERREUR JUSQUICI ON PEUT DONC SAVE LE NIVEAUX");
-		int reponseSaveNiveau=4;
-		reponseSaveNiveau=adminService.saveNiveaux(niveau);
+			Niveaux niveauSup=adminService.getNiveauxByCodeNiveaux(
+						updateNiveauxForm.getCodeNiveauxSup());
+			
+			if(niveauSup!=null)System.err.println("NIVEAUX SUP TROUVE EST "+
+					niveauSup.toString()+" POUR LE CODE "+
+					updateNiveauxForm.getCodeNiveauxSup());
+			
+			niveau.setNiveau(niveauSup);
+				
+			System.err.println("AUCUNE ERREUR JUSQUICI ON PEUT DONC SAVE LE NIVEAUX");
+			int reponseSaveNiveau=4;
+			reponseSaveNiveau=adminService.saveNiveaux(niveau);
+			
+			if(reponseSaveNiveau==0) return "redirect:/logesco/admin/getupdateNiveaux?"
+					+ "updateniveauxerrorNumeroOrdre";
+			if(reponseSaveNiveau==-1) return "redirect:/logesco/admin/getupdateNiveaux?"
+					+ "updateniveauxerrorCode";
+			System.err.println("ON A ENREGISTRER LE niveau ET IL FAUT DONC RETOURNER");
+		}
 		
-		if(reponseSaveNiveau==0) return "redirect:/logesco/admin/getupdateNiveaux?"
-				+ "updateniveauxerrorNumeroOrdre";
-		if(reponseSaveNiveau==-1) return "redirect:/logesco/admin/getupdateNiveaux?"
-				+ "updateniveauxerrorCode";
-		System.err.println("ON A ENREGISTRER LE niveau ET IL FAUT DONC RETOURNER");
+		else if(updateNiveauxForm.getEnregOrmodif().equals("modif")){
+
+			System.err.println("FAUT DONC EFFECTUER LA MODIFICATION du niveau");
+			System.err.println(updateNiveauxForm.getCodeNiveaux());
+			System.err.println(updateNiveauxForm.getCodeNiveaux_en());
+			
+			Niveaux niveauModif=new Niveaux();
+			niveauModif.setCodeNiveaux(updateNiveauxForm.getCodeNiveaux());
+			niveauModif.setCodeNiveaux_en(updateNiveauxForm.getCodeNiveaux_en());
+			niveauModif.setCycle(adminService.findCycles(updateNiveauxForm.getCodeCycles()));
+			niveauModif.setNiveau(adminService.findNiveau(updateNiveauxForm.getCodeNiveauxSup()));
+			niveauModif.setNumeroOrdreNiveaux(updateNiveauxForm.getNumeroOrdreNiveaux());
+			
+			int repServeur=adminService.updateNiveaux(
+					updateNiveauxForm.getCodeNiveauxAModif(), niveauModif);
+			
+			if(repServeur==0) 
+				return "redirect:/logesco/admin/getupdateNiveaux?updateniveauxerrormodif";
+			if(repServeur==-1) 
+				return "redirect:/logesco/admin/getupdateNiveaux?updateniveauxerrorCode";
+		
+		}
+		
 		
 		return "redirect:/logesco/admin/getupdateNiveaux?updateniveauxsuccess";
 	}
@@ -1367,19 +1449,45 @@ public class AdminController {
 		System.err.println("DEBUT DE POSTUPDATESECTION");
 		
 		if (bindingResult.hasErrors()) {
-			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE");
+			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE "+bindingResult.getFieldError());
+			
 			this.constructModelUpdateSections(model);
 			return "admin/updateSections";
 		}
 		
-		Sections sections=new Sections();
-		sections.setCodeSections(updateSectionsForm.getCodeSections());
-		sections.setIntituleSections(updateSectionsForm.getIntituleSections());
+		if(updateSectionsForm.getEnregOrmodif().equals("enreg")){
+			Sections sections=new Sections();
+			sections.setCodeSections(updateSectionsForm.getCodeSections());
+			sections.setIntituleSections(updateSectionsForm.getIntituleSections());
+			
+			int reponseSaveSection=4;
+			reponseSaveSection=adminService.saveSections(sections);
+			if(reponseSaveSection==0) return "redirect:/logesco/admin/getupdateSections?"
+					+ "updatesectionserrorCode";
+			
+			System.err.println("ON A ENREGISTRER la section ET IL FAUT DONC RETOURNER");
+		}
+		else if(updateSectionsForm.getEnregOrmodif().equals("modif")){
+
+			System.err.println("FAUT DONC EFFECTUER LA MODIFICATION de la section");
+			System.err.println(updateSectionsForm.getCodeSections());
+			System.err.println(updateSectionsForm.getCodeSections_en());
+			
+			Sections sectionModif=new Sections();
+			sectionModif.setCodeSections(updateSectionsForm.getCodeSections());
+			sectionModif.setCodeSections_en(updateSectionsForm.getCodeSections_en());
+			sectionModif.setIntituleSections(updateSectionsForm.getIntituleSections());
+			sectionModif.setIntituleSections_en(updateSectionsForm.getIntituleSections_en());
+			
+			int repServeur=adminService.updateSections(
+					updateSectionsForm.getCodeSectionsAModif(), sectionModif);
+			
+			if(repServeur==0) 
+				return "redirect:/logesco/admin/getupdateSections?updatesectionserrormodif";
+			if(repServeur==-1) 
+				return "redirect:/logesco/admin/getupdateSections?updatesectionserrorCode";
 		
-		int reponseSaveSection=4;
-		reponseSaveSection=adminService.saveSections(sections);
-		if(reponseSaveSection==0) return "redirect:/logesco/admin/getupdateSections?"
-				+ "updatesectionserrorCode";
+		}
 		
 		return "redirect:/logesco/admin/getupdateSections?updatesectionssuccess";
 	}

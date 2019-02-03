@@ -20,10 +20,21 @@ public class UpdateNiveauxForm {
 	private String codeNiveaux;
 	@NotNull
 	@NotEmpty
+	private String codeNiveaux_en;
+	@NotNull
+	@NotEmpty
 	private String codeCycles;
 	@NotNull
 	@NotEmpty
 	private String codeNiveauxSup;
+	
+	@NotNull
+	@NotEmpty
+	private String enregOrmodif;
+	@NotNull
+	@NotEmpty
+	private String codeNiveauxAModif;
+	
 	/**
 	 * @return the numeroOrdreNiveaux
 	 */
@@ -71,6 +82,42 @@ public class UpdateNiveauxForm {
 	 */
 	public void setCodeNiveauxSup(String codeNiveauxSup) {
 		this.codeNiveauxSup = codeNiveauxSup;
+	}
+	/**
+	 * @return the codeNiveaux_en
+	 */
+	public String getCodeNiveaux_en() {
+		return codeNiveaux_en;
+	}
+	/**
+	 * @param codeNiveaux_en the codeNiveaux_en to set
+	 */
+	public void setCodeNiveaux_en(String codeNiveaux_en) {
+		this.codeNiveaux_en = codeNiveaux_en;
+	}
+	/**
+	 * @return the enregOrmodif
+	 */
+	public String getEnregOrmodif() {
+		return enregOrmodif;
+	}
+	/**
+	 * @param enregOrmodif the enregOrmodif to set
+	 */
+	public void setEnregOrmodif(String enregOrmodif) {
+		this.enregOrmodif = enregOrmodif;
+	}
+	/**
+	 * @return the codeNiveauxAModif
+	 */
+	public String getCodeNiveauxAModif() {
+		return codeNiveauxAModif;
+	}
+	/**
+	 * @param codeNiveauxAModif the codeNiveauxAModif to set
+	 */
+	public void setCodeNiveauxAModif(String codeNiveauxAModif) {
+		this.codeNiveauxAModif = codeNiveauxAModif;
 	}
 	
 	
