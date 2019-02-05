@@ -11,7 +11,7 @@
 <body>
 
 <span layout:fragment="titre_boite">
-        Paramètres de saisie des notes 
+       <kbd>Paramètres de saisie des notes</kbd>  
 </span>
 
 	<div layout:fragment="formactionusers">
@@ -58,6 +58,17 @@
 					</form>
 					<br/>
 					<!-- ici on va afficher le form qui permettra de choisir la séquence et le cours pour lequel on veut saisir les notes -->
+					
+					<div th:if="${(listofTrimestresAnnee == null or listofCoursClasse == null) and affichechoixmatiereetseq == 'oui'}">
+						<h4 align="justify" class="alert alert-danger">Aucune séquence n'est encore active ou 
+						alors aucun cours n'est encore assigné à cette classe vous concernant: Contacter 
+						l'administrateur si l'inquiétude persiste. </h4>
+					</div>
+					
+					<div th:if="${(listofTrimestresAnnee == null or listofCoursClasse == null) and affichechoixmatiereetseq == 'non'}">
+						<h4 align="justify" class="alert alert-info">Choisir la séquence et la classe puis envoyer vos choix en 
+						cliquant sur envoyer. Les matières pour cette classe seront affichés</h4>
+					</div>
 					
 					<form action="#" class="form-inline"
 						th:action="@{/logesco/users/getformSaisieNotesV1}" method="get" th:if="${listofTrimestresAnnee != null and listofCoursClasse != null}">

@@ -11,9 +11,10 @@
 <body onload="donneFocus()">
 
 <span layout:fragment="titre_boite">
-        Formulaire de saisie des notes de  
-	<span th:inline="text" class="alert alert-warning"> Séquence  [[${sequenceConcerne.numeroSeq}]]: [[${coursConcerne.codeCours}]]
-		[[${coursConcerne.intituleCours}]].
+        <kbd>Formulaire de saisie des notes de </kbd> 
+	<span th:inline="text" class="alert alert-warning"> 
+		<kbd>Séquence  [[${sequenceConcerne.numeroSeq}]]: [[${coursConcerne.codeCours}]]
+			[[${coursConcerne.intituleCours}]].</kbd>
 	</span>
 </span>
 

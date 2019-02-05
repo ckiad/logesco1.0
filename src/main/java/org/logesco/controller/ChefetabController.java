@@ -1865,7 +1865,7 @@ public class ChefetabController {
 							if(cell.getStringCellValue().equalsIgnoreCase("F")==true
 									||cell.getStringCellValue().equalsIgnoreCase("feminin")==true
 									||cell.getStringCellValue().equalsIgnoreCase("féminin")==true){
-								sexe = "féminin";
+								sexe = "feminin";
 							}
 							listofData.add(sexe);
 						}
@@ -1928,8 +1928,8 @@ public class ChefetabController {
 								eleveAValider.setRedoublant("non");
 								eleveAValider.setStatutEleves("nouveau");
 								//les index de la liste des matricule a générer commence a partir de 0
-								int index = i+1;
-								String matricule = usersService.getNextMatriculeforIndex(codeEtab, anneeString,index);
+								//int index = i+1;
+								String matricule = usersService.getNextMatricule(codeEtab, anneeString);
 								eleveAValider.setMatriculeEleves(matricule);
 								//System.out.println("eleveAValider  "+i+"  "+eleveAValider.toString());
 								/*
@@ -2046,6 +2046,8 @@ public class ChefetabController {
 
 		String matricule = usersService.getNextMatricule(codeEtab, anneeString);
 
+		System.err.println("le matricule generer pour cet eleve est "+matricule);
+		
 		Eleves eleveAEnreg=new Eleves();
 
 		/*
@@ -2148,14 +2150,14 @@ public class ChefetabController {
 		System.err.println("AUCUNE ERREUR DANS LE FORMULAIRE updateEleves"
 				+ "ON INSTANCIE ET INITIALISE  ");
 
-		Date dateJour = new Date();
+		/*Date dateJour = new Date();
 
 		SimpleDateFormat spd = new SimpleDateFormat("yyyy");//"dd-MM-yyyy"
 		String anneeString = spd.format(dateJour);
 		String codeEtab = "";
 		Etablissement etab = adminService.getEtablissement();
 		if(etab!=null) codeEtab = etab.getCodeMatriculeEtab();
-		String matricule = usersService.getNextMatricule(codeEtab, anneeString);
+		String matricule = usersService.getNextMatricule(codeEtab, anneeString);*/
 
 		Eleves eleveAModif=new Eleves();
 
@@ -2164,7 +2166,7 @@ public class ChefetabController {
 		eleveAModif.setEmailParent(updateElevesForm.getEmailParent());
 		eleveAModif.setIdEleves(updateElevesForm.getIdEleves());
 		eleveAModif.setLieunaissEleves(updateElevesForm.getLieunaissEleves());
-		eleveAModif.setMatriculeEleves(matricule);
+		//eleveAModif.setMatriculeEleves(matricule);
 		eleveAModif.setNationaliteEleves(updateElevesForm.getNationaliteEleves());
 		eleveAModif.setNomsEleves(updateElevesForm.getNomsEleves());
 		eleveAModif.setNumtel1Parent(updateElevesForm.getNumtel1Parent());

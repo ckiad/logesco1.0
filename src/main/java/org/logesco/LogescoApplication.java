@@ -6,11 +6,13 @@ import java.util.List;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.logesco.dao.EtablissementRepository;
+import org.logesco.dao.MatriculeRepository;
 import org.logesco.dao.RolesRepository;
 import org.logesco.dao.UtilisateursRepository;
 import org.logesco.dao.UtilisateursRolesRepository;
 import org.logesco.entities.Administrateurs;
 import org.logesco.entities.Etablissement;
+import org.logesco.entities.Matricule;
 import org.logesco.entities.Roles;
 import org.logesco.entities.Utilisateurs;
 import org.logesco.entities.UtilisateursRoles;
@@ -56,6 +58,10 @@ public class LogescoApplication implements CommandLineRunner{
 	
 	@Autowired
 	private EtablissementRepository etabRepository;
+	
+	@Autowired
+	private MatriculeRepository matriculeRepository;
+	
 	/*
 	@Autowired
 	private ElevesRepository elevesRepository;
@@ -186,6 +192,30 @@ public class LogescoApplication implements CommandLineRunner{
 			log.log(Level.WARN, "==== Les users de base existe deja en BD. "
 					+ " Exception "+e.getMessage());
 		}
+		
+		
+		try{
+			List<Matricule> listofMatricule = matriculeRepository.findAll();
+			if(listofMatricule!=null){
+				if(listofMatricule.size()>0){
+					System.err.println("Le champ permettant de créer le numero d'ordre dans la génération des "
+							+ " matricules existe deja");
+				}
+				else if(listofMatricule.size() == 0){
+					System.err.println("enregistrement du premier numero qui permettra la génération des matricules");
+					Matricule mat = new Matricule();
+					mat.setValeur(0);
+					matriculeRepository.save(mat);
+				}
+			}
+			else{
+				System.err.println("la liste des matricules est null donc problème");
+			}
+		}
+		catch(Exception e){
+			System.err.println("erreur d'enregistrement des numero pour l'enreg des matricule "+e.getMessage());
+		}
+		
 		
 		
 		/*****************************

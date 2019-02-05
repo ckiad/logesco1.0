@@ -506,11 +506,11 @@ public class AdminController {
 	public String getsupprimerAnnee(Long idPeriodes){
 		int repServeur=adminService.deleteAnnee(idPeriodes);
 		
-		if(repServeur!=0){
+		if(repServeur==0){
 			return "redirect:/logesco/admin/getupdateAnnee?supprimAnneeerrorTrimestres";
 		}
 		
-		return "redirect:/logesco/admin/getupdateAnnee";
+		return "redirect:/logesco/admin/getupdateAnnee?supprimanneesuccess";
 	}
 
 	public void constructModelUpdateTrimestres(Model model){
@@ -728,7 +728,7 @@ public class AdminController {
 	Model model, HttpServletRequest request, 
 	Long idClasses,
 	@RequestParam(name="numPage", defaultValue="0") int numPage, 
-	@RequestParam(name="taillePage", defaultValue="3") int taillePage){
+	@RequestParam(name="taillePage", defaultValue="5") int taillePage){
 		
 		this.constructModelUpdateClasses(model, numPage, taillePage);
 		
@@ -1793,6 +1793,7 @@ public class AdminController {
 		 *debut des Ajouts du 19-08-2018
 		 */
 		classe.setLangueClasses(updateClassesForm.getLangueClasses());
+		System.err.println("la langue de la classe est "+updateClassesForm.getLangueClasses());
 		/**
 		 * fin des Ajouts du 19-08-2018
 		 */

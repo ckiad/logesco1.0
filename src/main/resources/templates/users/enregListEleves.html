@@ -10,7 +10,7 @@
 </head>
 <body>
 	<span layout:fragment="titre_boite">
-        Importer une liste d'élève à partir d'un fichier Excel 
+        <kbd>Importer une liste d'élève à partir d'un fichier Excel</kbd> 
     </span>
 <div layout:fragment="formactionusers">
     <!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
@@ -52,7 +52,7 @@
 							<select class="form-control" name="idClasseConcerne"  
 									th:field="*{idClasseConcerne}"  id="idClasseConcerne" >
 									
-									<optgroup th:label="${n.codeNiveaux}" 
+									<optgroup th:label="${session.lang=='fr'}?${n.codeNiveaux}+'/'+${n.codeNiveaux_en}:${n.codeNiveaux_en}+'/'+${n.codeNiveaux}"
 										th:if="${listofNiveaux}" th:each="n:${listofNiveaux}">
 										<option th:each="c:${n.listofClasses}" th:value="${c.idClasses}"
 											th:inline="text">

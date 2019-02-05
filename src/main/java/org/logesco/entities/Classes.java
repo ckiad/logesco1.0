@@ -47,10 +47,10 @@ public class Classes implements Serializable{
 	private Long idClasses;
 	@NotNull
 	@NotEmpty
-	@Size(min= 2, max= 7)
+	@Size(min= 1, max= 7)
 	private String codeClasses;
 	@NotNull
-	private int numeroClasses;
+	private String numeroClasses;
 	private double montantScolarite;
 
 	/****
@@ -113,7 +113,7 @@ public class Classes implements Serializable{
 	 * @param codeClasses
 	 * @param numeroClasses
 	 */
-	public Classes(String codeClasses, int numeroClasses) {
+	public Classes(String codeClasses, String numeroClasses) {
 		super();
 		this.codeClasses = codeClasses;
 		this.numeroClasses = numeroClasses;
@@ -150,14 +150,14 @@ public class Classes implements Serializable{
 	/**
 	 * @return the numeroClasses
 	 */
-	public int getNumeroClasses() {
+	public String getNumeroClasses() {
 		return numeroClasses;
 	}
 
 	/**
 	 * @param numeroClasses the numeroClasses to set
 	 */
-	public void setNumeroClasses(int numeroClasses) {
+	public void setNumeroClasses(String numeroClasses) {
 		this.numeroClasses = numeroClasses;
 	}
 

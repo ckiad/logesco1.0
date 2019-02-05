@@ -460,7 +460,7 @@ public interface IAdminService {
 	 * Retourne la classe dont le code et le numéro puis la specialité sont envoyées en parametre 
 	 * et null si cette classe n'existe pas
 	 **********************************************************************************/
-	public Classes findClasses(String codeClasses, int numeroClasses, Specialites specialite);
+	public Classes findClasses(String codeClasses, String numeroClasses, Specialites specialite);
 	
 	/**********************************************************************************************
 	 * Méthode qui retourne la liste des cours d'une classe specifié enregistrés  page par page
@@ -600,7 +600,7 @@ public interface IAdminService {
 	 * 					0 si on ne trouve pas la classe à modifier
 	 * 					-1  pour toutes autres erreur
 	 ****************************************************************************/
-	public int updateClasses(String codeClasseAModif, int numeroClasseAModif, 
+	public int updateClasses(String codeClasseAModif, String numeroClasseAModif, 
 			Long idSpecialite, Classes classes);
 	
 	/**

@@ -11,7 +11,7 @@
 <body>
 
 <span layout:fragment="titre_boite">
-        Génération des procès verbaux des évaluations séquentielles
+        <kbd>Génération des procès verbaux des évaluations séquentielles</kbd>
 </span>
 
 <div layout:fragment="formactionusers">
@@ -21,7 +21,10 @@
 		<form action="#" th:action="@{/logesco/users/postlistprocesverbalEvalSeq}" 
 				method="post"   class="form-inline" th:object="${getrapportEvalSeqForm}">
 				
-				
+				<div th:if="${param.listprocesverbalEvalSeqerror}">
+					<h4 align="justify" class="alert alert-danger">Vérifier que la classe et la séquence ont bien 
+					été sélectionnée. Contactez l'administrateur le cas écheant. </h4>
+				</div>
 				
 				<fieldset class="col-md-12" >
 					<legend class="text-primary">Sélectionner la classe pour laquelle le procès verbal sera demandé</legend>
@@ -33,7 +36,8 @@
 						<select class="form-control" name="idclasseRapport"
 									id="idclasseRapport"  th:value="*{idclasseRapport}">
 
-							<optgroup th:label="${n.codeNiveaux}" th:if="${listofNiveauxForPV}"
+							<optgroup th:label="${session.lang=='fr'}?${n.codeNiveaux}+'/'+${n.codeNiveaux_en}:${n.codeNiveaux_en}+'/'+${n.codeNiveaux}"
+							 th:if="${listofNiveauxForPV}"
 										th:each="n:${listofNiveauxForPV}">
 
 								<option th:each="c:${n.listofClasses}"
@@ -44,7 +48,8 @@
 							</optgroup>
 							
 						
-							<optgroup th:label="${n.codeNiveaux}" th:if="${listofNiveauxDirigesForPV}"
+							<optgroup th:label="${session.lang=='fr'}?${n.codeNiveaux}+'/'+${n.codeNiveaux_en}:${n.codeNiveaux_en}+'/'+${n.codeNiveaux}" 
+								th:if="${listofNiveauxDirigesForPV}"
 										th:each="n:${listofNiveauxDirigesForPV}">
 										
 								<option th:each="c:${n.listofClasses}" 
@@ -116,7 +121,7 @@
 										idSequence=${session.numeroseqdeRapportSeq},	
 										idClasse=${session.classeRapport.idClasses})}"
 										role="button" target="_blank">
-										<span class="glyphicon glyphicon-list-all"></span> Voir le procès verbal final
+										<span class="glyphicon glyphicon-list-alt"></span> Voir le procès verbal final
 								</a>
 								
 								[[${cours.gettailleListEvalSeq(session.numeroseqdeRapportSeq)==0}?'Procès verbal non disponible':' ']]

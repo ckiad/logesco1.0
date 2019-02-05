@@ -11,14 +11,20 @@
 <body>
 
 <span layout:fragment="titre_boite">
-       Actualiser les périodes (séquence)
+       <kbd>Actualiser les périodes (séquence)</kbd>
 </span>
 
 <div layout:fragment="formactionusers">
 <!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
 <div class="col-md-9">
-		<div th:if="${param.actualiserSeqerror}">
-				<h4 align="justify" class="alert alert-danger">Erreur de changement d'état</h4>
+			<div th:if="${param.actualiserSeqerror}">
+				<h4 align="justify" class="alert alert-danger">Erreur de changement d'état: On ne peut
+				avoir qu'une seule séquence active à la fois. Désactiver les autres et recommencer.</h4>
+			</div>
+			
+			<div th:if="${param.actualiserSeqerrorTrim}">
+				<h4 align="justify" class="alert alert-danger">Erreur de changement d'état: Activer d'abord 
+				le trimestre correspondant.</h4>
 			</div>
 			
 			<div th:if="${param.actualiserSeqsuccessFalse}">
@@ -65,8 +71,10 @@
 			      					<a class="btn btn-primary btn-sm" href="#" 
 			      						th:href="@{/logesco/users/censeur/getactualiserSequence(idPeriodes=${s.idPeriodes}, 
 											numPageTrim=${pageCouranteTrimestre})}" 
-			      						role="button" th:text="${s.etatPeriodes==false}?'Activer':'Désactiver'">
-			      						<span class="glyphicon glyphicon-refresh"></span> Actualiser
+			      						role="button" th:inline="text">
+			      						[[${s.etatPeriodes==false}?'Activer': 'Desactiver']]
+			      						
+			      						
 			      					</a>
 			      				</div>
 			      		</td>

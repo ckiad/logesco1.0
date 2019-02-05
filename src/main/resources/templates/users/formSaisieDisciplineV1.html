@@ -11,21 +11,29 @@
 <body>
 
 <span layout:fragment="titre_boite">
-     Formulaire des rapports de discipline  
-	<span th:inline="text" class="alert alert-warning"> Séquence  [[${sequenceConcerneRabs.numeroSeq}]].
+    <kbd> Formulaire des rapports de discipline </kbd> 
+	<span th:inline="text" class="alert alert-warning" th:if="${affichechoixclasse=='oui'}"> 
+		<kbd>Séquence  [[${sequenceConcerneRabs.numeroSeq}]].</kbd>
 	</span>
 </span>
 
 <div layout:fragment="formactionusers">
 <!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE   col-md-offset-1-->
 <div class="col-md-9">
-		<form action="#" class="form-inline"
+
+		<div th:if="${affichechoixclasse=='non'}">
+			<h4 align="justify" class="alert alert-danger">Aucune séquence n'est encore active ou 
+						alors aucune classe n'est enregistré: Contacter 
+						l'administrateur si l'inquiétude persiste. </h4>
+		</div>
+
+		<form action="#" class="form-inline" th:if="${affichechoixclasse=='oui'}"
 				th:action="@{/logesco/users/sg/getUpdateRDiscipline}" method="get">
 						
 						<div th:if="${param.updaterabssaisiError}">
-						<h4 align="justify" class="alert alert-danger">Erreur système lors de l'enregistrement des heures d'absences
-						ligne 252 de SGController.</h4>
-					</div>
+							<h4 align="justify" class="alert alert-danger">Erreur système lors de l'enregistrement des heures d'absences
+							ligne 252 de SGController.</h4>
+						</div>
 					
 					<div th:if="${param.updaterabssaisiErrorNH}">
 						<h4 align="justify" class="alert alert-danger">Erreur de saisi du nombre d'heure.</h4>
@@ -76,10 +84,7 @@
 								<th>Noms et prénoms</th>
 								<th >Nbre Abs J</th>
 								<th>Nbre Abs NJ</th>
-								<!-- <th>Consigne</th>
-								<th>Exclusion</th>
-								<th>Avertissement</th>
-								<th>Blâme</th> -->
+								
 							</tr>
 						</thead>
 						<tbody th:if="${listofAllEleve}">
@@ -109,40 +114,7 @@
 										th:value="${eleve.getRapportDAbsenceSeq(sequenceConcerneRabs.idPeriodes) != null}
 											?${eleve.getRapportDAbsenceSeq(sequenceConcerneRabs.idPeriodes).nbreheureNJustifie}:0" />
 								</td>
-								<!-- <td class="col-md-1">
-									<input type="text" name="consigne[]" id="consigne[]" 
-										class="form-control" 
-										th:value="${eleve.getRapportDAbsenceSeq(sequenceConcerneRabs.idPeriodes) != null}
-											?${eleve.getRapportDAbsenceSeq(sequenceConcerneRabs.idPeriodes).consigne}:0" />
-								</td> -->
-								<!-- <td  class="col-md-1">
-									<input type="text" name="jourExclusion[]" id="jourExclusion[]" 
-										class="form-control" 
-										th:value="${eleve.getRapportDAbsenceSeq(sequenceConcerneRabs.idPeriodes) != null}
-											?${eleve.getRapportDAbsenceSeq(sequenceConcerneRabs.idPeriodes).jourExclusion}:0" />
-								</td> -->
-								<!-- <td>
-									<select class="form-control" name="avertConduite[]" id="avertConduite[]">
-										<option value="non">non</option>
-										<option value="oui" 
-											th:selected="${eleve.getRapportDAbsenceSeq(sequenceConcerneRabs.idPeriodes) != null}
-											?(${eleve.getRapportDAbsenceSeq(sequenceConcerneRabs.idPeriodes).avertConduite == true}?' ')">
-											oui
-										</option>
-									</select>
-									
-								</td> -->
-								<!-- <td>
-									<select class="form-control" name="blameConduite[]" id="blameConduite[]">
-										<option value="non">non</option>
-										<option value="oui" 
-											th:selected="${eleve.getRapportDAbsenceSeq(sequenceConcerneRabs.idPeriodes) != null}
-											?(${eleve.getRapportDAbsenceSeq(sequenceConcerneRabs.idPeriodes).blameConduite == true}?' ')">
-											oui
-										</option>
-									</select>
-									
-								</td> -->
+								
 									
 							</tr>
 						</tbody>

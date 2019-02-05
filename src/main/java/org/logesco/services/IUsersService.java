@@ -467,7 +467,7 @@ public interface IUsersService {
 	 * Retourne la classe dont le code et le numéro puis la specialité sont envoyées en parametre 
 	 * et null si cette classe n'existe pas
 	 **********************************************************************************/
-	public Classes findClasses(String codeClasses, int numeroClasses, Specialites specialite);
+	public Classes findClasses(String codeClasses, String numeroClasses, Specialites specialite);
 
 	/******************************************************************************
 	 * Cette méthode retourne l'effectif des élèves enregistrés dans une classe
@@ -532,19 +532,6 @@ public interface IUsersService {
 	 * @return
 	 */
 	public String getNextMatricule(String codeEtab, String annee);
-	
-	/**************************************************************************************
-	 * Cette methode retourne le matricule du prochain eleve à enregistrer dans la base de donnée.
-	 * Ce matricule est concu en concatenant le code de l'établissement au quatre chiffres de l'année
-	 * suivi d'un tiret et du numéro d'enregistrement de l'élève. Ce numéro d'enregistrement tiendra sur 
-	 * 4 chiffres. et on doit y ajouter l'index qui est pris en paramètre car on veut ainsi générer une liste
-	 * de matricule.
-	 * @param annee
-	 * @param codeEtab
-	 * @param index
-	 * @return
-	 */
-	public String getNextMatriculeforIndex(String codeEtab, String annee, int index);
 	
 
 	/******************************************

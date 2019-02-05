@@ -128,8 +128,8 @@ public class Niveaux implements Serializable {
 					if(c1.getSpecialite().getCodeSpecialite().compareTo(c2.getSpecialite().getCodeSpecialite()) < 0) n=-1;
 					if(c1.getSpecialite().getCodeSpecialite().compareTo(c2.getSpecialite().getCodeSpecialite()) > 0) n=1;
 					if(c1.getSpecialite().getCodeSpecialite().compareTo(c2.getSpecialite().getCodeSpecialite()) == 0) {
-						if(c1.getNumeroClasses() < c2.getNumeroClasses()) n=-1;
-						if(c1.getNumeroClasses() > c2.getNumeroClasses()) n=1;
+						if(c1.getNumeroClasses().compareTo(c2.getNumeroClasses()) < 0) n=-1;
+						if(c1.getNumeroClasses().compareTo(c2.getNumeroClasses()) > 0) n=1;
 					}
 					
 				}

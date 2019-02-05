@@ -1040,7 +1040,13 @@ public class AdminServiceImplementation implements IAdminService {
 		
 		speAModif=this.findSpecialites(codeSpeAModif);
 		
-		if(speAModif==null) return 0;
+		if(speAModif==null) {
+			/*
+			 * On doit essayer d'enregistrer cette spécialité au cas c'est une nouvelle qu'on veut enregistrer
+			 */
+			
+			return this.saveSpecialites(speModif);
+		}
 		
 		speAModif.setCodeSpecialite(speModif.getCodeSpecialite());
 		speAModif.setLibelleSpecialite(speModif.getLibelleSpecialite());
@@ -1114,7 +1120,7 @@ public class AdminServiceImplementation implements IAdminService {
 	}
 
 	@Override
-	public Classes findClasses(String codeClasses, int numeroClasses, Specialites specialite) {
+	public Classes findClasses(String codeClasses, String numeroClasses, Specialites specialite) {
 		try{
 			Classes classeRechercher=classesRepository.
 					findByCodeClassesAndNumeroClassesAndSpecialite(codeClasses, numeroClasses, specialite);
@@ -1188,7 +1194,7 @@ public class AdminServiceImplementation implements IAdminService {
 	}
 	
 	@Override
-	public int updateClasses(String codeClasseAModif, int numeroClasseAModif, 
+	public int updateClasses(String codeClasseAModif, String numeroClasseAModif, 
 			Long idSpecialite, Classes classes){
 		
 		Specialites ancienneSpeClasse=this.findSpecialites(idSpecialite);
@@ -1196,13 +1202,21 @@ public class AdminServiceImplementation implements IAdminService {
 		Classes classesAModif=this.findClasses(
 				codeClasseAModif, numeroClasseAModif, ancienneSpeClasse);
 		
-		if(classesAModif==null) return 0;
+		if(classesAModif==null) {
+			/*
+			 * Si on ne trouve pas de classe alors peut être c'est une nouvelle classe qu'on veut
+			 * enregistrer 
+			 */
+			
+			return this.saveClasses(classes);
+		}
 		
 		classesAModif.setCodeClasses(classes.getCodeClasses());
 		classesAModif.setNumeroClasses(classes.getNumeroClasses());
 		classesAModif.setNiveau(classes.getNiveau());
 		classesAModif.setSection(classes.getSection());
 		classesAModif.setSpecialite(classes.getSpecialite());
+		classesAModif.setLangueClasses(classes.getLangueClasses());
 		
 		Classes classesUpdate=classesRepository.save(classesAModif);
 		

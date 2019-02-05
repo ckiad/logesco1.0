@@ -10,7 +10,7 @@
 </head>
 <body>
 <span layout:fragment="titre_boite">
-       Affichage des listes provisoires des différentes classes
+       <kbd>Affichage des listes provisoires des différentes classes</kbd>
 </span>
 <div layout:fragment="formactionusers">
 <!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
@@ -34,7 +34,8 @@
 										class="redcolor">*</span></label> 
 						<select class="form-control" name="idClasseSelect" id="idClasseSelect" >
 							
-							<optgroup th:label="${n.codeNiveaux}" th:if="${listofNiveaux}" th:each="n:${listofNiveaux}">
+							<optgroup th:label="${session.lang=='fr'}?${n.codeNiveaux}+'/'+${n.codeNiveaux_en}:${n.codeNiveaux_en}+'/'+${n.codeNiveaux}"
+							 th:if="${listofNiveaux}" th:each="n:${listofNiveaux}">
 											
 								<option th:each="c:${n.listofClasses}" th:value="${c.idClasses}"
 										th:inline="text">

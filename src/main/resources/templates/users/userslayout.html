@@ -205,9 +205,12 @@
 		<div class="panel panel-info">
            <div class="panel-heading">
                <h4 align="center"> 
-                    <span class="card pull-left">
+                    		<span class="card pull-left">
                                 <img th:src="@{/logesco/users/getphotoPersonnelConnecte}" 
-                                    class="card-img-top" width="60" height="40"/>
+                                    class="card-img-top img-rounded" width="60" height="40"/>
+                                    <div class="caption" th:inline="text">
+							            <kbd>[[${#httpServletRequest.remoteUser}]]</kbd>
+							          </div>
                             </span>
                    <span layout:fragment="titre_boite"></span><!-- <h4>Modification du mot de passe</h4> -->
                     <a th:href="@{/logout}" 

@@ -19,7 +19,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface ClassesRepository extends JpaRepository<Classes, Long> {
 	
 	public Classes findByCodeClassesAndNumeroClassesAndSpecialite
-				(String codeClasses, int numeroClasses, Specialites specialite);
+				(String codeClasses, String numeroClasses, Specialites specialite);
 	
 	public Page<Classes> findAllByOrderByCodeClassesAscSpecialiteCodeSpecialiteAscNumeroClassesAsc(
 				Pageable pageable);

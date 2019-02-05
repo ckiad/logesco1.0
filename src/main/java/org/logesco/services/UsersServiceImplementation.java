@@ -114,6 +114,9 @@ public class UsersServiceImplementation implements IUsersService {
 
 	@Autowired
 	private RapportDAbsenceRepository	 rapportDAbsenceRepository;
+	
+	@Autowired
+	private MatriculeRepository	 matriculeRepository;
 
 	
 	private UtilitairesBulletins ub;
@@ -1123,7 +1126,7 @@ public class UsersServiceImplementation implements IUsersService {
 
 
 	@Override
-	public Classes findClasses(String codeClasses, int numeroClasses, Specialites specialite) {
+	public Classes findClasses(String codeClasses, String numeroClasses, Specialites specialite) {
 		try{
 			Classes classeRechercher=classesRepository.
 					findByCodeClassesAndNumeroClassesAndSpecialite(codeClasses, numeroClasses, specialite);
@@ -1256,7 +1259,12 @@ public class UsersServiceImplementation implements IUsersService {
 		 * Est ce que le matricule sera unique apres enregistrement
 		 */
 		Eleves elevesExistMatricule=this.findEleves(eleve.getMatriculeEleves());
-		if(elevesExistMatricule!=null) return new Long(-1);
+		if(elevesExistMatricule!=null) {
+			System.err.println("l'eleve "+elevesExistMatricule.getNomsEleves()+" a deja le matricule "
+					+ "qui est entrain d'être utilisé pour enregistré un autre. son identifiant est "+elevesExistMatricule.getIdEleves()
+					+" ce matricule est d'ailleurs "+elevesExistMatricule.getMatriculeEleves());
+			return new Long(-1);
+		}
 
 		/*
 		 * Maintenant on  recherche la classe dans laquelle enregistré l'élève
@@ -1671,7 +1679,16 @@ public class UsersServiceImplementation implements IUsersService {
 
 	@Override
 	public List<Trimestres> findAllActiveTrimestre(Long idAnneeActive){
-		return trimestreRepository.findAllByAnneeIdPeriodesOrderByNumeroTrimAsc(idAnneeActive);
+		List<Trimestres> listofallTrim = 
+				trimestreRepository.findAllByAnneeIdPeriodesOrderByNumeroTrimAsc(idAnneeActive);
+		List<Trimestres> listofTrimActif = new ArrayList<Trimestres>();
+		for(Trimestres trim : listofallTrim){
+			if(trim.isEtatPeriodes() == true){
+				listofTrimActif.add(trim);
+			}
+		}
+		//return trimestreRepository.findAllByAnneeIdPeriodesOrderByNumeroTrimAsc(idAnneeActive);
+		return listofTrimActif;
 	}
 
 	@Override
@@ -1880,9 +1897,30 @@ public class UsersServiceImplementation implements IUsersService {
 				+ "swicthEtatPeriodesSeq(actif, bloqué) "+idPeriode);
 		if(seq == null) return 0;
 		if(seq.isEtatPeriodes() == false) {
-			seq.setEtatPeriodes(true);
-			sequenceRepository.save(seq);
-			return 2;
+			if(seq.getTrimestre().isEtatPeriodes() == true){
+				/*
+				 * Avant de mettre à true il faut se rassurer que ca va être la seule la seule séquence active
+				 * puisqu'on ne veut avoir qu'une seule période activer à la fois.
+				 */
+				List<Sequences> listofSeq = sequenceRepository.findAll();
+				int compt = 0;
+				for(Sequences seq1 : listofSeq){
+					if(seq1.isEtatPeriodes() == true){
+						compt+=1;
+					}
+				}
+				if(compt == 0){
+				seq.setEtatPeriodes(true);
+				sequenceRepository.save(seq);
+				return 2;
+				}
+				else{
+					return 0;
+				}
+			}
+			else{
+				return -1;
+			}
 		}
 		else{
 			seq.setEtatPeriodes(false);
@@ -1918,9 +1956,24 @@ public class UsersServiceImplementation implements IUsersService {
 		}
 		
 		if(trim.isEtatPeriodes() == false) {
-			trim.setEtatPeriodes(true);
-			trimestreRepository.save(trim);
-			return 2;
+			/*
+			 * On active un trimestre lorsque les autres trimestres de l'annee en cours sont tous 
+			 * desactivee
+			 */
+			int compt = 0;
+			for(Trimestres trim1 : trim.getAnnee().getListoftrimestre()){
+				if(trim1.isEtatPeriodes() == true){
+					compt +=1;
+				}
+			}
+			if(compt == 0){
+				trim.setEtatPeriodes(true);
+				trimestreRepository.save(trim);
+				return 2;
+			}
+			else{
+				return 0;
+			}
 		}
 		else{
 			trim.setEtatPeriodes(false);
@@ -2500,32 +2553,48 @@ public class UsersServiceImplementation implements IUsersService {
 		String matricule = "";
 		//System.err.println("anneeJour userService "+annee);
 		String prefixe = codeEtab+annee+"-";
-		int totalEleve = elevesRepository.findAll().size()+1;
-		//System.err.println("total entier eleve "+(totalEleve-1));
-		String suffixe = "";
-		if((totalEleve >= 0)&&(totalEleve < 10)){
-			suffixe = "000"+totalEleve;
+		
+		if(matriculeRepository.findAll().size()>0){
+			Matricule mat = matriculeRepository.findAll().get(0);
+			int numero = mat.getValeur();
+			int next_numero = numero+1;
+			//On modifie et on enregistre pour qu'a chaque fois il n'y ait qu'un seul numero en BD
+			mat.setValeur(next_numero);
+			matriculeRepository.save(mat);//ca va modifier celui qu'on a pris en BD
+			
+			String suffixe = "";
+			if((numero >= 0)&&(numero < 10)){
+				suffixe = "000"+numero;
+			}
+			else if((numero >= 10)&&(numero < 100)){
+				suffixe = "00"+numero;
+			}
+			if((numero >= 100)&&(numero < 1000)){
+				suffixe = "0"+numero;
+			}
+			if((numero >= 1000)&&(numero < 10000)){
+				suffixe = ""+numero;
+			}
+			matricule = prefixe+suffixe;
+			System.err.println("prefixe "+prefixe+" suffixe "+suffixe);
+			return matricule;
+			
+			
 		}
-		else if((totalEleve >= 10)&&(totalEleve < 100)){
-			suffixe = "00"+totalEleve;
+		else{
+			System.err.println("il ya un probleme dans la generation des matricules puisque la valeur du "
+					+ " numero qu'on recupere dans la table matricule est vide");
+			return "aucun";
 		}
-		if((totalEleve >= 100)&&(totalEleve < 1000)){
-			suffixe = "0"+totalEleve;
-		}
-		if((totalEleve >= 1000)&&(totalEleve < 10000)){
-			suffixe = ""+totalEleve;
-		}
-		matricule = prefixe+suffixe;
-		return matricule;
+		
+		
 	}
 
-	public String getNextMatriculeforIndex(String codeEtab, String annee, int index){
+	/*public String getNextMatriculeforIndex(String codeEtab, String annee, int index){
 		String matricule = "";
-		//System.err.println("anneeJour userService "+annee);
 		String prefixe = codeEtab+annee+"-";
 		int totalEleve = elevesRepository.findAll().size()+1;
 		totalEleve +=index;
-		//System.err.println("total entier eleve "+(totalEleve-1));
 		String suffixe = "";
 		if((totalEleve >= 0)&&(totalEleve < 10)){
 			suffixe = "000"+totalEleve;
@@ -2541,7 +2610,7 @@ public class UsersServiceImplementation implements IUsersService {
 		}
 		matricule = prefixe+suffixe;
 		return matricule;
-	}
+	}*/
 	
 
 	@Override

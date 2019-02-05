@@ -92,7 +92,8 @@ public class BulletinController {
 		System.err.println("anneeActive == "+anneeActive.getIntituleAnnee());
 		if(anneeActive != null) {
 			model.addAttribute("anneeActive", anneeActive);
-			List<Sequences> listofSequenceActive = usersService.findAllSequence(anneeActive.getIdPeriodes());
+			//List<Sequences> listofSequenceActive = usersService.findAllSequence(anneeActive.getIdPeriodes());
+			List<Sequences> listofSequenceActive = usersService.findAllSequenceActive(anneeActive.getIdPeriodes());
 			model.addAttribute("listofSequenceActive", listofSequenceActive);
 		}
 		
@@ -129,6 +130,11 @@ public class BulletinController {
 		Annee anneeScolaire = usersService.findAnneeActive();
 		session.setAttribute("anneeScolaireConcerneBulletinsSeq", anneeScolaire);
 		
+		if(etablissementConcerne == null || sequenceConcerne == null || anneeScolaire == null || 
+				classeConcerne == null){
+			return null;
+		}
+		
 		
 		/*******
 		 * Debut des ajouts du 11-09-2018
@@ -137,7 +143,7 @@ public class BulletinController {
 		if(classeConcerne.getSection().getCodeSections().equals(new String("Général")) == true){
 			
 			/*Collection<BulletinSequence1Bean> listofBulletinSeqClasse = 
-					usersService.generateCollectionofBulletinSequence1(classeConcerne.getIdClasses(), sequenceConcerne.getIdPeriodes());
+			 * 					usersService.generateCollectionofBulletinSequence1(classeConcerne.getIdClasses(), sequenceConcerne.getIdPeriodes());
 			*/
 			
 			Map<String, Object> donnee = new HashMap<String, Object>();
@@ -167,8 +173,8 @@ public class BulletinController {
 			
 			parameters.put("SUBREPORT_DIR", "src/main/resources/reports/compiled/sequentiels/models1/");
 			
-			//parameters.put("IMAGE_FOND", "src/main/resources/static/images/fondlogocsbnal.jpg");
-	        parameters.put("LOGO", "src/main/resources/static/images/logocsbnal.jpg");
+			parameters.put("IMAGE_FOND", "src/main/resources/static/images/fondlogobekoko.png");
+	        parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
 			/*
 			parameters.put("CHEMIN_JRXML_G1", "src/main/resources/reports/compiled/sequentiels/models2/MatiereGroupe1Sequence.jasper");
 		    parameters.put("CHEMIN_JRXML_G2", "src/main/resources/reports/compiled/sequentiels/models2/MatiereGroupe2Sequence.jasper");
@@ -189,7 +195,7 @@ public class BulletinController {
 		 * Fin des ajouts du 11-09-2018
 		 */
 		
-		System.err.println("Si on voir ceci alors ce n'est pas une section general et par consequent aucun bulletin");
+		System.err.println("Si on voit  ceci alors ce n'est pas une section general et par consequent aucun bulletin");
 		
 		return null;
 	}
@@ -209,7 +215,7 @@ public class BulletinController {
 
 		parameters.put("SUBREPORT_DIR", "src/main/resources/reports/compiled/fiches/");
 		
-        parameters.put("LOGO", "src/main/resources/static/images/logocsbnal.jpg");
+        parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
 		
         parameters.put("datasource", collectionficheCCS);
 		JasperReportsPdfView view = new JasperReportsPdfView();
@@ -292,7 +298,7 @@ public class BulletinController {
 		
 		parameters.put("SUBREPORT_DIR", "src/main/resources/reports/compiled/fiches/");
 		
-        parameters.put("LOGO", "src/main/resources/static/images/logocsbnal.jpg");
+        parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
 		
         parameters.put("datasource", collectionficheCCT);
 		JasperReportsPdfView view = new JasperReportsPdfView();
@@ -327,6 +333,10 @@ public class BulletinController {
 		Annee anneeScolaire = usersService.findAnneeActive();
 		session.setAttribute("anneeScolaireConcerneBulletinsSeq", anneeScolaire);
 		
+		if(etablissementConcerne == null || trimestreConcerne == null || anneeScolaire == null || 
+				classeConcerne == null){
+			return null;
+		}
 
 		/*******
 		 * Debut des ajouts du 26-09-2018
@@ -369,8 +379,8 @@ public class BulletinController {
 			
 			parameters.put("SUBREPORT_DIR", "src/main/resources/reports/compiled/trimestriels/models1/");
 			
-			//parameters.put("IMAGE_FOND", "src/main/resources/static/images/fondlogocsbnal.jpg");
-	        parameters.put("LOGO", "src/main/resources/static/images/logocsbnal.jpg");
+			parameters.put("IMAGE_FOND", "src/main/resources/static/images/fondlogobekoko.png");
+	        parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
 			
 	        parameters.put("datasource", listofBulletinTrimClasse);
 			JasperReportsPdfView view = new JasperReportsPdfView();
@@ -463,7 +473,10 @@ public class BulletinController {
 		Annee anneeScolaire = usersService.findAnneeActive();
 		session.setAttribute("anneeScolaireConcerneBulletinsSeq", anneeScolaire);
 		
-
+		if(etablissementConcerne == null ||  anneeScolaire == null || 
+				classeConcerne == null){
+			return null;
+		}
 		
 		//Il faut établir la liste des groupes qui passe dans la classe de façon à avoir tous les groupes avec les cours
 		if(classeConcerne.getSection().getCodeSections().equals(new String("Général")) == true){
@@ -498,8 +511,8 @@ public class BulletinController {
 			
 			parameters.put("SUBREPORT_DIR", "src/main/resources/reports/compiled/annuels/models1/");
 			
-			//parameters.put("IMAGE_FOND", "src/main/resources/static/images/fondlogocsbnal.jpg");
-	        parameters.put("LOGO", "src/main/resources/static/images/logocsbnal.jpg");
+			parameters.put("IMAGE_FOND", "src/main/resources/static/images/fondlogobekoko.png");
+	        parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
 			
 	        parameters.put("datasource", listofBulletinAnClasse);
 			JasperReportsPdfView view = new JasperReportsPdfView();
@@ -529,7 +542,7 @@ public class BulletinController {
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		
-        parameters.put("LOGO", "src/main/resources/static/images/logocsbnal.jpg");
+        parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
         
         parameters.put("SUBREPORT_DIR", "src/main/resources/reports/compiled/fiches/");
 		
@@ -621,6 +634,11 @@ public class BulletinController {
 		session.setAttribute("anneeScolaireConcerneBulletinsTrimAn", anneeScolaire);
 
 
+		if(etablissementConcerne == null || trimestreConcerne == null || anneeScolaire == null || 
+				classeConcerne == null){
+			return null;
+		}
+		
 		/*******
 		 * Debut des ajouts du 26-09-2018
 		 */
@@ -672,8 +690,8 @@ public class BulletinController {
 			
 			parameters.put("SUBREPORT_DIR", "src/main/resources/reports/compiled/annuels/models2/");
 			
-			//parameters.put("IMAGE_FOND", "src/main/resources/static/images/fondlogocsbnal.jpg");
-	        parameters.put("LOGO", "src/main/resources/static/images/logocsbnal.jpg");
+			parameters.put("IMAGE_FOND", "src/main/resources/static/images/fondlogobekoko.png");
+	        parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
 			
 	        parameters.put("datasource", listofBulletinTrimAnnuelClasse);
 			JasperReportsPdfView view = new JasperReportsPdfView();
@@ -703,7 +721,7 @@ public class BulletinController {
 		
 		parameters.put("SUBREPORT_DIR", "src/main/resources/reports/compiled/fiches/");
 		
-        parameters.put("LOGO", "src/main/resources/static/images/logocsbnal.jpg");
+        parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
 		
         parameters.put("datasource", collectionficheCCA);
 		JasperReportsPdfView view = new JasperReportsPdfView();

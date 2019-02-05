@@ -11,7 +11,7 @@
 <body>
 
 <span layout:fragment="titre_boite">
-        Enregistrer les versements
+       <kbd> Enregistrer les versements</kbd>
 </span>
 
 <div layout:fragment="formactionusers">
@@ -31,7 +31,8 @@
 										class="redcolor">*</span></label> 
 						<select class="form-control" name="idClasseSelect" id="idClasseSelect" >
 							
-							<optgroup th:label="${n.codeNiveaux}" th:if="${listofNiveaux}" th:each="n:${listofNiveaux}">
+							<optgroup th:label="${session.lang=='fr'}?${n.codeNiveaux}+'/'+${n.codeNiveaux_en}:${n.codeNiveaux_en}+'/'+${n.codeNiveaux}"
+								 th:if="${listofNiveaux}" th:each="n:${listofNiveaux}">
 											
 								<option th:each="c:${n.listofClasses}" th:value="${c.idClasses}"
 										th:inline="text">

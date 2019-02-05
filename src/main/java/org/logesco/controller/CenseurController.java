@@ -364,6 +364,9 @@ public class CenseurController {
 		if(repServeur == 0) return "redirect:/logesco/users/censeur/getupdateSequence?actualiserSeqerror"
 				+ "&&numPageTrim="+numPageTrim;
 		
+		if(repServeur == -1) return "redirect:/logesco/users/censeur/getupdateSequence?actualiserSeqerrorTrim"
+				+ "&&numPageTrim="+numPageTrim;
+		
 		return "redirect:/logesco/users/censeur/getupdateSequence?actualiserSeqsuccessTrue"
 				+ "&&numPageTrim="+numPageTrim;
 		
@@ -434,6 +437,7 @@ public class CenseurController {
 		
 		if(repServeur == -1) return "redirect:/logesco/users/censeur/getupdateTrimestre?actualiserTrimerrorSeq"
 		+ "&&numPageAn="+numPageAn;
+		
 		
 		return "redirect:/logesco/users/censeur/getupdateTrimestre?actualiserTrimsuccessTrue"
 				+ "&&numPageAn="+numPageAn;

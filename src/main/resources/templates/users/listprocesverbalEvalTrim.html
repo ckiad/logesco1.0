@@ -10,7 +10,7 @@
 </head>
 <body>
 <span layout:fragment="titre_boite">
-        Génération des procès verbaux recapitulatif d'un trimestre
+        <kbd>Génération des procès verbaux recapitulatif d'un trimestre</kbd>
 </span>
 
 <div layout:fragment="formactionusers">
@@ -19,6 +19,11 @@
 	
 	<form action="#" th:action="@{/logesco/users/postlistprocesverbalEvalTrim}" 
 				method="post"   class="form-inline" th:object="${getrapportEvalTrimForm}">
+			
+			<div th:if="${param.listprocesverbalEvalTrimerror}">
+					<h4 align="justify" class="alert alert-danger">Vérifier que la classe et le trimestre ont bien 
+					été sélectionnée. Contactez l'administrateur le cas écheant. </h4>
+				</div>
 			
 				<fieldset class="col-md-12" >
 					<legend class="text-primary">Sélectionner la classe pour laquelle le procès verbal sera demandé</legend>
@@ -30,7 +35,8 @@
 						<select class="form-control" name="idclasseRapport"
 									id="idclasseRapport"  th:value="*{idclasseRapport}">
 
-							<optgroup th:label="${n.codeNiveaux}" th:if="${listofNiveauxForPV}"
+							<optgroup th:label="${session.lang=='fr'}?${n.codeNiveaux}+'/'+${n.codeNiveaux_en}:${n.codeNiveaux_en}+'/'+${n.codeNiveaux}"
+							 th:if="${listofNiveauxForPV}"
 										th:each="n:${listofNiveauxForPV}">
 
 								<option th:each="c:${n.listofClasses}"
@@ -42,10 +48,21 @@
 							
 						
 
-						<option th:each="c:${listofClassesForPV}" th:if="${listofClassesForPV}"
+						<!-- <option th:each="c:${listofClassesForPV}" th:if="${listofClassesForPV}"
 									th:value="${c.idClasses}" th:inline="text">
 									[[${c.codeClasses}]] [[${c.specialite.codeSpecialite}]]
-											[[${c.numeroClasses}]]</option>
+											[[${c.numeroClasses}]]</option> -->
+							<optgroup th:label="${session.lang=='fr'}?${n.codeNiveaux}+'/'+${n.codeNiveaux_en}:${n.codeNiveaux_en}+'/'+${n.codeNiveaux}" 
+								th:if="${listofNiveauxDirigesForPV}"
+										th:each="n:${listofNiveauxDirigesForPV}">
+										
+								<option th:each="c:${n.listofClasses}" 
+									th:if="${c.estEnseignantTitulaireDeClasse(profConnecte.idUsers)==1}"
+									th:value="${c.idClasses}" th:inline="text">
+									[[${c.codeClasses}]] [[${c.specialite.codeSpecialite}]]
+											[[${c.numeroClasses}]]
+								</option>
+							</optgroup>
 
 						</select>
 						
@@ -64,7 +81,7 @@
 						
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;		
 						<button type="submit" class="btn btn-primary  pull-right">
-							<span class="glyphicon glyphicon-send"></span>Envoyer
+							<span class="glyphicon glyphicon-send"></span> Envoyer
 						</button>
 					</div>
 				</fieldset>
@@ -109,7 +126,7 @@
 										th:href="@{/logesco/users/getprocesverbalresumeNotesTrim(idCours=${cours.idCours},
 										idTrimestre=${session.numerotrimdeRapportTrim})}"
 										role="button" target="_blank">
-										<span class="glyphicon glyphicon-list-all"></span>Voir le procès verbal trimestriel
+										<span class="glyphicon glyphicon-list-alt"></span> Voir le procès verbal trimestriel
 								</a>
 								
 							</td>

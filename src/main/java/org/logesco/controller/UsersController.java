@@ -721,6 +721,7 @@ public class UsersController {
 					System.out.println("numPageTrimAn  "+numPageTrimAn);
 				}
 			}
+			
 			/*
 			 * On n'a maintenant la liste des trimestres de l'année dans le model
 			 * il faut la liste des cours d'une classe qui sera affichée pour chaque séquence
@@ -757,6 +758,10 @@ public class UsersController {
 						System.out.println("numPageCoursClasse  "+numPageCoursClasse);
 					}
 				}
+				model.addAttribute("affichechoixmatiereetseq", "oui");
+			}
+			else{
+				model.addAttribute("affichechoixmatiereetseq", "non");
 			}
 			
 		}
@@ -772,6 +777,8 @@ public class UsersController {
 			@RequestParam(name="numPageCoursClasse", defaultValue="0") int numPageCoursClasse,
 			@RequestParam(name="taillePageCoursClasse", defaultValue="5") int taillePageCoursClasse,
 			@RequestParam(name="taillePage", defaultValue="1") int taillePage){
+		
+		System.err.println("les parametres sont classe: "+idClassesConcerne+"  annee: "+idAnneeActive);
 		
 		this.constructModelgetdonneesSaisieNotesV1(model,	request,  idClassesConcerne,  idAnneeActive,
 				numPageTrimAn, taillePage, numPageCoursClasse, taillePageCoursClasse);
@@ -1809,12 +1816,15 @@ public class UsersController {
 		
 		Utilisateurs userconnecte = usersService.findByUsername(username);
 		
+		Proffesseurs profConnecte = usersService.findProffesseurs(userconnecte.getIdUsers());
+		model.addAttribute("profConnecte", profConnecte);
+		
 		if(userconnecte != null){
 			int roleUser = usersService.getcodeUsersRole(userconnecte);
 			System.out.println("le role joue vis a vis du système a pour code "+roleUser);
 
 			/*
-			 * Il faut la liste des séquences de l'année en cours
+			 * Il faut la liste des trimestres de l'année en cours
 			 */
 			Annee anneeActive = usersService.findAnneeActive();
 			List<Trimestres> listofTrimestre = usersService.findAllActiveTrimestre(anneeActive.getIdPeriodes());
@@ -1842,6 +1852,17 @@ public class UsersController {
 					//session.setAttribute("listofClassesForPV", listofClasseDirige);
 					model.addAttribute("listofClassesForPV", listofClasseDirige);
 				}
+				
+				List<Niveaux> listofNiveauxDiriges = usersService.findAllNiveauxDirigesEns(userconnecte.getIdUsers());
+				if(listofNiveauxDiriges != null){
+					/*
+					 *On va donc plutot placer dans la session la liste des classes dirigés
+					 */
+					//session.setAttribute("listofClassesForPV", listofClasseDirige);
+					model.addAttribute("listofNiveauxDirigesForPV", listofNiveauxDiriges);
+				}
+				
+				
 			}
 		}
 		
@@ -2243,6 +2264,10 @@ public class UsersController {
 		Sequences seqRapport = usersService.findSequences(getrapportEvalSeqForm.getIdsequenceRapport());
 		HttpSession session=request.getSession();
 		
+		if(classeRapport == null || seqRapport == null) {
+			return "redirect:/logesco/users/getlistprocesverbalEvalSeq?listprocesverbalEvalSeqerror"; 
+		}
+		
 		String classesname = ""+classeRapport.getCodeClasses()+" "+classeRapport.getSpecialite().getCodeSpecialite()+classeRapport.getNumeroClasses();
 		session.setAttribute("classeRapportSeq", classesname);
 		session.setAttribute("classeRapport", classeRapport);
@@ -2286,6 +2311,10 @@ public class UsersController {
 		
 		Trimestres trimestreConcerne = usersService.findTrimestres(getrapportEvalTrimForm.getIdtrimestreRapport());
 		
+		if(trimestreConcerne == null) {
+			return "redirect:/logesco/users/getlistprocesverbalEvalTrim?listprocesverbalEvalTrimerror"; 
+		}
+		
 		List<Sequences> listofSeqTrim = (List<Sequences>) trimestreConcerne.getListofsequence();
 		List<Evaluations> listofEvaltrim = new ArrayList<Evaluations>();
 		
@@ -2302,6 +2331,9 @@ public class UsersController {
 		Classes classeRapport = usersService.findClasses(getrapportEvalTrimForm.getIdclasseRapport());
 		Trimestres trimRapport = usersService.findTrimestres(getrapportEvalTrimForm.getIdtrimestreRapport());
 		
+		if(classeRapport == null || trimRapport == null) {
+			return "redirect:/logesco/users/getlistprocesverbalEvalTrim?listprocesverbalEvalTrimerror"; 
+		}
 		
 		String classesname = ""+classeRapport.getCodeClasses()+" "+classeRapport.getSpecialite().getCodeSpecialite()+classeRapport.getNumeroClasses();
 		session.setAttribute("classeRapportTrim", classesname);

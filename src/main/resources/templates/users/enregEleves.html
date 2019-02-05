@@ -11,7 +11,7 @@
 <body>
 
 	<span layout:fragment="titre_boite">
-        Formulaire d'enregistrement des élèves recrutés en vue de leurs inscriptions
+        <kbd>Formulaire d'enregistrement des élèves recrutés en vue de leurs inscriptions</kbd>
     </span>
 
 <div layout:fragment="formactionusers">
@@ -175,7 +175,8 @@
 						<select class="form-control" name="idClasse"  th:field="*{idClasse}"
 										 id="idClasse" >
 							
-							<optgroup th:label="${n.codeNiveaux}" th:if="${listofNiveaux}" th:each="n:${listofNiveaux}">
+							<optgroup th:label="${session.lang=='fr'}?${n.codeNiveaux}+'/'+${n.codeNiveaux_en}:${n.codeNiveaux_en}+'/'+${n.codeNiveaux}" 
+									th:if="${listofNiveaux}" th:each="n:${listofNiveaux}">
 											
 								<option th:each="c:${n.listofClasses}" th:value="${c.idClasses}"
 										th:inline="text">
@@ -190,6 +191,10 @@
 					</div>
 					<div th:if="${#fields.hasErrors('idClasse')}"
 								th:errors="*{idClasse}" class="redcolor">Erreur de classe</div>
+					
+					<button type="submit" class="btn btn-primary  pull-right">
+						<span class="glyphicon glyphicon-save"></span> Envoyer
+					</button>
 					
 					<div th:if="${eleveEnreg}">
 					
@@ -253,10 +258,9 @@
 				      		
 					</div>
 					
+					
+					
 				</fieldset>
-					<button type="submit" class="btn btn-primary  pull-right">
-						<span class="glyphicon glyphicon-save"></span> Envoyer
-					</button>
 					<a class="btn btn-danger pull-left" href="#" 
 											th:href="@{/logesco/users/chefetab/getenregEleves}" 
 											role="button">

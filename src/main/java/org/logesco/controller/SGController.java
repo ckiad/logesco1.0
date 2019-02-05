@@ -190,12 +190,18 @@ public class SGController {
 				model.addAttribute("listofAllEleve", listofAllEleve);
 				
 				Sequences sequenceConcerne = usersService.findSequences(idSequenceConcerne);
-				
-				model.addAttribute("sequenceConcerneRabs", sequenceConcerne);
-				
 				Classes classeConcerne = usersService.findClasses(idClassesConcerne);
 				
-				model.addAttribute("classeConcerne", classeConcerne);
+				if(sequenceConcerne!=null && classeConcerne!=null){
+					model.addAttribute("sequenceConcerneRabs", sequenceConcerne);
+					
+					model.addAttribute("classeConcerne", classeConcerne);
+					
+					model.addAttribute("affichechoixclasse", "oui");
+				}
+				else{
+					model.addAttribute("affichechoixclasse", "non");
+				}
 				
 			}
 			

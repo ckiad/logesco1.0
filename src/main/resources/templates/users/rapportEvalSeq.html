@@ -11,7 +11,7 @@
 <body>
 
 <span layout:fragment="titre_boite">
-        Génération du rapport des évaluations d'une séquence dans une classe
+        <kbd>Génération du rapport des évaluations d'une séquence dans une classe</kbd>
 </span>
 
 <div layout:fragment="formactionusers">
@@ -33,7 +33,9 @@
 						<select class="form-control" name="idclasseRapport"
 									id="idclasseRapport"  th:value="*{idclasseRapport}">
 
-							<optgroup th:label="${n.codeNiveaux}" th:if="${listofNiveaux}"
+							<optgroup th:label="${session.lang=='fr'}?${n.codeNiveaux}+'/'+${n.codeNiveaux_en}:${n.codeNiveaux_en}+'/'+${n.codeNiveaux}"
+							
+							 th:if="${listofNiveaux}"
 										th:each="n:${listofNiveaux}">
 
 								<option th:each="c:${n.listofClasses}"

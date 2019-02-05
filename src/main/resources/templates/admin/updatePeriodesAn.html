@@ -72,7 +72,7 @@
 						<span class="glyphicon glyphicon-save"></span> Envoyer
 					</button>
 					<button type="reset" class="btn btn-danger">
-						<span class="glyphicon glyphicon-erase"></span>Effacer
+						<span class="glyphicon glyphicon-erase"></span> Effacer
 					</button>
 					
 			</form>
@@ -81,6 +81,10 @@
 		
 			<div th:if="${param.supprimAnneeerrorTrimestres}">
 				<h4 align="justify" class="alert alert-danger">Impossible de supprimer une année qui englobe des trimestres.</h4>
+			</div>
+			
+			<div th:if="${param.supprimanneesuccess}">
+				<h4 align="justify" class="alert alert-success">Suppression réalisée avec succès: Elle ne contenait ni trimestre ni séquence.</h4>
 			</div>
 			
 			<!-- ici on va placer le tableau qui affiche la liste des sections dèjà enregistré -->

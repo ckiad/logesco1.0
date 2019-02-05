@@ -15,15 +15,15 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class UpdateClassesForm {
 	
 	private String codeClasseAModif;
-	private int numeroClasseAModif;
+	private String numeroClasseAModif;
 	private Long idSpecialiteAModif;
 	
 	@NotNull
 	@NotEmpty
-	@Size(min= 2, max= 7)
+	@Size(min= 1, max= 7)
 	private String codeClasse;
 	@NotNull
-	private int numeroClasse;
+	private String numeroClasse;
 	@NotNull
 	@NotEmpty
 	private String codeSpecialiteClasse;
@@ -78,13 +78,13 @@ public class UpdateClassesForm {
 	/**
 	 * @return the numeroClasseAModif
 	 */
-	public int getNumeroClasseAModif() {
+	public String getNumeroClasseAModif() {
 		return numeroClasseAModif;
 	}
 	/**
 	 * @param numeroClasseAModif the numeroClasseAModif to set
 	 */
-	public void setNumeroClasseAModif(int numeroClasseAModif) {
+	public void setNumeroClasseAModif(String numeroClasseAModif) {
 		this.numeroClasseAModif = numeroClasseAModif;
 	}
 	/**
@@ -102,13 +102,13 @@ public class UpdateClassesForm {
 	/**
 	 * @return the numeroClasse
 	 */
-	public int getNumeroClasse() {
+	public String getNumeroClasse() {
 		return numeroClasse;
 	}
 	/**
 	 * @param numeroClasse the numeroClasse to set
 	 */
-	public void setNumeroClasse(int numeroClasse) {
+	public void setNumeroClasse(String numeroClasse) {
 		this.numeroClasse = numeroClasse;
 	}
 	/**

@@ -44,12 +44,12 @@
 <!-- debut de la partie contenu de la page d'index -->
 	<section> 
 		
-	<div class="col-md-10   col-md-offset-1 reculeverticalement">
+	<div class="col-md-6  col-md-offset-3 reculeverticalement">
 		<div class=" panel  panel-primary" >
 			<div class="panel-heading">
 				<p align="center" th:inline="text"> 
 					<!-- Bienvennue sur LOGESCO: Logiciel de Gestion Scolaire -->
-					[[#{titre_fen.titre_accueil}]]
+					<kbd>[[#{titre_fen.titre_accueil}]]</kbd>
 					<a th:href="@{/logesco/admin/index}" 
 							class="btn btn-default btn-sm pull-right" role="button">
 						Administrer l'application <span class="glyphicon glyphicon-lock"></span>
@@ -74,18 +74,18 @@
 		            	Vous vous êtes déconnecté avec succès.
 		            </h4>
 		        </div>
-				
+				<br/><br/><br/><br/>
 				<p align="center">
 					<a th:href="@{/logesco/users/index}" 
 						class="btn btn-primary btn-sm" role="button" id="ouvrirlapplication" 
-						th:text="#{button.open}">
-						Cliquer ici pour ouvrir  l'application <span class="glyphicon glyphicon-ok"></span>
+						th:inline="text">
+						[[#{button.open}]] <span class="glyphicon glyphicon-hand-right"></span>
 					</a>
 				</p> 
 			</div>
 			<div class="panel-footer">
 				<p>&copy;<small th:text="#{label.confiance}"> 
-					 KiadjMind 2019 (678470262 / 695093228) merci de la confiance en nous accordée
+					 Kiadjeu 2019 (678470262 / 695093228) merci de la confiance en nous accordée
 				</small>
 				<span  class="badge badge-light pull-right">
 				    <span th:text="${dfNameJour}">Nom du jour</span>&nbsp;
