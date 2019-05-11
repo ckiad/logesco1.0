@@ -10,7 +10,7 @@
 </head>
 <body>
 <span layout:fragment="titre_boite">
-       <kbd>Affichage des listes provisoires des différentes classes</kbd>
+       <kbd th:text="#{listeProvEleves.titre_boite}">Listes provisoires des différentes classes</kbd>
 </span>
 <div layout:fragment="formactionusers">
 <!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
@@ -80,11 +80,11 @@
 								<tr th:each="eleve:${listprovofEleves}">
 									<!-- <td th:inline="text">[[${eleve.matriculeEleves}]] </td> -->
 								
-									<td th:inline="text">[[${#strings.capitalize(eleve.nomsEleves)}]] [[${eleve.prenomsEleves}]] </td>
+									<td th:inline="text">[[${#strings.toUpperCase(eleve.nomsEleves)}]] [[${eleve.prenomsEleves}]] </td>
 									
 									<td th:inline="text">
 										[[#{listeProvEleves.label_nele}]] 
-										[[${eleve.datenaissEleves}]] [[#{listeProvEleves.label_a}]] 
+										[[${#dates.format(eleve.datenaissEleves,"dd-MM-yyyy")}]] [[#{listeProvEleves.label_a}]] 
 										[[${eleve.lieunaissEleves}]]
 									</td>
 									

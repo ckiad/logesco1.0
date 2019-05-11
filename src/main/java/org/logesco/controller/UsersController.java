@@ -27,9 +27,12 @@ import org.logesco.entities.*;
 import org.logesco.form.*;
 import org.logesco.modeles.EleveBean;
 import org.logesco.modeles.EleveBean2;
+import org.logesco.modeles.EleveInsolvableBean;
+import org.logesco.modeles.OperationBean;
 import org.logesco.modeles.PV_NoteBean;
 import org.logesco.modeles.PV_SequenceBean;
 import org.logesco.modeles.PV_TrimestreBean;
+import org.logesco.modeles.Recu_versement;
 import org.logesco.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,6 +62,8 @@ import org.springframework.web.servlet.view.jasperreports.JasperReportsPdfView;
 @RequestMapping(path="/logesco/users")
 public class UsersController {
 	
+	@Value("${dir.emblemes.logo}")
+	private String logoetabDir;
 	/**
 	 * Objet metier qui permettra au controleur d'avoir les méthodes metiers
 	 */
@@ -98,7 +103,7 @@ public class UsersController {
 		HttpSession session=request.getSession();
 		String lang = (String)session.getAttribute("lang");
 		
-		System.out.println("le langage choisi estestest "+lang);
+		//System.out.println("le langage choisi estestest "+lang);
 		
 		if(lang.equals("fr")==true){
     		Locale localeFr = new Locale("fr","FR");
@@ -122,18 +127,18 @@ public class UsersController {
 		 * avant toutes redirection vers la page demandée 
 		 */
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-				+ "xxxxxxxxxxxxxxxxxxxxxxxxxxxx"+auth.getName());
+		/*//System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+				+ "xxxxxxxxxxxxxxxxxxxxxxxxxxxx"+auth.getName());*/
 		model.addAttribute("username", auth.getName());
 
-		System.out.println(String.format("Modèle=%s, Session[username]=%s", model, 
-				session.getAttribute("username")));
+		/*//System.out.println(String.format("Modèle=%s, Session[username]=%s", model, 
+				session.getAttribute("username")));*/
 
 		//Utiliser pour retrouver la photos de l'utilisateur connecté
 		session.setAttribute("username", auth.getName());
 
-		System.out.println(String.format("Modèle=%s, Session[usernamess]=%s", model, 
-				session.getAttribute("username")));
+		/*//System.out.println(String.format("Modèle=%s, Session[usernamess]=%s", model, 
+				session.getAttribute("username")));*/
 		
 		/*
 		 * On doit charger la liste des niveaux car dans le menu un users censeur doit pouvoir
@@ -155,14 +160,14 @@ public class UsersController {
 	@RequestMapping(path="/getphotoPers", produces=MediaType.IMAGE_PNG_VALUE)
 	@ResponseBody
 	public byte[] getphotoPers(Long idPers){
-		System.out.println("DEPART DE LA RECHERCHE DE LA PHOTO  du personnel connecté  "+idPers);
+		//System.out.println("DEPART DE LA RECHERCHE DE LA PHOTO  du personnel connecté  "+idPers);
 		File f=new File(photoPersonnelsDir+idPers);
 		try{
-			System.out.println("nous voici ici et chemin fichier est = "+photoPersonnelsDir+idPers);
+			//System.out.println("nous voici ici et chemin fichier est = "+photoPersonnelsDir+idPers);
 			return IOUtils.toByteArray(new FileInputStream(f));
 		}
 		catch(Exception e){
-			System.out.println("erreur de recherche de la photos "+e.getMessage());
+			//System.out.println("erreur de recherche de la photos "+e.getMessage());
 			return null;
 		}
 	}
@@ -173,15 +178,15 @@ public class UsersController {
 	@RequestMapping(path="/getphotoEleve", produces=MediaType.IMAGE_PNG_VALUE)
 	@ResponseBody
 	public byte[] getphotoEleve(Long idEleves){
-		System.out.println("DEPART DE LA RECHERCHE DE LA PHOTO  de l'élève enregistré "+idEleves);
+		//System.out.println("DEPART DE LA RECHERCHE DE LA PHOTO  de l'élève enregistré "+idEleves);
 		
 		File f=new File(photoElevesDir+idEleves);
 		try{
-			System.out.println("nous voici ici et chemin fichier est ="+photoElevesDir+idEleves);
+			//System.out.println("nous voici ici et chemin fichier est ="+photoElevesDir+idEleves);
 			return IOUtils.toByteArray(new FileInputStream(f));
 		}
 		catch(Exception e){
-			System.out.println("erreur de recherche de la photos "+e.getMessage());
+			//System.out.println("erreur de recherche de la photos "+e.getMessage());
 			return null;
 		}
 		
@@ -195,7 +200,7 @@ public class UsersController {
 	@ResponseBody
 	public byte[] getphotoPersonnelConnecte(HttpServletRequest request){
 		HttpSession session=request.getSession();
-		System.out.println("DEPART DE LA RECHERCHE DE LA PHOTO  "+session.getAttribute("username"));
+		//System.out.println("DEPART DE LA RECHERCHE DE LA PHOTO  "+session.getAttribute("username"));
 		/*
 		 * Il faut rechercher le personnel associe a ce nom d'utilisateur car c'est avec son nom d'utilisateur
 		 * qu'on va retrouver sa photos
@@ -204,12 +209,12 @@ public class UsersController {
 		
 		File f=new File(photoPersonnelsDir+usersService.findByUsername(username).getIdUsers());
 		try{
-			System.out.println("nous voici ici et chemin fichier est ="+photoPersonnelsDir+
-					usersService.findByUsername(username).getIdUsers());
+			/*//System.out.println("nous voici ici et chemin fichier est ="+photoPersonnelsDir+
+					usersService.findByUsername(username).getIdUsers());*/
 			return IOUtils.toByteArray(new FileInputStream(f));
 		}
 		catch(Exception e){
-			System.out.println("erreur sur idusers "+e.getMessage());
+			//System.out.println("erreur sur idusers "+e.getMessage());
 			return null;
 		}
 		
@@ -243,11 +248,11 @@ public class UsersController {
 			model.addAttribute("listdefofPagesEleves", listofPagesEleves);
 				
 			model.addAttribute("pagedefCouranteEleves", numPageEleves);
-			System.out.println("la liste des élève contient "+pageofEleves.getContent().size());
+			//System.out.println("la liste des élève contient "+pageofEleves.getContent().size());
 		}
 		
 		/*for(Eleves elv : pageofEleves.getContent()){
-			System.out.println("-------"+elv.getNomsEleves()+"------"+elv.getPrenomsEleves());
+			//System.out.println("-------"+elv.getNomsEleves()+"------"+elv.getPrenomsEleves());
 		}*/
 		
 		return "users/resultatRechEleves";
@@ -309,7 +314,7 @@ public class UsersController {
 				model.addAttribute("listprovofPagesEleves", listofPagesEleves);
 					
 				model.addAttribute("pageprovCouranteEleves", numPageprovEleves);
-				System.out.println("la liste des élève contient "+pageofEleves.getContent().size());
+				//System.out.println("la liste des élève contient "+pageofEleves.getContent().size());
 			}
 		}
 	}
@@ -328,7 +333,7 @@ public class UsersController {
 	public ModelAndView exportlistprovEleves(Model model, HttpServletRequest request,
 			@RequestParam(name="idClasseSelect", defaultValue="0") long idClasseSelect){
 	
-		System.out.println("----------------------- IMPRESSION DES LISTES PROVISOIRES -------------------");
+		//System.out.println("----------------------- IMPRESSION DES LISTES PROVISOIRES -------------------");
 		Etablissement etablissementConcerne = usersService.getEtablissement();
 		
 		Classes classeSelect = usersService.findClasses(idClasseSelect);
@@ -336,17 +341,17 @@ public class UsersController {
 		Annee anneeScolaire = usersService.findAnneeActive();
 		
 		if(classeSelect == null) {
-			System.out.println("la classe selectionner est null dans le code donc mauvaise recuperation");
+			//System.out.println("la classe selectionner est null dans le code donc mauvaise recuperation");
 			return null;
 		}
 		
 		if(anneeScolaire == null){
-			System.out.println("l'annee scolaire est null donc mal recuperer ou pas encore enregistrée");
+			//System.out.println("l'annee scolaire est null donc mal recuperer ou pas encore enregistrée");
 			return null;
 		}
 		
 		if(etablissementConcerne == null){
-			System.out.println("Avez vous déjà enregistrer l'établissement si oui alors mauvaise recuperation");
+			//System.out.println("Avez vous déjà enregistrer l'établissement si oui alors mauvaise recuperation");
 			return null;
 		}
 		
@@ -397,6 +402,146 @@ public class UsersController {
 		parameters.put("datasource", collectionofEleveprovClasse);
 		
 		return new ModelAndView(view, parameters);
+	}
+	
+	public void constructModelListOperationEleves(Model model, HttpServletRequest request,
+			long idClasseSelect,  int numPageOperationEleves){
+		HttpSession session=request.getSession();
+		/*
+		 * Il faut faire la liste des classes et placer dans le model puisqu'on 
+		 * va s'en servir pour les etiquetes des classes
+		 */
+		List<Classes> listofClasses=usersService.findListClasse();
+		
+		model.addAttribute("listofClasses", listofClasses);
+		
+		List<Niveaux> listofNiveaux = usersService.findAllNiveaux();
+		
+		model.addAttribute("listofNiveaux", listofNiveaux);
+		
+		if(idClasseSelect!=-1){
+			/*
+			 * On place idClasseSelect dans le modele puisqu'au niveau des liens de numerotation des pages il doit être
+			 * utilisé pour savoir dans quel classe on se trouvait 
+			 */
+			model.addAttribute("idClasseSelect", idClasseSelect);
+			
+			/*
+			 * On va rechercher la classe selectionné car on doit la placer aussi dans le model
+			 */
+			Classes classeSelect = usersService.findClasses(idClasseSelect);
+			model.addAttribute("classeSelect", classeSelect);
+			
+			/*
+			 * On veut mettre aussi l'effectif total des insolvables d'une classe dans le modèle
+			 */
+			int effectiftotalClasse = usersService.getEffectifProvisoireClasse(idClasseSelect);
+			model.addAttribute("effectiftotalClasse", effectiftotalClasse);
+			
+			List<Eleves> listprovofEleves = usersService.findListElevesClasse(idClasseSelect);
+			
+			session.setAttribute("listprovofEleves", listprovofEleves);
+			session.setAttribute("classeSelect", classeSelect);
+			
+			Page<Eleves> pageofEleves=usersService.findPageElevesClasse(idClasseSelect,	
+					numPageOperationEleves, 10);
+			if(pageofEleves.getContent().size()!=0){
+				model.addAttribute("listeleveDansClasses", pageofEleves.getContent());
+				int[] listofPagesEleves=new int[pageofEleves.getTotalPages()];
+					
+				model.addAttribute("listofPagesEleves", listofPagesEleves);
+					
+				model.addAttribute("pageCouranteEleves", numPageOperationEleves);
+				//System.out.println("la liste des élève contient "+pageofEleves.getContent().size());
+			}
+		}
+		
+	}
+	
+	@GetMapping(path="/getlistOperationsEleves")
+	public String getlistOperationsEleves(@RequestParam(name="idClasseSelect", defaultValue="-1") long idClasseSelect,
+			@RequestParam(name="numPageOperationEleves", defaultValue="0") int numPageOperationEleves,
+			  Model model, HttpServletRequest request){
+		
+		this.constructModelListOperationEleves(model,	request,  idClasseSelect,  numPageOperationEleves);
+		
+		return "users/listeOperationEleves";
+	}
+	
+	
+	public void constructModelListeElevesInsolvable(Model model, HttpServletRequest request,
+			long idClasseSelect,  int numPageElevesInsolvable){
+		
+		HttpSession session=request.getSession();
+		
+		/*
+		 * Il faut faire la liste des classes et placer dans le model puisqu'on 
+		 * va s'en servir pour les etiquetes des classes
+		 */
+		List<Classes> listofClasses=usersService.findListClasse();
+		
+		model.addAttribute("listofClasses", listofClasses);
+		
+		List<Niveaux> listofNiveaux = usersService.findAllNiveaux();
+		
+		model.addAttribute("listofNiveaux", listofNiveaux);
+		
+		//Long idClasseAEnvoyer=null;
+		if(idClasseSelect!=-1){
+			//idClasseAEnvoyer=new Long(idClasseSelect);
+			/*
+			 * On place idClasseSelect dans le modele puisqu'au niveau des liens de numerotation des pages il doit être
+			 * utilisé pour savoir dans quel classe on se trouvait 
+			 */
+			model.addAttribute("idClasseSelect", idClasseSelect);
+			
+			/*
+			 * On va rechercher la classe selectionné car on doit la placer aussi dans le model
+			 */
+			Classes classeSelect = usersService.findClasses(idClasseSelect);
+			model.addAttribute("classeSelect", classeSelect);
+		
+		
+			/*
+			 * On veut mettre aussi l'effectif total des insolvables d'une classe dans le modèle
+			 */
+			int effectifinsolvableDansClasse=usersService.getEffectifInsolvableDansClasse(idClasseSelect);
+			model.addAttribute("effectifinsolvableDansClasse", effectifinsolvableDansClasse);
+			
+			int effectiftotalClasse = usersService.getEffectifProvisoireClasse(idClasseSelect);
+			model.addAttribute("effectiftotalClasse", effectiftotalClasse);
+			
+			List<Eleves> listeleveinsolvableDansClasses = usersService.getListElevesInsolvable(idClasseSelect);
+			
+			session.setAttribute("listeleveinsolvableDansClasses", listeleveinsolvableDansClasses);
+			session.setAttribute("classeSelect", classeSelect);
+			
+			Page<Eleves> pageofElevesInsolvable = usersService.findPageElevesInsolvable(idClasseSelect, 
+					numPageElevesInsolvable, 10);
+			if(pageofElevesInsolvable.getContent().size()!=0){
+				model.addAttribute("listeleveinsolvableDansClasses", pageofElevesInsolvable.getContent());
+				int[] listofPagesElevesInsolvable=new int[pageofElevesInsolvable.getTotalPages()];
+					
+				model.addAttribute("listofPagesElevesInsolvable", listofPagesElevesInsolvable);
+					
+				model.addAttribute("pageCouranteElevesInsolvable", numPageElevesInsolvable);
+				//System.out.println("la liste des élève contient "+pageofEleves.getContent().size());
+			}
+			
+		}
+		
+		
+		
+	}
+	
+	@GetMapping(path="/getlisteElevesInsolvable")
+	public String getlisteElevesInsolvable(@RequestParam(name="idClasseSelect", defaultValue="-1") long idClasseSelect,
+			@RequestParam(name="numPageElevesInsolvable", defaultValue="0") int numPageElevesInsolvable,
+			  Model model, HttpServletRequest request){
+		
+		this.constructModelListeElevesInsolvable(model,	request,  idClasseSelect,  numPageElevesInsolvable);
+		
+		return "users/listeElevesInsolvable";
 	}
 	
 	
@@ -452,7 +597,7 @@ public class UsersController {
 			int effectifdefClasse=usersService.getEffectifDefinitifClasse(idClasseSelect, critere);
 			model.addAttribute("effectifdefClasse", effectifdefClasse);
 			session.setAttribute("effectifdefClasse", effectifdefClasse);
-			System.out.println("effectifdefClasse "+effectifdefClasse);
+			//System.out.println("effectifdefClasse "+effectifdefClasse);
 			
 			
 			/*
@@ -467,7 +612,7 @@ public class UsersController {
 			 * On place aussi toute la liste des eleves définitif selon le critere dans la session
 			 */
 			List<Eleves> listdefofEleves = usersService.findListElevesDefClasse(idClasseSelect, montantMin);
-			System.out.println("listdefofEleves "+listdefofEleves.size());
+			//System.out.println("listdefofEleves "+listdefofEleves.size());
 			
 			session.setAttribute("listdefofEleves", listdefofEleves);
 			
@@ -480,7 +625,7 @@ public class UsersController {
 				model.addAttribute("listdefofPagesEleves", listofPagesEleves);
 					
 				model.addAttribute("pagedefCouranteEleves", numPagedefEleves);
-				System.out.println("la liste des élève contient "+pageDefofEleves.getContent().size());
+				//System.out.println("la liste des élève contient "+pageDefofEleves.getContent().size());
 			}
 		}
 		
@@ -504,7 +649,7 @@ public class UsersController {
 			@RequestParam(name="idClasseSelect", defaultValue="0") long idClasseSelect,
 			@RequestParam(name="critere", defaultValue="100") int critere){
 		
-		System.out.println("----------------------- IMPRESSION DES LISTES DEFINITIVES -------------------");
+		//System.out.println("----------------------- IMPRESSION DES LISTES DEFINITIVES -------------------");
 		Etablissement etablissementConcerne = usersService.getEtablissement();
 		
 		Classes classeSelect = usersService.findClasses(idClasseSelect);
@@ -512,17 +657,17 @@ public class UsersController {
 		Annee anneeScolaire = usersService.findAnneeActive();
 		
 		if(classeSelect == null) {
-			System.out.println("la classe selectionner est null dans le code donc mauvaise recuperation");
+			//System.out.println("la classe selectionner est null dans le code donc mauvaise recuperation");
 			return null;
 		}
 		
 		if(anneeScolaire == null){
-			System.out.println("l'annee scolaire est null donc mal recuperer");
+			//System.out.println("l'annee scolaire est null donc mal recuperer");
 			return null;
 		}
 		
 		if(etablissementConcerne == null){
-			System.out.println("Avez vous déjà enregistrer l'établissement si oui alors mauvaise recuperation");
+			//System.out.println("Avez vous déjà enregistrer l'établissement si oui alors mauvaise recuperation");
 			return null;
 		}
 		double coefMontant = critere * 0.01;
@@ -550,12 +695,14 @@ public class UsersController {
 		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
 		String nomClasse= classeSelect.getCodeClasses()+classeSelect.getSpecialite().getCodeSpecialite()+
 				classeSelect.getNumeroClasses();
-		String titre = "Liste des élève ayant payé au moins "+montantMin+" dans la classe "+nomClasse;
+		String titre = "Liste des eleves ayant paye au moins "+montantMin+" en classe de "+nomClasse;
 		if(montantMin == classeSelect.getMontantScolarite()) 
-			titre = "Liste définitive des élèves de la classe "+nomClasse;
+			titre = "Liste definitive des eleves de la classe "+nomClasse;
 		
 		parameters.put("titre_liste", titre);
 		parameters.put("ville", etablissementConcerne.getVilleEtab());
+		
+		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
 		
 		JasperReportsPdfView view = new JasperReportsPdfView();
 		view.setUrl("classpath:/reports/compiled/fiches/ListeEleveParClasse.jasper");
@@ -614,7 +761,7 @@ public class UsersController {
 					model.addAttribute("listofPagesTrimestresAnnee", listofPagesTrimestresAnnee);
 					
 					model.addAttribute("pageCouranteTrimestresAnnee", numPageTrimAn);
-					System.out.println("numPageTrimAn  "+numPageTrimAn);
+					//System.out.println("numPageTrimAn  "+numPageTrimAn);
 				}
 			}
 			/*
@@ -633,7 +780,7 @@ public class UsersController {
 				
 				//Long idProf = request.getUserPrincipal().getName();
 				
-				System.out.println("request.getUserPrincipal().getName() "+request.getUserPrincipal().getName());
+				//System.out.println("request.getUserPrincipal().getName() "+request.getUserPrincipal().getName());
 				
 				String usernameConnect = request.getUserPrincipal().getName();
 				
@@ -650,7 +797,7 @@ public class UsersController {
 						model.addAttribute("listofPagesCoursClasse", listofPagesCoursClasse);
 						
 						model.addAttribute("pageCouranteCoursClasse", numPageCoursClasse);
-						System.out.println("numPageCoursClasse  "+numPageCoursClasse);
+						//System.out.println("numPageCoursClasse  "+numPageCoursClasse);
 					}
 				}
 			}
@@ -718,7 +865,7 @@ public class UsersController {
 					model.addAttribute("listofPagesTrimestresAnnee", listofPagesTrimestresAnnee);
 					
 					model.addAttribute("pageCouranteTrimestresAnnee", numPageTrimAn);
-					System.out.println("numPageTrimAn  "+numPageTrimAn);
+					//System.out.println("numPageTrimAn  "+numPageTrimAn);
 				}
 			}
 			
@@ -738,7 +885,7 @@ public class UsersController {
 				
 				//Long idProf = request.getUserPrincipal().getName();
 				
-				System.out.println("request.getUserPrincipal().getName() "+request.getUserPrincipal().getName());
+				//System.out.println("request.getUserPrincipal().getName() "+request.getUserPrincipal().getName());
 				
 				String usernameConnect = request.getUserPrincipal().getName();
 				
@@ -755,7 +902,7 @@ public class UsersController {
 						model.addAttribute("listofPagesCoursClasse", listofPagesCoursClasse);
 						
 						model.addAttribute("pageCouranteCoursClasse", numPageCoursClasse);
-						System.out.println("numPageCoursClasse  "+numPageCoursClasse);
+						//System.out.println("numPageCoursClasse  "+numPageCoursClasse);
 					}
 				}
 				model.addAttribute("affichechoixmatiereetseq", "oui");
@@ -778,7 +925,7 @@ public class UsersController {
 			@RequestParam(name="taillePageCoursClasse", defaultValue="5") int taillePageCoursClasse,
 			@RequestParam(name="taillePage", defaultValue="1") int taillePage){
 		
-		System.err.println("les parametres sont classe: "+idClassesConcerne+"  annee: "+idAnneeActive);
+		//System.err.println("les parametres sont classe: "+idClassesConcerne+"  annee: "+idAnneeActive);
 		
 		this.constructModelgetdonneesSaisieNotesV1(model,	request,  idClassesConcerne,  idAnneeActive,
 				numPageTrimAn, taillePage, numPageCoursClasse, taillePageCoursClasse);
@@ -787,194 +934,45 @@ public class UsersController {
 		//return "users/donneesSaisieNotesV2";
 	}
 	
-	public void constructModelgetformSaisieNotes(Model model,	HttpServletRequest request, Long idEleves,  Long idSequenceConcerne,  
-			Long idCoursConcerne, String typeEval, Long idClassesConcerne,  int numPageEleves, int taillePage ){
-		
-		Page<Eleves> pageofEleves=usersService.findPageElevesClasse(idClassesConcerne,	
-				numPageEleves, taillePage);
-		
-		if(pageofEleves != null){
-			
-			if(pageofEleves.getContent().size()!=0){
-				
-				model.addAttribute("listofEleves", pageofEleves.getContent());
-				int[] listofPagesEleves=new int[pageofEleves.getTotalPages()];
-					
-				model.addAttribute("listofPagesEleves", listofPagesEleves);
-					
-				model.addAttribute("pageCouranteEleves", numPageEleves);
-				System.out.println("la liste des élève contient "+pageofEleves.getContent().size());
-			}
-		}
-		/*
-		 * Il faut donc la liste de tous les élèves de la classe dans le modele dans le même ordre qu'ils vont apparaitre dans les pages
-		 */
-		List<Eleves> listofAllEleve = usersService.findListElevesClasse(idClassesConcerne);
-		
-		/*for(Eleves e : listofAllEleve){
-			System.out.println("AFFx  Noms "+e.getNomsEleves()+" ID: "+e.getIdEleves().longValue());
-		}*/
-		
-		if(listofAllEleve != null){
-			model.addAttribute("effectifTotal", listofAllEleve.size());
-			
-			if((listofAllEleve.size() > 0)){
-				model.addAttribute("listofAllEleve", listofAllEleve);
-				/*
-				 * On doit charger dans le modèle le premier élève de la liste et à chaque fois on va charger l'élève dont 
-				 * le numero est passé en paramètre
-				 */
-				int numEleve = usersService.getNumeroEleve(listofAllEleve, idEleves);
-				
-				//System.out.println("numEleve  "+numEleve+ " idEleves "+idEleves.longValue());
-				model.addAttribute("numEleve", numEleve);
-				
-				
-				/*
-				 * Au chargement de la page idEleves vaudra 0 et par conséquent getNumeroEleve va retourner 0. 
-				 * Il faut donc charger le premier élève de la liste. 
-				 */
-				if(numEleve == 0) numEleve = 1;
-				
-				Eleves eleveCharge =  listofAllEleve.get(numEleve-1);
-				
-				System.out.println("le numero du gar charge est "+numEleve);
-				System.out.println("et le gar lui même a pour nom  "+eleveCharge.getNomsEleves());
-				
-				model.addAttribute("eleveCharge",eleveCharge);//car l'élève 1 est à l'indice 0 de la liste
-				
-				
-				//System.out.println("AFFx1  "+listofAllEleve.get(numEleve-1).getNomsEleves());
-				/*
-				 * Il faut charger du même coup la note que cet élève à obtenu à cette évaluation au cas ou elle est déjà enregistré
-				 */
-				NotesEval notesEvalEleveCharge = eleveCharge.getNotesEvalCoursSeq(idCoursConcerne, idSequenceConcerne, typeEval);
-				
-				if(notesEvalEleveCharge != null) model.addAttribute("notesEvalEleveCharge", notesEvalEleveCharge);
-				
-				Sequences sequenceConcerne = usersService.findSequences(idSequenceConcerne);
-				Cours coursConcerne = usersService.findCours(idCoursConcerne);
-				
-				model.addAttribute("sequenceConcerne", sequenceConcerne);
-				model.addAttribute("coursConcerne", coursConcerne);
-				model.addAttribute("typeEval", typeEval);
-				
-			}
-			
-		}
-		/*
-		 * Il faut placer dans le modele l'évaluation pour laquelle on veut enregistrer les notes
-		 */
-		Evaluations eval = usersService.findEvaluations(idCoursConcerne, idSequenceConcerne, typeEval);
-		model.addAttribute("evaluationConcerne", eval);
-	}
-	
-	
-	
-	@GetMapping(path="/getformSaisieNotes")
-	public String getformSaisieNotes(
-			Model model, HttpServletRequest request,
-			@RequestParam(name="idSequenceConcerne", defaultValue="-1") Long idSequenceConcerne,
-			@RequestParam(name="idClassesConcerne", defaultValue="0") Long idClassesConcerne,
-			@RequestParam(name="idCoursConcerne", defaultValue="0") Long idCoursConcerne,
-			@RequestParam(name="typeEval", defaultValue="DS") String typeEval,
-			@RequestParam(name="idEleves", defaultValue="0") Long idEleves,
-			@RequestParam(name="numPageEleves", defaultValue="0") int numPageEleves,
-			@RequestParam(name="taillePage", defaultValue="5") int taillePage){
-		
-		/*
-		 * Il faut enregistrer l'évaluation s'il n'existe pas encore
-		 * pour cela il faut idCours et idSequence et les paramètres de eval
-		 */
-		Sequences sequenceConcerne = usersService.findSequences(idSequenceConcerne);
-		Cours coursConcerne = usersService.findCours(idCoursConcerne);
-		
-		Evaluations eval = new Evaluations();
-		eval.setContenuEval("");
-		eval.setCours(coursConcerne);
-		eval.setDateenregEval(new Date());
-		eval.setSequence(sequenceConcerne);
-		eval.setTypeEval(typeEval);
-		
-		String contenuEval="";
-		String typeEvalAssocie="";
-		int proportionEval = 0;
-		if(typeEval.equals("DS")) {
-			proportionEval = 80;
-			typeEvalAssocie = "CC";
-		}
-		if(typeEval.equals("CC")) {
-			proportionEval = 20;
-			typeEvalAssocie = "DS";
-		}
-		
-		
-		Evaluations evalDeTypeExist = usersService.findEvaluations(coursConcerne.getIdCours(), sequenceConcerne.getIdPeriodes(), typeEval);
-		Evaluations evalDeTypeExistAssocie = usersService.findEvaluations(coursConcerne.getIdCours(), 
-				sequenceConcerne.getIdPeriodes(), typeEvalAssocie);
-		
-		if(evalDeTypeExist == null) {
-			int repServeur = usersService.saveEvaluation(contenuEval, coursConcerne, new Date(), proportionEval, sequenceConcerne, typeEval);
-		
-			if(repServeur == 0) return "redirect:/logesco/users/500?enregEvaluationerror";
-		}
-		
-		/*
-		 * L'évaluation associe existe on la charge dans la session sinon on affichera un pourcentage null.
-		 */
-		if(evalDeTypeExistAssocie != null) {
-			model.addAttribute("evaluationAssocie", evalDeTypeExistAssocie);
-		}
-		
-		/*
-		 * Ensuite il faut charger la liste des élèves dans le model avec pour chacun le moyen d'avoir 
-		 * sa note pour un type d'évaluation précis, dans un cours et une séquence donnée
-		 */
-		
-		this.constructModelgetformSaisieNotes(model,	request, idEleves, idSequenceConcerne,  idCoursConcerne,  typeEval,
-				idClassesConcerne, numPageEleves, taillePage);
-		
-		return "users/formSaisieNotes";
-	}
 	
 	
 	public void constructModelgetformSaisieNotesV1(Model model,	HttpServletRequest request, Long idSequenceConcerne,  
 			Long idCoursConcerne, String typeEval, Long idClassesConcerne){
 		
-		System.err.println("depart de la fonction 1 ");
+		//System.err.println("depart de la fonction 1 ");
 		/*
 		 * Il faut donc la liste de tous les élèves de la classe dans le modele dans le même ordre qu'ils vont apparaitre dans les pages
 		 */
 		List<Eleves> listofAllEleve = usersService.findListElevesClasse(idClassesConcerne);
 		
 		/*for(Eleves e : listofAllEleve){
-			System.out.println("AFFx  Noms "+e.getNomsEleves()+" ID: "+e.getIdEleves().longValue());
+			//System.out.println("AFFx  Noms "+e.getNomsEleves()+" ID: "+e.getIdEleves().longValue());
 		}*/
-		System.err.println("depart de la fonction 2");
+		//System.err.println("depart de la fonction 2");
 		if(listofAllEleve != null){
 			model.addAttribute("effectifTotal", listofAllEleve.size());
-			System.err.println("depart de la fonction 3 la taille "+listofAllEleve.size());
+			//System.err.println("depart de la fonction 3 la taille "+listofAllEleve.size());
 			if((listofAllEleve.size() > 0)){
 				model.addAttribute("listofAllEleve", listofAllEleve);
-				System.err.println("depart de la fonction 4");
+				//System.err.println("depart de la fonction 4");
 				Sequences sequenceConcerne = usersService.findSequences(idSequenceConcerne);
 				Cours coursConcerne = usersService.findCours(idCoursConcerne);
-				System.err.println("chargement du modele initie "+sequenceConcerne.getNumeroSeq());
+				//System.err.println("chargement du modele initie "+sequenceConcerne.getNumeroSeq());
 				model.addAttribute("sequenceConcerne", sequenceConcerne);
 				model.addAttribute("coursConcerne", coursConcerne);
 				model.addAttribute("typeEval", typeEval);
 				model.addAttribute("effectifclasse",listofAllEleve.size());
-				System.err.println("chargement du modele terminee");
+				//System.err.println("chargement du modele terminee");
 			}
 			
 		}
 		/*
 		 * Il faut placer dans le modele l'évaluation pour laquelle on veut enregistrer les notes
 		 */
-		System.err.println("depart de la fonction 5");
+		//System.err.println("depart de la fonction 5");
 		Evaluations eval = usersService.findEvaluations(idCoursConcerne, idSequenceConcerne, typeEval);
 		model.addAttribute("evaluationConcerne", eval);
-		System.err.println("depart de la fonction 6");
+		//System.err.println("depart de la fonction 6");
 	}
 	
 	
@@ -994,12 +992,12 @@ public class UsersController {
 		Sequences sequenceConcerne = usersService.findSequences(idSequenceConcerne);
 		Cours coursConcerne = usersService.findCours(idCoursConcerne);
 		
-		Evaluations eval = new Evaluations();
+		/*Evaluations eval = new Evaluations();
 		eval.setContenuEval("");
 		eval.setCours(coursConcerne);
 		eval.setDateenregEval(new Date());
 		eval.setSequence(sequenceConcerne);
-		eval.setTypeEval(typeEval);
+		eval.setTypeEval(typeEval);*/
 		
 		String contenuEval="";
 		String typeEvalAssocie="";
@@ -1013,29 +1011,55 @@ public class UsersController {
 			typeEvalAssocie = "DS";
 		}
 		
+		//System.err.println("la proportion eval est d'abord "+proportionEval);
+		Evaluations evalDeTypeExist = usersService.findEvaluations(coursConcerne.getIdCours(), 
+				sequenceConcerne.getIdPeriodes(), typeEval);
 		
-		Evaluations evalDeTypeExist = usersService.findEvaluations(coursConcerne.getIdCours(), sequenceConcerne.getIdPeriodes(), typeEval);
 		Evaluations evalDeTypeExistAssocie = usersService.findEvaluations(coursConcerne.getIdCours(), 
 				sequenceConcerne.getIdPeriodes(), typeEvalAssocie);
 		
 		if(evalDeTypeExist == null) {
-			int repServeur = usersService.saveEvaluation(contenuEval, coursConcerne, new Date(), proportionEval, sequenceConcerne, typeEval);
-		
+			if(evalDeTypeExistAssocie !=null){
+				proportionEval = 100 - evalDeTypeExistAssocie.getProportionEval();
+			}
+			int repServeur = usersService.saveEvaluation(contenuEval, coursConcerne, new Date(), 
+					proportionEval, sequenceConcerne, typeEval);
+			/*
+			 * L'evaluation n'existait pas. On l'enregistre et la recupere car elle va aider par la suite
+			 */
+			if(repServeur != 0){
+				evalDeTypeExist = usersService.findEvaluations(coursConcerne.getIdCours(), sequenceConcerne.getIdPeriodes(), typeEval);
+				//System.err.println("proportion evalDeTypeExist "+evalDeTypeExist.getProportionEval());
+			}
+			
 			if(repServeur == 0) return "redirect:/logesco/users/500?enregEvaluationerror";
 		}
 		
 		/*
-		 * L'évaluation associe existe on la charge dans la session sinon on affichera un pourcentage null.
+		 * Ici on est sur que l'evaluation concerne elle même existe deja en BD donc peut l'enseignant
+		 * veut juste modifier les notes. En fait même lorsqu'il n'existait pas (le if qui precede) on 
+		 * l'enregistre puis on le récupère
+		 */
+		proportionEval = evalDeTypeExist.getProportionEval();
+		//System.err.println("la proportion devient de evalDeTypeExist"+proportionEval);
+		
+		/*
+		 * si L'évaluation associe existe on la charge dans la session sinon on affichera un pourcentage null.
 		 */
 		if(evalDeTypeExistAssocie != null) {
 			model.addAttribute("evaluationAssocie", evalDeTypeExistAssocie);
+		}
+		else{
+			//System.err.println("eval associe n'existe pas "+proportionEval);
+			int p = 100 - proportionEval;
+			model.addAttribute("default_proportion", p);
 		}
 		
 		/*
 		 * Ensuite il faut charger la liste des élèves dans le model avec pour chacun le moyen d'avoir 
 		 * sa note pour un type d'évaluation précis, dans un cours et une séquence donnée
 		 */
-		System.err.println("deja avant la contruction du modele");
+		//System.err.println("deja avant la contruction du modele");
 		this.constructModelgetformSaisieNotesV1(model,	request, idSequenceConcerne,  idCoursConcerne,  typeEval,
 				idClassesConcerne);
 		
@@ -1053,7 +1077,7 @@ public class UsersController {
 			@RequestParam(name="noteSaisi", defaultValue="0") String noteSaisi,
 			@RequestParam(name="numPageEleves", defaultValue="0") int numPageEleves){
 		
-		System.out.println("proportionEvalproportionEvalproportionEval == "+proportionEval);
+		//System.out.println("proportionEvalproportionEvalproportionEval == "+proportionEval);
 		
 		Eleves elv = usersService.findEleves(idEleves);
 		
@@ -1061,7 +1085,7 @@ public class UsersController {
 		 * Recuperer l'évaluation
 		 */
 		Evaluations evalConcerne = usersService.findEvaluations(idEval);
-		if(evalConcerne == null) System.out.println("yyyyyyyyyyyyyyyyy evalConcerne non trouve");
+		/*if(evalConcerne == null) //System.out.println("yyyyyyyyyyyyyyyyy evalConcerne non trouve");*/
 		
 		/*
 		 * On doit calculer le numero de la page à partir de l'id de l'élève sachant que 
@@ -1098,7 +1122,7 @@ public class UsersController {
 			int r = usersService.saveEvaluation(evalConcerne.getContenuEval(), evalConcerne.getCours(), evalConcerne.getDateenregEval(), 
 					evalConcerne.getProportionEval(), evalConcerne.getSequence(), evalConcerne.getTypeEval());
 			
-			System.out.println("le r de saveEval == "+r);
+			//System.out.println("le r de saveEval == "+r);
 			
 			if(r == 0) return "redirect:/logesco/users/getformSaisieNotes?updatenotesaisiErrorsaveEval"
 					+ "&&idSequenceConcerne="+evalConcerne.getSequence().getIdPeriodes()
@@ -1127,7 +1151,7 @@ public class UsersController {
 			
 			int numEleve = usersService.getNumeroEleve(idEleves);
 			
-			System.out.println("usersService.getNumeroEleve(idEleves) "+numEleve+"  "+usersService.getEffectifClasse(idEleves));
+			//System.out.println("usersService.getNumeroEleve(idEleves) "+numEleve+"  "+usersService.getEffectifClasse(idEleves));
 			
 			if(numEleve == usersService.getEffectifClasse(idEleves)){
 				/*
@@ -1147,14 +1171,14 @@ public class UsersController {
 				 * Alors on doit chargé l'élève qui suit. 
 				 * Il faut donc la liste trié pour retirer l'élève qui suit celui qui est entreint d'etre traité reférencé par idEleves
 				 */
-				System.out.println("Cherchons l'élève suivant ");
+				//System.out.println("Cherchons l'élève suivant ");
 				int mode = 1;
 				Eleves elvSvt = usersService.getElevesATraiter(idEleves, mode);
 				
-				if(elvSvt == null) System.out.println("l'élève suivant n'est pas trouvable donc problème dans le code ou la requete");
+				/*if(elvSvt == null) //System.out.println("l'élève suivant n'est pas trouvable donc problème dans le code ou la requete");*/
 				
-				System.out.println("Cherchons l'élève suivant  de "+elv.getNomsEleves()+" id == "+elv.getIdEleves().longValue());
-				System.out.println("et c'est l'élève suivant  "+elvSvt.getNomsEleves()+" id == "+elvSvt.getIdEleves().longValue());
+				//System.out.println("Cherchons l'élève suivant  de "+elv.getNomsEleves()+" id == "+elv.getIdEleves().longValue());
+				//System.out.println("et c'est l'élève suivant  "+elvSvt.getNomsEleves()+" id == "+elvSvt.getIdEleves().longValue());
 				
 			
 				
@@ -1164,7 +1188,7 @@ public class UsersController {
 				int taillePage = 5;
 				int newnumPageEleves = usersService.getNumeroPageEleve(elvSvt.getIdEleves(),taillePage);
 				
-				System.out.println("le numero de page du nouvel eleve est "+newnumPageEleves);
+				//System.out.println("le numero de page du nouvel eleve est "+newnumPageEleves);
 				
 				return "redirect:/logesco/users/getformSaisieNotes?updatenotesaisiSucces"
 						+ "&&idSequenceConcerne="+evalConcerne.getSequence().getIdPeriodes()
@@ -1208,37 +1232,37 @@ public class UsersController {
 			@RequestParam(name="tabnotesaisi[]") String tabnotesaisi[],
 			@RequestParam(name="tabideleve[]") String tabideleve[]){
 		
-		System.out.println("proportionEvalproportionEvalproportionEval == "+tabnotesaisi.length);
+		//System.out.println("proportionEvalproportionEvalproportionEval == "+tabnotesaisi.length);
 		
 		
 		Evaluations evalConcerne = usersService.findEvaluations(idEval);
-		if(evalConcerne == null) System.out.println("yyyyyyyyyyyyyyyyy evalConcerne non trouve");
+		/*if(evalConcerne == null) //System.out.println("yyyyyyyyyyyyyyyyy evalConcerne non trouve");*/
 		
 	
 		int numero = 1;
 		try{
-			System.err.println("proportion "+proportionEval);
+			//System.err.println("proportion "+proportionEval);
 			int newproportionEval = Integer.parseInt(proportionEval);
-			System.err.println("proportion converti "+newproportionEval);
+			//System.err.println("proportion converti "+newproportionEval);
 			evalConcerne.setProportionEval(newproportionEval);
 			int r = usersService.saveEvaluation(evalConcerne.getContenuEval(), evalConcerne.getCours(), evalConcerne.getDateenregEval(), 
 					evalConcerne.getProportionEval(), evalConcerne.getSequence(), evalConcerne.getTypeEval());
 			int reponse=1;
-			System.err.println("evaluation enregistree "+r);
+			//System.err.println("evaluation enregistree "+r);
 			if(r>0){
 				for(String noteS : tabnotesaisi){
-					System.err.println("note en string "+noteS);
+					//System.err.println("note en string "+noteS);
 					double valNoteSaisi = Double.parseDouble(noteS);
-					System.err.println("valNoteSaisi en int "+valNoteSaisi);
+					//System.err.println("valNoteSaisi en int "+valNoteSaisi);
 					int i=numero-1;
 					String idEleveString = tabideleve[i];
 					long idEleve = Long.parseLong(idEleveString);
 					int ret = usersService.saveNoteEvalEleve(idEval, idEleve, valNoteSaisi);
-					System.err.println("enreg note eval "+valNoteSaisi+" pour eleve "+numero);
+					//System.err.println("enreg note eval "+valNoteSaisi+" pour eleve "+numero);
 					if(ret == 0) reponse = 0;
 					numero+=1;
 				}
-				System.err.println("Nous voici dans la suite ");
+				//System.err.println("Nous voici dans la suite ");
 				if(reponse == 0){
 					model.addAttribute("numero", numero);
 					return "redirect:/logesco/users/getformSaisieNotesV1?updatenotesaisiError1"
@@ -1255,7 +1279,7 @@ public class UsersController {
 			}
 		}
 		catch(Exception e){
-			System.err.println("exception gggg "+e.getMessage());
+			//System.err.println("exception gggg "+e.getMessage());
 			model.addAttribute("numero", numero);
 			return "redirect:/logesco/users/getformSaisieNotesV1?updatenotesaisiError1"
 					+ "&&idSequenceConcerne="+evalConcerne.getSequence().getIdPeriodes()
@@ -1283,13 +1307,13 @@ public class UsersController {
 		Eleves elv = usersService.findEleves(idEleves);
 		Evaluations evalConcerne = usersService.findEvaluations(idEval);
 		
-		if((elv == null) || (evalConcerne == null)) System.out.println("Eleve ou evaluation non trouve donc problème de passage de paramètre "
-				+ "dans la requete initié par le clic sur le lien");
+	/*	if((elv == null) || (evalConcerne == null)) //System.out.println("Eleve ou evaluation non trouve donc problème de passage de paramètre "
+				+ "dans la requete initié par le clic sur le lien");*/
 		
 		int numEleve = usersService.getNumeroEleve(idEleves);
 		
-		if(numEleve == 0) System.out.println("L'élève n'existe pas dans la liste des élève de la classe donc il y a encore erreur lors du passage des "
-				+ " paramètres dans la requete initié par le clic sur le lien");
+		/*if(numEleve == 0) //System.out.println("L'élève n'existe pas dans la liste des élève de la classe donc il y a encore erreur lors du passage des "
+				+ " paramètres dans la requete initié par le clic sur le lien");*/
 		
 		if(numEleve == 1){
 			/*
@@ -1306,14 +1330,14 @@ public class UsersController {
 		}
 		else if((numEleve > 1) && (numEleve <= usersService.getEffectifClasse(idEleves))){
 			
-			System.out.println("Cherchons l'élève précédent ");
+			//System.out.println("Cherchons l'élève précédent ");
 			int mode = 0;
 			Eleves elvSvt = usersService.getElevesATraiter(idEleves, mode);
 			
-			if(elvSvt == null) System.out.println("l'élève suivant n'est pas trouvable donc problème dans le code ou la requete");
+			/*if(elvSvt == null) //System.out.println("l'élève suivant n'est pas trouvable donc problème dans le code ou la requete");*/
 			
-			/*System.out.println("Cherchons l'élève suivant  de "+elv.getNomsEleves()+" id == "+elv.getIdEleves().longValue());
-			System.out.println("et c'est l'élève suivant  "+elvSvt.getNomsEleves()+" id == "+elvSvt.getIdEleves().longValue());
+			/*//System.out.println("Cherchons l'élève suivant  de "+elv.getNomsEleves()+" id == "+elv.getIdEleves().longValue());
+			//System.out.println("et c'est l'élève suivant  "+elvSvt.getNomsEleves()+" id == "+elvSvt.getIdEleves().longValue());
 			*/
 			
 			/*
@@ -1322,7 +1346,7 @@ public class UsersController {
 			int taillePage = 5;
 			int newnumPageEleves = usersService.getNumeroPageEleve(elvSvt.getIdEleves(),taillePage);
 			
-			//System.out.println("le numero de page du nouvel eleve est "+newnumPageEleves);
+			////System.out.println("le numero de page du nouvel eleve est "+newnumPageEleves);
 			
 			return "redirect:/logesco/users/getformSaisieNotes?"
 					+ "&&idSequenceConcerne="+evalConcerne.getSequence().getIdPeriodes()
@@ -1419,7 +1443,7 @@ public class UsersController {
 		HttpSession session=request.getSession();
 		String username=(String)session.getAttribute("username");
 		
-		//System.out.println("l'user connecte est  "+username +" mais quel fonction occupe t'il dans le système?");
+		////System.out.println("l'user connecte est  "+username +" mais quel fonction occupe t'il dans le système?");
 		
 		Utilisateurs userconnecte = usersService.findByUsername(username);
 		
@@ -1428,7 +1452,7 @@ public class UsersController {
 		
 		if(userconnecte != null){
 			int roleUser = usersService.getcodeUsersRole(userconnecte);
-			//System.out.println("le role joue vis a vis du système a pour code "+roleUser);
+			////System.out.println("le role joue vis a vis du système a pour code "+roleUser);
 
 			/*
 			 * Il faut la liste des séquences de l'année en cours
@@ -1499,7 +1523,7 @@ public class UsersController {
 		
 		String username=(String)session.getAttribute("username");
 		
-		//System.out.println("l'user connecte est  "+username +" mais quel fonction occupe t'il dans le système?");
+		////System.out.println("l'user connecte est  "+username +" mais quel fonction occupe t'il dans le système?");
 		
 		Utilisateurs userconnecte = usersService.findByUsername(username);
 		
@@ -1507,7 +1531,7 @@ public class UsersController {
 
 		if(etablissementConcerne==null || classeConcerne==null || anneeScolaire==null || 
 				 userconnecte==null) {
-			System.out.println("un de ces truc est null vraiment");
+			//System.out.println("un de ces truc est null vraiment");
 			return null;
 		}
 
@@ -1542,7 +1566,7 @@ public class UsersController {
 		parameters.put("titulaire", titulaire.toUpperCase());
 		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
 		parameters.put("datasource", listofEleve);
-		System.out.println("Aucun de ces truc n'est null vraiment  "+listofEleve.size());
+		//System.out.println("Aucun de ces truc n'est null vraiment  "+listofEleve.size());
 		JasperReportsPdfView view = new JasperReportsPdfView();
 		view.setUrl("classpath:/reports/compiled/fiches/relevedenoteVideParClasse.jasper");
 		view.setApplicationContext(applicationContext);
@@ -1574,7 +1598,7 @@ public class UsersController {
 		
 		String username=(String)session.getAttribute("username");
 		
-		//System.out.println("l'user connecte est  "+username +" mais quel fonction occupe t'il dans le système?");
+		////System.out.println("l'user connecte est  "+username +" mais quel fonction occupe t'il dans le système?");
 		
 		Utilisateurs userconnecte = usersService.findByUsername(username);
 		
@@ -1582,7 +1606,7 @@ public class UsersController {
 
 		if(etablissementConcerne==null || classeConcerne==null || anneeScolaire==null || 
 				sequenceConcerne==null || cours==null || userconnecte==null) {
-			System.out.println("un de ces truc est null vraiment pour l'impression des pv de sequence");
+			//System.out.println("un de ces truc est null vraiment pour l'impression des pv de sequence");
 			return null;
 		}
 		
@@ -1618,7 +1642,7 @@ public class UsersController {
 				idCoursConcerne, idSequenceConcerne);
 		int nbre_sous_moyennes = usersService.getNbreSousNoteDansCourspourSeq(idClasseConcerne, 
 				idCoursConcerne, idSequenceConcerne);
-		System.err.println("nbre_moyennes "+nbre_moyennes);
+		//System.err.println("nbre_moyennes "+nbre_moyennes);
 		
 		if(nbre_moyennes<0) nbre_moyennes = 0;
 		parameters.put("nbre_moyennes", nbre_moyennes);
@@ -1632,7 +1656,7 @@ public class UsersController {
 		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			pourRr =df.parse(df.format(pourRr)).doubleValue();
-			//System.out.println("pourcentagessss "+pourcentage);
+			////System.out.println("pourcentagessss "+pourcentage);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1665,10 +1689,10 @@ public class UsersController {
 		parameters.put("pourcc", pourcc);
 		parameters.put("pourds", pourds);
 		parameters.put("pourR", pourR);
-		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.jpg");
-		//parameters.put("IMAGE_FOND", "src/main/resources/static/images/logobekoko.jpg");
+		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
+		//parameters.put("IMAGE_FOND", "src/main/resources/static/images/logobekoko.png");
 		parameters.put("datasource", listofPV);
-		System.out.println("Aucun de ces truc n'est null vraiment  "+listofPV.size());
+		//System.out.println("Aucun de ces truc n'est null vraiment  "+listofPV.size());
 		JasperReportsPdfView view = new JasperReportsPdfView();
 		view.setUrl("classpath:/reports/compiled/fiches/PVSequence.jasper");
 		view.setApplicationContext(applicationContext);
@@ -1699,7 +1723,7 @@ public class UsersController {
 		
 		String username=(String)session.getAttribute("username");
 		
-		//System.out.println("l'user connecte est  "+username +" mais quel fonction occupe t'il dans le système?");
+		////System.out.println("l'user connecte est  "+username +" mais quel fonction occupe t'il dans le système?");
 		
 		Utilisateurs userconnecte = usersService.findByUsername(username);
 		
@@ -1707,10 +1731,10 @@ public class UsersController {
 
 		if(etablissementConcerne==null || classeConcerne==null || anneeScolaire==null || 
 				trimestreConcerne==null || cours==null || userconnecte==null) {
-			System.out.println("un de ces truc est null vraiment dans l'impression du pv du trimestre "
+			/*//System.out.println("un de ces truc est null vraiment dans l'impression du pv du trimestre "
 					+ "etablissementConcerne "+etablissementConcerne+
 					"classeConcerne "+classeConcerne+" anneeScolaire "+anneeScolaire+
-					"trimestreConcerne"+trimestreConcerne+" cours"+cours+" userconnecte"+userconnecte);
+					"trimestreConcerne"+trimestreConcerne+" cours"+cours+" userconnecte"+userconnecte);*/
 			return null;
 		}
 		
@@ -1764,7 +1788,7 @@ public class UsersController {
 				idCoursConcerne, idTrimestreConcerne);
 		int nbre_sous_moyennes = usersService.getNbreSousNoteDansCourspourTrim(idClasseConcerne, 
 				idCoursConcerne, idTrimestreConcerne);
-		System.err.println("nbre_moyennes trim "+nbre_moyennes);
+		//System.err.println("nbre_moyennes trim "+nbre_moyennes);
 		
 		if(nbre_moyennes<0) nbre_moyennes = 0;
 		parameters.put("nbre_moyennes", nbre_moyennes);
@@ -1778,7 +1802,7 @@ public class UsersController {
 		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			pourRr =df.parse(df.format(pourRr)).doubleValue();
-			//System.out.println("pourcentagessss "+pourcentage);
+			////System.out.println("pourcentagessss "+pourcentage);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1792,10 +1816,10 @@ public class UsersController {
 				idCoursConcerne, idTrimestreConcerne);
 		
 		parameters.put("pourR", pourR);
-		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.jpg");
-		//parameters.put("IMAGE_FOND", "src/main/resources/static/images/logobekoko.jpg");
+		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
+		//parameters.put("IMAGE_FOND", "src/main/resources/static/images/logobekoko.png");
 		parameters.put("datasource", listofPV);
-		System.out.println("Aucun de ces truc n'est null vraiment  "+listofPV.size());
+		//System.out.println("Aucun de ces truc n'est null vraiment  "+listofPV.size());
 		JasperReportsPdfView view = new JasperReportsPdfView();
 		view.setUrl("classpath:/reports/compiled/fiches/PVTrimestre.jasper");
 		view.setApplicationContext(applicationContext);
@@ -1812,7 +1836,7 @@ public class UsersController {
 		HttpSession session=request.getSession();
 		String username=(String)session.getAttribute("username");
 		
-		System.out.println("l'user connecte est  "+username +" mais quel fonction occupe t'il dans le système?");
+		//System.out.println("l'user connecte est  "+username +" mais quel fonction occupe t'il dans le système?");
 		
 		Utilisateurs userconnecte = usersService.findByUsername(username);
 		
@@ -1821,7 +1845,7 @@ public class UsersController {
 		
 		if(userconnecte != null){
 			int roleUser = usersService.getcodeUsersRole(userconnecte);
-			System.out.println("le role joue vis a vis du système a pour code "+roleUser);
+			//System.out.println("le role joue vis a vis du système a pour code "+roleUser);
 
 			/*
 			 * Il faut la liste des trimestres de l'année en cours
@@ -1896,7 +1920,7 @@ public class UsersController {
 		Annee anneeScolaire = usersService.findAnneeActive();
 		
 		Classes classeConcerne = usersService.findClasses(idClasseConcerne);
-		System.out.println("classeConcernelist "+classeConcerne.getCodeClasses());
+		//System.out.println("classeConcernelist "+classeConcerne.getCodeClasses());
 		
 		Evaluations evalConcerne =  usersService.findEvaluations(idEvalConcerne);
 		
@@ -1908,14 +1932,14 @@ public class UsersController {
 		
 		Proffesseurs profConnecte = usersService.findProffesseurs(userconnecte.getIdUsers());
 		
-		System.out.println("classeConcernelist "+classeConcerne.getCodeClasses()+
-				"  evalConcernelist "+evalConcerne.getProportionEval()+"");
+		/*//System.out.println("classeConcernelist "+classeConcerne.getCodeClasses()+
+				"  evalConcernelist "+evalConcerne.getProportionEval()+"");*/
 		
 		List<NotesEval> listofNotesEvalSeq = (List<NotesEval>) evalConcerne.getListofnotesEval();
 		
-		System.out.println("classeConcernelist "+classeConcerne.getCodeClasses()+
+	/*	//System.out.println("classeConcernelist "+classeConcerne.getCodeClasses()+
 				"  evalConcernelist "+evalConcerne.getProportionEval()+""
-						+ " listofNotesEvalSeq "+listofNotesEvalSeq.size());
+						+ " listofNotesEvalSeq "+listofNotesEvalSeq.size());*/
 		
 		//liste des élèves classé par ordre alphabetique
 		List<Eleves> listofAllEleveDeClasseConcerne = usersService.findListElevesClasse(classeConcerne.getIdClasses());
@@ -1932,10 +1956,10 @@ public class UsersController {
 		
 		if(etablissementConcerne==null || classeConcerne==null || anneeScolaire==null || 
 				evalConcerne==null || cours==null || userconnecte==null) {
-			System.out.println("un de ces truc est null vraiment dans l'impression du pv du trimestre "
+			/*//System.out.println("un de ces truc est null vraiment dans l'impression du pv du trimestre "
 					+ "etablissementConcerne "+etablissementConcerne+
 					"classeConcerne "+classeConcerne+" anneeScolaire "+anneeScolaire+
-					"evalConcerne "+evalConcerne+" cours"+cours+" userconnecte "+userconnecte);
+					"evalConcerne "+evalConcerne+" cours"+cours+" userconnecte "+userconnecte);*/
 			return null;
 		}
 		
@@ -1969,7 +1993,7 @@ public class UsersController {
 		
 		int nbre_moyennes = usersService.getNbreNoteDansCourspourEvalDansListe(listofNotesEvalSeq);
 		int nbre_sous_moyennes = usersService.getNbreSousNoteDansCourspourEvalDansListe(listofNotesEvalSeq);
-		System.err.println("nbre_moyennes dans evaluation "+nbre_moyennes);
+		//System.err.println("nbre_moyennes dans evaluation "+nbre_moyennes);
 		
 		if(nbre_moyennes<0) nbre_moyennes = 0;
 		parameters.put("nbre_moyennes", nbre_moyennes);
@@ -1983,7 +2007,7 @@ public class UsersController {
 		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			pourRr =df.parse(df.format(pourRr)).doubleValue();
-			//System.out.println("pourcentagessss "+pourcentage);
+			////System.out.println("pourcentagessss "+pourcentage);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1997,10 +2021,10 @@ public class UsersController {
 		parameters.put("pourd", evalConcerne.getProportionEval()+"%");
 		parameters.put("pourR", pourR);
 		parameters.put("label_devoir", label_devoir);
-		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.jpg");
-		//parameters.put("IMAGE_FOND", "src/main/resources/static/images/logobekoko.jpg");
+		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
+		//parameters.put("IMAGE_FOND", "src/main/resources/static/images/logobekoko.png");
 		parameters.put("datasource", listofPV);
-		System.out.println("Aucun de ces truc n'est null vraiment  "+listofPV.size());
+		//System.out.println("Aucun de ces truc n'est null vraiment  "+listofPV.size());
 		JasperReportsPdfView view = new JasperReportsPdfView();
 		view.setUrl("classpath:/reports/compiled/fiches/PVNoteEval.jasper");
 		view.setApplicationContext(applicationContext);
@@ -2019,7 +2043,7 @@ public class UsersController {
 		Etablissement etablissementConcerne = usersService.getEtablissement();
 		
 		Classes classeConcerne = usersService.findClasses(idClasseConcerne);
-		System.out.println("classeConcernelist "+classeConcerne.getCodeClasses());
+		//System.out.println("classeConcernelist "+classeConcerne.getCodeClasses());
 		
 		Sequences seqConcerne = usersService.findSequences(idSequenceConcerne);
 		
@@ -2054,10 +2078,10 @@ public class UsersController {
 		
 		if(etablissementConcerne==null || classeConcerne==null || anneeScolaire==null || 
 				coursConcerne==null || userconnecte==null) {
-			System.out.println("un de ces truc est null vraiment dans l'impression du pv du trimestre "
+			/*//System.out.println("un de ces truc est null vraiment dans l'impression du pv du trimestre "
 					+ "etablissementConcerne "+etablissementConcerne+
 					"classeConcerne "+classeConcerne+" anneeScolaire "+anneeScolaire
-					+" cours  "+coursConcerne+" userconnecte "+userconnecte);
+					+" cours  "+coursConcerne+" userconnecte "+userconnecte);*/
 			return null;
 		}
 		
@@ -2093,7 +2117,7 @@ public class UsersController {
 				coursConcerne.getIdCours(),seqConcerne.getIdPeriodes());
 		int nbre_sous_moyennes = usersService.getNbreSousNoteDansCourspourSeq(classeConcerne.getIdClasses(), 
 				coursConcerne.getIdCours(),seqConcerne.getIdPeriodes());
-		System.err.println("nbre_moyennes dans Sequence "+nbre_moyennes);
+		//System.err.println("nbre_moyennes dans Sequence "+nbre_moyennes);
 		
 		if(nbre_moyennes<0) nbre_moyennes = 0;
 		parameters.put("nbre_moyennes", nbre_moyennes);
@@ -2107,7 +2131,7 @@ public class UsersController {
 		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			pourRr =df.parse(df.format(pourRr)).doubleValue();
-			//System.out.println("pourcentagessss "+pourcentage);
+			////System.out.println("pourcentagessss "+pourcentage);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -2131,10 +2155,10 @@ public class UsersController {
 		parameters.put("pourds", pourds+"%");
 		parameters.put("pourcc", pourcc+"%");
 		parameters.put("pourR", pourR);
-		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.jpg");
-		//parameters.put("IMAGE_FOND", "src/main/resources/static/images/logobekoko.jpg");
+		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
+		//parameters.put("IMAGE_FOND", "src/main/resources/static/images/logobekoko.png");
 		parameters.put("datasource", listofPVSeq);
-		System.out.println("Aucun de ces truc n'est null vraiment  "+listofPVSeq.size());
+		//System.out.println("Aucun de ces truc n'est null vraiment  "+listofPVSeq.size());
 		JasperReportsPdfView view = new JasperReportsPdfView();
 		view.setUrl("classpath:/reports/compiled/fiches/PVSequence.jasper");
 		view.setApplicationContext(applicationContext);
@@ -2154,7 +2178,7 @@ public class UsersController {
 		HttpSession session=request.getSession();
 		String username=(String)session.getAttribute("username");
 		
-		//System.out.println("l'user connecte est  "+username );
+		////System.out.println("l'user connecte est  "+username );
 		
 		Utilisateurs userconnecte = usersService.findByUsername(username);
 		
@@ -2181,8 +2205,620 @@ public class UsersController {
 		return "users/listcoursofEnseignant";
 	}
 	
+	public void constructModelListOperation(String datemin, String datemax,	 Model model, 
+			HttpServletRequest request, int numPageOperation){
+		
+		
+		model.addAttribute("datemin", datemin);
+		model.addAttribute("datemax", datemax);
+		
+		SimpleDateFormat spd = new SimpleDateFormat("yyyy-MM-dd");
+		try{
+			Date date_min = spd.parse(datemin);
+			Date date_max = spd.parse(datemax);
+			//System.out.println("datemin ="+date_min+" datemax="+date_max+" bien converti donc ca va aller");
+			
+			/*
+			 * Il faut recuperer la liste des opérations comprise entre les 2 date et les placer dans le model
+			 * puis on va charger celle de la page demande. La taille d'une page est de 10 operations max
+			 */
+			
+			
+			Page<Operations> pageofOperations=
+					usersService.findPageOperations(date_min, date_max, numPageOperation, 10);
+			
+			if(pageofOperations.getContent().size()!=0){
+				model.addAttribute("listpageofOperations", pageofOperations.getContent());
+				int[] tabofPagesOperations=new int[pageofOperations.getTotalPages()];
+				
+				model.addAttribute("tabofpageOperations", tabofPagesOperations);
+				
+				model.addAttribute("pageCourante", numPageOperation);
+				System.out.println("nbre de page du resultat  "+pageofOperations.getTotalPages());
+			}
+			else{
+				/*
+				 * Donc il n'ya aucune page donc aucune operation trouve
+				 */
+				model.addAttribute("aucune", "aucune operation dans l'intervalle de date donnee");
+			}
+			
+		}
+		catch(Exception e){
+			System.out.println("erreur de conversion de pendant le dressage de la liste des operations"
+					+ " "+datemin+" "+e.getMessage());
+			System.out.println("erreur de conversion de pendant le dressage de la liste des operations"
+					+ " "+datemax+" "+e.getMessage());
+		}
+		
+		
+		//System.out.println("datemin ="+datemin+" datemax="+datemax);
+		
+		
+		
+	}
+	
+	@GetMapping(path="/getlistOperations")
+	public String getlistOperations(
+			Model model, HttpServletRequest request,
+			@RequestParam(name="datemin", defaultValue="2019-01-01") String datemin,
+			@RequestParam(name="datemax", defaultValue="2035-01-01") String datemax,
+			@RequestParam(name="numPageOperation", defaultValue="0") int numPageOperation){
+		
+		//System.out.println("voici l'intervalle de date "+datemin+" datemax = "+datemax);
+		/*
+			 * Il faut recuperer toutes les opérations et les charger dans le modèle afin de les afficher 
+			 * page par page pour l'année scolaire active
+			 */
+		this.constructModelListOperation(datemin, datemax,	model, request, numPageOperation);
+		
+		return "users/listeOperations";
+	}
+	
+	@GetMapping(path="/imprimerRecuOperation")
+	public ModelAndView imprimerRecuOperation(Model model, HttpServletRequest request,
+			@RequestParam(name="idOperation_a_imprimer", defaultValue="0") long idOperation_a_imprimer){
+		
+		Etablissement etablissementConcerne = usersService.getEtablissement();
+		Annee anneeScolaire = usersService.findAnneeActive();
+		if(etablissementConcerne == null ||  anneeScolaire == null ){
+			return null;
+		}
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		parameters.put("delegation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
+		parameters.put("delegation_en", etablissementConcerne.getDeleguationdeptuteleanglaisEtab().toUpperCase());
+		parameters.put("etablissement_fr", etablissementConcerne.getNomsEtab().toUpperCase());
+		parameters.put("etablissement_en", etablissementConcerne.getNomsanglaisEtab().toUpperCase());
+		String adresse = "BP "+etablissementConcerne.getBpEtab()+
+				"  TEL: "+etablissementConcerne.getNumtel1Etab();
+		parameters.put("adresse", adresse);
+		parameters.put("annee_scolaire_fr", "Année Académique "+anneeScolaire.getIntituleAnnee());
+		parameters.put("annee_scolaire_en", "Academic year "+anneeScolaire.getIntituleAnnee());
+		parameters.put("ministere_fr", etablissementConcerne.getMinisteretuteleEtab());
+		parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
+		parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
+		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
+
+		File f=new File(logoetabDir+etablissementConcerne.getLogoEtab());
+
+		if(f.exists()==true){
+			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
+		}
+		else{
+			parameters.put("logo", "src/main/resources/static/images/logobekoko.png");
+		}
+		
+		Operations operation_concerne = usersService.findOperation(idOperation_a_imprimer);
+		if(operation_concerne == null) return null;
+		
+		Date date_op = operation_concerne.getDateOperation();
+		SimpleDateFormat spd = new SimpleDateFormat("yyyy-MM-dd");//"dd-MM-yyyy"
+		String dateString = spd.format(date_op);
+		parameters.put("date_jour", dateString);
+		
+		String numero_recu=operation_concerne.getIdentifiantOperation();
+		parameters.put("numero_recu", numero_recu);
+		
+		double montantTransaction = operation_concerne.getMontantOperation();
+		parameters.put("montant", montantTransaction+" F cfa");
+		
+		Eleves eleveConcerne = operation_concerne.getCompteinscription().getEleveProprietaire();
+		if(eleveConcerne==null){
+			return null;
+		}
+		String classeString=eleveConcerne.getClasse().getCodeClasses()+
+				eleveConcerne.getClasse().getSpecialite().getCodeSpecialite()+
+				eleveConcerne.getClasse().getNumeroClasses();
+		
+		String recu_de=(eleveConcerne.getNomsEleves()+" "+eleveConcerne.getPrenomsEleves()).toUpperCase();
+		recu_de+=" pour la classe de ";
+		recu_de+=classeString;
+		parameters.put("recu_de", recu_de);
+		
+		String nature_versement="Frais de scolarité / School fees ";
+		parameters.put("nature_versement", nature_versement);
+		
+		long montant_long = Math.round(montantTransaction);
+		String montant_en_lettre_fr = usersService.ecritEnLettreNombrePlusDeDouze9(montant_long, true);
+		parameters.put("montant_verse_lettre_fr", montant_en_lettre_fr+" Francs cfa");
+		
+		String montant_en_lettre_en = usersService.writeInLetterNumberOverTwelve9(montant_long);
+		parameters.put("montant_verse_lettre_en", montant_en_lettre_en+" Francs cfa");
+		
+		Collection<Recu_versement> collectionofEleveprovClasse = new ArrayList<Recu_versement>();
+		Recu_versement rv=new Recu_versement();
+		collectionofEleveprovClasse.add(rv);
+		parameters.put("datasource", collectionofEleveprovClasse);
+		JasperReportsPdfView view = new JasperReportsPdfView();
+		view.setUrl("classpath:/reports/compiled/recus/recu.jasper");
+		view.setApplicationContext(applicationContext);
+		
+		return new ModelAndView(view, parameters);
+		
+	}
+	
+	@GetMapping(path="/exportlistOperations")
+	public ModelAndView exportlistOperations(Model model, HttpServletRequest request,
+			@RequestParam(name="datemin", defaultValue="2019-01-01") String datemin,
+			@RequestParam(name="datemax", defaultValue="2035-01-01") String datemax){
+		
+		SimpleDateFormat spd = new SimpleDateFormat("yyyy-MM-dd");
+		try{
+			Date date_min = spd.parse(datemin);
+			Date date_max = spd.parse(datemax);
+			
+			List<Operations> listOperation = usersService.findListAllOperations(date_min, date_max);
+			double montantTotal=usersService.calculMontantTotalListOperation(listOperation);
+			Collection<OperationBean> listofOperationBean = usersService.generateListOperation(date_min, date_max);
+			
+			Etablissement etablissementConcerne = usersService.getEtablissement();
+			Annee anneeScolaire = usersService.findAnneeActive();
+			if(etablissementConcerne == null ||  anneeScolaire == null ){
+				return null;
+			}
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			
+			parameters.put("delegation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
+			parameters.put("delegation_en", etablissementConcerne.getDeleguationdeptuteleanglaisEtab().toUpperCase());
+			parameters.put("etablissement_fr", etablissementConcerne.getNomsEtab().toUpperCase());
+			parameters.put("etablissement_en", etablissementConcerne.getNomsanglaisEtab().toUpperCase());
+			String adresse = "BP "+etablissementConcerne.getBpEtab()+
+					"  TEL: "+etablissementConcerne.getNumtel1Etab();
+			parameters.put("adresse", adresse);
+			parameters.put("annee_scolaire_fr", "Année Académique "+anneeScolaire.getIntituleAnnee());
+			parameters.put("annee_scolaire_en", "Academic year "+anneeScolaire.getIntituleAnnee());
+			parameters.put("ministere_fr", etablissementConcerne.getMinisteretuteleEtab());
+			parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
+			parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
+			parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
+
+			File f=new File(logoetabDir+etablissementConcerne.getLogoEtab());
+
+			if(f.exists()==true){
+				parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
+			}
+			else{
+				parameters.put("logo", "src/main/resources/static/images/logobekoko.png");
+			}
+
+			parameters.put("datemin", datemin);
+			parameters.put("datemax", datemax);
+			parameters.put("total_encaisse", montantTotal+"");
+			
+			long montant_long = Math.round(montantTotal);
+			String montantLettre_fr = usersService.ecritEnLettreNombrePlusDeDouze9(montant_long, true);
+			String montantLettre_en = usersService.writeInLetterNumberOverTwelve9(montant_long);
+			parameters.put("total_enlettre", montantLettre_fr+" Francs cfa /" +montantLettre_en+" Francs cfa");
+			
+			parameters.put("datasource", listofOperationBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/recus/listOperation.jasper");
+			view.setApplicationContext(applicationContext);
+			
+			return new ModelAndView(view, parameters);
+			
+		}
+		catch(Exception e){
+			System.out.println("erreur de conversion de pendant le dressage de la liste des operations"
+					+ " "+datemin+" "+e.getMessage());
+			System.out.println("erreur de conversion de pendant le dressage de la liste des operations"
+					+ " "+datemax+" "+e.getMessage());
+			
+		}
+		return null;
+	}
 	
 	
+	
+	@GetMapping(path="/imprimerlistingVersement")
+	public ModelAndView imprimerlistingVersement(Model model, HttpServletRequest request,
+			@RequestParam(name="idEleve", defaultValue="0") Long idEleve){
+		
+		Etablissement etablissementConcerne = usersService.getEtablissement();
+		Annee anneeScolaire = usersService.findAnneeActive();
+		Eleves eleveConcerne = usersService.findEleves(idEleve);
+		if(etablissementConcerne == null ||  anneeScolaire == null || eleveConcerne == null){
+			System.out.println("Erreur dans les paramètre car etab, annee ou eleve sont null");
+			return null;
+		}
+		
+		System.out.println("Tout est bien ");
+		List<Operations> listOperationEleve = usersService.findListAllOperationsEleve(idEleve);
+		double montantTotal=usersService.calculMontantTotalListOperation(listOperationEleve);
+		Collection<OperationBean> listofOperationBean = usersService.generateListOperationEleve(idEleve);
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		parameters.put("delegation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
+		parameters.put("delegation_en", etablissementConcerne.getDeleguationdeptuteleanglaisEtab().toUpperCase());
+		parameters.put("etablissement_fr", etablissementConcerne.getNomsEtab().toUpperCase());
+		parameters.put("etablissement_en", etablissementConcerne.getNomsanglaisEtab().toUpperCase());
+		String adresse = "BP "+etablissementConcerne.getBpEtab()+
+				"  TEL: "+etablissementConcerne.getNumtel1Etab();
+		parameters.put("adresse", adresse);
+		parameters.put("annee_scolaire_fr", "Année Académique "+anneeScolaire.getIntituleAnnee());
+		parameters.put("annee_scolaire_en", "Academic year "+anneeScolaire.getIntituleAnnee());
+		parameters.put("ministere_fr", etablissementConcerne.getMinisteretuteleEtab());
+		parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
+		parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
+		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
+
+		File f=new File(logoetabDir+etablissementConcerne.getLogoEtab());
+
+		if(f.exists()==true){
+			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
+		}
+		else{
+			parameters.put("logo", "src/main/resources/static/images/logobekoko.png");
+		}
+		
+		String nomeleveconcerne = eleveConcerne.getNomsEleves();
+		nomeleveconcerne+="  "+eleveConcerne.getPrenomsEleves();
+		String classeeleve =  eleveConcerne.getClasse().getCodeClasses();
+		classeeleve +=  eleveConcerne.getClasse().getSpecialite().getCodeSpecialite();
+		classeeleve +=  eleveConcerne.getClasse().getNumeroClasses();
+		
+		parameters.put("eleve_concerne", nomeleveconcerne);
+		parameters.put("classe_eleve", classeeleve);
+		parameters.put("total_encaisse", montantTotal+"");
+		
+		long montant_long = Math.round(montantTotal);
+		String montantLettre_fr = usersService.ecritEnLettreNombrePlusDeDouze9(montant_long, true);
+		String montantLettre_en = usersService.writeInLetterNumberOverTwelve9(montant_long);
+		parameters.put("total_enlettre", montantLettre_fr+" Francs cfa /" +montantLettre_en+" Francs cfa");
+		
+		parameters.put("datasource", listofOperationBean);
+		JasperReportsPdfView view = new JasperReportsPdfView();
+		view.setUrl("classpath:/reports/compiled/recus/listOperationEleve.jasper");
+		view.setApplicationContext(applicationContext);
+		
+		return new ModelAndView(view, parameters);
+	}
+	
+	@GetMapping(path="/exportlistElevesInsolvable")
+	public ModelAndView exportlistElevesInsolvable(Model model, HttpServletRequest request,
+			@RequestParam(name="idClasseSelect", defaultValue="0") Long idClasseSelect){
+		
+		HttpSession session=request.getSession();
+		Etablissement etablissementConcerne = usersService.getEtablissement();
+		Annee anneeScolaire = usersService.findAnneeActive();
+		Classes classe = usersService.findClasses(idClasseSelect);
+		if(etablissementConcerne == null ||  anneeScolaire == null || classe == null){
+			return null;
+		}
+		
+		List<Eleves> listeleveinsolvableDansClasses = usersService.getListElevesInsolvable(idClasseSelect);
+		Collection<EleveInsolvableBean> collectionofInsolvable = usersService.generateListEleveInsolvable(idClasseSelect);
+		
+		session.setAttribute("listeleveinsolvableDansClasses", listeleveinsolvableDansClasses);
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		parameters.put("delegation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
+		parameters.put("delegation_en", etablissementConcerne.getDeleguationdeptuteleanglaisEtab().toUpperCase());
+		parameters.put("etablissement_fr", etablissementConcerne.getNomsEtab().toUpperCase());
+		parameters.put("etablissement_en", etablissementConcerne.getNomsanglaisEtab().toUpperCase());
+		String adresse = "BP "+etablissementConcerne.getBpEtab()+
+				"  TEL: "+etablissementConcerne.getNumtel1Etab();
+		parameters.put("adresse", adresse);
+		parameters.put("annee_scolaire_fr", "Année Académique "+anneeScolaire.getIntituleAnnee());
+		parameters.put("annee_scolaire_en", "Academic year "+anneeScolaire.getIntituleAnnee());
+		parameters.put("ministere_fr", etablissementConcerne.getMinisteretuteleEtab());
+		parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
+		parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
+		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
+		parameters.put("ville", etablissementConcerne.getVilleEtab());
+
+		File f=new File(logoetabDir+etablissementConcerne.getLogoEtab());
+
+		if(f.exists()==true){
+			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
+		}
+		else{
+			parameters.put("logo", "src/main/resources/static/images/logobekoko.png");
+		}
+		
+		String classe_concerne =  classe.getCodeClasses();
+		classe_concerne +=  classe.getSpecialite().getCodeSpecialite();
+		classe_concerne +=  classe.getNumeroClasses();
+		parameters.put("classe", classe_concerne);
+		
+		parameters.put("montant_exige", classe.getMontantScolarite()+"");
+		
+		parameters.put("datasource", collectionofInsolvable);
+		JasperReportsPdfView view = new JasperReportsPdfView();
+		view.setUrl("classpath:/reports/compiled/fiches/ListeEleveInsolvable.jasper");
+		view.setApplicationContext(applicationContext);
+		
+		return new ModelAndView(view, parameters);
+	}
+	
+	public void constructModelgetdonneesConseilSequentiel(Model model,	HttpServletRequest request){
+		
+		List<Classes> listofClasses = usersService.findAllClasse();
+		if(listofClasses.size()>0){
+			model.addAttribute("affichechoixclasse", "oui");
+		}
+		else{
+			model.addAttribute("affichechoixclasse", "non");
+		}
+		/*
+		 * On place la liste des niveaux dans le modele sachant qu'on retrouvera les classes
+		 */
+		List<Niveaux> listofNiveaux = usersService.findAllNiveaux();
+		
+		model.addAttribute("listofNiveaux", listofNiveaux);
+		
+		
+		Annee anneeActive = usersService.findAnneeActive();
+		
+		if(anneeActive != null) {
+			model.addAttribute("anneeActive", anneeActive);
+			/*
+			 * On place la liste des séquences actives de l'année active
+			 */
+			List<Sequences> listofSequenceActive = usersService.findAllSequenceActive(anneeActive.getIdPeriodes());
+			model.addAttribute("listofSequenceActive", listofSequenceActive);
+			List<Sequences> listofSequence = usersService.findAllSequence(anneeActive.getIdPeriodes());
+			model.addAttribute("listofSequence", listofSequence);
+		}
+		
+	}
+	
+	@GetMapping(path="/getdonneesConseilSequentiel")
+	public String getdonneesConseilSequentiel(Model model, HttpServletRequest request){
+		
+		this.constructModelgetdonneesConseilSequentiel(model,	request);
+		
+		return "users/donneesConseilSequentiel";
+	}
+	
+	public void constructModelgetformSaisieConseilClasseSeq(Model model,	HttpServletRequest request,
+			Long idSequenceConcerne,	Long idClasseConcerne, int numPageEleves, int taillePage){
+		
+		//HttpSession session = request.getSession();
+		model.addAttribute("idClasseConcerne", idClasseConcerne);
+		model.addAttribute("idSequenceConcerne", idSequenceConcerne);
+		
+		/*
+		 * Il faut faire la liste des sanctions diciplinaire et placer dans le modele car on devra en choisir 
+		 * une pour chaque élève. 
+		 * Si cette liste est vide alors le conseil ne saurait se passé
+		 * On doit faire pareille avec la liste des sanctions travail (distinction)
+		 */
+		List<SanctionDisciplinaire> listofSanctionDisc = usersService.findListAllSanctionDisciplinaire();
+		List<SanctionTravail> listofSanctionTrav = usersService.findListAllSanctionTravail();
+		if(listofSanctionDisc.size()>0 && listofSanctionTrav.size()>0){
+			model.addAttribute("listofSanctionDisc", listofSanctionDisc);
+			model.addAttribute("listofSanctionTrav", listofSanctionTrav);
+			
+			List<Eleves> listofAllEleve = usersService.findListElevesClasse(idClasseConcerne);
+			if(listofAllEleve != null){
+				model.addAttribute("effectifTotal", listofAllEleve.size());
+				if((listofAllEleve.size() > 0)){
+					model.addAttribute("listofAllEleve", listofAllEleve);
+					Sequences sequenceConcerne = usersService.findSequences(idSequenceConcerne);
+					Classes classeConcerne = usersService.findClasses(idClasseConcerne);
+					model.addAttribute("sequenceConcerne", sequenceConcerne);
+					model.addAttribute("classeConcerne", classeConcerne);
+					
+					Page<Eleves> pageofEleves=usersService.findPageElevesClasse(idClasseConcerne,	
+							numPageEleves, taillePage);
+					
+					model.addAttribute("ub", usersService.getUtilitairesBulletins());
+					
+					if(pageofEleves.getContent().size()!=0){
+						model.addAttribute("listofEleves", pageofEleves.getContent());
+						int[] listofPagesEleves=new int[pageofEleves.getTotalPages()];
+							
+						model.addAttribute("listofPagesEleves", listofPagesEleves);
+							
+						model.addAttribute("pageCouranteEleves", numPageEleves);
+						
+					}
+					
+				}
+			}
+		}
+		
+	}
+	
+	@GetMapping(path="/getformSaisieConseilClasseSeq")
+	public String getformSaisieConseilClasseSeq(Model model, HttpServletRequest request,
+			@RequestParam(name="idSequenceConcerne", defaultValue="-1") Long idSequenceConcerne,
+			@RequestParam(name="idClasseConcerne", defaultValue="0") Long idClasseConcerne,
+			@RequestParam(name="numPageEleves", defaultValue="0") int numPageEleves,
+			@RequestParam(name="taillePage", defaultValue="5") int taillePage){
+		
+		this.constructModelgetformSaisieConseilClasseSeq(model,	request,	idSequenceConcerne,
+				idClasseConcerne, numPageEleves, taillePage);
+		
+		return "users/formSaisieConseilClasseSeq";
+	}
+
+	@GetMapping(path="/getUpdateDecisionConseilSeq")
+	public String getUpdateDecisionConseilSeq(Model model, HttpServletRequest request,
+			@RequestParam(name="idElevesConcerne", defaultValue="-1") Long idElevesConcerne,
+			@RequestParam(name="idSequenceConcerne", defaultValue="-1") Long idSequenceConcerne,
+			@RequestParam(name="idClasseConcerne", defaultValue="-1") Long idClasseConcerne,
+			@RequestParam(name="idsanctionDiscAssocie", defaultValue="-1") Long idsanctionDiscAssocie,
+			@RequestParam(name="idsanctionTravAssocie", defaultValue="-1") Long idsanctionTravAssocie,
+			@RequestParam(name="nbreperiode", defaultValue="0") String nbreperiode,
+			@RequestParam(name="unite", defaultValue="0") String unite,
+			@RequestParam(name="numPageEleves", defaultValue="0") int numPageEleves,
+			@RequestParam(name="taillePage", defaultValue="5") int taillePage){
+		
+		try{
+			int nbre_periode = Integer.parseInt(nbreperiode);
+			if((nbre_periode>0 && unite.equalsIgnoreCase("RAS")==true)||(nbre_periode<0)){
+				return "redirect:/logesco/users/getformSaisieConseilClasseSeq?updateDecisionConseilSeqErrorUnite"
+						+ "&&idSequenceConcerne="+idSequenceConcerne
+						+ "&&idClasseConcerne="+idClasseConcerne
+						+ "&&numPageEleves="+numPageEleves
+						+ "&&taillePage="+taillePage;
+			}
+			
+			/*
+			 * Le nombre de periode et l'unite sont deja bien ie soit 0 soit >0 et unite!=RAS
+			 */
+			//On recupere l'eleve associe
+			int ret = usersService.saveDecisionConseilSeq(idElevesConcerne, idSequenceConcerne, 
+					idsanctionDiscAssocie, nbre_periode, unite, idsanctionTravAssocie);
+			if (ret == -1) return "redirect:/logesco/users/getformSaisieConseilClasseSeq?"
+										+ "&&idSequenceConcerne="+idSequenceConcerne
+										+ "&&idClasseConcerne="+idClasseConcerne
+										+ "&&numPageEleves="+numPageEleves
+										+ "&&taillePage="+taillePage;
+			
+			if(ret == 0) return "redirect:/logesco/users/getformSaisieConseilClasseSeq?updateDecisionConseilSeqErrorUnite"
+										+ "&&idSequenceConcerne="+idSequenceConcerne
+										+ "&&idClasseConcerne="+idClasseConcerne
+										+ "&&numPageEleves="+numPageEleves
+										+ "&&taillePage="+taillePage;
+			
+			
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			return "redirect:/logesco/users/getformSaisieConseilClasseSeq?updateDecisionConseilSeqErrorConvert"
+					+ "&&idSequenceConcerne="+idSequenceConcerne
+					+ "&&idClasseConcerne="+idClasseConcerne
+					+ "&&numPageEleves="+numPageEleves
+					+ "&&taillePage="+taillePage;
+		}
+		
+		return "redirect:/logesco/users/getformSaisieConseilClasseSeq?updateDecisionConseilSeqSuccess"
+					+ "&&idSequenceConcerne="+idSequenceConcerne
+					+ "&&idClasseConcerne="+idClasseConcerne
+					+ "&&numPageEleves="+numPageEleves
+					+ "&&taillePage="+taillePage;
+	}
+	
+	public void constructModelgetdonneesConseilTrimestriel(Model model,	HttpServletRequest request){
+		
+		List<Classes> listofClasses = usersService.findAllClasse();
+		if(listofClasses.size()>0){
+			model.addAttribute("affichechoixclasse", "oui");
+		}
+		else{
+			model.addAttribute("affichechoixclasse", "non");
+		}
+		/*
+		 * On place la liste des niveaux dans le modele sachant qu'on retrouvera les classes
+		 */
+		List<Niveaux> listofNiveaux = usersService.findAllNiveaux();
+		
+		model.addAttribute("listofNiveaux", listofNiveaux);
+		
+		
+		Annee anneeActive = usersService.findAnneeActive();
+		
+		if(anneeActive != null) {
+			model.addAttribute("anneeActive", anneeActive);
+			/*
+			 * On place la liste des trimestres actifs de l'année active
+			 */
+			List<Trimestres> listofTrimestreActif = usersService.findAllActiveTrimestre(anneeActive.getIdPeriodes());
+			model.addAttribute("listofTrimestreActif", listofTrimestreActif);
+			List<Trimestres> listofTrimestre = usersService.findAllTrimestresAnnee(anneeActive.getIdPeriodes());
+			model.addAttribute("listofTrimestre", listofTrimestre);
+		}
+		
+	}
+	
+	@GetMapping(path="/getdonneesConseilTrimestriel")
+	public String getdonneesConseilTrimestriel(Model model, HttpServletRequest request){
+		
+		this.constructModelgetdonneesConseilTrimestriel(model,	request);
+		
+		return "users/donneesConseilTrimestriel";
+	}
+	
+	public void constructModelgetformSaisieConseilClasseTrim(Model model,	HttpServletRequest request,
+			Long idTrimestreConcerne,	Long idClasseConcerne, int numPageEleves, int taillePage){
+		
+		model.addAttribute("idClasseConcerne", idClasseConcerne);
+		model.addAttribute("idTrimestreConcerne", idTrimestreConcerne);
+		
+		/*
+		 * Il faut faire la liste des sanctions diciplinaire et placer dans le modele car on devra en choisir 
+		 * une pour chaque élève. 
+		 * Si cette liste est vide alors le conseil ne saurait se passé
+		 * On doit faire pareille avec la liste des sanctions travail (distinctions)
+		 */
+		List<SanctionDisciplinaire> listofSanctionDisc = usersService.findListAllSanctionDisciplinaire();
+		List<SanctionTravail> listofSanctionTrav = usersService.findListAllSanctionTravail();
+		if(listofSanctionDisc.size()>0 && listofSanctionTrav.size()>0){
+			model.addAttribute("listofSanctionDisc", listofSanctionDisc);
+			model.addAttribute("listofSanctionTrav", listofSanctionTrav);
+			
+			List<Eleves> listofAllEleve = usersService.findListElevesClasse(idClasseConcerne);
+			if(listofAllEleve != null){
+				model.addAttribute("effectifTotal", listofAllEleve.size());
+				if((listofAllEleve.size() > 0)){
+					model.addAttribute("listofAllEleve", listofAllEleve);
+					Trimestres trimestreConcerne = usersService.findTrimestres(idTrimestreConcerne);
+					
+					Classes classeConcerne = usersService.findClasses(idClasseConcerne);
+					model.addAttribute("trimestreConcerne", trimestreConcerne);
+					model.addAttribute("classeConcerne", classeConcerne);
+					
+					Page<Eleves> pageofEleves=usersService.findPageElevesClasse(idClasseConcerne,	
+							numPageEleves, taillePage);
+					
+					model.addAttribute("ub", usersService.getUtilitairesBulletins());
+					
+					if(pageofEleves.getContent().size()!=0){
+						model.addAttribute("listofEleves", pageofEleves.getContent());
+						int[] listofPagesEleves=new int[pageofEleves.getTotalPages()];
+							
+						model.addAttribute("listofPagesEleves", listofPagesEleves);
+							
+						model.addAttribute("pageCouranteEleves", numPageEleves);
+						
+					}
+					
+				}
+			}
+		}
+		
+		
+		
+	}
+	
+	@GetMapping(path="/getformSaisieConseilClasseTrim")
+	public String getformSaisieConseilClasseTrim(Model model, HttpServletRequest request,
+			@RequestParam(name="idTrimestreConcerne", defaultValue="-1") Long idTrimestreConcerne,
+			@RequestParam(name="idClasseConcerne", defaultValue="0") Long idClasseConcerne,
+			@RequestParam(name="numPageEleves", defaultValue="0") int numPageEleves,
+			@RequestParam(name="taillePage", defaultValue="5") int taillePage){
+		
+		this.constructModelgetformSaisieConseilClasseTrim(model,	request,	idTrimestreConcerne,
+				idClasseConcerne, numPageEleves, taillePage);
+		
+		return "users/formSaisieConseilClasseTrim";
+	}
 	
 	
 /////////////////////////// FIN DES REQUETES DE TYPES GET ///////////////////////////
@@ -2247,8 +2883,8 @@ public class UsersController {
 		/*
 		 * Il faut effectuer la liste des cours qui passe dans la classe
 		 */
-		/*System.out.println("On veut les cours de la classe "+getrapportEvalSeqForm.getIdclasseRapport());
-		System.out.println("Avec les evaluations de la séquence "+getrapportEvalSeqForm.getIdsequenceRapport());*/
+		/*//System.out.println("On veut les cours de la classe "+getrapportEvalSeqForm.getIdclasseRapport());
+		//System.out.println("Avec les evaluations de la séquence "+getrapportEvalSeqForm.getIdsequenceRapport());*/
 		
 		List<Cours> listcoursofClasses = usersService.getListCoursClasse(getrapportEvalSeqForm.getIdclasseRapport());
 		
@@ -2305,8 +2941,8 @@ public class UsersController {
 		/*
 		 * Il faut effectuer la liste des cours qui passe dans la classe
 		 */
-		/*System.out.println("On veut les cours de la classe "+getrapportEvalSeqForm.getIdclasseRapport());
-		System.out.println("Avec les evaluations de la séquence "+getrapportEvalSeqForm.getIdsequenceRapport());*/
+		/*//System.out.println("On veut les cours de la classe "+getrapportEvalSeqForm.getIdclasseRapport());
+		//System.out.println("Avec les evaluations de la séquence "+getrapportEvalSeqForm.getIdsequenceRapport());*/
 		List<Cours> listcoursofClasses = usersService.getListCoursClasse(getrapportEvalTrimForm.getIdclasseRapport());
 		
 		Trimestres trimestreConcerne = usersService.findTrimestres(getrapportEvalTrimForm.getIdtrimestreRapport());
@@ -2321,11 +2957,11 @@ public class UsersController {
 		for(Sequences seq : listofSeqTrim){
 			List<Evaluations> listofEvalSeq = usersService.getListEvalAllCoursClasseSeq(getrapportEvalTrimForm.getIdclasseRapport(), 
 					seq.getIdPeriodes());
-			System.out.println("taillesss taillesss "+listofEvalSeq.size());
+			//System.out.println("taillesss taillesss "+listofEvalSeq.size());
 			listofEvaltrim.addAll(listofEvalSeq);
 		}
 		
-		System.out.println("taille taille "+listofEvaltrim.size());
+		//System.out.println("taille taille "+listofEvaltrim.size());
 		
 		
 		Classes classeRapport = usersService.findClasses(getrapportEvalTrimForm.getIdclasseRapport());

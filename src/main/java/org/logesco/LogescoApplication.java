@@ -1,21 +1,26 @@
 package org.logesco;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.logesco.dao.EtablissementRepository;
+import org.logesco.dao.IdentOperationRepository;
 import org.logesco.dao.MatriculeRepository;
 import org.logesco.dao.RolesRepository;
 import org.logesco.dao.UtilisateursRepository;
 import org.logesco.dao.UtilisateursRolesRepository;
 import org.logesco.entities.Administrateurs;
 import org.logesco.entities.Etablissement;
+import org.logesco.entities.IdentOperation;
 import org.logesco.entities.Matricule;
 import org.logesco.entities.Roles;
 import org.logesco.entities.Utilisateurs;
 import org.logesco.entities.UtilisateursRoles;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -62,6 +67,9 @@ public class LogescoApplication implements CommandLineRunner{
 	@Autowired
 	private MatriculeRepository matriculeRepository;
 	
+	@Autowired
+	private IdentOperationRepository identopRepository;
+	
 	/*
 	@Autowired
 	private ElevesRepository elevesRepository;
@@ -99,7 +107,12 @@ public class LogescoApplication implements CommandLineRunner{
 	@Value("${dir.logs}")
 	private String logsDir;
 
-	public static Logger log = Logger.getLogger(LogescoApplication.class);
+	//public static Logger log = Logger.getLogger(LogescoApplication.class);
+	//public static Logger log = LogManager.getLogger(LogescoApplication.class);
+	Logger logger = LoggerFactory.getLogger(LogescoApplication.class);
+	
+	public static DateFormat formatdateop=new SimpleDateFormat("yyyy-MM-dd H:m:s");
+	public static Date dateJour=new Date();
 	
 	public static void main(String[] args) {
 		SpringApplication.run(LogescoApplication.class, args);
@@ -107,17 +120,33 @@ public class LogescoApplication implements CommandLineRunner{
 
 	@Override
 	public void run(String... arg0) throws Exception {
-		log.log(Level.DEBUG, "DEMARRAGE DE L'APPLICATION");
+		
+
+		/*logger.trace("This is a TRACE message.");
+	    logger.debug("This is a DEBUG message.");
+	    logger.info("This is an INFO message.");
+	    logger.warn("This is a WARN message.");
+	    logger.error("You guessed it, an ERROR message.");*/
+		
+		
+		
+		
+		
+		/*System.out.println(formatdateop.format(dateJour)+
+				"****TRACE**** DEMARRAGE DE L'APPLICATION  ****TRACE**** ");*/
+	   logger.info("====================================================================");
+	    logger.info("====================================================================");
+	    logger.info("DEBUT DU DEMARRAGE DE L'APPLICATION.");
+	    logger.info("====================================================================");
 		/**********************************************************
 		 * On va ici créer les différents répertoire lorsqu'il n'existe pas
 		 * Ce sont les dossiers de sauvegarde des images et des documents
 		 * important pour le logiciels
 		 */
 	try{
-		
-		log.log(Level.DEBUG, "============ LANCEMENT DE LA CREATION DE L'ARBORESECENCE SE "
-				+ "TROUVANT DANS"+ "  "+racineDir+"=============");
-		
+		/*System.out.println(formatdateop.format(dateJour)+
+				"****TRACE**** LANCEMENT DE LA CREATION DE L'ARBORESECENCE SE  TROUVANT DANS "+racineDir+"****TRACE**** ");*/
+		logger.debug("LANCEMENT DE LA CREATION DE L'ARBORESECENCE SE  TROUVANT DANS "+racineDir);
 		File f = new File(racineDir);
 		f.mkdirs();
 		new File(racineEmblemesDir).mkdirs();
@@ -137,17 +166,16 @@ public class LogescoApplication implements CommandLineRunner{
 		process.getOutputStream().close();
 		process.getErrorStream().close();
 		
-		log.log(Level.DEBUG, "============ FIN DE LA CREATION DE L'ARBORESECENCE SE "
-				+ "TROUVANT DANS"+ "  "+racineDir+"=============");
+		
+		logger.debug("LANCEMENT DE LA CREATION DE L'ARBORESECENCE SE  TROUVANT DANS "+racineDir);
 	}
 	catch(Exception e){
-		log.log(Level.WARN, "==== Erreur lors de la création des dossiers necessaires au bon "
-				+ "fonctionnement du logiciel. Exception "+e.getMessage());
+		logger.error("Erreur lors de la création des dossiers necessaires au bon fonctionnement du logiciel. Exception "+e.getMessage());
 	}
 		
 		
 		/****************************
-		 * Il faut faire les configurations de base au démarage
+		 * Il faut faire les configurations de base au démarage et de façon automatique
 		 * 1) Enregistrer les roles de base (ADMIN, SUPERADMIN)
 		 * 2) Enregistrer les utilisateurs de base qui sont tous des administrateurs (admin, superadmin)
 		 * L'un s'occupe de la configuration du serveur(admin) et l'autre de realiser dans sa session ce 
@@ -159,24 +187,31 @@ public class LogescoApplication implements CommandLineRunner{
 		 * 		b) emblemes/baniere et emblemes/logo: pour stocker les emblemes de l'etablissement gérer
 		 * 		c)	imagesUpload/eleves et imagesUpload/personnels pour stocker les photos de profil des 
 		 * élèves et des membres du personnel.
+		 * 5) Apres les répertoires l'administrateur doit créer  les différents rôles que les utilisateurs 
+		 * peuvent avoir dans le système car on ne peut pas avoir des utilisateurs sans role. Le rôle admin
+		 * et superadmin ont deja ete crée donc il reste proviseur, censeur, sg, intendant et enseignant. 
+		 * 6) Il faut enregistrer le proviseur (chose qui se fait grâce à l'administrateur)
 		 */
 			
 		try{
-			log.log(Level.DEBUG, "==== Création des supers rôles de l'application (admin et super admin) "
-					+ "s'il n'existe pas déjà ");
+			/*log.log(Level.DEBUG, "==== Création des supers rôles de l'application (admin et super admin) "
+					+ "s'il n'existe pas déjà ");*/
+			logger.debug("Création des supers rôles de l'application (admin et super admin) s'il n'existe pas déjà.");
 			//On enregistre les role de base de l'aapplication
 			rolesRepository.save(new Roles("ADMIN"));
 			rolesRepository.save(new Roles("SUPERADMIN"));
 		}
 		catch(Exception e){
-			log.log(Level.WARN, "les rôles de base pour la configuration de l'application existe déjà.  "
-					+ "Exception "+e.getMessage());
+			/*log.log(Level.WARN, "les rôles de base pour la configuration de l'application existe déjà.  "
+					+ "Exception "+e.getMessage());*/
+			logger.error("les rôles de base pour la configuration de l'application existe déjà. Exception "+e.getMessage());
 		}
 		Utilisateurs admin = null;
 		Utilisateurs superadmin = null;
 		try{
-			log.log(Level.DEBUG, "Création des utilisateurs de base assumant les "
-					+ "rôles de base (admin et superadmin) ");
+			/*log.log(Level.DEBUG, "Création des utilisateurs de base assumant les "
+					+ "rôles de base (admin et superadmin) ");*/
+			logger.debug("Création des utilisateurs de base (admin et superadmin)");
 			
 			Pbkdf2PasswordEncoder p=new Pbkdf2PasswordEncoder();
 			admin=usersRepository.save(new Administrateurs("admin@gmail.com", 
@@ -189,38 +224,76 @@ public class LogescoApplication implements CommandLineRunner{
 					rolesRepository.findByRole("SUPERADMIN")));
 		}
 		catch(Exception e){
-			log.log(Level.WARN, "==== Les users de base existe deja en BD. "
-					+ " Exception "+e.getMessage());
+			/*log.log(Level.WARN, "==== Les users de base existe deja en BD. "
+					+ " Exception "+e.getMessage());*/
+			logger.error("Les users de base existe deja en BD (admin et superadmin). Exception "+e.getMessage());
 		}
 		
-		
+		/**************************
+		 * On prepare l'enregistrement de la table matricule qui va permettre de generer les matricules
+		 * avec les numeros d'enregistrement
+		 */
 		try{
 			List<Matricule> listofMatricule = matriculeRepository.findAll();
 			if(listofMatricule!=null){
 				if(listofMatricule.size()>0){
-					System.err.println("Le champ permettant de créer le numero d'ordre dans la génération des "
-							+ " matricules existe deja");
+					/*System.err.println("Le champ permettant de créer le numero d'ordre dans la génération des "
+							+ " matricules existe deja");*/
+					logger.debug("Le champ permettant de créer le numero d'ordre dans la génération des matricules existe deja ");
 				}
 				else if(listofMatricule.size() == 0){
-					System.err.println("enregistrement du premier numero qui permettra la génération des matricules");
+					/*System.err.println("enregistrement du premier numero qui permettra la génération des matricules");*/
+					logger.debug("Enregistrement du premier numero qui permettra la génération des matricules ");
 					Matricule mat = new Matricule();
 					mat.setValeur(0);
 					matriculeRepository.save(mat);
 				}
 			}
 			else{
-				System.err.println("la liste des matricules est null donc problème");
+				/*System.err.println("la liste des matricules est null donc problème");*/
+				logger.error("la liste des matricules est null donc problème ");
 			}
 		}
 		catch(Exception e){
-			System.err.println("erreur d'enregistrement des numero pour l'enreg des matricule "+e.getMessage());
+			/*System.err.println("erreur d'enregistrement des numero pour l'enreg des matricule "+e.getMessage());*/
+			logger.error("Erreur d'enregistrement des numeros pour la fabrication des matricules "+e.getMessage());
+		}
+		
+		/*************************************************
+		 * On prepare l'enregistrement de la table Identoperation qui va permettre de génerer le numero
+		 * des transactions financieres qui aura lieu dans les différents comptes d'incription des élèves
+		 */
+		try{
+			List<IdentOperation> listofIdentop = identopRepository.findAll();
+			if(listofIdentop!=null){
+				if(listofIdentop.size()>0){
+					/*System.err.println("Le champ permettant de créer le numero d'ordre dans la génération des "
+							+ " matricules existe deja");*/
+					logger.debug("Le champ permettant de generer les numeros de transaction existe deja ");
+				}
+				else if(listofIdentop.size() == 0){
+					/*System.err.println("enregistrement du premier numero qui permettra la génération des matricules");*/
+					logger.debug("Enregistrement du premier numero qui permettra la génération des numero de transaction ");
+					IdentOperation identop = new IdentOperation();
+					identop.setNumero(0);
+					identopRepository.save(identop);
+				}
+			}
+			else{
+				/*System.err.println("la liste des matricules est null donc problème");*/
+				logger.error("la liste des Ident Operation est null donc problème ");
+			}
+		}
+		catch(Exception e){
+			/*System.err.println("erreur d'enregistrement des numero pour l'enreg des matricule "+e.getMessage());*/
+			logger.error("Erreur d'enregistrement des numeros pour la fabrication des numeros de transaction "+e.getMessage());
 		}
 		
 		
 		
 		/*****************************
-		 * On enregistre l'établissement car en fait on doit avoir un établissement
-		 * pour dans chaque base de donnée. Tous ceci fait parti des configurations de 
+		 * On enregistre un établissement par defaut car en fait on doit avoir un établissement
+		 * dans chaque base de donnée. Tous ceci fait parti des configurations de 
 		 * base. la configuration est telle qu'on aura toujours un seul établissement 
 		 * dans la base de donnée. Car le logiciel doit gérer un établissement à la fois
 		 */
@@ -228,16 +301,18 @@ public class LogescoApplication implements CommandLineRunner{
 			List<Etablissement> listofEtab = etabRepository.findAll();
 			if(listofEtab != null){
 				if(listofEtab.size()>0){
-					log.log(Level.DEBUG, "==== L'ETABLISSEMENT A GERER EST DEJA ENREGISTRE DANS LA BD. ");
+					/*log.log(Level.DEBUG, "==== L'ETABLISSEMENT A GERER EST DEJA ENREGISTRE DANS LA BD. ");*/
+					logger.debug("L'ETABLISSEMENT A GERER EST DEJA ENREGISTRE DANS LA BD ");
 				}
 				else if(listofEtab.size() == 0){
 					/*
 					 * On va enregistrer le tout premier etablissement de tel sorte qu'il soit juste
-					 * modifier pendant l'atblissement
+					 * modifier pendant la configuration
 					 */
-					log.log(Level.DEBUG, "==== PREPARATION DE L'ENREGISTREMENT DE L'ETABLISSEMENT "
+					/*log.log(Level.DEBUG, "==== PREPARATION DE L'ENREGISTREMENT DE L'ETABLISSEMENT "
 							+ " PAR DEFAUT QUI SERA MODIFIER PAR LA SUITE PAR LE CHEF DE L'ETABLISSEMENT "
-							+ " CLIENTE ====");
+							+ " CLIENTE ====");*/
+					logger.debug("PREPARATION DE L'ENREGISTREMENT DE L'ETABLISSEMENT PAR DEFAUT QUI SERA MODIFIER PAR LA SUITE PAR LE CHEF DE L'ETABLISSEMENT CLIENTE");
 					
 					Etablissement etab = new Etablissement();
 					etab.setAliasEtab("Alias");
@@ -269,13 +344,15 @@ public class LogescoApplication implements CommandLineRunner{
 				}
 			}
 			else{
-				log.log(Level.WARN, "***** LA LISTE DES ETABLISSEMENTS EST NULL DONC MAUVAISE "
-						+ " RECUPERATION ");
+				/*log.log(Level.WARN, "***** LA LISTE DES ETABLISSEMENTS EST NULL DONC MAUVAISE "
+						+ " RECUPERATION ");*/
+				logger.error("LA LISTE DES ETABLISSEMENTS EST NULL DONC MAUVAISE RECUPERATION");
 			}
 		}
 		catch(Exception e){
-			log.log(Level.WARN, "==== ERREUR LORS DE LA RECHERCHE DE L'ETABLISSEMENT ENREGISTRER OU "
-					+ " LORS DE SON ENREGISTREMENT. Exception : "+e.getMessage());
+			/*log.log(Level.WARN, "==== ERREUR LORS DE LA RECHERCHE DE L'ETABLISSEMENT ENREGISTRER OU "
+					+ " LORS DE SON ENREGISTREMENT. Exception : "+e.getMessage());*/
+			logger.error("ERREUR LORS DE LA RECHERCHE DE L'ETABLISSEMENT ENREGISTRER OU LORS DE SON ENREGISTREMENT. Exception : "+e.getMessage());
 			
 		}
 		
@@ -362,8 +439,12 @@ public class LogescoApplication implements CommandLineRunner{
 			catch(Exception e){
 				System.err.println(e.getMessage());
 			}*/
-			log.log(Level.DEBUG, "FIN DU DEMARRAGE ET CONFIGURATION DE BASE EFFECTUEE");
+			/*log.log(Level.DEBUG, "FIN DU DEMARRAGE ET CONFIGURATION DE BASE EFFECTUEE");*/
 			
+		
+		logger.info("FIN DU DEMARRAGE DE L'APPLICATION.");
+	    logger.info("====================================================================");
+		
 		}
 	
 }

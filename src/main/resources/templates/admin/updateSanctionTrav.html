@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="admin/adminlayout">
+<head>
+<meta charset="UTF-8"/>
+<title>Honneur issue du travail</title>
+</head>
+<body>
+<div layout:fragment="formactionadmin">
+<!-- debut du FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
+<div class="col-md-10  col-md-offset-1  reculeverticalementmodifpasswordform">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h4>Gestion des différents honneurs issue du travail</h4>
+		</div>
+		<div class="panel-body">
+			<form action="#" th:action="@{/logesco/admin/postupdateSanctionTrav}"
+						th:object="${updateSanctionTravForm}" method="post"  class="form-inline">
+			
+				<div th:if="${param.supprimsanctionTraverrorDC}">
+					<h4 align="justify" class="alert alert-danger">La sanction ne peut être supprimé car deja 
+					associe à des décisions de conseil de classe</h4>
+				</div>
+				
+				<div th:if="${param.supprimsanctionTraverror}">
+					<h4 align="justify" class="alert alert-danger">Erreur de suppression id inexistant</h4>
+				</div>
+				
+				<div th:if="${param.supprimsanctionTravsuccess}">
+					<h4 align="justify" class="alert alert-success">Operation de suppression effectuée avec succes</h4>
+				</div>
+				
+				<div th:if="${param.updatesanctionTraverrorCode}">
+					<h4 align="justify" class="alert alert-danger">Un des codes saisies doit être déjà utilisé par une autre sanction</h4>
+				</div>
+				
+				<div th:if="${param.updatesanctionTravsuccess}">
+					<h4 align="justify" class="alert alert-success">Sanction mise à jour avec succès</h4>
+				</div>
+				
+				<div th:if="${param.enregsanctionTravsuccess}">
+					<h4 align="justify" class="alert alert-success">Sanction ajoutée avec succès</h4>
+				</div>
+			
+				<table class="table table-striped">
+					<thead class="thead-light">
+						<tr>
+							<th class="text-center" scope="col">CODE</th>
+							<th class="text-center" scope="col">CODE 2<sup>nd</sup> LANGUE</th>
+							<th class="text-center" scope="col">INTITULE</th>
+							<th class="text-center" scope="col">INTITULE 2<sup>nd</sup> LANGUE</th>
+						    <th class="text-center" scope="col">ACTION</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+								<div class="form-group">
+									<input type="text" name="codeSancTrav" id="codeSancTrav"
+												class="form-control"  th:value="*{codeSancTrav}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+								</div>
+								<div th:if="${#fields.hasErrors('codeSancTrav')}"
+												th:errors="*{codeSancTrav}" class="redcolor">Erreur de code de sanction travail</div>
+							</td>
+							<td>
+								<div class="form-group">
+									<input type="text" name="codeSancTravEn" id="codeSancTravEn"
+												class="form-control"  th:value="*{codeSancTravEn}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+								</div>
+								<div th:if="${#fields.hasErrors('codeSancTravEn')}"
+												th:errors="*{codeSancTravEn}" class="redcolor">Erreur de code de sanction En travail</div>
+							</td>
+							<td>
+								<div class="form-group">
+									<input type="text" name="intituleSancTrav" id="intituleSancTrav"
+												class="form-control"  th:value="*{intituleSancTrav}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+								</div>
+								<div th:if="${#fields.hasErrors('intituleSancTrav')}"
+												th:errors="*{intituleSancTrav}" class="redcolor">Erreur de intitule de sanction travail</div>
+					
+							</td>
+							
+							<td>
+								<div class="form-group">
+									<input type="text" name="intituleSancTravEn" id="intituleSancTravEn"
+												class="form-control"  th:value="*{intituleSancTravEn}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+								</div>
+								<div th:if="${#fields.hasErrors('intituleSancTravEn')}"
+												th:errors="*{intituleSancTravEn}" class="redcolor">Erreur de intitule de sanction travail</div>
+								
+								<input type="hidden" name="idSanctionTrav"
+										id="idSanctionTrav" class="form-control" th:value="*{idSanctionTrav}" th:field="*{idSanctionTrav}"/>
+								
+							</td>
+							
+							<td>
+								<button type="submit" class="btn btn-primary  pull-right">
+											<span class="glyphicon glyphicon-save"></span> Envoyer
+								</button>
+							</td>
+							
+						</tr>
+						
+					</tbody>
+				</table>
+				
+				<hr/>
+				<table class="table table-striped">
+					<tbody>	
+						<!-- LISTE DES DIFFERENTES SANCTIONS TRAVAIL ENREGISTREES AU CAS OU CETTE 
+						LISTE EST DEJA DANS LE MODELE -->
+						<tr th:each="sancTrav:${listofSanctionTrav}" th:if="${listofSanctionTrav}">
+							<td th:inline="text">[[${sancTrav.codeSancTrav}]] </td>
+							<td th:inline="text">[[${sancTrav.codeSancTravEn}]] </td>
+							<td th:inline="text">[[${sancTrav.intituleSancTrav}]] </td>
+							<td th:inline="text">[[${sancTrav.intituleSancTravEn}]] </td>
+							<td>
+							
+								<div>
+									<span>
+										<a class="btn btn-primary btn-sm pull-left" href="#" 
+											th:href="@{/logesco/admin/getupdateSanctionTrav(idSanctionTrav=${sancTrav.idSancTrav}, 
+											numPageSanctionTrav=${pageCouranteSanctionTrav})}" role="button">
+											<span class="glyphicon glyphicon-edit"></span> Modifier
+										</a>
+									
+										<a class="btn btn-danger btn-sm pull-right" href="#" 
+											th:href="@{/logesco/admin/getsupprimerSanctionTrav(idSanctionTrav=${sancTrav.idSancTrav})}" role="button">
+												<span class="glyphicon glyphicon-trash"></span> Supprimer
+										</a>
+									</span>
+								</div>
+								
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			
+				<div class="container">
+					<ul class="pagination"><!-- nav nav-pills -->
+						<li th:each="p,status:${listofPagesSanctionTrav}" th:class="${status.index==pageCouranteSanctionTrav}?active:' ' ">
+							<a th:href="@{/logesco/admin/getupdateSanctionTrav(numPageSanctionTrav=${status.index},
+									idSanctionTrav=*{idSanctionTrav})}"
+									th:text="${status.index+1}"></a>
+						</li>
+					</ul>
+				</div> 
+			
+			</form>
+		</div>
+	</div>
+</div>
+<!-- fin du FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
+</div>
+</body>
+</html>

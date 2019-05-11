@@ -4,6 +4,7 @@
 package org.logesco.entities;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * @author cedrickiadjeu
@@ -33,11 +36,9 @@ public class RapportDAbsence implements Serializable {
 	private int nbreheureJustifie;
 	@NotNull
 	private int nbreheureNJustifie;
-	private boolean avertConduite;
-	private boolean blameConduite;
-	private boolean conseilDiscipline;
-	private int consigne;
-	private int jourExclusion;
+	@NotNull
+	@DateTimeFormat(pattern="yyyy-MM-dd")
+	private Date dateenreg;
 	
 	/******************************************
 	 * Mapping des associations avec les autres tables
@@ -116,6 +117,20 @@ public class RapportDAbsence implements Serializable {
 	}
 
 	/**
+	 * @return the dateenreg
+	 */
+	public Date getDateenreg() {
+		return dateenreg;
+	}
+
+	/**
+	 * @param dateenreg the dateenreg to set
+	 */
+	public void setDateenreg(Date dateenreg) {
+		this.dateenreg = dateenreg;
+	}
+
+	/**
 	 * @return the sequence
 	 */
 	public Sequences getSequence() {
@@ -143,76 +158,6 @@ public class RapportDAbsence implements Serializable {
 		this.eleve = eleve;
 	}
 
-	/**
-	 * @return the avertConduite
-	 */
-	public boolean isAvertConduite() {
-		return avertConduite;
-	}
-
-	/**
-	 * @param avertConduite the avertConduite to set
-	 */
-	public void setAvertConduite(boolean avertConduite) {
-		this.avertConduite = avertConduite;
-	}
-
-	/**
-	 * @return the blameConduite
-	 */
-	public boolean isBlameConduite() {
-		return blameConduite;
-	}
-
-	/**
-	 * @param blameConduite the blameConduite to set
-	 */
-	public void setBlameConduite(boolean blameConduite) {
-		this.blameConduite = blameConduite;
-	}
-
-	/**
-	 * @return the conseilDiscipline
-	 */
-	public boolean isConseilDiscipline() {
-		return conseilDiscipline;
-	}
-
-	/**
-	 * @param conseilDiscipline the conseilDiscipline to set
-	 */
-	public void setConseilDiscipline(boolean conseilDiscipline) {
-		this.conseilDiscipline = conseilDiscipline;
-	}
-
-	/**
-	 * @return the consigne
-	 */
-	public int getConsigne() {
-		return consigne;
-	}
-
-	/**
-	 * @param consigne the consigne to set
-	 */
-	public void setConsigne(int consigne) {
-		this.consigne = consigne;
-	}
-
-	/**
-	 * @return the jourExclusion
-	 */
-	public int getJourExclusion() {
-		return jourExclusion;
-	}
-
-	/**
-	 * @param jourExclusion the jourExclusion to set
-	 */
-	public void setJourExclusion(int jourExclusion) {
-		this.jourExclusion = jourExclusion;
-	}
-	
 	
 
 }

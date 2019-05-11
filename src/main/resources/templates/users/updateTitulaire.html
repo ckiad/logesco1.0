@@ -6,11 +6,11 @@
 	layout:decorator="users/userslayout">
 <head>
 <meta charset="UTF-8"/>
-<title>Attribution des titulaires de classe</title>
+<title th:inline="text">[[#{updatetitulaire.titrepage}]]</title>
 </head>
 <body>
 	<span layout:fragment="titre_boite">
-        <kbd>Attribuer des titulaires aux différentes classes</kbd>
+        <kbd th:inline="text">[[#{updatetitulaire.titreboite}]]</kbd>
     </span>
 <div layout:fragment="formactionusers">
 <!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
@@ -20,15 +20,15 @@
 			method="post"   class="form-inline" th:object="${updateTitulaireForm}">
 				
 				<div th:if="${param.updatetutulaireerror}">
-					<h4 align="justify" class="alert alert-danger">Erreur lors de l'affectation du titulaire de la classe.</h4>
+					<h4 align="justify" class="alert alert-danger" th:inline="text">[[#{updatetitulaire.updatetutulaireerror}]] .</h4>
 				</div>
 				
 				<div th:if="${param.updatetutulaireerrorTit}">
-					<h4 align="justify" class="alert alert-danger">Le rôle titulaire n'est pas encore enregistré.</h4>
+					<h4 align="justify" class="alert alert-danger" th:inline="text">[[#{updatetitulaire.updatetutulaireerrorTit}]] .</h4>
 				</div>
 				
 				<div th:if="${param.updatetutulairesuccess}">
-					<h4 align="justify" class="alert alert-success">Le titulaire de la classe a été affecté avec succès.</h4>
+					<h4 align="justify" class="alert alert-success" th:inline="text">[[#{updatetitulaire.updatetutulairesuccess}]] .</h4>
 				</div>
 				
 				<div class="form-group">
@@ -39,8 +39,8 @@
 				<table class="table table-striped">
 					<thead class="thead-light">
 						<tr>
-							<th class="text-center" scope="col">CLASSE</th>
-							<th class="text-center" scope="col">ID PROFFESSEUR</th>
+							<th class="text-center" scope="col" th:inline="text">[[#{updatetitulaire.th_classe}]]</th>
+							<th class="text-center" scope="col" th:inline="text">[[#{updatetitulaire.th_idProf}]] </th>
 						    <th class="text-center" scope="col">ACTION</th>
 						</tr>
 					</thead>
@@ -58,7 +58,7 @@
 											
 												<option th:each="c:${n.listofClasses}" th:value="${c.idClasses}"
 													th:inline="text">
-													 [[${c.codeClasses}]] [[${c.specialite.codeSpecialite}]] [[${c.numeroClasses}]]
+													 [[${c.codeClasses}]] [[${c.specialite.codeSpecialite}]] [[${c.numeroClasses}]] 
 												</option>
 												
 											</optgroup>
@@ -71,7 +71,7 @@
 										</select>
 									</div>
 									<div th:if="${#fields.hasErrors('idClassesConcerne')}"
-										th:errors="*{idClassesConcerne}" class="redcolor">Erreur de classe de cours</div>
+										th:errors="*{idClassesConcerne}" class="redcolor" th:inline="text">[[#{updatetitulaire.erreurclasse}]]</div>
 								</div>
 							</td>
 							
@@ -118,13 +118,13 @@
 										</select>
 									</div>
 									<div th:if="${#fields.hasErrors('idUsersTitulaire')}"
-										th:errors="*{idUsersTitulaire}" class="redcolor">Erreur de Users pour titulaire</div>
+										th:errors="*{idUsersTitulaire}" class="redcolor" th:inline="text">[[#{updatetitulaire.erreuriduser}]]</div>
 								</div>
 							</td>
 							
 							<td>
-								<button type="submit" class="btn btn-primary  pull-right">
-									<span class="glyphicon glyphicon-save"></span> Envoyer
+								<button type="submit" class="btn btn-primary  pull-right" th:inline="text">
+									<span class="glyphicon glyphicon-save"></span> [[#{updatetitulaire.bouton_envoyer}]]
 								</button>
 							</td>
 							
@@ -136,7 +136,7 @@
 					<thead class="thead-light">
 						<tr>
 							<th th:inline="text" > 
-								<span class="greencolor">[[${niv.codeNiveaux}]]:</span>
+								<span class="greencolor">[[${session.lang=='fr'}?${niv.codeNiveaux}+'/'+${niv.codeNiveaux_en}:${niv.codeNiveaux_en}+'/'+${niv.codeNiveaux}]]:</span>
 							</th>
 						</tr>
 					</thead>
@@ -145,11 +145,11 @@
 						<tr th:each="classe:${niv.listofClasses}" th:if="${listofNiveaux}">
 						
 							<td th:inline="text">[[${classe.codeClasses}]] [[${classe.specialite.codeSpecialite}]] 
-								[[${classe.numeroClasses}]] </td>
+								[[${classe.numeroClasses}]] <kbd>[[${classe.geteffectifEleve()}]]</kbd></td>
 								
 							<td th:inline="text"><!-- [[${classe.proffesseur.nomsPers}]] 
 								[[${classe.proffesseur.prenomsPers}]]   -->
-								[[${classe.proffesseur==null}?'Pas encore attribué':${classe.proffesseur.nomsPers} ]]
+								[[${classe.proffesseur==null}?#{updateTitulaire.pasdefini}:${classe.proffesseur.nomsPers} ]]
 							</td>
 							
 							<td>
@@ -159,8 +159,8 @@
 										<a class="btn btn-primary btn-sm pull-left" href="#" 
 											th:href="@{/logesco/users/censeur/getupdateTitulaire(idClasseAModif=${classe.idClasses}, 
 											idUsersTitulaire=${classe.proffesseur==null}?0:${classe.proffesseur.idUsers}, 
-											numPageNiveaux=${pageCouranteNiveaux})}" role="button">
-											<span class="glyphicon glyphicon-edit"></span> Modifier
+											numPageNiveaux=${pageCouranteNiveaux})}" role="button" th:inline="text">
+											<span class="glyphicon glyphicon-edit"></span> [[#{updatetitulaire.bouton_modifier}]]
 										</a>
 									</span>
 								</div>
@@ -182,9 +182,9 @@
 				</div> 
 				
 				<a class=" pull-right" href="#" 
-			      						th:href="@{/logesco/users/censeur/exportlistTitulaireClasse}" 
-			      						role="button">
-			      				<span class="glyphicon glyphicon-list-alt"></span> Exporter la liste des titulaires de classe
+			      		th:href="@{/logesco/users/censeur/exportlistTitulaireClasse}" 
+			      						role="button" th:inline="text" target="_blank">
+			      				<span class="glyphicon glyphicon-list-alt"></span>[[#{updatetitulaire.bouton_export}]] 
 			    </a>
 				
 			</form>

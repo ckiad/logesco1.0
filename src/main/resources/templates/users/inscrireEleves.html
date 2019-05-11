@@ -93,6 +93,13 @@
 					<span th:inline="text" th:if="${classeSelect}" class="greencolor"> [[${classeSelect.codeClasses}]] 
 						[[${classeSelect.specialite.codeSpecialite}]] [[${classeSelect.numeroClasses}]]</span> (Total:
 					<span th:text="${effectifprovClasse}" class="redcolor"></span>)
+					
+					<span th:if="${session.operation_presente=='1'}">
+						<a th:href="@{/logesco/users/intendant/lancerEditionsRecuVersement(idEleveConcerne=${session.idEleveConcerne},
+								idOperation_a_imprimer=${session.idOperation_a_imprimer})}"   target="_blank" 
+								th:text="#{inscrireEleves.bouton_imprimer}" class="btn btn-success btn-sm pull-right">Imprimer reçu</a>
+					</span>
+					
 				</legend>
 					
 				<table class="table table-striped">
@@ -112,7 +119,7 @@
 							<!-- <td th:inline="text">[[${eleve.matriculeEleves}]] </td> -->
 									
 							<td th:inline="text">
-								[[${#strings.capitalize(eleve.nomsEleves)}]] [[${eleve.prenomsEleves}]] <br/>
+								[[${#strings.toUpperCase(eleve.nomsEleves)}]] [[${eleve.prenomsEleves}]] <br/>
 								[[#{inscrireEleves.label_nele}]] 
 								[[${#dates.format(eleve.datenaissEleves,"dd-MM-yyyy")}]] 
 								[[#{inscrireEleves.label_a}]] [[${eleve.lieunaissEleves}]]
@@ -133,26 +140,23 @@
 							<td>
 								<form action="#" th:action="@{/logesco/users/intendant/versementSco}" 
 									method="get"  th:if="${listofClasses}" class="form-inline">
-											
-									<input type="text" name="montantAVerse"
-										id="montantAVerse" class="form-control" placeholder="0" value="0.0"/>
-												
-									<input type="hidden" name="montantScolarite"
-										id="montantScolarite" class="form-control"  th:value="${montantScolarite}"/>
-											
-									<input type="hidden" name="numPageEleves"
-										id="numPageEleves" class="form-control" th:value="${pageCouranteEleves}"/>
 									
-									<input type="hidden" name="idEleveAModif"
-										id="idEleveAModif" class="form-control" th:value="${eleve.idEleves}"/>
-											
-									<input type="hidden" name="idClasseSelect"
-										id="idClasseSelect" class="form-control" th:value="${idClasseSelect}"/>
-											
-									<button type="submit" class="btn btn-primary  pull-right" 
-										th:text="#{inscrireEleves.bouton_verser}">
-										<span class="glyphicon glyphicon-save"></span> Verser
-									</button>
+										<input type="text" name="montantAVerse"
+											id="montantAVerse" class="form-control" placeholder="0" value="0"/>
+													
+										<input type="hidden" name="numPageEleves"
+											id="numPageEleves" class="form-control" th:value="${pageCouranteEleves}"/>
+										
+										<input type="hidden" name="idEleveAModif"
+											id="idEleveAModif" class="form-control" th:value="${eleve.idEleves}"/>
+												
+										<input type="hidden" name="idClasseSelect"
+											id="idClasseSelect" class="form-control" th:value="${idClasseSelect}"/>
+												
+										<button type="submit" class="btn btn-primary  pull-right" 
+											th:text="#{inscrireEleves.bouton_verser}">
+											<span class="glyphicon glyphicon-save"></span> Verser
+										</button>
 								</form>
 								
 							</td>

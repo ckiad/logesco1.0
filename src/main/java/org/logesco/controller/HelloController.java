@@ -41,20 +41,20 @@ public class HelloController {
     	
     	HttpSession session=request.getSession();
     	session.setAttribute("lang", lang);
-    	//System.err.println("la langue choisi par le user est "+lang);
-    	System.err.println("quel sera la langue de la date ===  "+lang);
+    	////System.err.println("la langue choisi par le user est "+lang);
+    	//System.err.println("quel sera la langue de la date ===  "+lang);
     	Date dateJour=new Date();
     	if(lang.equals("fr")==true){
     		Locale localeFr = new Locale("fr","FR");
     		dfNameJour = DateFormat.getDateInstance(DateFormat.FULL, localeFr);
     		dfheure = DateFormat.getTimeInstance(DateFormat.FULL, localeFr);
-    		System.out.println("Francais ===  "+dfNameJour.format(dateJour).toUpperCase());
+    		//System.out.println("Francais ===  "+dfNameJour.format(dateJour).toUpperCase());
     	}
     	else if(lang.equals("en")==true){
     		Locale localeEn = new Locale("en","EN");
     		dfNameJour = DateFormat.getDateInstance(DateFormat.FULL, localeEn);
     		dfheure = DateFormat.getTimeInstance(DateFormat.FULL, localeEn);
-    		System.out.println("Anglais ===  "+dfNameJour.format(dateJour).toUpperCase());
+    		//System.out.println("Anglais ===  "+dfNameJour.format(dateJour).toUpperCase());
     	}
     	
     	
@@ -84,14 +84,14 @@ public class HelloController {
     	/*Pbkdf2PasswordEncoder p=new Pbkdf2PasswordEncoder();*/
     	//StandardPasswordEncoder s=new StandardPasswordEncoder();
     	
-		/*System.out.println("p=="+p.encode("12345"));
-		System.out.println("MATCHESSSS==========="+p.matches("admin12345", "3b974605e4d35c747d69d85966ef988f61481a549184441af421ef3c9f2451b66aef9615220f4486"));*/
+		/*//System.out.println("p=="+p.encode("12345"));
+		//System.out.println("MATCHESSSS==========="+p.matches("admin12345", "3b974605e4d35c747d69d85966ef988f61481a549184441af421ef3c9f2451b66aef9615220f4486"));*/
         
-		/*System.out.println("p=="+s.encode("12345"));
-		System.out.println("MATCHESSSS==========="+s.matches("admin12345", "3b974605e4d35c747d69d85966ef988f61481a549184441af421ef3c9f2451b66aef9615220f4486"));*/
+		/*//System.out.println("p=="+s.encode("12345"));
+		//System.out.println("MATCHESSSS==========="+s.matches("admin12345", "3b974605e4d35c747d69d85966ef988f61481a549184441af421ef3c9f2451b66aef9615220f4486"));*/
 		
     	
-    	System.err.println("lang choisi "+lang);
+    	//System.err.println("lang choisi "+lang);
     	
     	DateFormat dfNameJour=new SimpleDateFormat("EEEE");
     	DateFormat dfJour=new SimpleDateFormat("dd");
@@ -132,14 +132,14 @@ public class HelloController {
     
     @PostMapping("/logoute")
     public String logoutPage (HttpServletRequest request, HttpServletResponse response) {
-       //System.err.println("Il souhaite se deconnecter");
+       ////System.err.println("Il souhaite se deconnecter");
     	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     	
         if (auth != null){    
-        	 //System.err.println("Nous le faisons donc et ... ");
+        	 ////System.err.println("Nous le faisons donc et ... ");
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
-        //System.err.println("on l'a fait par programmation et il sera donc redirectionne");
+        ////System.err.println("on l'a fait par programmation et il sera donc redirectionne");
         return "redirect:/logesco/index?logout";
     }
     

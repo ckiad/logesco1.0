@@ -113,17 +113,17 @@ public class AdminController {
 		 * avant toutes redirection vers la page demandée 
 		 */
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-				+ "xxxxxxxxxxxxxxxxxxxxxxxxxxxx"+auth.getName());
+		/*//System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+				+ "xxxxxxxxxxxxxxxxxxxxxxxxxxxx"+auth.getName());*/
 		model.addAttribute("username", auth.getName());
 
-		System.out.println(String.format("Modèle=%s, Session[username]=%s", model, 
-				session.getAttribute("username")));
+		/*//System.out.println(String.format("Modèle=%s, Session[username]=%s", model, 
+				session.getAttribute("username")));*/
 
 		session.setAttribute("username", auth.getName());
 
-		System.out.println(String.format("Modèle=%s, Session[usernamess]=%s", model, 
-				session.getAttribute("username")));
+		/*//System.out.println(String.format("Modèle=%s, Session[usernamess]=%s", model, 
+				session.getAttribute("username")));*/
 
 		
 		/*
@@ -163,6 +163,19 @@ public class AdminController {
 		return "admin/updateAdresse";
 	}
 	
+	@GetMapping(path="/getresetPassword")
+	public String getresetPassword(@ModelAttribute("passwordResetForm") 
+		PasswordResetForm passwordResetForm, 
+			Model model, HttpServletRequest request) throws ParseException{
+		
+		//Il faut charger la liste de tous les users sauf l'administrateur dans le modèle de cette page
+		List<Utilisateurs> listofUsers = adminService.findAllUsers();
+		model.addAttribute("listofUsers", listofUsers);
+		
+		
+		return "admin/resetPassword";
+	}
+	
 	@GetMapping(path="/getupdateUsername")
 	public String getupdateAdresse(@ModelAttribute("modifusernameForm") 
 			ModifUsernameForm modifusernameForm, 
@@ -172,7 +185,7 @@ public class AdminController {
 		 */
 		HttpSession session=request.getSession();
 		modifusernameForm.setActiveUsername((String)session.getAttribute("username"));
-		System.err.println("username dans session =="+(String)session.getAttribute("username"));
+		/*//System.err.println("username dans session =="+(String)session.getAttribute("username"));*/
 		
 		return "admin/updateUsername";
 	}
@@ -224,8 +237,8 @@ public class AdminController {
 			
 		}
 		else{
-			System.out.println("*********************  Aucun établissement n'est enregistré "
-					+ "or un et un seul devrait l'etre des l'installation du système **********************");
+			/*//System.out.println("*********************  Aucun établissement n'est enregistré "
+					+ "or un et un seul devrait l'etre des l'installation du système **********************");*/
 		}
 		
 		return "admin/updateEtablissement";
@@ -628,7 +641,7 @@ public class AdminController {
 			int[] listofPagesSpecialites=new int[pageofSpecialites.getTotalPages()];
 			model.addAttribute("listofPagesSpecialites", listofPagesSpecialites);
 			model.addAttribute("pageCourante", numPage);
-			System.err.println("vvvvvvvvvvvvvvv  "+numPage);
+			/*//System.err.println("vvvvvvvvvvvvvvv  "+numPage);*/
 		}
 		
 	}
@@ -695,7 +708,7 @@ public class AdminController {
 			model.addAttribute("listofPagesClasses", listofPagesClasses);
 			
 			model.addAttribute("pageCourante", numPage);
-			System.err.println("numPageClasses  "+numPage);
+			/*//System.err.println("numPageClasses  "+numPage);*/
 		}
 		
 		/*
@@ -745,7 +758,7 @@ public class AdminController {
 		if(idClasses!=null){
 			Classes classeAModif=adminService.findClasses(idClasses);
 			
-			System.err.println("Ici on veut modif classes  "+classeAModif.getCodeClasses());
+		/*	//System.err.println("Ici on veut modif classes  "+classeAModif.getCodeClasses());*/
 			
 			updateClassesForm.setCodeClasse(classeAModif.getCodeClasses());
 			updateClassesForm.setCodeClasseAModif(classeAModif.getCodeClasses());
@@ -795,7 +808,7 @@ public class AdminController {
 				model.addAttribute("listofPagesMatieres", listofPagesMatieres);
 				
 				model.addAttribute("pageCouranteMatiere", numPageMatiere);
-				System.err.println("numPageMatiere  "+numPageMatiere);
+				/*//System.err.println("numPageMatiere  "+numPageMatiere);*/
 				session.setAttribute("numPageMatiere", numPageMatiere);
 			}
 		}
@@ -841,10 +854,191 @@ public class AdminController {
 	
 	
 	
+	public void constructModelUpdateSanctionDisc(Model model, HttpServletRequest request,		
+			UpdateSanctionDiscForm updateSanctionDiscForm, int numPageSanctionDisc, int taillePage, Long idSanctionDisc){
+		HttpSession session = request.getSession();
+		/*
+		 * On doit faire la liste des sanctions disciplinaires existant et affiché dans la vue 
+		 */
+		Page<SanctionDisciplinaire> pageofSanctionDisc=
+				adminService.findPageSanctionDisc(numPageSanctionDisc, taillePage);
+		
+		if(pageofSanctionDisc.getContent().size()!=0){
+			model.addAttribute("listofSanctionDisc", pageofSanctionDisc.getContent());
+			int[] listofPagesSanctionDisc=new int[pageofSanctionDisc.getTotalPages()];
+			
+			model.addAttribute("listofPagesSanctionDisc", listofPagesSanctionDisc);
+			
+			model.addAttribute("pageCouranteSanctionDisc", numPageSanctionDisc);
+			/*//System.err.println("numPageRoles  "+numPage);*/
+			session.setAttribute("numPageSanctionDisc", numPageSanctionDisc);
+		}
+		/*
+		 * On doit rechercher la sanction disciplinaire dont le id est passe en paramètre au cas où ca existe
+		 */
+		SanctionDisciplinaire sancdiscConcerne = adminService.findSanctionDisciplinaire(idSanctionDisc);
+		if(sancdiscConcerne!=null){
+			updateSanctionDiscForm.setCodeSancDisc(sancdiscConcerne.getCodeSancDisc());
+			updateSanctionDiscForm.setCodeSancDiscEn(sancdiscConcerne.getCodeSancDiscEn());
+			updateSanctionDiscForm.setIntituleSancDisc(sancdiscConcerne.getIntituleSancDisc());
+			updateSanctionDiscForm.setIntituleSancDiscEn(sancdiscConcerne.getIntituleSancDiscEn());
+			updateSanctionDiscForm.setIdSanctionDisc(sancdiscConcerne.getIdSancDisc());
+			
+			model.addAttribute("sancdiscConcerne", sancdiscConcerne);
+			session.setAttribute("sancdiscConcerne", sancdiscConcerne);
+		}
+		else{
+			//Car l'idSanctionDisc ne doit pas être null lors de l'appel à la methode updateSanctionDisc au niveau du metier 
+			updateSanctionDiscForm.setIdSanctionDisc(new Long(0));
+			/*
+			 * Lors de l'affichage des numeros de page on passe aussi dans la requete idSanctionDisc de l'objet sancdiscConcerne
+			 * qui est d'ailleurs le même que celui de updateSanctionDiscForm
+			 */
+		}
+		
+		//System.err.println("voici donc l'id en jeux "+updateSanctionDiscForm.getIdSanctionDisc());
+		
+	}
+	
+	@GetMapping(path="/getupdateSanctionDisc")
+	public String getupdateSanctionDisc(@ModelAttribute("updateSanctionDiscForm") 
+	UpdateSanctionDiscForm updateSanctionDiscForm, 
+	Model model, HttpServletRequest request, 
+	@RequestParam(name="idSanctionDisc", defaultValue="0") Long idSanctionDisc, 
+	@RequestParam(name="numPageSanctionDisc", defaultValue="0") int numPageSanctionDisc, 
+	@RequestParam(name="taillePage", defaultValue="10") int taillePage){
+		
+		this.constructModelUpdateSanctionDisc(model, request, updateSanctionDiscForm,
+				numPageSanctionDisc, taillePage,idSanctionDisc);
+		
+		return "admin/updateSanctionDisc";   
+	}
 	
 	
+	public void constructModelUpdateSanctionTrav(Model model, HttpServletRequest request,		
+			UpdateSanctionTravForm updateSanctionTravForm, int numPageSanctionTrav, int taillePage, Long idSanctionTrav){
+		HttpSession session = request.getSession();
+		/*
+		 * On doit faire la liste des sanctions travail existant et affiché dans la vue 
+		 */
+		Page<SanctionTravail> pageofSanctionTrav=
+				adminService.findPageSanctionTrav(numPageSanctionTrav, taillePage);
+		
+		if(pageofSanctionTrav.getContent().size()!=0){
+			model.addAttribute("listofSanctionTrav", pageofSanctionTrav.getContent());
+			int[] listofPagesSanctionTrav=new int[pageofSanctionTrav.getTotalPages()];
+			
+			model.addAttribute("listofPagesSanctionTrav", listofPagesSanctionTrav);
+			
+			model.addAttribute("pageCouranteSanctionTrav", numPageSanctionTrav);
+			/*//System.err.println("numPageRoles  "+numPage);*/
+			session.setAttribute("numPageSanctionTrav", numPageSanctionTrav);
+		}
+		
+		/*
+		 * On doit rechercher la sanction travail dont le id est passe en paramètre au cas où ca existe
+		 */
+		SanctionTravail sanctravConcerne = adminService.findSanctionTravail(idSanctionTrav);
+		if(sanctravConcerne!=null){
+			updateSanctionTravForm.setCodeSancTrav(sanctravConcerne.getCodeSancTrav());
+			updateSanctionTravForm.setCodeSancTravEn(sanctravConcerne.getCodeSancTravEn());
+			updateSanctionTravForm.setIntituleSancTrav(sanctravConcerne.getIntituleSancTrav());
+			updateSanctionTravForm.setIntituleSancTravEn(sanctravConcerne.getIntituleSancTravEn());
+			updateSanctionTravForm.setIdSanctionTrav(sanctravConcerne.getIdSancTrav());
+			
+			model.addAttribute("sanctravConcerne", sanctravConcerne);
+			session.setAttribute("sanctravConcerne", sanctravConcerne);
+		}
+		else{
+			//Car l'idSanctionTrav ne doit pas être null lors de l'appel à la methode updateSanctionTrav au niveau du metier 
+			updateSanctionTravForm.setIdSanctionTrav(new Long(0));
+			/*
+			 * Lors de l'affichage des numeros de page on passe aussi dans la requete idSanctionTrav de l'objet sanctravConcerne
+			 * qui est d'ailleurs le même que celui de updateSanctionTravForm
+			 */
+		}
+		
+		
+	}
 	
 	
+	@GetMapping(path="/getupdateSanctionTrav")
+	public String getupdateSanctionTrav(@ModelAttribute("updateSanctionTravForm") 
+	UpdateSanctionTravForm updateSanctionTravForm, 
+	Model model, HttpServletRequest request, 
+	@RequestParam(name="idSanctionTrav", defaultValue="0") Long idSanctionTrav, 
+	@RequestParam(name="numPageSanctionTrav", defaultValue="0") int numPageSanctionTrav, 
+	@RequestParam(name="taillePage", defaultValue="10") int taillePage){
+		
+		this.constructModelUpdateSanctionTrav(model, request, updateSanctionTravForm,
+				numPageSanctionTrav, taillePage,idSanctionTrav);
+		
+		return "admin/updateSanctionTrav";   
+	}
+	
+	public void constructModelUpdateDecision(Model model, HttpServletRequest request,		
+			UpdateDecisionForm updateDecisionForm, int numPageDecision, int taillePage, Long idDecision){
+		HttpSession session = request.getSession();
+		
+		/*
+		 * On doit faire la liste des sanctions travail existant et affiché dans la vue 
+		 */
+		Page<Decision> pageofDecision=
+				adminService.findPageDecision(numPageDecision, taillePage);
+		
+		if(pageofDecision.getContent().size()!=0){
+			model.addAttribute("listofDecision", pageofDecision.getContent());
+			int[] listofPagesDecision=new int[pageofDecision.getTotalPages()];
+			
+			model.addAttribute("listofPagesDecision", listofPagesDecision);
+			
+			model.addAttribute("pageCouranteDecision", numPageDecision);
+			/*//System.err.println("numPageRoles  "+numPage);*/
+			session.setAttribute("numPageDecision", numPageDecision);
+		}
+		
+		/*
+		 * On doit rechercher la decision dont le id est passe en paramètre au cas où ca existe
+		 */
+		Decision decisionConcerne = adminService.findDecision(idDecision);
+		if(decisionConcerne!=null){
+			updateDecisionForm.setCodeDecision(decisionConcerne.getCodeDecision());
+			updateDecisionForm.setCodeDecisionEn(decisionConcerne.getCodeDecisionEn());
+			updateDecisionForm.setIntituleDecision(decisionConcerne.getIntituleDecision());
+			updateDecisionForm.setIntituleDecisionEn(decisionConcerne.getIntituleDecisionEn());
+			updateDecisionForm.setIdDecision(decisionConcerne.getIdDecision());
+			
+			model.addAttribute("decisionConcerne", decisionConcerne);
+			session.setAttribute("decisionConcerne", decisionConcerne);
+		}
+		else{
+			//Car l'idDecision ne doit pas être null lors de l'appel à la methode updateDecision au niveau du metier 
+			updateDecisionForm.setIdDecision(new Long(0));
+			/*
+			 * Lors de l'affichage des numeros de page on passe aussi dans la requete idDecision de l'objet decisionConcerne
+			 * qui est d'ailleurs le même que celui de updateDecisionForm
+			 */
+		}
+		
+	}
+	
+	
+	@GetMapping(path="/getupdateDecision")
+	public String getupdateDecision(@ModelAttribute("updateDecisionForm") 
+	UpdateDecisionForm updateDecisionForm, 
+	Model model, HttpServletRequest request, 
+	@RequestParam(name="idDecision", defaultValue="0") Long idDecision, 
+	@RequestParam(name="numPageDecision", defaultValue="0") int numPageDecision, 
+	@RequestParam(name="taillePage", defaultValue="10") int taillePage){
+		
+		this.constructModelUpdateDecision(model, request, updateDecisionForm,
+				numPageDecision, taillePage,idDecision);
+		
+		return "admin/updateDecision";   
+	}
+	
+	
+	@SuppressWarnings("unused")
 	public void constructModelUpdateRoles(Model model, int numPage, int taillePage){
 		/*
 		 * On doit faire la liste des roles existant et affiché dans la vue et pour chaque role, 
@@ -860,7 +1054,7 @@ public class AdminController {
 			model.addAttribute("listofPagesRoles", listofPagesRoles);
 			
 			model.addAttribute("pageCourante", numPage);
-			System.err.println("numPageRoles  "+numPage);
+			/*//System.err.println("numPageRoles  "+numPage);*/
 		}
 		
 		/*
@@ -869,9 +1063,9 @@ public class AdminController {
 		 */
 		List<UtilisateursRoles> listofUsersRoles=adminService.findAllUsersRoles();
 		model.addAttribute("listofUsersRoles", listofUsersRoles);  
-		System.err.println("taille de listofUsersRoles "+listofUsersRoles.size());
+		/*//System.err.println("taille de listofUsersRoles "+listofUsersRoles.size());*/
 		for(UtilisateursRoles ur:listofUsersRoles){
-			System.err.println("users = "+ur.getUsers().getUsername());
+			/*//System.err.println("users = "+ur.getUsers().getUsername());*/
 		}
 		
 	}
@@ -899,7 +1093,7 @@ public class AdminController {
 		if(role!=null){
 			Roles roleAModif=adminService.findRoles(role);
 			
-			System.err.println("Ici on veut modif roles  "+roleAModif.getAliasRole());
+			/*//System.err.println("Ici on veut modif roles  "+roleAModif.getAliasRole());*/
 			
 			updateRolesForm.setAliasRole(roleAModif.getAliasRole());
 			updateRolesForm.setRole(roleAModif.getRole());
@@ -911,6 +1105,14 @@ public class AdminController {
 		
 		return "admin/updateRoles";
 	}
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	/*****
@@ -926,9 +1128,9 @@ public class AdminController {
 		view.setUrl("classpath:/reports/listSpecialites.jrxml");
 		view.setApplicationContext(applicationContext);
 		Map<String, Object> params = new HashMap<String, Object>();
-		System.err.println("/////////////// ici deja ///////////");
+		//System.err.println("/////////////// ici deja ///////////");
 		params.put("datasource", adminServiceExport.exportlisteSpecialite());
-		System.err.println("/////////////// PUIS LA ///////////");
+		//System.err.println("/////////////// PUIS LA ///////////");
 		return new ModelAndView(view, params);*/
 		
 		/*
@@ -1035,6 +1237,29 @@ public class AdminController {
 
 		return "admin/updateAdresse";
 	}
+	
+	@PostMapping(path="/postresetPassword")
+	public String postresetPassword(@Valid @ModelAttribute("passwordResetForm") 
+	PasswordResetForm passwordResetForm, 
+	BindingResult bindingResult, Model model) throws ParseException{
+		
+		if (bindingResult.hasErrors()) {
+			return "admin/resetPassword";
+		}
+		//On peut effectuer la reinitialisation du mot de passe
+		String newPassword = passwordResetForm.getNewPassword();
+		String newPasswordConfirm = passwordResetForm.getNewPasswordConfirm();
+		String username = passwordResetForm.getUsername();
+		int reponse = adminService.resetPassword(newPassword, 
+				newPasswordConfirm, username);
+		if(reponse==1){
+			return "redirect:/logesco/admin/getresetPassword?updatesuccess";
+		}
+		if(reponse==0){
+			return "redirect:/logesco/admin/getresetPassword?updateerror";
+		}
+		return "admin/resetPassword";
+	}
 
 	/**************************************************************
 	 * Traitement du formulaire de modification d'un nom d'utilisateur
@@ -1074,6 +1299,7 @@ public class AdminController {
 	 * Traitement du formulaire de mise à jour des données de l'établissement
 	 *****************************************************************/
 	
+	@SuppressWarnings("unused")
 	@PostMapping(path="/postupdateEtablissement")
 	public String postupdateEtablissement(@Valid @ModelAttribute("updateEtablissementForm") 
 			UpdateEtablissementForm updateEtablissementForm, 
@@ -1081,21 +1307,21 @@ public class AdminController {
 			HttpServletRequest request, HttpServletResponse response) 
 					throws ParseException, Exception, IOException{
 		
-		System.err.println("ICI AU DEBUT DE postupdateEtablissement");
+		//System.err.println("ICI AU DEBUT DE postupdateEtablissement");
 		
 		if (bindingResult.hasErrors()) {
-			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE");
-			System.out.println("les erreurs sont "+bindingResult.getFieldErrors().toString());
-			System.out.println("les erreurs sont "+bindingResult.getErrorCount());
-			System.out.println("les erreurs sont "+bindingResult.getFieldError().getDefaultMessage());
-			System.out.println("les erreurs sont "+bindingResult.getFieldError().getField());
+			//System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE");
+			//System.out.println("les erreurs sont "+bindingResult.getFieldErrors().toString());
+			//System.out.println("les erreurs sont "+bindingResult.getErrorCount());
+			//System.out.println("les erreurs sont "+bindingResult.getFieldError().getDefaultMessage());
+			//System.out.println("les erreurs sont "+bindingResult.getFieldError().getField());
 			return "admin/updateEtablissement";
 		}
 		/*
 		 * Tout est bien rempli dans le formulaire et on peut donc enregistrer l'etablissement
 		 */
-		System.err.println("AUCUNE ERREUR DANS LE FORMULAIRE "
-				+ "ON INSTANCIE ETABLISSEMENT");
+		/*//System.err.println("AUCUNE ERREUR DANS LE FORMULAIRE "
+				+ "ON INSTANCIE ETABLISSEMENT");*/
 		Etablissement etab=new Etablissement();
 		etab.setAliasEtab(updateEtablissementForm.getAliasEtab());
 		etab.setBpEtab(updateEtablissementForm.getBpEtab());
@@ -1126,7 +1352,7 @@ public class AdminController {
 		
 		Long idEtab=adminService.saveEtablissement(etab);
 		
-		System.out.println("**************  etablissement mis a jour  *********************"+idEtab);
+		//System.out.println("**************  etablissement mis a jour  *********************"+idEtab);
 		
 		return "redirect:/logesco/admin/getupdateEtablissement?updateetabsuccess";
 	}
@@ -1144,10 +1370,10 @@ public class AdminController {
 	HttpServletRequest request, HttpServletResponse response) 
 			throws ParseException, Exception, IOException{
 		
-		System.err.println("ICI AU DEBUT DE postupdateEtablissement");
+		//System.err.println("ICI AU DEBUT DE postupdateEtablissement");
 		
 		if (bindingResult.hasErrors()) {
-			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE");
+			//System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE");
 			return "admin/updateEmblemeEtab";
 		}
 		
@@ -1163,12 +1389,12 @@ public class AdminController {
 			
 			Long idEtab=adminService.saveEtablissement(etabExistant);
 			
-			System.err.println("ON FAIT MAINTENANT L'UPLOAD DU LOGO");
+			//System.err.println("ON FAIT MAINTENANT L'UPLOAD DU LOGO");
 			if(!(filelogoEtab.isEmpty())){
 				filelogoEtab.transferTo(new File(logoDir+idEtab.longValue()));
 			}
 			
-			System.err.println("ON FAIT MAINTENANT L'UPLOAD DE LA BANNIERE");
+			//System.err.println("ON FAIT MAINTENANT L'UPLOAD DE LA BANNIERE");
 			if(!(filebanniereEtab.isEmpty())){
 				filebanniereEtab.transferTo(new File(banniereDir+idEtab.longValue()));
 			}
@@ -1187,11 +1413,11 @@ public class AdminController {
 	public byte[] getBaniereEtab(Long idEtab){
 		File f=new File(banniereDir+idEtab);
 		try{
-			System.err.println("nous voici ici et chemin fichier est ="+banniereDir+idEtab);
+			//System.err.println("nous voici ici et chemin fichier est ="+banniereDir+idEtab);
 			return IOUtils.toByteArray(new FileInputStream(f));
 		}
 		catch(Exception e){
-			System.err.println("erreur sur idetab "+e.getMessage());
+			//System.err.println("erreur sur idetab "+e.getMessage());
 			return null;
 		}
 	}
@@ -1204,11 +1430,11 @@ public class AdminController {
 	public byte[] getLogoEtab(Long idEtab){
 		File f=new File(logoDir+idEtab);
 		try{
-			System.err.println("nous voici ici et chemin fichier est ="+logoDir+idEtab);
+			//System.err.println("nous voici ici et chemin fichier est ="+logoDir+idEtab);
 			return IOUtils.toByteArray(new FileInputStream(f));
 		}
 		catch(Exception e){
-			System.err.println("erreur sur idetab "+e.getMessage());
+			//System.err.println("erreur sur idetab "+e.getMessage());
 			return null;
 		}
 	}
@@ -1225,25 +1451,24 @@ public class AdminController {
 			HttpServletRequest request, HttpServletResponse response) 
 					throws ParseException, Exception, IOException{
 		
-		System.err.println("ICI AU DEBUT DE postupdateProviseur");
+		//System.err.println("ICI AU DEBUT DE postupdateProviseur");
 		
 		if (bindingResult.hasErrors()) {
-			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE");
 			return "admin/updateProviseur";
 		}
 		/*
 		 * Tout est bien rempli dans le formulaire et on peut donc enregistrer l'etablissement
 		 */
-		System.err.println("AUCUNE ERREUR DANS LE FORMULAIRE "
-				+ "ON INSTANCIE ET INITIALISE Proviseur");
+		/*//System.err.println("AUCUNE ERREUR DANS LE FORMULAIRE "
+				+ "ON INSTANCIE ET INITIALISE Proviseur");*/
 		
 		Proviseur proviseur=new Proviseur();
 		DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
 		String ds=df.format(updateProviseurForm.getDatenaissPers());
 		Date d=df.parse(ds);
 		proviseur.setDatenaissPers(d);
-		System.err.println("AUCUNE ERREUR DANS LE FORMULAIRE "
-				+ "VOICI SA DATE DE NAISSANCE  "+d);
+		/*//System.err.println("AUCUNE ERREUR DANS LE FORMULAIRE "
+				+ "VOICI SA DATE DE NAISSANCE  "+d);*/
 		proviseur.setDiplomePers(updateProviseurForm.getDiplomePers());
 		proviseur.setEmailPers(updateProviseurForm.getEmailPers());
 		proviseur.setEnabled(true);
@@ -1263,12 +1488,12 @@ public class AdminController {
 		proviseur.setUsername(updateProviseurForm.getUsername());
 		proviseur.setVillePers(updateProviseurForm.getVillePers());
 		
-		System.err.println("TOUJOURS PAS DERREUR ON SETPHOTOPERS");
+		//System.err.println("TOUJOURS PAS DERREUR ON SETPHOTOPERS");
 		if(!(filephotoPers.isEmpty())){
 			proviseur.setPhotoPers(filephotoPers.getOriginalFilename());
 		}
 		
-		System.err.println("TOUJOURS PAS DERREUR ON SAVE PROVISEUR");
+		//System.err.println("TOUJOURS PAS DERREUR ON SAVE PROVISEUR");
 		
 		Long idProviseur=adminService.saveProviseur(proviseur);
 		
@@ -1279,7 +1504,7 @@ public class AdminController {
 		
 		if(idProviseur.longValue()==-3) return "redirect:/logesco/admin/getupdateProviseur?updateproviseurerrorUsername";
 		
-		System.err.println("TOUJOURS PAS DERREUR ON UPLOAD PHOTOPROVISEUR");
+		//System.err.println("TOUJOURS PAS DERREUR ON UPLOAD PHOTOPROVISEUR");
 		if(!(filephotoPers.isEmpty())){
 			filephotoPers.transferTo(new File(photoPersonnelsDir+idProviseur.longValue()));
 		}
@@ -1294,14 +1519,14 @@ public class AdminController {
 	@RequestMapping(path="/getphotoPers", produces=MediaType.IMAGE_PNG_VALUE)
 	@ResponseBody
 	public byte[] getphotoPers(Long idPers){
-		System.err.println("DEPART DE LA RECHERCHE DE LA PHOTO  "+idPers);
+		//System.err.println("DEPART DE LA RECHERCHE DE LA PHOTO  "+idPers);
 		File f=new File(photoPersonnelsDir+idPers);
 		try{
-			System.err.println("nous voici ici et chemin fichier est ="+photoPersonnelsDir+idPers);
+			//System.err.println("nous voici ici et chemin fichier est ="+photoPersonnelsDir+idPers);
 			return IOUtils.toByteArray(new FileInputStream(f));
 		}
 		catch(Exception e){
-			System.err.println("erreur sur idetab "+e.getMessage());
+			//System.err.println("erreur sur idetab "+e.getMessage());
 			return null;
 		}
 	}
@@ -1315,10 +1540,10 @@ public class AdminController {
 			BindingResult bindingResult, Model model, 
 			HttpServletRequest request, HttpServletResponse response) 
 					throws ParseException, Exception{
-		System.err.println("DEBUT DE POSTUPDATECYCLES");
+		//System.err.println("DEBUT DE POSTUPDATECYCLES");
 		
 		if (bindingResult.hasErrors()) {
-			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE "+bindingResult.getFieldError());
+			//System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE "+bindingResult.getFieldError());
 			
 			this.constructModelUpdateCycles(model);
 			
@@ -1330,7 +1555,7 @@ public class AdminController {
 		cycle.setCodeCycles(updateCyclesForm.getCodeCycles());
 		cycle.setNumeroOrdreCycles(updateCyclesForm.getNumeroOrdreCycles());
 		cycle.setCodeCycles_en(updateCyclesForm.getCodeCycles_en());
-		System.err.println("AUCUNE ERREUR ET ON A LE CYCLE A ENREGISTRER");
+		//System.err.println("AUCUNE ERREUR ET ON A LE CYCLE A ENREGISTRER");
 		int reponseServeur=adminService.saveCycles(cycle);
 		
 		if(reponseServeur==0) 
@@ -1338,15 +1563,15 @@ public class AdminController {
 		if(reponseServeur==-1) 
 			return "redirect:/logesco/admin/getupdateCycles?updatecycleserrorCode";
 		
-			System.err.println("ON A ENREGISTRER LE CYCLE ET IL FAUT DONC RETOURNER");
+			//System.err.println("ON A ENREGISTRER LE CYCLE ET IL FAUT DONC RETOURNER");
 			
 			
 		}
 		else if(updateCyclesForm.getEnregOrmodif().equals("modif")){
 
-			System.err.println("FAUT DONC EFFECTUER LA MODIFICATION du cycle");
-			System.err.println(updateCyclesForm.getCodeCycles());
-			System.err.println(updateCyclesForm.getCodeCycles_en());
+			//System.err.println("FAUT DONC EFFECTUER LA MODIFICATION du cycle");
+			//System.err.println(updateCyclesForm.getCodeCycles());
+			//System.err.println(updateCyclesForm.getCodeCycles_en());
 			
 			Cycles cycleModif=new Cycles();
 			cycleModif.setCodeCycles(updateCyclesForm.getCodeCycles());
@@ -1374,9 +1599,9 @@ public class AdminController {
 			BindingResult bindingResult, Model model, 
 			HttpServletRequest request, HttpServletResponse response) 
 					throws ParseException, Exception{
-		System.err.println("DEBUT DE POSTUPDATENIVEAU");
+		//System.err.println("DEBUT DE POSTUPDATENIVEAU");
 		if (bindingResult.hasErrors()) {
-			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE "+bindingResult.getFieldError());
+			//System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE "+bindingResult.getFieldError());
 			
 			constructModelUpdateNiveaux(model);
 			return "admin/updateNiveaux";
@@ -1386,20 +1611,20 @@ public class AdminController {
 			Niveaux niveau=new Niveaux();
 			niveau.setCodeNiveaux(updateNiveauxForm.getCodeNiveaux());
 			niveau.setNumeroOrdreNiveaux(updateNiveauxForm.getNumeroOrdreNiveaux());
-			System.err.println("RECUPERATION DU CYCLE SAISI POUR LE NIVEAU");
+			//System.err.println("RECUPERATION DU CYCLE SAISI POUR LE NIVEAU");
 			Cycles cycle=adminService.getCyclesByCodeCycles(updateNiveauxForm.getCodeCycles());
 			if(cycle!=null) niveau.setCycle(cycle);
 			
 			Niveaux niveauSup=adminService.getNiveauxByCodeNiveaux(
 						updateNiveauxForm.getCodeNiveauxSup());
 			
-			if(niveauSup!=null)System.err.println("NIVEAUX SUP TROUVE EST "+
+			if(niveauSup!=null)/*//System.err.println("NIVEAUX SUP TROUVE EST "+
 					niveauSup.toString()+" POUR LE CODE "+
-					updateNiveauxForm.getCodeNiveauxSup());
+					updateNiveauxForm.getCodeNiveauxSup());*/
 			
 			niveau.setNiveau(niveauSup);
 				
-			System.err.println("AUCUNE ERREUR JUSQUICI ON PEUT DONC SAVE LE NIVEAUX");
+			//System.err.println("AUCUNE ERREUR JUSQUICI ON PEUT DONC SAVE LE NIVEAUX");
 			int reponseSaveNiveau=4;
 			reponseSaveNiveau=adminService.saveNiveaux(niveau);
 			
@@ -1407,14 +1632,14 @@ public class AdminController {
 					+ "updateniveauxerrorNumeroOrdre";
 			if(reponseSaveNiveau==-1) return "redirect:/logesco/admin/getupdateNiveaux?"
 					+ "updateniveauxerrorCode";
-			System.err.println("ON A ENREGISTRER LE niveau ET IL FAUT DONC RETOURNER");
+			//System.err.println("ON A ENREGISTRER LE niveau ET IL FAUT DONC RETOURNER");
 		}
 		
 		else if(updateNiveauxForm.getEnregOrmodif().equals("modif")){
 
-			System.err.println("FAUT DONC EFFECTUER LA MODIFICATION du niveau");
-			System.err.println(updateNiveauxForm.getCodeNiveaux());
-			System.err.println(updateNiveauxForm.getCodeNiveaux_en());
+			//System.err.println("FAUT DONC EFFECTUER LA MODIFICATION du niveau");
+			//System.err.println(updateNiveauxForm.getCodeNiveaux());
+			//System.err.println(updateNiveauxForm.getCodeNiveaux_en());
 			
 			Niveaux niveauModif=new Niveaux();
 			niveauModif.setCodeNiveaux(updateNiveauxForm.getCodeNiveaux());
@@ -1446,10 +1671,10 @@ public class AdminController {
 			BindingResult bindingResult, Model model, 
 			HttpServletRequest request, HttpServletResponse response) 
 					throws ParseException, Exception{
-		System.err.println("DEBUT DE POSTUPDATESECTION");
+		//System.err.println("DEBUT DE POSTUPDATESECTION");
 		
 		if (bindingResult.hasErrors()) {
-			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE "+bindingResult.getFieldError());
+			//System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE "+bindingResult.getFieldError());
 			
 			this.constructModelUpdateSections(model);
 			return "admin/updateSections";
@@ -1465,13 +1690,13 @@ public class AdminController {
 			if(reponseSaveSection==0) return "redirect:/logesco/admin/getupdateSections?"
 					+ "updatesectionserrorCode";
 			
-			System.err.println("ON A ENREGISTRER la section ET IL FAUT DONC RETOURNER");
+			//System.err.println("ON A ENREGISTRER la section ET IL FAUT DONC RETOURNER");
 		}
 		else if(updateSectionsForm.getEnregOrmodif().equals("modif")){
 
-			System.err.println("FAUT DONC EFFECTUER LA MODIFICATION de la section");
-			System.err.println(updateSectionsForm.getCodeSections());
-			System.err.println(updateSectionsForm.getCodeSections_en());
+			//System.err.println("FAUT DONC EFFECTUER LA MODIFICATION de la section");
+			//System.err.println(updateSectionsForm.getCodeSections());
+			//System.err.println(updateSectionsForm.getCodeSections_en());
 			
 			Sections sectionModif=new Sections();
 			sectionModif.setCodeSections(updateSectionsForm.getCodeSections());
@@ -1501,10 +1726,10 @@ public class AdminController {
 			BindingResult bindingResult, Model model, 
 			HttpServletRequest request, HttpServletResponse response) 
 					throws ParseException, Exception{
-		System.err.println("DEBUT DE POSTUPDATEPERIODEAN");
+		//System.err.println("DEBUT DE POSTUPDATEPERIODEAN");
 		
 		if (bindingResult.hasErrors()) {
-			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE");
+			//System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE");
 			this.constructModelUpdateAnnee(model);
 			return "admin/updatePeriodesAn";
 		}
@@ -1537,10 +1762,10 @@ public class AdminController {
 			BindingResult bindingResult, Model model, 
 			HttpServletRequest request, HttpServletResponse response) 
 					throws ParseException, Exception{
-		System.err.println("DEBUT DE POSTUPDATEPERIODETRIM");
+		//System.err.println("DEBUT DE POSTUPDATEPERIODETRIM");
 		
 		if (bindingResult.hasErrors()) {
-			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE");
+			//System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE");
 			this.constructModelUpdateTrimestres(model);
 			return "admin/updatePeriodesTrim";
 		}
@@ -1552,7 +1777,7 @@ public class AdminController {
 		Annee anneeAssocie=adminService.getAnneeIntituleAnnee(
 				updatePeriodesTrimForm.getIntituleAnneeTrim());
 		
-		System.err.println("ANNEE DAPARTENANCE RECUPERER NORMALEMENT");
+		//System.err.println("ANNEE DAPARTENANCE RECUPERER NORMALEMENT");
 		
 		trimestre.setAnnee(anneeAssocie);
 		trimestre.setDatedebutPeriodes(updatePeriodesTrimForm.getDatedebutPeriodes());
@@ -1560,12 +1785,12 @@ public class AdminController {
 		trimestre.setEtatPeriodes(true);
 		trimestre.setNumeroTrim(updatePeriodesTrimForm.getNumeroTrim());
 		
-		System.err.println("TRIMESTRE A ENREGISTRER INSTANCIER");
+		//System.err.println("TRIMESTRE A ENREGISTRER INSTANCIER");
 		
 		int reponseSaveTrimestre=4;
 		reponseSaveTrimestre=adminService.saveTrimestres(trimestre);
 		
-		System.err.println("APPEL ENREG METHODE EFFECTUE: REP= "+reponseSaveTrimestre);
+		//System.err.println("APPEL ENREG METHODE EFFECTUE: REP= "+reponseSaveTrimestre);
 		
 		if(reponseSaveTrimestre==0)
 			return "redirect:/logesco/admin/getupdateTrimestres?"
@@ -1613,10 +1838,10 @@ public class AdminController {
 			BindingResult bindingResult, Model model, 
 			HttpServletRequest request, HttpServletResponse response) 
 					throws ParseException, Exception{
-		System.err.println("DEBUT DE POSTUPDATEPERIODESEQ");
+		//System.err.println("DEBUT DE POSTUPDATEPERIODESEQ");
 		
 		if (bindingResult.hasErrors()) {
-			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE");
+			//System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE");
 			this.constructModelUpdateSequences(model);
 			return "admin/updatePeriodesSeq";
 		}
@@ -1660,8 +1885,8 @@ public class AdminController {
 			int reponseSaveSequence=4;
 			reponseSaveSequence=adminService.saveSequences(sequence);
 			
-			System.err.println("APPEL ENREG SEQ METHODE EFFECTUE: REP= "+
-					reponseSaveSequence);
+			/*//System.err.println("APPEL ENREG SEQ METHODE EFFECTUE: REP= "+
+					reponseSaveSequence);*/
 			
 			if(reponseSaveSequence==0) return "redirect:/logesco/admin/getupdateSequences?"
 			+ "updateperiodesseqerrorTrimContent2Seq";
@@ -1713,10 +1938,10 @@ public class AdminController {
 	HttpServletRequest request, HttpServletResponse response) 
 			throws ParseException, Exception{
 		
-		System.err.println("DEBUT DE POSTUPDATE SPECIALITE");
+		//System.err.println("DEBUT DE POSTUPDATE SPECIALITE");
 		
 		if (bindingResult.hasErrors()) {
-			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE");
+			//System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE");
 			this.constructModelUpdateSpecialites(model, numPage, 3);
 			return "admin/updateSpecialites";
 		}
@@ -1727,14 +1952,14 @@ public class AdminController {
 			spe.setLibelleSpecialite(updateSpecialitesForm.getLibelleSpecialite());
 			
 			int repServeur=adminService.saveSpecialites(spe);
-			System.err.println("repServeur == "+repServeur);
+			//System.err.println("repServeur == "+repServeur);
 			if(repServeur==0) 
 				return "redirect:/logesco/admin/getupdateSpecialites?updatespecialiteserror";
 		}
 		else if(updateSpecialitesForm.getEnregOrmodif().equals("modif")){
-			System.err.println("FAUT DONC EFFECTUER LA MODIFICATION");
-			System.err.println(updateSpecialitesForm.getCodeSpecialite());
-			System.err.println(updateSpecialitesForm.getLibelleSpecialite());
+			//System.err.println("FAUT DONC EFFECTUER LA MODIFICATION");
+			//System.err.println(updateSpecialitesForm.getCodeSpecialite());
+			//System.err.println(updateSpecialitesForm.getLibelleSpecialite());
 			
 			/*Specialites speAModif=null;
 			speAModif=adminService.findSpecialites(
@@ -1768,10 +1993,10 @@ public class AdminController {
 	HttpServletRequest request, HttpServletResponse response) 
 			throws ParseException, Exception{
 		
-		System.err.println("DEBUT DE POSTUPDATE CLASSES");
+		//System.err.println("DEBUT DE POSTUPDATE CLASSES");
 		
 		if (bindingResult.hasErrors()) {
-			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE");
+			//System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE");
 			this.constructModelUpdateClasses(model, numPage, 3);
 			return "admin/updateClasses";
 		}
@@ -1793,13 +2018,13 @@ public class AdminController {
 		 *debut des Ajouts du 19-08-2018
 		 */
 		classe.setLangueClasses(updateClassesForm.getLangueClasses());
-		System.err.println("la langue de la classe est "+updateClassesForm.getLangueClasses());
+		//System.err.println("la langue de la classe est "+updateClassesForm.getLangueClasses());
 		/**
 		 * fin des Ajouts du 19-08-2018
 		 */
 		
 		if(updateClassesForm.getEnregOrmodif().equals("enreg")){
-			System.err.println("ON EFFECTUE LENREGISTREMENT DE LA CLASSE");
+			//System.err.println("ON EFFECTUE LENREGISTREMENT DE LA CLASSE");
 			//Effectuer donc l'enregistrement
 			int repServeur=adminService.saveClasses(classe);
 			if(repServeur==0) return "redirect:/logesco/admin/getupdateClasses?"
@@ -1807,7 +2032,7 @@ public class AdminController {
 			
 		}
 		else if(updateClassesForm.getEnregOrmodif().equals("modif")){
-			System.err.println("FAUT DONC EFFECTUER LA MODIFICATION DE LA CLASSE");
+			//System.err.println("FAUT DONC EFFECTUER LA MODIFICATION DE LA CLASSE");
 			
 			int repServeur=adminService.updateClasses(
 					updateClassesForm.getCodeClasseAModif(),
@@ -1832,10 +2057,10 @@ public class AdminController {
 	@RequestParam(name="numPage", defaultValue="0") int numPage,
 	HttpServletRequest request, HttpServletResponse response) 
 			throws ParseException, Exception{
-		System.err.println("DEBUT DE POSTUPDATE ROLES");
+		//System.err.println("DEBUT DE POSTUPDATE ROLES");
 		
 		if (bindingResult.hasErrors()) {
-			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE");
+			//System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE");
 			this.constructModelUpdateRoles(model, numPage, 5);
 			
 			return "admin/updateRoles";
@@ -1846,14 +2071,14 @@ public class AdminController {
 		role.setRole(updateRolesForm.getRole());
 		
 		if(updateRolesForm.getEnregOrmodif().equals("enreg")){
-			System.err.println("ON EFFECTUE LENREGISTREMENT DU ROLES");
+			//System.err.println("ON EFFECTUE LENREGISTREMENT DU ROLES");
 			//Effectuer donc l'enregistrement
 			int repServeur=adminService.saveRoles(role);
 			if(repServeur==0) return "redirect:/logesco/admin/getupdateRoles?"
 					+ "updateroleserrorRolesExist";
 		}
 		else if(updateRolesForm.getEnregOrmodif().equals("modif")){
-			System.err.println("FAUT DONC EFFECTUER LA MODIFICATION DU ROLE");
+			//System.err.println("FAUT DONC EFFECTUER LA MODIFICATION DU ROLE");
 			int repServeur=adminService.updateRoles(updateRolesForm.getRoleAModif(), role);
 			if(repServeur==0) return "redirect:/logesco/admin/getupdateRoles?"
 					+ "updateroleserror";
@@ -1872,7 +2097,7 @@ public class AdminController {
 			HttpServletRequest request, HttpServletResponse response) 
 					throws ParseException, Exception, IOException{
 		
-		System.err.println("ICI AU DEBUT DE postUPDATEMatieres USERSUSERSUSERS");
+		//System.err.println("ICI AU DEBUT DE postUPDATEMatieres USERSUSERSUSERS");
 		
 		int cleExistante=0;
 		int numPageMatiere = 0;
@@ -1882,13 +2107,13 @@ public class AdminController {
 			if(cle.equals("matiereConcerne")) cleExistante=cleExistante+1;
 		}
 		
-		System.err.println("LES CLES RECHERCHEES EXISTENT BEL ET BIEN DANS "+cleExistante);
+		//System.err.println("LES CLES RECHERCHEES EXISTENT BEL ET BIEN DANS "+cleExistante);
 		if(cleExistante==2){
 			numPageMatiere = (Integer)request.getSession().getAttribute("numPageMatiere");
 			matiereConcerne = (Matieres)request.getSession().getAttribute("matiereConcerne");
 		}
 		if (bindingResult.hasErrors()) {
-			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE updateMatière");
+			//System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE updateMatière");
 			
 			if(matiereConcerne!=null) {
 				this.constructModelUpdateMatiere(model, request, updateMatieresForm, 
@@ -1916,9 +2141,9 @@ public class AdminController {
 		/***
 		 * debut des ajouts du 19-08-2018
 		 */
-		System.err.println("ici deja dans updateMatiere");
+		//System.err.println("ici deja dans updateMatiere");
 		matiere.setIntitule2langueMatiere(updateMatieresForm.getIntitule2langueMatiere());
-		System.err.println("ici deja dans updateMatiere  "+matiere.getIntitule2langueMatiere());
+		//System.err.println("ici deja dans updateMatiere  "+matiere.getIntitule2langueMatiere());
 		/*****
 		 * fin des ajouts du 19-08-2018
 		 */
@@ -1930,6 +2155,189 @@ public class AdminController {
 		if(repServeur == 2) return "redirect:/logesco/admin/getupdateMatieres?updatematieressuccess";
 		return "redirect:/logesco/admin/getupdateMatieres?enregmatieressuccess";
 	}
+	
+	@SuppressWarnings("deprecation")
+	@PostMapping(path="/postupdateSanctionDisc")
+	public String postupdateSanctionDisc(@Valid @ModelAttribute("updateSanctionDiscForm") 
+			UpdateSanctionDiscForm updateSanctionDiscForm, 
+			BindingResult bindingResult, Model model, 
+			HttpServletRequest request, HttpServletResponse response) 
+					throws ParseException, Exception, IOException{
+		
+		int cleExistante=0;
+		int numPageSanctionDisc = 0;
+		SanctionDisciplinaire sancdiscConcerne = null;
+		for(String cle : request.getSession().getValueNames()){
+			if(cle.equals("numPageSanctionDisc")) cleExistante=cleExistante+1;
+			if(cle.equals("sancdiscConcerne")) cleExistante=cleExistante+1;
+		}
+		
+		if(cleExistante==2){
+			numPageSanctionDisc = (Integer)request.getSession().getAttribute("numPageSanctionDisc");
+			sancdiscConcerne = (SanctionDisciplinaire)request.getSession().getAttribute("sancdiscConcerne");
+		}
+		
+		if (bindingResult.hasErrors()) {
+			//System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE updateMatière");
+			
+			if(sancdiscConcerne!=null) {
+				this.constructModelUpdateSanctionDisc(model, request, updateSanctionDiscForm, 
+						numPageSanctionDisc, 5, sancdiscConcerne.getIdSancDisc());
+			}
+			else{
+				this.constructModelUpdateSanctionDisc(model, request, updateSanctionDiscForm, 
+						 0, 3, new Long(0));
+			}
+			
+			return "admin/updateSanctionDisc";
+			
+		}
+		
+		/*
+		 * Ici tout est bon et on peut aller enregistrer la sanction disciplinaire
+		 */
+		SanctionDisciplinaire sanctionDisc = new SanctionDisciplinaire();
+		
+		sanctionDisc.setCodeSancDisc(updateSanctionDiscForm.getCodeSancDisc());
+		sanctionDisc.setCodeSancDiscEn(updateSanctionDiscForm.getCodeSancDiscEn());
+		sanctionDisc.setIntituleSancDisc(updateSanctionDiscForm.getIntituleSancDisc());
+		sanctionDisc.setIntituleSancDiscEn(updateSanctionDiscForm.getIntituleSancDiscEn());
+		sanctionDisc.setIdSancDisc(updateSanctionDiscForm.getIdSanctionDisc());
+		
+		System.err.println("Voici donc l'id  "+updateSanctionDiscForm.getIdSanctionDisc());
+		int repServeur = adminService.updateSanctionDisciplinaire(sanctionDisc);
+		
+		if(repServeur == 0) return "redirect:/logesco/admin/getupdateSanctionDisc?updatesanctionDiscerrorCode"
+				+ "&&idSanctionDisc="+updateSanctionDiscForm.getIdSanctionDisc();
+		
+		if(repServeur == 2) return "redirect:/logesco/admin/getupdateSanctionDisc?updatesanctionDiscsuccess";
+		
+		return "redirect:/logesco/admin/getupdateSanctionDisc?enregsanctionDiscsuccess";
+		
+	}
+	
+	@SuppressWarnings("deprecation")
+	@PostMapping(path="/postupdateSanctionTrav")
+	public String postupdateSanctionTrav(@Valid @ModelAttribute("updateSanctionTravForm") 
+			UpdateSanctionTravForm updateSanctionTravForm, 
+			BindingResult bindingResult, Model model, 
+			HttpServletRequest request, HttpServletResponse response) 
+					throws ParseException, Exception, IOException{
+		
+		int cleExistante=0;
+		int numPageSanctionTrav = 0;
+		SanctionTravail sanctravConcerne = null;
+		for(String cle : request.getSession().getValueNames()){
+			if(cle.equals("numPageSanctionTrav")) cleExistante=cleExistante+1;
+			if(cle.equals("sanctravConcerne")) cleExistante=cleExistante+1;
+		}
+		
+		if(cleExistante==2){
+			numPageSanctionTrav = (Integer)request.getSession().getAttribute("numPageSanctionTrav");
+			sanctravConcerne = (SanctionTravail)request.getSession().getAttribute("sanctravConcerne");
+		}
+		
+		if (bindingResult.hasErrors()) {
+			//System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE updateMatière");
+			
+			if(sanctravConcerne!=null) {
+				this.constructModelUpdateSanctionTrav(model, request, updateSanctionTravForm, 
+						numPageSanctionTrav, 5, sanctravConcerne.getIdSancTrav());
+			}
+			else{
+				this.constructModelUpdateSanctionTrav(model, request, updateSanctionTravForm, 
+						 0, 3, new Long(0));
+			}
+			
+			return "admin/updateSanctionTrav";
+			
+		}
+		
+		/*
+		 * Ici tout est bon et on peut aller enregistrer la sanction de travail
+		 */
+		SanctionTravail sanctionTrav = new SanctionTravail();
+		
+		sanctionTrav.setCodeSancTrav(updateSanctionTravForm.getCodeSancTrav());
+		sanctionTrav.setCodeSancTravEn(updateSanctionTravForm.getCodeSancTravEn());
+		sanctionTrav.setIntituleSancTrav(updateSanctionTravForm.getIntituleSancTrav());
+		sanctionTrav.setIntituleSancTravEn(updateSanctionTravForm.getIntituleSancTravEn());
+		sanctionTrav.setIdSancTrav(updateSanctionTravForm.getIdSanctionTrav());
+		
+		System.err.println("Voici donc l'id  "+updateSanctionTravForm.getIdSanctionTrav());
+		int repServeur = adminService.updateSanctionTravail(sanctionTrav);
+		
+		if(repServeur == 0) return "redirect:/logesco/admin/getupdateSanctionTrav?updatesanctionTraverrorCode"
+		+ "&&idSanctionDisc="+updateSanctionTravForm.getIdSanctionTrav();
+
+		if(repServeur == 2) return "redirect:/logesco/admin/getupdateSanctionTrav?updatesanctionTravsuccess";
+		
+		return "redirect:/logesco/admin/getupdateSanctionTrav?enregsanctionTravsuccess";
+		
+	}
+	
+	
+	@SuppressWarnings("deprecation")
+	@PostMapping(path="/postupdateDecision")
+	public String postupdateDecision(@Valid @ModelAttribute("updateDecisionForm") 
+			UpdateDecisionForm updateDecisionForm, 
+			BindingResult bindingResult, Model model, 
+			HttpServletRequest request, HttpServletResponse response) 
+					throws ParseException, Exception, IOException{
+		
+		int cleExistante=0;
+		int numPageDecision = 0;
+		Decision decisionConcerne = null;
+		for(String cle : request.getSession().getValueNames()){
+			if(cle.equals("numPageDecision")) cleExistante=cleExistante+1;
+			if(cle.equals("decisionConcerne")) cleExistante=cleExistante+1;
+		}
+		
+		if(cleExistante==2){
+			numPageDecision = (Integer)request.getSession().getAttribute("numPageDecision");
+			decisionConcerne = (Decision)request.getSession().getAttribute("decisionConcerne");
+		}
+		
+		if (bindingResult.hasErrors()) {
+			//System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE updateMatière");
+			
+			if(decisionConcerne!=null) {
+				this.constructModelUpdateDecision(model, request, updateDecisionForm, 
+						numPageDecision, 5, decisionConcerne.getIdDecision());
+			}
+			else{
+				this.constructModelUpdateDecision(model, request, updateDecisionForm, 
+						 0, 3, new Long(0));
+			}
+			
+			return "admin/updateDecision";
+			
+		}
+		
+		/*
+		 * Ici tout est bon et on peut aller enregistrer la decision
+		 */
+		Decision decision = new Decision();
+		
+		decision.setCodeDecision(updateDecisionForm.getCodeDecision());
+		decision.setCodeDecisionEn(updateDecisionForm.getCodeDecisionEn());
+		decision.setIntituleDecision(updateDecisionForm.getIntituleDecision());
+		decision.setIntituleDecisionEn(updateDecisionForm.getIntituleDecisionEn());
+		decision.setIdDecision(updateDecisionForm.getIdDecision());
+		
+		System.err.println("Voici donc l'id  "+updateDecisionForm.getIdDecision());
+		int repServeur = adminService.updateDecision(decision);
+		
+		if(repServeur == 0) return "redirect:/logesco/admin/getupdateDecision?updatedecisionerrorCode"
+		+ "&&idDecision="+updateDecisionForm.getIdDecision();
+
+		if(repServeur == 2) return "redirect:/logesco/admin/getupdateDecision?updatedecisionsuccess";
+		
+		
+		return "redirect:/logesco/admin/getupdateDecision?enregdecisionsuccess";
+	}
+	
+	
 	
 	@GetMapping(path="/getsupprimerMatieres")
 	public String getsupprimerMatieres( 
@@ -1945,8 +2353,48 @@ public class AdminController {
 		return "redirect:/logesco/admin/getupdateMatieres?supprimmatieressuccess";
 	}
 	
+	@GetMapping(path="/getsupprimerSanctionDisc")
+	public String getsupprimerSanctionDisc( 
+			@RequestParam(name="idSanctionDisc", defaultValue="0") Long idSanctionDisc, 
+			Model model, HttpServletRequest request){
+		
+		int repServeur = adminService.deleteSanctionDisciplinaire(idSanctionDisc);
+		
+		if(repServeur == 0) return "redirect:/logesco/admin/getupdateSanctionDisc?supprimsanctionDiscerrorRD";
+		if(repServeur == -1) return "redirect:/logesco/admin/getupdateSanctionDisc?supprimsanctionDiscerrorDC";
+		if(repServeur == -2) return "redirect:/logesco/admin/getupdateSanctionDisc?supprimsanctionDiscerrorCST";
+		if(repServeur == -3) return "redirect:/logesco/admin/getupdateSanctionDisc?supprimsanctionDiscerror";
+		
+		return "redirect:/logesco/admin/getupdateSanctionDisc?supprimsanctionDiscsuccess";
+	}
 	
+	@GetMapping(path="/getsupprimerSanctionTrav")
+	public String getsupprimerSanctionTrav( 
+			@RequestParam(name="idSanctionTrav", defaultValue="0") Long idSanctionTrav, 
+			Model model, HttpServletRequest request){
+		
+		int repServeur = adminService.deleteSanctionTravail(idSanctionTrav);
+		
+		if(repServeur == 0) return "redirect:/logesco/admin/getupdateSanctionTrav?supprimsanctionTraverrorDC";
+		if(repServeur == -1) return "redirect:/logesco/admin/getupdateSanctionTrav?supprimsanctionTraverror";
+		
+		return "redirect:/logesco/admin/getupdateSanctionTrav?supprimsanctionTravsuccess";
+	}
 	
+	@GetMapping(path="/getsupprimerDecision")
+	public String getsupprimerDecision( 
+			@RequestParam(name="idDecision", defaultValue="0") Long idDecision, 
+			Model model, HttpServletRequest request){
+		
+		int repServeur = adminService.deleteDecision(idDecision);
+		
+		if(repServeur == 0) return "redirect:/logesco/admin/getupdateDecision?supprimdecisionerrorDC";
+		if(repServeur == -1) return "redirect:/logesco/admin/getupdateDecision?supprimdecisionerror";
+		
+		return "redirect:/logesco/admin/getupdateDecision?supprimdecisionsuccess";
+	}
+	
+	 
 	
 	public void constructModelUpdateCours(Model model,	HttpServletRequest request,	UpdateCoursForm	updateCoursForm,		
 			Long idCours,	Long idMatiereAssocie,	long idUsersAssocie, Long idClasseAssocie,	int numPageCours,	int taillePage){
@@ -1960,7 +2408,7 @@ public class AdminController {
 		 */
 		Classes classeSelect = adminService.findClasses(idClasseAssocie);
 		if(classeSelect != null) {
-			System.err.println("idclasseSelect *** "+classeSelect.getCodeClasses());
+			//System.err.println("idclasseSelect *** "+classeSelect.getCodeClasses());
 			
 			updateCoursForm.setIdClasseSelect(classeSelect.getIdClasses());
 			model.addAttribute("classeSelect", classeSelect);
@@ -1978,19 +2426,19 @@ public class AdminController {
 				model.addAttribute("listofPagesCours", listofPagesCours);
 				
 				model.addAttribute("pageCouranteCours", numPageCours);
-				System.err.println("numPageCours  "+numPageCours);
+				//System.err.println("numPageCours  "+numPageCours);
 				session.setAttribute("numPageCours", numPageCours);
 			}
 		}
 		
 		
-		System.err.println("liste cours page par page charge ");
+		//System.err.println("liste cours page par page charge ");
 		/*
 		 * On charge la liste des matieres dans le model pour le formulaire
 		 */
 		List<Matieres> listofMatiere = adminService.findAllMatieres();
 		model.addAttribute("listofMatiere", listofMatiere);
-		System.err.println("liste matiere charge  === ");
+		//System.err.println("liste matiere charge  === ");
 		
 		
 		/*
@@ -1998,13 +2446,13 @@ public class AdminController {
 		 */
 		List<Niveaux> listofNiveaux = adminService.findAllNiveaux();
 		model.addAttribute("listofNiveaux", listofNiveaux);
-		System.err.println("liste niveau chargé  === ");
+		//System.err.println("liste niveau chargé  === ");
 		/*
 		 * On charge la liste des classes dans le model pour le formulaire
 		 */
 		List<Classes> listofClasses = adminService.findAllClasse();
 		model.addAttribute("listofClasses", listofClasses);
-		System.err.println("liste classe charge === ");
+		//System.err.println("liste classe charge === ");
 		/*
 		 * On charge la liste des Proffesseurs dans le model pour le formulaire
 		 */
@@ -2041,15 +2489,15 @@ public class AdminController {
 		List<Enseignants> listofenseignants = adminService.findAllEnseignants();
 		if(listofenseignants.size()	!=	0)	model.addAttribute("listofenseignants", listofenseignants);
 		
-		System.err.println("liste users chargé  === ");
+		//System.err.println("liste users chargé  === ");
 		
 		/*
-		 * On doit rechercher la cours dont le id est passe en paramètre au cas où ca existe
+		 * On doit rechercher le cours dont le id est passe en paramètre au cas où ca existe
 		 */
 		
 		Cours coursConcerne = adminService.findCours(idCours);
 		if(coursConcerne!=null){
-			System.err.println(" coursConcerne  === trouve");
+			//System.err.println(" coursConcerne  === trouve");
 			updateCoursForm.setCodeCours(coursConcerne.getCodeCours());
 			updateCoursForm.setIntituleCours(coursConcerne.getIntituleCours());
 			/***
@@ -2072,7 +2520,7 @@ public class AdminController {
 			session.setAttribute("coursConcerne", coursConcerne);
 		}
 		else{
-			System.err.println(" coursConcerne  === NONtrouve");
+			//System.err.println(" coursConcerne  === NONtrouve");
 			//Car l'idMatiere ne doit pas être null lors de l'appel à la methode updateMatiere au niveau du metier 
 			updateCoursForm.setIdCours(new Long(0));
 			/*updateCoursForm.setIdClasseAssocie(new Long(0));
@@ -2084,7 +2532,7 @@ public class AdminController {
 			 */
 		}
 		
-		System.err.println(" TOUS EST TERMINE");
+		//System.err.println(" TOUS EST TERMINE");
 		
 	}
 	
@@ -2101,7 +2549,7 @@ public class AdminController {
 	@RequestParam(name="taillePage", defaultValue="25") int taillePage,
 	Model model, HttpServletRequest request){
 		
-		System.err.println("idClasseAssocie *** "+idClasseAssocie);
+		//System.err.println("idClasseAssocie *** "+idClasseAssocie);
 		
 		this.constructModelUpdateCours(model,	request,	updateCoursForm,		idCours,	idMatiereAssocie,	idUsersAssocie, 
 				idClasseAssocie,	numPageCours,	taillePage);
@@ -2134,7 +2582,7 @@ public class AdminController {
 			HttpServletRequest request, HttpServletResponse response) 
 					throws ParseException, Exception, IOException{
 		
-		System.err.println("ICI AU DEBUT DE postupdateCours CENSEURCENSEURCENSEURCENSEUR");
+		//System.err.println("ICI AU DEBUT DE postupdateCours ADMIN");
 		
 		int cleExistante=0;
 		int numPageCours = 0;
@@ -2144,17 +2592,17 @@ public class AdminController {
 			if(cle.equals("coursConcerne")) cleExistante=cleExistante+1;
 		}
 		
-		System.err.println("LES CLES RECHERCHEES EXISTENT BEL ET BIEN DANS "+cleExistante);
+		//System.err.println("LES CLES RECHERCHEES EXISTENT BEL ET BIEN DANS "+cleExistante);
 		if(cleExistante==2){
 			numPageCours = (Integer)request.getSession().getAttribute("numPageCours");
 			coursConcerne = (Cours)request.getSession().getAttribute("coursConcerne");
 		}
 		
 		if (bindingResult.hasErrors()) {
-			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE updateCours");
+			//System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE updateCours");
 			
 			if(coursConcerne	!=	null) {
-				System.err.println("ERREUR DE REMPLISSAGE coursConcerne  === ");
+				//System.err.println("ERREUR DE REMPLISSAGE coursConcerne  === ");
 				/*this.constructModelUpdateCours(model, request, updateCoursForm, 
 						coursConcerne.getIdCours(), coursConcerne.getMatiere().getIdMatiere(), 
 						coursConcerne.getProffesseur().getIdUsers(), coursConcerne.getClasse().getIdClasses(), numPageCours, 3);*/
@@ -2168,7 +2616,7 @@ public class AdminController {
 				
 			}
 			else{
-				System.err.println("ERREUR DE REMPLISSAGE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!coursConcerne  === ");
+				//System.err.println("ERREUR DE REMPLISSAGE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!coursConcerne  === ");
 				/*this.constructModelUpdateCours(model, request, updateCoursForm, 
 						new Long(0), new Long(0), new Long(0), new Long(0), 0, 3);*/
 				return "redirect:/logesco/admin/getupdateCours?updateCourserror";
@@ -2195,7 +2643,7 @@ public class AdminController {
 			 * Fin des ajouts du 19-08-2018
 			 */
 			
-			System.err.println("fffffffffffffffff "+updateCoursForm.getNumerogroupeCours());
+			//System.err.println("fffffffffffffffff "+updateCoursForm.getNumerogroupeCours());
 			
 			int repServeur = adminService.updateCours(cours, updateCoursForm.getIdMatiereAssocie(), 
 					updateCoursForm.getIdUsersAssocie(), updateCoursForm.getIdClasseSelect());
@@ -2211,7 +2659,7 @@ public class AdminController {
 					+ "&&idClasseAssocie="+updateCoursForm.getIdClasseSelect()
 					+ "&&numPageCours="+numPageCours;
 			
-			System.err.println("idClasseAssocieSelectionner *** "+updateCoursForm.getIdClasseSelect());
+			//System.err.println("idClasseAssocieSelectionner *** "+updateCoursForm.getIdClasseSelect());
 			
 			return "redirect:/logesco/admin/getupdateCours?enregcourssuccess"
 					+ "&&idClasseAssocie="+updateCoursForm.getIdClasseSelect()

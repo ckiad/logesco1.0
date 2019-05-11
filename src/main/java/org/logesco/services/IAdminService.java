@@ -19,6 +19,14 @@ public interface IAdminService {
 	 * vis à vis de l'application
 	 *******************/
 	
+	/***
+	 * Recuperer la liste de tous les users enregistrer dans la base de données sauf l'administrateur. 
+	 * Donc il faut recuperer tous les UtilisateursRole puis extraire celui qui le rôle admin.
+	 * Ensuite il faut éliminer les doublons de la liste car un user peut avoir plusieurs role donc 
+	 * plusieurs enregistrement userRole
+	 */
+	public List<Utilisateurs> findAllUsers();
+	
 	/**
 	 * Recuperer un utilisateur dans la base de données
 	 */
@@ -37,6 +45,15 @@ public interface IAdminService {
 	 * 				-2 si le username n'est pas valide
 	 */
 	public int updatePassword(String passwordCourant, String newPassword, 
+			String newPasswordConfirm, String username);
+	
+	/**
+	 * Reinitialise le mot de passe d'un utilisateur autre que l'admin en cas d'oubli par ce dernier
+	 * Retourne 1 si la modification a réussi
+	 * 					0 si newPassord et newPasswordConfirm ne sont pas identique
+	 * 					-1 si le username n'est pas valide
+	 */
+	public int resetPassword( String newPassword, 
 			String newPasswordConfirm, String username);
 	
 	/**
@@ -631,6 +648,35 @@ public interface IAdminService {
 	 */
 	public Page<Roles> findPageRole(int numPage, int taillePage);
 	
+	/***************************
+	 * Retourne la liste des sanctions disciplinaire enregistré en BD
+	 * page apres page selon la taille de la page choisi
+	 * @param numPage
+	 * @param taillePage
+	 * @return
+	 */
+	public Page<SanctionDisciplinaire> findPageSanctionDisc(int numPage, int taillePage);
+	
+	/***************************
+	 * Retourne la liste des sanctions travail enregistré en BD
+	 * page apres page selon la taille de la page choisi
+	 * @param numPage
+	 * @param taillePage
+	 * @return
+	 */
+	public Page<SanctionTravail> findPageSanctionTrav(int numPage, int taillePage);
+	
+	/***************************
+	 * Retourne la liste des decisions enregistré en BD
+	 * page apres page selon la taille de la page choisi
+	 * @param numPage
+	 * @param taillePage
+	 * @return
+	 */
+	public Page<Decision> findPageDecision(int numPage, int taillePage);
+	
+	
+	
 	/***
 	 * Retourne la liste de tous les UsersRoles enregistrées dans la bd
 	 * et null si aucun users n'a encore été associé a un role
@@ -670,6 +716,27 @@ public interface IAdminService {
 	 */
 	public Matieres findMatieres(Long idMatiere);
 	
+	/***********************
+	 * Cette methode retourne la sanction disciplinaire dont l'id est passe en paramètre
+	 * @param idSancDisc
+	 * @return
+	 */
+	public SanctionDisciplinaire findSanctionDisciplinaire(Long idSancDisc);
+	
+	/***********************
+	 * Cette methode retourne la sanction travail dont l'id est passe en paramètre
+	 * @param idSancDisc
+	 * @return
+	 */
+	public SanctionTravail findSanctionTravail(Long idSancTrav);
+	
+	/***********************
+	 * Cette methode retourne la decision dont l'id est passe en paramètre
+	 * @param idDecision
+	 * @return
+	 */
+	public Decision findDecision(Long idDecision);
+	
 	/******************************************************************************
 	 * Methode qui enregistre une nouvelle matiere ou met à jour la matiere deja existante
 	 * Elle retourne 
@@ -680,6 +747,44 @@ public interface IAdminService {
 	 ******************************************************************************/
 	public int updateMatiere(Matieres matiere);
 	
+	/******************************************************************************
+	 * Methode qui enregistre une nouvelle sanctiondisciplinaire ou met à jour la sanctiondisciplinaire deja existante
+	 * Elle retourne 
+	 * 	2 lorsque la sanctiondisciplinaire est nouvelle et a été enregistré avec succès
+	 * 	1 lorsque la sanctiondisciplinaire n'est pas nouvelle et par conséquent a été mis à jour avec succès
+	 * 	0 lorsque le code qu'on veut donner à la sanctiondisciplinaire violera la contrainte d'unicite du code 
+	 * 		de la sanctiondisciplinaire
+	 ******************************************************************************/
+	public int updateSanctionDisciplinaire(SanctionDisciplinaire sanctionDisc);
+	
+	/************************************************************************************************************
+	 * Methode qui enregistre une nouvelle sanctiontravail ou met à jour la sanctiontravail deja existante
+	 * Elle retourne
+	 * 	2 lorsque la sanctiontravail est nouvelle et a été enregistré avec succès
+	 * 	1 lorsque la sanctiontravail n'est pas nouvelle et par conséquent a été mis à jour avec succès
+	 * 	0 lorsque le code qu'on veut donner à la sanctiontravail violera la contrainte d'unicite du code 
+	 * 		de la sanctiontravail
+	 * @param sanctionTrav
+	 * @return
+	 */
+	public int updateSanctionTravail(SanctionTravail sanctionTrav);
+	
+	/************************************************************************************************************
+	 * Methode qui enregistre une nouvelle decision ou met à jour la decision deja existante
+	 * Elle retourne
+	 * 	2 lorsque la decision est nouvelle et a été enregistré avec succès
+	 * 	1 lorsque la decision n'est pas nouvelle et par conséquent a été mis à jour avec succès
+	 * 	0 lorsque le code qu'on veut donner à la decision violera la contrainte d'unicite du code 
+	 * 		de la decision
+	 * @param sanctionTrav
+	 * @return
+	 */
+	public int updateDecision(Decision decision);
+	
+	public SanctionDisciplinaire findSanctionDisciplinaire(String code);
+	
+	public SanctionDisciplinaire findSanctionDisciplinaireEn(String codeEn);
+	
 	/**************************************************************************
 	 * Methode qui supprime une matière(département) de la base de donnée
 	 * Elle retourne 
@@ -689,13 +794,46 @@ public interface IAdminService {
 	 */
 	public int deleteMatiere(Long idMatiere);
 	
+	/***********************************************
+	 * Methode qui supprime une sanction disciplinaire de la base de donnée
+	 * Elle retourne
+	 * 1 lorsque la sanction a ete supprimee avec succes
+	 * 0 si cette sanction a deja ete attribue a un eleve (table RapportDisciplinaire)
+	 * -1 si cette sanction est deja associe à des décisions de conseil de classe
+	 * -2 si cette sanction est deja le resultat des conditions de sanction travail (table ConditionSanctionTravail)
+	 * -3 si idSanctionDisc est errone ie ne correspond a aucune sanctiondisciplinaire
+	 * @param idSanctionDisc
+	 * @return
+	 */
+	public int deleteSanctionDisciplinaire(Long idSanctionDisc);
+	
+	/***********************************************
+	 * Methode qui supprime une sanction disciplinaire de la base de donnée
+	 * Elle retourne
+	 * 1 lorsque la sanction a ete supprimee avec succes
+	 * 0 si cette sanction est deja associe à des décisions de conseil de classe
+	 * -1 si idSanctionTrav est errone ie ne correspond a aucune sanctiontravail
+	 * @param idSanctionDisc
+	 * @return
+	 */
+	public int deleteSanctionTravail(Long idSanctionTrav);
+	
+	/***********************************************
+	 * Methode qui supprime une decision  de la base de donnée
+	 * Elle retourne
+	 * 1 lorsque la decision a ete supprimee avec succes
+	 * 0 si cette decision est deja associe à des décisions de conseil de classe
+	 * -1 si idDecision est errone ie ne correspond a aucune Decision
+	 * @param idDecision
+	 * @return
+	 */
+	public int deleteDecision(Long idDecision);
+	
 	/******************************************************************************
 	 * Methode qui enregistre un nouveau cours ou met à jour le cours deja existant
 	 * Elle retourne 
 	 * 	2 lorsque le cours est nouveau et a été enregistré avec succès
 	 * 	1 lorsque le cours n'est pas nouveau et par conséquent a été mis à jour avec succès
-	 * 	0 lorsque le code qu'on veut donner au cours violera la contrainte d'unicite du code 
-	 * 		du code
 	 * 	-1 lorsque la classe, la matiere ou le prof associe au cours n'existe pas encore
 	 ******************************************************************************/
 	public int updateCours(Cours cours, Long idMatiereAssocie, Long idProfAssocie, Long idClasseAssocie);
@@ -708,5 +846,23 @@ public interface IAdminService {
 	 * 	-1 si le cours n'existe pas dans la base de donnée
 	 */
 	public int deleteCours(Long idCours);
+	
+	/****
+	 * Retirer un role a un utilisateur
+	 * retourne 1 si tout s'est bien passé et 0 si l'user n'a meme pas ce role et -1 si probleme
+	 * @param idUser
+	 * @param role
+	 * @return
+	 */
+	public int retirerRoleUser(Long idUser, String role);
+	
+	/****
+	 * Ajouter un role a un utilisateur
+	 * retourne 1 si tout s'est bien passé et 0 sinon
+	 * @param idUser
+	 * @param role
+	 * @return
+	 */
+	public int ajouterRoleUser(Long idUser, String role);
 	
 }

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="users/userslayout">
+<head>
+<meta charset="UTF-8"/>
+<title th:inline="text">[[#{formsaisieconseilclassetrim.titre_page}]] </title>
+</head>
+<body>
+
+<span layout:fragment="titre_boite">
+    <kbd th:inline="text"> [[#{formsaisieconseilclassetrim.titre_boite}]] </kbd> 
+	<span th:inline="text" class="alert alert-warning"> 
+		<kbd th:inline="text">
+			[[${classeConcerne.codeClasses}]][[${classeConcerne.specialite.codeSpecialite}]] [[${classeConcerne.numeroClasses}]]
+			([[#{formsaisieconseilclassetrim.label_trimestre}]]: [[${trimestreConcerne.numeroTrim}]]).
+		</kbd>
+	</span>
+</span>
+
+<div layout:fragment="formactionusers">
+<!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE   col-md-offset-1-->
+<div class="col-md-9">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th></th>
+				<th colspan="3">PERIODE: 
+					<span th:inline="text" class="redcolor">Trimestre N°[[${trimestreConcerne.numeroTrim}]] </span> 
+				</th>
+				<th></th>
+			</tr>
+			
+			<tr>
+				<th></th>
+				<th>Moyenne Obtenue</th>
+				<th>Sanction disciplinaire</th>
+				<th>Abs NJ/Total</th>
+				<!-- <th>DECISION DU CONSEIL DE CLASSE</th> -->
+			</tr>
+			
+			<tr>
+				<th>NOMS ET PRENOMS</th>
+				<th>Trim: 
+					<span th:inline="text" class="redcolor">N°[[${trimestreConcerne.numeroTrim}]] </span>
+				</th>
+				<th>Trim: 
+					<span th:inline="text" class="redcolor">N°[[${trimestreConcerne.numeroTrim}]] </span>
+				</th>
+				<th>Trim: 
+					<span th:inline="text" class="redcolor">N°[[${trimestreConcerne.numeroTrim}]] </span>
+				</th>
+				<!-- <th>Choix de la décision</th> -->
+			</tr>
+			
+		</thead>
+		<tbody th:if="${listofAllEleve}">
+			<tr th:each="eleve:${listofEleves}">
+				<td>
+					<span th:inline="text">
+						<b>
+						[[${eleve.getNumero(listofAllEleve)}]]) [[${#strings.toUpperCase(eleve.nomsEleves)}]] 
+						[[${eleve.prenomsEleves}]] <br/>
+						Né le <span class="bluecolor">[[${#dates.format(eleve.datenaissEleves,"dd-MM-yyyy")}]]</span> à [[${eleve.lieunaissEleves}]]
+						</b>
+					</span>
+				</td>
+				
+				<td>
+					<span th:inline="text" class="bluecolor">
+						<kbd>[[${ub.getMoyenneTrimestriel(eleve,trimestreConcerne)}]]</kbd>
+					</span>
+				</td>
+				
+				<td>
+					<div th:each="seq:${trimestreConcerne.getListofsequence()}">
+						<label class="bluecolor" th:inline="text">Séquence [[${seq.numeroSeq}]]</label>
+						<ol>
+							<li th:each="rdisc:${eleve.getListRapportDisciplinaireSeq(seq.idPeriodes)}">
+								<span th:inline="text" class="redcolor">
+									<b>
+									[[
+										${session.lang=='fr'}?
+										(
+											 ${rdisc.sanctionDisc.codeSancDisc}+' '+${rdisc.nbreperiode} +' '+ ${rdisc.unite}
+										):
+										(
+											 ${rdisc.sanctionDisc.codeSancDiscEn}+' '+${rdisc.nbreperiode} +' '+ ${rdisc.unite}
+										)
+									]]
+									</b>
+								</span>
+							</li>
+						</ol>
+					</div>
+				</td>
+				
+				<td>
+					<div th:each="seq:${trimestreConcerne.getListofsequence()}">
+						<label class="bluecolor" th:inline="text">Séquence [[${seq.numeroSeq}]]</label>
+						<span th:inline="text" class="redcolor">
+						<b>
+							[[${eleve.getNbreHeureAbscenceNonJustifie(seq.idPeriodes)}]]/
+							[[${eleve.getNbreHeureAbscenceNonJustifie(seq.idPeriodes)}+
+							${eleve.getNbreHeureAbscenceJustifie(seq.idPeriodes)}]]
+						</b>
+						</span>
+					</div>
+					<div>
+						<label class="bluecolor" th:inline="text">Total [[${trimestreConcerne.numeroTrim}]]</label>
+						<span th:inline="text" class="redcolor">
+						<b>
+							[[${eleve.getNbreHeureAbscenceNonJustifie(trimestreConcerne)}]]/
+							[[${eleve.getNbreHeureAbscenceNonJustifie(trimestreConcerne)}+
+							${eleve.getNbreHeureAbscenceJustifie(trimestreConcerne)}]]
+						</b>
+						</span>
+					</div>
+				</td>
+				
+				
+			</tr>
+		</tbody>
+		
+		
+	</table>
+</div>
+<!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE   col-md-offset-1-->
+</div>
+
+
+
+</body>
+</html>

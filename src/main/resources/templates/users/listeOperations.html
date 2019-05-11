@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="users/userslayout">
+<head>
+<meta charset="UTF-8"/>
+<title th:text="#{listeOperation.titre_page}">Listes opérations financières</title>
+</head>
+<body>
+	<span layout:fragment="titre_boite">
+        <kbd th:inline="text">[[#{listeOperation.titre_boite}]]</kbd>
+    </span>
+    
+    <div layout:fragment="formactionusers">
+	<!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
+	<div class="col-md-9 ">
+		<p class="alert alert-warning" th:inline="text">
+			[[#{listeOperation.messageform}]]
+		</p>
+		<form action="#" th:action="@{/logesco/users/getlistOperations}" method="get"  
+				class="form-inline" >
+			
+			<div class="form-group">
+				<label for="datemin" th:inline="text"> [[#{listeOperation.label_datemin}]]: </label>
+				<input type="date" name="datemin" id="datemin" class="form-control" 
+					placeholder="Date de naissance(année-mois-jour)"  min="2019-01-01" max="2020-01-01"/>
+			</div>
+			
+			<div class="form-group">
+				<label for="datemax" th:inline="text"> [[#{listeOperation.label_datemax}]]: </label>
+				<input type="date" name="datemax" id="datemax" class="form-control" 
+					placeholder="Date de naissance(année-mois-jour)"  min="2019-01-01" max="2020-01-01"/>
+			</div>
+			
+			<button type="submit" class="btn btn-primary  pull-right" 
+				th:inline="text">
+				<span class="glyphicon glyphicon-send"></span> [[#{listeOperation.bouton_envoyer}]]
+			</button>
+			
+		</form>
+		<br/>
+		<div th:if="${datemin}">
+			<span  th:inline="text" class="greencolor">
+				<b>[[#{listeOperation.label_listeoperation}]]
+				<span class="redcolor">[[${datemin}]]</span> [[#{listeOperation.label_et}]] 
+				<span class="redcolor">[[${datemax}]]</span></b>
+			</span>
+			
+			<div  th:if="${aucune}" th:inline="text" class="alert alert-warning">
+				[[#{listeOperation.label_aucuneoperation}]]
+			</div>
+		</div>
+		
+		<div th:if="${listpageofOperations}" >
+			<table class="table table-striped">
+				<thead class="thead-light">
+					<tr>
+						<th scope="col" th:text="#{listeOperation.th_numeroordre}">N° D'ORDRE</th>
+						<th scope="col" th:text="#{listeOperation.th_dateoperation}">DATE</th>
+						<th scope="col" th:text="#{listeOperation.th_typeoperation}">TYPE</th>
+						<th scope="col" th:text="#{listeOperation.th_eleveconcerne}">ELEVE CONCERNE</th>
+						<th scope="col" th:text="#{listeOperation.th_montanttransaction}">MONTANT</th>
+						<th scope="col" th:text="#{listeOperation.th_action}">&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="operation:${listpageofOperations}">
+						<td th:inline="text">[[${operation.identifiantOperation}]] </td>
+						<td th:inline="text">[[${operation.dateOperation}]] </td>
+						<td th:inline="text">[[${operation.typeOperation}]] </td>
+						<td th:inline="text">
+							[[${#strings.toUpperCase(operation.compteinscription.eleveProprietaire.nomsEleves)}]] 
+							[[${#strings.toUpperCase(operation.compteinscription.eleveProprietaire.prenomsEleves)}]]
+						</td>
+						<td th:inline="text">[[${operation.montantOperation}]] </td>
+						<td>
+							<div>
+			      				<span>
+			      					<a class="btn btn-success btn-sm pull-right" href="#"  
+			      						th:href="@{/logesco/users/imprimerRecuOperation(idOperation_a_imprimer=${operation.idOperation})}" 
+			      						role="button" th:inline="text" target="_blank">
+			      						<span class="glyphicon glyphicon-print"></span> [[#{listeOperation.bouton_imprimer}]]
+			      					</a>
+			      				</span>
+			      			</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<div class="container">
+				<ul class="pagination"><!-- nav nav-pills -->
+						<li th:each="p,status:${tabofpageOperations}" th:class="${status.index==pageCourante}?active:' ' ">
+						<a th:href="@{/logesco/users/getlistOperations(datemin=${datemin}, datemax=${datemax},
+							numPageOperation=${status.index})}"
+							 th:text="${status.index+1}"></a>
+					</li>
+				</ul>
+							
+			</div> 
+			
+		</div>
+		
+		
+		
+		<a class="btn btn-primary btn-sm pull-right" href="#" th:if="${listpageofOperations}"
+			  th:href="@{/logesco/users/exportlistOperations(datemin=${datemin}, datemax=${datemax})}" 
+			  role="button" target="_blank" th:inline="text">
+			  <span class="glyphicon glyphicon-list-all"></span> [[#{listeOperation.bouton_export}]]
+		</a>
+		
+	</div>
+	<!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
+	</div>
+    
+</body>
+</html>

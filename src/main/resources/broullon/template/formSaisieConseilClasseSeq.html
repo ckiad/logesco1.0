@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="users/userslayout">
+<head>
+<meta charset="UTF-8"/>
+<title th:inline="text">[[#{formsaisieconseilclasseseq.titre_page}]] </title>
+</head>
+<body>
+
+<span layout:fragment="titre_boite">
+    <kbd th:inline="text"> [[#{formsaisieconseilclasseseq.titre_boite}]] </kbd> 
+	<span th:inline="text" class="alert alert-warning"> 
+		<kbd th:inline="text">
+			[[${classeConcerne.codeClasses}]][[${classeConcerne.specialite.codeSpecialite}]] [[${classeConcerne.numeroClasses}]]
+			([[#{formsaisieconseilclasseseq.label_sequence}]]: [[${sequenceConcerne.numeroSeq}]]).
+		</kbd>
+	</span>
+</span>
+
+<div layout:fragment="formactionusers">
+<!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE   col-md-offset-1-->
+<div class="col-md-9">
+
+	<div th:if="${param.addCSDError}">
+		<h4 align="justify" class="alert alert-danger" th:inline="text">
+			Erreur: Un des paramètres est érroné. Contacter un administrateur
+		</h4>
+	</div>
+	
+	<div th:if="${param.addCSDErrorNbreNegatif}">
+		<h4 align="justify" class="alert alert-danger" th:inline="text">
+			Erreur: Impossible d'effectuer l'opération puisqu'un nombre négatif a été saisi dans un champ du formulaire
+		</h4>
+	</div>
+	
+	<div th:if="${param.addCSDErrorChevauchement}">
+		<h4 align="justify" class="alert alert-danger" th:inline="text">
+			Erreur: Vérifier que l'intervalle des absences non justifiées saisies ne chevauche pas avec un autres 
+			déjà enregistré dans le système. 
+		</h4>
+	</div>
+	
+	<div th:if="${param.addCSDErrorConvert}">
+		<h4 align="justify" class="alert alert-danger" th:inline="text">
+			Erreur: Vérifier les nombres saisis (ils doivent être des entiers naturels). 
+		</h4>
+	</div>
+	
+	<div th:if="${param.deleteCSDError}">
+		<h4 align="justify" class="alert alert-danger" th:inline="text">
+			Erreur pendant la suppression de la condition. Contacter l'administrateur
+		</h4>
+	</div>
+	
+	<div th:if="${param.addCSDSuccess}">
+		<h4 align="justify" class="alert alert-success" th:inline="text">
+			Condition enregistrée avec succès. Vous pouvez la supprimer si elle n'est plus applicable.  
+		</h4>
+	</div>
+	
+	<div th:if="${param.deleteCSDSuccess}">
+		<h4 align="justify" class="alert alert-success" th:inline="text">
+			Condition supprimée avec succès.  
+		</h4>
+	</div>
+
+	<div class="panel-group" id="accordion">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+						Conditions d'application des sanctions disciplinaires
+					</a>
+				</h4>
+			</div>
+			<div id="collapse1" class="panel-collapse collapse in">
+				<div class="panel-body">
+					<form action="#" class="form-inline" th:if="${listofSanctionDiscpresente=='nonvide'}"
+						th:action="@{/logesco/users/getAddCSD}" method="get">
+						
+						<table class="table table-condensed">
+						<caption><h4>Remplir convenablement ce formulaire</h4></caption>
+							<tbody>
+								<tr>
+									<td>
+										<label for="" > Intervalle des absences non justifiée: </label>
+									</td>
+									<td>
+										<table class="table table-condensed">
+											<tr>
+												<td>
+													<div class="form-group">
+														<label for="nbreabsencemin" >Entre</label>
+														<input type="text" name="nbreabsencemin" id="nbreabsencemin"
+															class="form-control" value="0"/>
+													</div>
+												</td>
+												<td>
+													<div class="form-group">
+														<label for="nbreabsencemax">Et</label>
+														<input type="text" name="nbreabsencemax" id="nbreabsencemax"
+															class="form-control" value="0"/>
+													</div>
+												</td>
+											</tr>
+										</table>
+										
+									</td>
+									<td>
+										<input type="hidden" name="idSequenceConcerne" id="idSequenceConcerne" 
+											class="form-control" 
+											th:value="${sequenceConcerne.idPeriodes}" />
+									</td>
+								</tr>
+								
+								<tr>
+									<td><label for="" > Sanction à appliquer: </label></td>
+									<td>
+										<div class="form-group">
+											<select class="form-control" name="idSanctionAssocie" id="idSanctionAssocie">
+												<option th:each="sanctDisc:${listofSanctionDisc}" th:value="${sanctDisc.idSancDisc}"
+													th:inline="text" th:if="${session.lang=='fr'}">
+													[[${sanctDisc.intituleSancDisc}]] ( [[${sanctDisc.codeSancDisc}]])
+												</option>
+												<option th:each="sanctDisc:${listofSanctionDisc}" th:value="${sanctDisc.idSancDisc}"
+													th:inline="text" th:if="${session.lang!='fr'}">
+													[[${sanctDisc.intituleSancDiscEn}]] ( [[${sanctDisc.codeSancDiscEn}]])
+												</option>
+											</select>
+										</div>
+									</td>
+									<td>
+										<input type="hidden" name="idClassesConcerne" id="idClassesConcerne" 
+												class="form-control" 
+												th:value="${classeConcerne.idClasses}" />
+									</td>
+								</tr>
+								
+								<tr>
+									<td>
+										<label>Nombre période </label>
+									</td>
+									<td>
+										<input type="text" name="nbreperiode" id="nbreperiode" class="form-control" value="0"/>
+									</td>
+								</tr>
+								
+								<tr>
+									<td>
+										<label>Unité </label>
+									</td>
+									<td>
+										<div class="form-group">
+											<select class="form-control" name="unite" id="unite">
+												<option th:value="${session.lang=='fr'?'Heures':'Hours'}" th:inline="text">
+													[[${session.lang=='fr'?'Heures':'Hours'}]]
+												</option>
+												<option th:value="${session.lang=='fr'?'Jours':'Days'}" th:inline="text">
+													[[${session.lang=='fr'?'Jours':'Days'}]]
+												</option>
+											</select>
+										</div>
+									</td>
+									<td>
+										<button type="submit" class="btn btn-primary btn-sm  pull-right">
+											<span class="glyphicon glyphicon-plus-sign"></span> Ajouter 
+										</button>
+									</td>
+								</tr>
+							
+							</tbody>
+						</table>
+					</form>
+					<!-- Tableau d'affichage des conditions de sanction disciplinaire déjà enregistrées dans le système -->
+					<div th:if="${listofCSDClasseSeqpresente=='vide'}">
+						<h4>Aucune condition n'est enregistrée pour cette classe dans cette séquence</h4>
+					</div>
+					
+					<div th:if="${listofCSDClasseSeqpresente=='nonvide'}">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>Conditions</th>
+									<th>Sanction associe</th>	
+									<th> </th>		
+								</tr>
+							</thead>
+							<tbody th:if="${listofCSDClasseSeq}">
+								<tr th:each="csd:${listofCSDClasseSeq}" >
+									<td>
+										<label><span>Si AbsNJ entre [</span>
+											<span th:inline="text">[[${csd.absenceMin}]]</span>
+											<span>;</span>
+											<span th:inline="text">[[${csd.absenceMax}]]</span>
+											<span>] alors</span>
+										</label>
+									</td>
+									<td>
+										<label><span th:inline="text">[[${csd.nbreperiode==0}?' ':${csd.nbreperiode}]]</span>
+										<span th:inline="text">[[${csd.nbreperiode==0}?' ':${csd.unite}]]</span>
+										<span th:inline="text">[[${csd.sanctionDiscAssocie.intituleSancDisc}]]</span>
+										<span th:inline="text">([[${csd.sanctionDiscAssocie.codeSancDisc}]])</span></label>
+									</td>
+									<td>
+										<span>
+											<a class="btn btn-link btn-sm " href="#"  
+					      						th:href="@{/logesco/users/getsupprimCSD(idCSD=${csd.idCSD},
+					      						idClasseConcerne=${classeConcerne.idClasses}, idSequenceConcerne=${sequenceConcerne.idPeriodes})}" 
+					      						role="button">
+					      						<span class="glyphicon glyphicon-trash"></span>
+					      					</a>										
+										</span>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+		
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+						Conditions d'application des honneurs due au travail et à la discipline
+					</a>
+				</h4>
+			</div>
+			<div id="collapse2" class="panel-collapse collapse in">
+				<div class="panel-body">
+					Contenu du panneau lorsqu'il sera déroulé 2
+				</div>
+			</div>
+		</div>
+		
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+						Conditions d'application des décisions
+					</a>
+				</h4>
+			</div>
+			<div id="collapse3" class="panel-collapse collapse in">
+				<div class="panel-body">
+					Contenu du panneau lorsqu'il sera déroulé 3
+				</div>
+			</div>
+		</div>
+		
+	</div>
+</div>
+<!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE   col-md-offset-1-->
+</div>
+
+</body>
+</html>

@@ -38,7 +38,7 @@
 										th:each="n:${listofNiveauxDirigesEns}">
 										
 										<option th:each="c:${n.listofClasses}"
-											th:if="${c.estEnseignantTitulaireDeClasse(profConnecte.idUsers)==1 or patron!=null}"
+											th:if="${(c.estEnseignantTitulaireDeClasse(profConnecte.idUsers)==1 or patron!=null) and c.geteffectifEleve()>0}"
 											th:value="${c.idClasses}" th:inline="text">
 										
 											 [[${c.codeClasses}]] [[${c.specialite.codeSpecialite}]] [[${c.numeroClasses}]]
@@ -75,7 +75,7 @@
 						<br/>
 						<fieldset class="col-md-12" th:if="${session.getrapportan}">
 							<legend class="text-primary">Bouton de génération du rapport de conseil</legend>
-							<button type="submit" class="btn btn-primary">
+							<button type="submit" class="btn btn-success">
 								<span class="glyphicon glyphicon-cloud-download"></span> Générer le rapport de conseil de classe annuel
 							</button>
 						</fieldset>

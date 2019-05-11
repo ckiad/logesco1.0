@@ -65,6 +65,8 @@ public class BulletinSequence1Bean implements Serializable {
     private Double r_moy_seq1;
     private String r_rang_seq;
     private String appreciation;
+    private String avertissement_travail;
+    private String blame_travail;
     private String tableau_hon;
     private String tableau_enc;
     private String tableau_fel;
@@ -1006,6 +1008,54 @@ public class BulletinSequence1Bean implements Serializable {
 	 */
 	public void setMatieresSequence1Groupe3(List<MatiereGroupe3Sequence1Bean> matieresSequence1Groupe3) {
 		this.matieresSequence1Groupe3 = matieresSequence1Groupe3;
+	}
+
+
+	/**
+	 * @return the avertissement_travail
+	 */
+	public String getAvertissement_travail() {
+		return avertissement_travail;
+	}
+
+
+	/**
+	 * @param avertissement_travail the avertissement_travail to set
+	 */
+	public void setAvertissement_travail(String avertissement_travail) {
+		this.avertissement_travail = avertissement_travail;
+	}
+
+
+	/**
+	 * @return the blame_travail
+	 */
+	public String getBlame_travail() {
+		return blame_travail;
+	}
+
+
+	/**
+	 * @param blame_travail the blame_travail to set
+	 */
+	public void setBlame_travail(String blame_travail) {
+		this.blame_travail = blame_travail;
+	}
+
+
+	/**
+	 * @param moyenne_seq the moyenne_seq to set
+	 */
+	public void setMoyenne_seq(Double moyenne_seq) {
+		this.moyenne_seq = moyenne_seq;
+	}
+
+
+	/**
+	 * @param result_moy_seq the result_moy_seq to set
+	 */
+	public void setResult_moy_seq(Double result_moy_seq) {
+		this.result_moy_seq = result_moy_seq;
 	}
 	
 	

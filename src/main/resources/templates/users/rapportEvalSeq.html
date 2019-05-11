@@ -6,12 +6,12 @@
 	layout:decorator="users/userslayout">
 <head>
 <meta charset="UTF-8"/>
-<title>Rapport des évaluations</title>
+<title th:inline="text">[[#{rapportevalseq.titrepage}]]</title>
 </head>
 <body>
 
 <span layout:fragment="titre_boite">
-        <kbd>Génération du rapport des évaluations d'une séquence dans une classe</kbd>
+        <kbd th:inline="text">[[#{rapportevalseq.titreboite}]]</kbd>
 </span>
 
 <div layout:fragment="formactionusers">
@@ -24,10 +24,10 @@
 				
 				
 				<fieldset class="col-md-12" >
-					<legend class="text-primary">Choisir la classe dont le rapport des évaluations doit être consulté</legend>
+					<legend class="text-primary" th:inline="text">[[#{rapportevalseq.legend_choixclasse}]]</legend>
 					
 					<div class="form-group">
-						<label for="idclasseRapport"> Classe à consulter: <span
+						<label for="idclasseRapport" th:inline="text">[[#{rapportevalseq.label_choixclasse}]] : <span
 										class="redcolor">*</span></label> 
 						
 						<select class="form-control" name="idclasseRapport"
@@ -48,7 +48,7 @@
 						</select>
 						
 						<div class="form-group">
-							<label for="idsequenceRapport"> Séquence: <span
+							<label for="idsequenceRapport" th:inline="text">[[#{rapportevalseq.label_sequence}]] : <span
 								class="redcolor">*</span></label> 
 							
 							<select class="form-control" name="idsequenceRapport"
@@ -62,8 +62,8 @@
 						</div> 
 						
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;		
-						<button type="submit" class="btn btn-primary  pull-right">
-							<span class="glyphicon glyphicon-send"></span>Envoyer
+						<button type="submit" class="btn btn-primary  pull-right" th:inline="text">
+							<span class="glyphicon glyphicon-send"></span> [[#{rapportevalseq.bouton_envoyer}]]
 						</button>
 					</div>
 					
@@ -72,20 +72,20 @@
 				
 			<fieldset  class="col-md-12" th:if="${session.erreurcoursRapportEvalSeq}">
 				<hr/>
-				<h4 align="justify" class="alert alert-warning">
-					Aucun cours n'existe dans la classe sélectionnée.
+				<h4 align="justify" class="alert alert-warning" th:inline="text">
+					[[#{rapportevalseq.warning_coursinexistant}]].
 				</h4>
 			</fieldset>
 			
 			<!-- Affichage de la liste des classes pages par pages en indiquant pour chacune le montant de la scolarité spécifié -->
 			<fieldset  class="col-md-12" th:if="${session.listcoursofClassesRapportEvalSeq}">
 				<table class="table table-striped">
-					<caption>Liste des cours et des évaluations dèjà enregistrées pour chaque cours</caption>
+					<caption th:inline="text">[[#{rapportevalseq.caption_listcours}]]</caption>
 					<thead class="thead-light">
 						<tr>
-							<th scope="col">COURS</th>
-							<th scope="col">ENSEIGNANT </th>
-							<th scope="col" >EVALUATIONS PASSEES </th>
+							<th scope="col" th:inline="text">[[#{rapportevalseq.th_cours}]]</th>
+							<th scope="col" th:inline="text">[[#{rapportevalseq.th_enseignant}]] </th>
+							<th scope="col" th:inline="text">[[#{rapportevalseq.th_evalpasse}]] </th>
 						</tr>
 					</thead>
 					<tbody>
@@ -100,14 +100,14 @@
 								<table class="table table-bordered">
 									<tbody>
 										<tr th:each="eval:${session.listofEvalSeqRapportEvalSeq}" th:if="${eval.cours.idCours == cours.idCours}">
-											<td th:inline="text">[[${eval.typeEval =='CC'?'D1':'D2'}]] </td>
+											<td th:inline="text">[[${eval.typeEval =='CC'?(session.lang=='fr'?'D1':'E1'):(session.lang=='fr'?'D2':'E2')}]] </td>
 											<td th:inline="text">[[${eval.proportionEval}]] </td>
 											<td th:inline="text">[[${#dates.format(eval.dateenregEval,"dd-MM-yyyy")}]] </td>
 											<td th:inline="text">
 												<a class="btn btn-primary btn-sm pull-left" href="#" 
 													th:href="@{/logesco/users/getprocesverbalNotes(idEval=${eval.idEval})}"
-													 role="button">
-													 <span class="glyphicon glyphicon-list-all"></span> Voir le procès verbal
+													 role="button" th:inline="text">
+													 <span class="glyphicon glyphicon-list-all"></span> [[#{rapportevalseq.bouton_voirpv}]]
 												</a>
 											</td>
 										</tr>

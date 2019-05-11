@@ -8,9 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.logesco.LogescoApplication;
+
 import org.logesco.entities.Etablissement;
 import org.logesco.entities.Specialites;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +26,10 @@ public class AdminServiceExportImpl implements IAdminServiceExport {
 	@Autowired
 	private IAdminService adminService;
 	
-	private static Logger log = LogescoApplication.log;
 	
 	@Override
 	public List<Map<String, Object>> exportlisteSpecialite() {
-		log.log(Level.DEBUG, "****** LANCEMENT DE LA METHODE exportlisteSpecialite()");
+		/*log.log(Level.DEBUG, "****** LANCEMENT DE LA METHODE exportlisteSpecialite()");*/
 		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 		
 		/*
@@ -64,7 +61,7 @@ public class AdminServiceExportImpl implements IAdminServiceExport {
 			result.add(item);
 		}
 		
-		log.log(Level.DEBUG, "****** FIN DE L'EXECUTION DE LA METHODE exportlisteSpecialite()");
+		/*log.log(Level.DEBUG, "****** FIN DE L'EXECUTION DE LA METHODE exportlisteSpecialite()");*/
 		return result;
 	}
 

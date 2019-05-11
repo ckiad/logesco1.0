@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="users/userslayout">
+<head>
+<meta charset="UTF-8"/>
+<title th:inline="text">[[#{formsaisieabsence.titre_page}]] </title>
+</head>
+<body>
+
+<span layout:fragment="titre_boite">
+    <kbd th:inline="text"> [[#{formsaisieabsence.titre_boite}]] </kbd> 
+	<span th:inline="text" class="alert alert-warning" th:if="${affichechoixclasse=='oui'}"> 
+		<kbd th:inline="text">[[#{formsaisieabsence.label_sequence}]] [[${sequenceConcerneRabs.numeroSeq}]].</kbd>
+	</span>
+</span>
+
+<div layout:fragment="formactionusers">
+<!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE   col-md-offset-1-->
+<div class="col-md-9">
+
+		<div th:if="${affichechoixclasse=='non'}">
+			<h4 align="justify" class="alert alert-danger" th:inline="text">[[#{formsaisieabsence.label_erreurclasse}]] </h4>
+		</div>
+
+		<form action="#" class="form-inline" th:if="${affichechoixclasse=='oui'}"
+				th:action="@{/logesco/users/sg/getUpdateRAbsence}" method="get">
+						
+						<div th:if="${param.updaterabssaisiError}">
+							<h4 align="justify" class="alert alert-danger" th:inline="text">
+							[[#{formsaisieabsence.label_erreurinconnue}]]</h4>
+						</div>
+					
+					
+					<div th:if="${param.updaterabsSucces}">
+						<h4 align="justify" class="alert alert-success" th:inline="text">
+							[[#{formsaisieabsence.label_success}]]
+						</h4>
+					</div>
+					
+					<div th:if="${param.updateAbsenceSuccess}">
+						<h4 align="justify" class="alert alert-success" th:inline="text">
+							[[#{formsaisieabsence.label_success}]]
+						</h4>
+					</div>
+					
+					<div th:if="${param.updateAbsenceError}">
+						<h4 align="justify" class="alert alert-danger" th:inline="text">
+							[[#{formsaisieabsence.label_error}]]
+						</h4>
+					</div>
+					
+					<div th:if="${param.updateAbsenceDateError}">
+						<h4 align="justify" class="alert alert-danger" th:inline="text">
+							[[#{formsaisieabsence.label_errorDate}]]
+						</h4>
+					</div>
+					
+					<div th:if="${param.updateAbsenceNegError}">
+						<h4 align="justify" class="alert alert-danger" th:inline="text">
+							[[#{formsaisieabsence.label_errorAbsNeg}]]
+						</h4>
+					</div>
+					
+					<div th:if="${param.updateAbsenceErroneError}">
+						<h4 align="justify" class="alert alert-danger" th:inline="text">
+							[[#{formsaisieabsence.label_errorAbsErrone}]]
+						</h4>
+					</div>
+					
+					<div th:if="${param.updateAbsenceErrorConvert}">
+						<h4 align="justify" class="alert alert-danger" th:inline="text">
+							[[#{formsaisieabsence.label_erreurnbreheure}]]
+						</h4>
+					</div>
+					
+					
+					<input type="hidden" name="idSequenceConcerne" id="idSequenceConcerne" 
+						class="form-control" 
+						th:value="${sequenceConcerneRabs.idPeriodes}" />
+					
+					<input type="hidden" name="idClassesConcerne" id="idClassesConcerne" 
+						class="form-control" 
+						th:value="${classeConcerne.idClasses}" />
+									
+					<!-- Il faut aussi placer un moyen de choix de la date d'enregistrement -->
+					<div class="form-group">
+						<label for="dateenreg" th:inline="text"> [[#{formsaisieabsence.label_dateenreg}]]: </label>
+						<input type="date" name="dateenreg" id="dateenreg" class="form-control" 
+							placeholder="Date de naissance(année-mois-jour)"   max="2020-01-01" 
+							th:value="${dateenreg}"/>
+					</div>
+					
+				
+					<table class="table table-striped">
+						
+						<thead>
+							<tr>
+								<th th:inline="text">[[#{formsaisieabsence.label_nomprenom}]]</th>
+								<th th:inline="text">[[#{formsaisieabsence.label_rabs}]]</th>
+								<th></th>
+								
+							</tr>
+						</thead>
+						<tbody th:if="${listofAllEleve}">
+							<button type="submit" class="btn btn-primary btn-sm  pull-right" th:inline="text">
+								<span class="glyphicon glyphicon-save"></span> [[#{formsaisieabsence.bouton_enreg}]] 
+							</button>
+							<tr th:each="eleve:${listofAllEleve}" >
+								
+							
+								<td class="col-md-4" th:inline="text">
+									<input type="hidden" name="idEleves[]" id="idEleves[]" 
+											class="form-control" th:value="${eleve.idEleves}"/>
+									<b>[[${eleve.getNumero(listofAllEleve)}]]</b>) 
+									<b>[[${#strings.toUpperCase(eleve.nomsEleves)}]] [[${eleve.prenomsEleves}]]</b> 
+								</td>
+								
+									
+								
+								<td class="col-md-2" th:inline="text"> 
+									<b>J ([[${eleve.getNbreHeureAbscenceJustifie(sequenceConcerneRabs.idPeriodes)}]]) /
+									NJ ([[${eleve.getNbreHeureAbscenceNonJustifie(sequenceConcerneRabs.idPeriodes)}]])
+									</b>
+								</td>
+								<td class="col-md-6">
+								
+									<label for="nbreheureNJustifie" th:inline="text">[[#{formsaisieabsence.label_nj}]]</label>
+									<input type="text" name="nbreheureNJustifie[]" id="nbreheureNJustifie[]" 
+										class="form-control" value="0"/>
+									<br/>
+									<label for="nbreheureJustifie" th:inline="text">[[#{formsaisieabsence.label_j}]]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+									<input type="text" name="nbreheureJustifie[]" id="nbreheureJustifie[]" 
+										class="form-control" value="0"/>
+									
+								</td>
+								
+									
+							</tr>
+						</tbody>
+					</table>
+					
+					<button type="submit" class="btn btn-primary btn-sm  pull-right" th:inline="text">
+						<span class="glyphicon glyphicon-save"></span> [[#{formsaisieabsence.bouton_enreg}]]
+					</button>
+				</form>
+</div>
+<!-- fin DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE   col-md-offset-1-->
+</div>
+</body>
+</html>

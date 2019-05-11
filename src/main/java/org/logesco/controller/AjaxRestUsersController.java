@@ -4,6 +4,7 @@
 package org.logesco.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.logesco.entities.Eleves;
 import org.logesco.entities.Evaluations;
@@ -29,29 +30,33 @@ public class AjaxRestUsersController {
 	@Autowired
 	private IUsersService usersService;
 	
-	public String mention(double note){
-		if(note>=0 && note<5) return "NULL";
-		else if(note>=5 && note<7) return "TRES FAIBLE";
-		else if(note>=7 && note<8) return "FAIBLE";
-		else if(note>=8 && note<9) return "INSUFFISANT";
-		else if(note>=9 && note<10) return "MEDIOCRE";
-		else if(note>=10 && note<12) return "PASSABLE";
-		else if(note>=12 && note<14) return "ASSEZ BIEN";
-		else if(note>=14 && note<16) return "BIEN";
-		else if(note>=16 && note<18) return "TRES BIEN";
+	public String mention(double note, String lang){
+		/*System.err.println("Voici donc la langue de la mention "+lang);*/
+		if(note>=0 && note<5) return lang.equalsIgnoreCase("fr")==true?"NUL":"NULL";
+		else if(note>=5 && note<7) return lang.equalsIgnoreCase("fr")==true?"TRES FAIBLE":"VERY POOR";
+		else if(note>=7 && note<8) return lang.equalsIgnoreCase("fr")==true?"FAIBLE":"POOR";
+		else if(note>=8 && note<9) return lang.equalsIgnoreCase("fr")==true?"INSUFFISANT":"INSUFFICIENT";
+		else if(note>=9 && note<10) return lang.equalsIgnoreCase("fr")==true?"MEDIOCRE":"MEDIOCRE";
+		else if(note>=10 && note<12) return lang.equalsIgnoreCase("fr")==true?"PASSABLE":"FAIR";
+		else if(note>=12 && note<14) return lang.equalsIgnoreCase("fr")==true?"ASSEZ BIEN":"FAIRLY GOOD";
+		else if(note>=14 && note<16) return lang.equalsIgnoreCase("fr")==true?"BIEN":"GOOD";
+		else if(note>=16 && note<18) return lang.equalsIgnoreCase("fr")==true?"TRES BIEN":"VERY GOOD";
 		else if(note>=18 && note<20) return "EXCELLENT";
-		else if(note==20) return "PARFAIT";
+		else if(note==20) return lang.equalsIgnoreCase("fr")==true?"PARFAIT":"PERFECT";
 		else  return "IMPOSSIBLE"; 
 	}
 	
-	@GetMapping(path="/enregNote/{idEleve}/{idEval}/{proportionEval}/{noteSaisi}", produces=MimeTypeUtils.TEXT_PLAIN_VALUE)
-	public ResponseEntity<String> testAjax(HttpServletRequest request,
+	@SuppressWarnings("unused")
+	@GetMapping(path="/enregNote/{idEleve}/{idEval}/{proportionEval}/{noteSaisi}/{lang}", produces=MimeTypeUtils.TEXT_PLAIN_VALUE)
+	public ResponseEntity<String> enregNote_Ajax(HttpServletRequest request,
 			@PathVariable(name="idEleve") Long idEleve,
 			@PathVariable(name="idEval") Long idEval,
 			@PathVariable(name="proportionEval") String proportionEval,
-			@PathVariable(name="noteSaisi") String noteSaisi){
+			@PathVariable(name="noteSaisi") String noteSaisi,
+			@PathVariable(name="lang") String lang){
 		try{
 			
+			HttpSession session = request.getSession();
 			//String texteReponse = "**** les parametres passes a la requete sont: idEleves="+idEleve+" idEval="+idEval+" noteSaisi="+noteSaisi;
 			
 			int reponse = 0;
@@ -62,7 +67,7 @@ public class AjaxRestUsersController {
 			 * Recuperer l'évaluation
 			 */
 			Evaluations evalConcerne = usersService.findEvaluations(idEval);
-			if(evalConcerne == null) System.err.println("yyyyyyyyyyyyyyyyy evalConcerne non trouve");
+			/*if(evalConcerne == null) System.err.println("yyyyyyyyyyyyyyyyy evalConcerne non trouve");*/
 			
 			try{
 				int newproportionEval = Integer.parseInt(proportionEval);
@@ -75,7 +80,7 @@ public class AjaxRestUsersController {
 				int r = usersService.saveEvaluation(evalConcerne.getContenuEval(), evalConcerne.getCours(), evalConcerne.getDateenregEval(), 
 						evalConcerne.getProportionEval(), evalConcerne.getSequence(), evalConcerne.getTypeEval());
 				
-				System.err.println("le r de saveEvalsssAjax == "+r);
+				/*System.err.println("le r de saveEvalsssAjax == "+r);*/
 				if(r == 0) reponse = -1;
 				
 				/*
@@ -83,19 +88,57 @@ public class AjaxRestUsersController {
 				 */
 				int ret = usersService.saveNoteEvalEleve(idEval, idEleve, valNoteSaisi);
 				reponse = ret;
-				System.err.println("le r de saveNoteEvalAjax == "+reponse);
+				/*System.err.println("le r de saveNoteEvalAjax == "+reponse);*/
 				if(ret == 0) reponse = -2;
 				
-				String mention = this.mention(valNoteSaisi);
+				String mention = this.mention(valNoteSaisi,lang);
+				if(mention.equalsIgnoreCase("IMPOSSIBLE")) session.setAttribute("mention", "0");
 				ResponseEntity<String> responseEntity = new ResponseEntity<String>(new String(""+mention), HttpStatus.OK);
 				return responseEntity;
 			}
 			catch(Exception e){
 				reponse = -3;
 				String mention = "IMPOSSIBLE";
+				session.setAttribute("mention", "0");
 				ResponseEntity<String> responseEntity = new ResponseEntity<String>(new String(""+mention), HttpStatus.OK);
 				return responseEntity;
 			}
+			
+		}
+		catch(Exception e){
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
+		
+	}
+	
+	@GetMapping(path="/enregProportionEval/{idEval}/{proportionEval}", produces=MimeTypeUtils.TEXT_PLAIN_VALUE)
+	public ResponseEntity<String> enregProportionEval_Ajax(HttpServletRequest request,
+			@PathVariable(name="idEval") Long idEval,
+			@PathVariable(name="proportionEval") String proportionEval){
+		try{
+			int reponse = 0;
+			int newproportionEval_associe = -1;
+			
+			int newproportionEval = Integer.parseInt(proportionEval);
+				
+			if(newproportionEval<=100){
+				newproportionEval_associe = 100 - newproportionEval;
+				/*
+				 * On appele la fonction de mise à jour de l'évaluation
+				 */
+				int majE = usersService.updateProportionEvaluation(idEval, newproportionEval);
+				if(majE == -1){
+					reponse = majE;
+					ResponseEntity<String> responseEntity = new ResponseEntity<String>(new String(""+reponse), HttpStatus.OK);
+					return responseEntity;
+				}
+				reponse = newproportionEval_associe;
+				ResponseEntity<String> responseEntity = new ResponseEntity<String>(new String(""+reponse), HttpStatus.OK);
+				return responseEntity;
+			}
+			reponse = -1;//la proportion saisie est superieur a 100 ce qui est impossible
+			ResponseEntity<String> responseEntity = new ResponseEntity<String>(new String(""+reponse), HttpStatus.OK);
+			return responseEntity;
 			
 		}
 		catch(Exception e){
@@ -105,7 +148,7 @@ public class AjaxRestUsersController {
 	
 	
 	@GetMapping(path="/getNumeroEleveSuivant/{idEleve}/{idEval}", produces=MimeTypeUtils.TEXT_PLAIN_VALUE)
-	public ResponseEntity<String> testAjax(HttpServletRequest request,
+	public ResponseEntity<String> getNumeroEleveSuivant_Ajax(HttpServletRequest request,
 			@PathVariable(name="idEleve") Long idEleve,
 			@PathVariable(name="idEval") Long idEval){
 		long reponse = 0;
@@ -122,4 +165,7 @@ public class AjaxRestUsersController {
 		return responseEntity;
 	}
 
+	
+	
+	
 }

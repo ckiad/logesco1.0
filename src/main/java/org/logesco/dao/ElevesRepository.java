@@ -68,4 +68,10 @@ public interface ElevesRepository extends JpaRepository<Eleves, Long> {
 	public Page<Eleves> findByClasseIdClassesOrderByNomsElevesAscPrenomsElevesAscDatenaissElevesAsc
 		(Long idClasses,	Pageable pageable);
 	
+	@Query("SELECT e FROM Eleves e WHERE e.classe.idClasses=:idClasses AND e.compteInscription.montant<e.classe.montantScolarite")
+	public Page<Eleves> findPageElevesInsolvableDansClasse(@Param("idClasses") Long idClasses, Pageable pageable);
+	
+	@Query("SELECT e FROM Eleves e WHERE e.classe.idClasses=:idClasses AND e.compteInscription.montant<e.classe.montantScolarite")
+	public List<Eleves> findListElevesInsolvableDansClasse(@Param("idClasses") Long idClasses);
+	
 }

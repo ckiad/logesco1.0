@@ -43,6 +43,18 @@ public class Operations implements Serializable {
 	private Date dateOperation;
 	
 	/*
+	 * 23-04-2019
+	 * Les champs qui suivent ont ete ajoute pour s'assurer que:
+	 * --) une operation doit avoir un identifiant unique qui permettra 
+	 * de compter les opérations déjà  realiser dans le systeme. Donc 
+	 * quelque soit le moment où une opération est imprimée, elle aura toujours le 
+	 * meme numero. 
+	 */
+	@NotNull
+	@NotEmpty
+	private String identifiantOperation;
+	
+	/*
 	 * Association avec la table CompteInscription
 	 ******************************************/
 	@ManyToOne
@@ -135,6 +147,20 @@ public class Operations implements Serializable {
 	 */
 	public void setCompteinscription(CompteInscription compteinscription) {
 		this.compteinscription = compteinscription;
+	}
+
+	/**
+	 * @return the identifiantOperation
+	 */
+	public String getIdentifiantOperation() {
+		return identifiantOperation;
+	}
+
+	/**
+	 * @param identifiantOperation the identifiantOperation to set
+	 */
+	public void setIdentifiantOperation(String identifiantOperation) {
+		this.identifiantOperation = identifiantOperation;
 	}
 
 	

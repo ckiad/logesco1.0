@@ -53,7 +53,7 @@ public class BulletinController {
 	
 	public void constructModelgetdonneesEditionsBulletinsSeq(Model model,	HttpServletRequest request){
 		
-		//System.err.println("dddddddddddddddddddddddddddddd");
+		////System.err.println("dddddddddddddddddddddddddddddd");
 		String profConnect = request.getUserPrincipal().getName();
 		
 		Utilisateurs usersProf = usersService.findByUsername(profConnect);
@@ -89,7 +89,7 @@ public class BulletinController {
 		 * On doit placer l'année active dans le model
 		 */
 		Annee anneeActive = usersService.findAnneeActive();
-		System.err.println("anneeActive == "+anneeActive.getIntituleAnnee());
+		//System.err.println("anneeActive == "+anneeActive.getIntituleAnnee());
 		if(anneeActive != null) {
 			model.addAttribute("anneeActive", anneeActive);
 			//List<Sequences> listofSequenceActive = usersService.findAllSequence(anneeActive.getIdPeriodes());
@@ -122,6 +122,9 @@ public class BulletinController {
 		
 		
 		Classes classeConcerne = usersService.findClasses(idClasseConcerne);
+		/*
+		 * Cette donnee classe en session va aider pour la génération du rapport de conseil
+		 */
 		session.setAttribute("classeConcerneBulletinsSeq", classeConcerne);
 		
 		Sequences sequenceConcerne = usersService.findSequences(idSequenceConcerne);
@@ -136,12 +139,8 @@ public class BulletinController {
 		}
 		
 		
-		/*******
-		 * Debut des ajouts du 11-09-2018
-		 */
 		//Il faut établir la liste des groupes qui passe dans la classe de façon à avoir tous les groupes avec les cours
 		if(classeConcerne.getSection().getCodeSections().equals(new String("Général")) == true){
-			
 			/*Collection<BulletinSequence1Bean> listofBulletinSeqClasse = 
 			 * 					usersService.generateCollectionofBulletinSequence1(classeConcerne.getIdClasses(), sequenceConcerne.getIdPeriodes());
 			*/
@@ -166,7 +165,7 @@ public class BulletinController {
 			
 			session.setAttribute("getrapportseq", "oui");
 			session.setAttribute("collectionficheCCS", collectionficheCCS);
-			System.err.println("fin affichage des bean bulletin et le Conseil classe "+collectionficheCCS.size());
+			//System.err.println("fin affichage des bean bulletin et le Conseil classe "+collectionficheCCS.size());
 			
 			
 			Map<String, Object> parameters = new HashMap<String, Object>();
@@ -175,7 +174,8 @@ public class BulletinController {
 			
 			parameters.put("IMAGE_FOND", "src/main/resources/static/images/fondlogobekoko.png");
 	        parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
-			/*
+			
+	        /*
 			parameters.put("CHEMIN_JRXML_G1", "src/main/resources/reports/compiled/sequentiels/models2/MatiereGroupe1Sequence.jasper");
 		    parameters.put("CHEMIN_JRXML_G2", "src/main/resources/reports/compiled/sequentiels/models2/MatiereGroupe2Sequence.jasper");
 		    parameters.put("CHEMIN_JRXML_G3", "src/main/resources/reports/compiled/sequentiels/models2/MatiereGroupe3Sequence.jasper");
@@ -183,20 +183,26 @@ public class BulletinController {
 	        
 	        parameters.put("datasource", listofBulletinSeqClasse);
 			JasperReportsPdfView view = new JasperReportsPdfView();
-			view.setUrl("classpath:/reports/compiled/sequentiels/models1/BulletinSequence.jasper");
+			
+			if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+			
+				view.setUrl("classpath:/reports/compiled/sequentiels/models1/BulletinSequence.jasper");
+				
+			}
+			else{
+				/*//System.err.println("cette classe est une classe du sous système anglophone "
+						+ "donc il faut le modèle anglais des bulletins séquentiels");*/
+				
+				view.setUrl("classpath:/reports/compiled/sequentiels/models1/BulletinSequence_en.jasper");
+				
+			}
 			view.setApplicationContext(applicationContext);
-			
-			
 			return new ModelAndView(view, parameters);
-			
 		}
-		
-		/********
-		 * Fin des ajouts du 11-09-2018
-		 */
-		
-		System.err.println("Si on voit  ceci alors ce n'est pas une section general et par consequent aucun bulletin");
-		
+		else{
+			/*//System.err.println("Si on voit  ceci alors ce n'est pas une section general et par "
+					+ "consequent aucun bulletin");*/
+		}
 		return null;
 	}
 
@@ -219,7 +225,13 @@ public class BulletinController {
 		
         parameters.put("datasource", collectionficheCCS);
 		JasperReportsPdfView view = new JasperReportsPdfView();
-		view.setUrl("classpath:/reports/compiled/fiches/FicheConseilClasseBean.jasper");
+		Classes classeConcerne = (Classes)session.getAttribute("classeConcerneBulletinsSeq");
+		if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+			view.setUrl("classpath:/reports/compiled/fiches/FicheConseilClasseBean.jasper");
+		}
+		else{
+			view.setUrl("classpath:/reports/compiled/fiches/FicheConseilClasseBean_en.jasper");
+		}
 		view.setApplicationContext(applicationContext);
 		
 		 
@@ -230,7 +242,7 @@ public class BulletinController {
 	
 	public void constructModelgetdonneesEditionsBulletinsTrim(Model model,	HttpServletRequest request){
 		
-		//System.err.println("dddddddddddddddddddddddddddddd");
+		////System.err.println("dddddddddddddddddddddddddddddd");
 		String profConnect = request.getUserPrincipal().getName();
 		
 		Utilisateurs usersProf = usersService.findByUsername(profConnect);
@@ -264,12 +276,12 @@ public class BulletinController {
 		 * On doit placer l'année active dans le model
 		 */
 		Annee anneeActive = usersService.findAnneeActive();
-		System.err.println("anneeActive == "+anneeActive.getIntituleAnnee());
+		//System.err.println("anneeActive == "+anneeActive.getIntituleAnnee());
 		if(anneeActive != null) {
 			model.addAttribute("anneeActive", anneeActive);
 			
 			List<Trimestres> listofTrimestreActive = usersService.findAllActiveTrimestre(anneeActive.getIdPeriodes());
-			System.err.println("liste------ "+listofTrimestreActive.size());
+			//System.err.println("liste------ "+listofTrimestreActive.size());
 			model.addAttribute("listofTrimestreActive", listofTrimestreActive);
 		}
 		
@@ -283,6 +295,7 @@ public class BulletinController {
 		
 		return "users/donneesEditionsBulletinsTrim";
 	}
+	
 	
 	@SuppressWarnings("unchecked")
 	@GetMapping(path="/lancerEditionsRapportConseilTrim")
@@ -302,7 +315,13 @@ public class BulletinController {
 		
         parameters.put("datasource", collectionficheCCT);
 		JasperReportsPdfView view = new JasperReportsPdfView();
+		Classes classeConcerne = (Classes)session.getAttribute("classeConcerneBulletinsSeq");
+		if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
 		view.setUrl("classpath:/reports/compiled/fiches/FicheConseilClasseBean.jasper");
+		}
+		else{
+			view.setUrl("classpath:/reports/compiled/fiches/FicheConseilClasseBean_en.jasper");
+		}
 		view.setApplicationContext(applicationContext);
 		
 		 
@@ -310,6 +329,8 @@ public class BulletinController {
 		return new ModelAndView(view, parameters);
 		
 	}
+	
+	
 	
 	@GetMapping(path="/lancerEditionsBulletinsTrim")
 	public ModelAndView lancerEditionsBulletinsTrim(Model model, HttpServletRequest request,
@@ -325,7 +346,7 @@ public class BulletinController {
 		
 		
 		Classes classeConcerne = usersService.findClasses(idClasseConcerne);
-		session.setAttribute("classeConcerneBulletinsSeq", classeConcerne);
+		session.setAttribute("classeConcerneBulletinsTrim", classeConcerne);
 		
 		Trimestres trimestreConcerne = usersService.findTrimestres(idTrimestreConcerne);
 		session.setAttribute("trimestreConcerneBulletinsSeq", trimestreConcerne);
@@ -345,52 +366,61 @@ public class BulletinController {
 		if(classeConcerne.getSection().getCodeSections().equals(new String("Général")) == true){
 			
 			/*Collection<BulletinSequence1Bean> listofBulletinSeqClasse = 
-					usersService.generateCollectionofBulletinSequence1(classeConcerne.getIdClasses(), sequenceConcerne.getIdPeriodes());
-			*/
-			
-			/*Collection<BulletinTrimestreBean> listofBulletinTrimClasse = 
-					usersService.generateCollectionofBulletinTrimestre_opt(classeConcerne.getIdClasses(), 
-							trimestreConcerne.getIdPeriodes());*/
-			
-			Map<String, Object> donnee = new HashMap<String, Object>();
-			donnee = usersService.generateCollectionofBulletinTrimestre_opt(classeConcerne.getIdClasses(), 
-					trimestreConcerne.getIdPeriodes());
-			
+			usersService.generateCollectionofBulletinSequence1(classeConcerne.getIdClasses(), sequenceConcerne.getIdPeriodes());
+	*/
+	
+	/*Collection<BulletinTrimestreBean> listofBulletinTrimClasse = 
+			usersService.generateCollectionofBulletinTrimestre_opt(classeConcerne.getIdClasses(), 
+					trimestreConcerne.getIdPeriodes());*/
+	
+	Map<String, Object> donnee = new HashMap<String, Object>();
+	donnee = usersService.generateCollectionofBulletinTrimestre_opt(classeConcerne.getIdClasses(), 
+			trimestreConcerne.getIdPeriodes());
+	
 
-			@SuppressWarnings("unchecked")
-			Collection<BulletinTrimestreBean> listofBulletinTrimClasse = (Collection<BulletinTrimestreBean>)
-					donnee.get("collectionofBulletionTrimestre");
+	@SuppressWarnings("unchecked")
+	Collection<BulletinTrimestreBean> listofBulletinTrimClasse = (Collection<BulletinTrimestreBean>)
+			donnee.get("collectionofBulletionTrimestre");
+	
+	FicheConseilClasseBean ficheCT = (FicheConseilClasseBean)
+			donnee.get("ficheconseilclassetrimestriel");
+	
+	List<FicheConseilClasseBean> collectionficheCCT = new ArrayList<FicheConseilClasseBean>();
+	collectionficheCCT.add(ficheCT);
+	
+	session.setAttribute("getrapporttrim", "oui");
+	session.setAttribute("collectionficheCCT", collectionficheCCT);
+	//System.err.println("fin affichage des bean bulletin et le Conseil classe "+collectionficheCCT.size());
+	
+	
+	////System.err.println("fin affichage des bean bulletin "+listofBulletinSeqClasse.size());
+	
+	
+	Map<String, Object> parameters = new HashMap<String, Object>();
+	
+	parameters.put("SUBREPORT_DIR", "src/main/resources/reports/compiled/trimestriels/models1/");
+	
+	parameters.put("IMAGE_FOND", "src/main/resources/static/images/fondlogobekoko.png");
+    parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
+	
+    parameters.put("datasource", listofBulletinTrimClasse);
+	JasperReportsPdfView view = new JasperReportsPdfView();
 			
-			FicheConseilClasseBean ficheCT = (FicheConseilClasseBean)
-					donnee.get("ficheconseilclassetrimestriel");
-			
-			List<FicheConseilClasseBean> collectionficheCCT = new ArrayList<FicheConseilClasseBean>();
-			collectionficheCCT.add(ficheCT);
-			
-			session.setAttribute("getrapporttrim", "oui");
-			session.setAttribute("collectionficheCCT", collectionficheCCT);
-			System.err.println("fin affichage des bean bulletin et le Conseil classe "+collectionficheCCT.size());
-			
-			
-			//System.err.println("fin affichage des bean bulletin "+listofBulletinSeqClasse.size());
-			
-			
-			Map<String, Object> parameters = new HashMap<String, Object>();
-			
-			parameters.put("SUBREPORT_DIR", "src/main/resources/reports/compiled/trimestriels/models1/");
-			
-			parameters.put("IMAGE_FOND", "src/main/resources/static/images/fondlogobekoko.png");
-	        parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
-			
-	        parameters.put("datasource", listofBulletinTrimClasse);
-			JasperReportsPdfView view = new JasperReportsPdfView();
-			view.setUrl("classpath:/reports/compiled/trimestriels/models1/BulletinTrimestre.jasper");
+			if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+				
+				view.setUrl("classpath:/reports/compiled/trimestriels/models1/BulletinTrimestre.jasper");
+				
+			}
+			else{
+				//System.err.println("la on doit sortir les bulletins trimestriels en anglais car c'est une classe anglophone");
+				
+				
+				view.setUrl("classpath:/reports/compiled/trimestriels/models1/BulletinTrimestre_en.jasper");
+				
+			}
 			view.setApplicationContext(applicationContext);
 			
-			 
-			
 			return new ModelAndView(view, parameters);
-			
 		}
 		
 		/********
@@ -402,10 +432,11 @@ public class BulletinController {
 		return null;
 	}
 	
+	
 	public void constructModelgetdonneesEditionsBulletinsAn(Model model,	
 			HttpServletRequest request){
 		
-		//System.err.println("dddddddddddddddddddddddddddddd");
+		////System.err.println("dddddddddddddddddddddddddddddd");
 		String profConnect = request.getUserPrincipal().getName();
 				
 		Utilisateurs usersProf = usersService.findByUsername(profConnect);
@@ -439,7 +470,7 @@ public class BulletinController {
 		 * On doit placer l'année active dans le model
 		 */
 		Annee anneeActive = usersService.findAnneeActive();
-		System.err.println("anneeActive == "+anneeActive.getIntituleAnnee());
+		//System.err.println("anneeActive == "+anneeActive.getIntituleAnnee());
 		
 		if(anneeActive != null) {
 			model.addAttribute("anneeActive", anneeActive);
@@ -468,7 +499,7 @@ public class BulletinController {
 		
 		
 		Classes classeConcerne = usersService.findClasses(idClasseConcerne);
-		session.setAttribute("classeConcerneBulletinsSeq", classeConcerne);
+		session.setAttribute("classeConcerneBulletinsAn", classeConcerne);
 		
 		Annee anneeScolaire = usersService.findAnneeActive();
 		session.setAttribute("anneeScolaireConcerneBulletinsSeq", anneeScolaire);
@@ -503,7 +534,7 @@ public class BulletinController {
 			
 			session.setAttribute("getrapportan", "oui");
 			session.setAttribute("collectionficheCCA", collectionficheCCA);
-			System.err.println("fin affichage des bean bulletin et le Conseil classe "+collectionficheCCA.size());
+			//System.err.println("fin affichage des bean bulletin et le Conseil classe "+collectionficheCCA.size());
 			
 			
 
@@ -516,14 +547,23 @@ public class BulletinController {
 			
 	        parameters.put("datasource", listofBulletinAnClasse);
 			JasperReportsPdfView view = new JasperReportsPdfView();
-			view.setUrl("classpath:/reports/compiled/annuels/models1/BulletinAnnuel.jasper");
+			
+			if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+				
+				view.setUrl("classpath:/reports/compiled/annuels/models1/BulletinAnnuel.jasper");
+				
+			}
+			else{
+				//System.err.println("la langue de la classe c'est l'anglais donc on sort le modele anglophone");
+				
+				view.setUrl("classpath:/reports/compiled/annuels/models1/BulletinAnnuel_en.jasper");
+				
+			}
 			view.setApplicationContext(applicationContext);
 			
 			 
 			
 			return new ModelAndView(view, parameters);
-			
-			
 		}
 
 		
@@ -548,7 +588,13 @@ public class BulletinController {
 		
         parameters.put("datasource", collectionficheCCA);
 		JasperReportsPdfView view = new JasperReportsPdfView();
-		view.setUrl("classpath:/reports/compiled/fiches/FicheConseilClasseBean.jasper");
+		Classes classeConcerne = (Classes)session.getAttribute("classeConcerneBulletinsSeq");
+		if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+			view.setUrl("classpath:/reports/compiled/fiches/FicheConseilClasseBean.jasper");
+		}
+		else{
+			view.setUrl("classpath:/reports/compiled/fiches/FicheConseilClasseBean_en.jasper");
+		}
 		view.setApplicationContext(applicationContext);
 		
 		 
@@ -561,7 +607,7 @@ public class BulletinController {
 			HttpServletRequest request){
 
 		
-		//System.err.println("dddddddddddddddddddddddddddddd");
+		////System.err.println("dddddddddddddddddddddddddddddd");
 		String profConnect = request.getUserPrincipal().getName();
 				
 		Utilisateurs usersProf = usersService.findByUsername(profConnect);
@@ -591,13 +637,13 @@ public class BulletinController {
 		 * On doit placer l'année active dans le model
 		 */
 		Annee anneeActive = usersService.findAnneeActive();
-		System.err.println("anneeActive == "+anneeActive.getIntituleAnnee());
+		//System.err.println("anneeActive == "+anneeActive.getIntituleAnnee());
 		
 		if(anneeActive != null) {
 			model.addAttribute("anneeActive", anneeActive);
 			
 			List<Trimestres> listofTrimestreActive = usersService.findAllActiveTrimestre(anneeActive.getIdPeriodes());
-			System.err.println("liste------ "+listofTrimestreActive.size());
+			//System.err.println("liste------ "+listofTrimestreActive.size());
 			model.addAttribute("listofTrimestreActive", listofTrimestreActive);
 		}
 		
@@ -646,61 +692,71 @@ public class BulletinController {
 		if(classeConcerne.getSection().getCodeSections().equals(new String("Général")) == true){
 			
 			/*Collection<BulletinSequence1Bean> listofBulletinSeqClasse = 
-					usersService.generateCollectionofBulletinSequence1(classeConcerne.getIdClasses(), sequenceConcerne.getIdPeriodes());
-			*/
-			
+			usersService.generateCollectionofBulletinSequence1(classeConcerne.getIdClasses(), sequenceConcerne.getIdPeriodes());
+			 */
+	
 			/*Collection<BulletinTrimestreBean> listofBulletinTrimClasse = 
-					usersService.generateCollectionofBulletinTrimestre_opt(classeConcerne.getIdClasses(), 
-							trimestreConcerne.getIdPeriodes());*/
-			
-			Map<String, Object> donnee = new HashMap<String, Object>();
-			donnee = usersService.generateCollectionofBulletinTrimAnnee(classeConcerne.getIdClasses(), 
-					trimestreConcerne.getIdPeriodes());
-			
+			usersService.generateCollectionofBulletinTrimestre_opt(classeConcerne.getIdClasses(), 
+					trimestreConcerne.getIdPeriodes());*/
+	
+	Map<String, Object> donnee = new HashMap<String, Object>();
+	donnee = usersService.generateCollectionofBulletinTrimAnnee(classeConcerne.getIdClasses(), 
+			trimestreConcerne.getIdPeriodes());
+	
 
-			@SuppressWarnings("unchecked")
-			Collection<BulletinTrimAnnuelBean> listofBulletinTrimAnnuelClasse = (Collection<BulletinTrimAnnuelBean>)
-					donnee.get("collectionofBulletionTrimAnnuel");
+	@SuppressWarnings("unchecked")
+	Collection<BulletinTrimAnnuelBean> listofBulletinTrimAnnuelClasse = (Collection<BulletinTrimAnnuelBean>)
+			donnee.get("collectionofBulletionTrimAnnuel");
 
-			System.err.println("la liste des bulletins contains keys"+donnee.containsKey("collectionofBulletionTrimAnnuel"));
+	//System.err.println("la liste des bulletins contains keys"+donnee.containsKey("collectionofBulletionTrimAnnuel"));
 
-			FicheConseilClasseBean ficheCT = (FicheConseilClasseBean)
-					donnee.get("ficheconseilclassetriman");
-			
-			List<FicheConseilClasseBean> collectionficheCCTrim = new ArrayList<FicheConseilClasseBean>();
-			collectionficheCCTrim.add(ficheCT);
-			
-			session.setAttribute("getrapporttriman", "oui");
-			session.setAttribute("collectionficheCCT", collectionficheCCTrim);
-			System.err.println("fin affichage des bean bulletin et le Conseil classe "+collectionficheCCTrim.size());
-			
-			FicheConseilClasseBean ficheCA = (FicheConseilClasseBean)
-					donnee.get("ficheconseilclasseantrim");
+	FicheConseilClasseBean ficheCT = (FicheConseilClasseBean)
+			donnee.get("ficheconseilclassetriman");
+	
+	List<FicheConseilClasseBean> collectionficheCCTrim = new ArrayList<FicheConseilClasseBean>();
+	collectionficheCCTrim.add(ficheCT);
+	
+	session.setAttribute("getrapporttriman", "oui");
+	session.setAttribute("collectionficheCCT", collectionficheCCTrim);
+	//System.err.println("fin affichage des bean bulletin et le Conseil classe "+collectionficheCCTrim.size());
+	
+	FicheConseilClasseBean ficheCA = (FicheConseilClasseBean)
+			donnee.get("ficheconseilclasseantrim");
 
-			List<FicheConseilClasseBean> collectionficheCCAn = new ArrayList<FicheConseilClasseBean>();
-			collectionficheCCAn.add(ficheCA);
-			
-			session.setAttribute("getrapportantrim", "oui");
-			session.setAttribute("collectionficheCCA", collectionficheCCAn);
-			System.err.println("fin affichage des bean bulletin et le Conseil classe "+collectionficheCCAn.size());
-			
-			
+	List<FicheConseilClasseBean> collectionficheCCAn = new ArrayList<FicheConseilClasseBean>();
+	collectionficheCCAn.add(ficheCA);
+	
+	session.setAttribute("getrapportantrim", "oui");
+	session.setAttribute("collectionficheCCA", collectionficheCCAn);
+	//System.err.println("fin affichage des bean bulletin et le Conseil classe "+collectionficheCCAn.size());
+	
+	
 
-			Map<String, Object> parameters = new HashMap<String, Object>();
+	Map<String, Object> parameters = new HashMap<String, Object>();
+	
+	parameters.put("SUBREPORT_DIR", "src/main/resources/reports/compiled/annuels/models2/");
+	
+	parameters.put("IMAGE_FOND", "src/main/resources/static/images/fondlogobekoko.png");
+    parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
+	
+    parameters.put("datasource", listofBulletinTrimAnnuelClasse);
+	JasperReportsPdfView view = new JasperReportsPdfView();
 			
-			parameters.put("SUBREPORT_DIR", "src/main/resources/reports/compiled/annuels/models2/");
+			if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+				
+				view.setUrl("classpath:/reports/compiled/annuels/models2/BulletinTrimAnnuel.jasper");
+				
+			}
+			else{
+				//System.err.println("On doit sortir les bulletins avec le modele anglophone car c'est une classe anglophone");
+				
+				
+				view.setUrl("classpath:/reports/compiled/annuels/models2/BulletinTrimAnnuel_en.jasper");
+			}
 			
-			parameters.put("IMAGE_FOND", "src/main/resources/static/images/fondlogobekoko.png");
-	        parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
-			
-	        parameters.put("datasource", listofBulletinTrimAnnuelClasse);
-			JasperReportsPdfView view = new JasperReportsPdfView();
-			view.setUrl("classpath:/reports/compiled/annuels/models2/BulletinTrimAnnuel.jasper");
 			view.setApplicationContext(applicationContext);
 			
-			 
-			
-			return new ModelAndView(view, parameters);
+			 return new ModelAndView(view, parameters);
 		
 		}
 		
@@ -725,7 +781,13 @@ public class BulletinController {
 		
         parameters.put("datasource", collectionficheCCA);
 		JasperReportsPdfView view = new JasperReportsPdfView();
-		view.setUrl("classpath:/reports/compiled/fiches/FicheConseilClasseBean.jasper");
+		Classes classeConcerne = (Classes)session.getAttribute("classeConcerneBulletinsSeq");
+		if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+			view.setUrl("classpath:/reports/compiled/fiches/FicheConseilClasseBean.jasper");
+		}
+		else{
+			view.setUrl("classpath:/reports/compiled/fiches/FicheConseilClasseBean_en.jasper");
+		}
 		view.setApplicationContext(applicationContext);
 		
 		 

@@ -6,12 +6,12 @@
 	layout:decorator="users/userslayout">
 <head>
 <meta charset="UTF-8" />
-<title>Paramètres de saisie des notes</title>
+<title th:inline="text">[[#{donneeNoteV1.titre_page}]]</title>
 </head>
 <body>
 
 <span layout:fragment="titre_boite">
-       <kbd>Paramètres de saisie des notes</kbd>  
+       <kbd th:inline="text">[[#{donneeNoteV1.titre_boite}]]</kbd>  
 </span>
 
 	<div layout:fragment="formactionusers">
@@ -22,13 +22,13 @@
 						class="form-inline">
 						<div th:if="${listofNiveaux !=null and anneeActive != null}" >
 							<div class="form-group">
-								<label for="idClassesConcerne"> Classes: <span
+								<label for="idClassesConcerne" th:inline="text">[[#{donneeNoteV1.label_classe}]] : <span
 									class="redcolor">*</span></label>
 								<select class="form-control" name="idClassesConcerne"
 									id="idClassesConcerne" >
 
-									<optgroup th:label="${n.codeNiveaux}" th:if="${listofNiveaux}"
-										th:each="n:${listofNiveaux}">
+									<optgroup th:label="${session.lang=='fr'}?${n.codeNiveaux}+'/'+${n.codeNiveaux_en}:${n.codeNiveaux_en}+'/'+${n.codeNiveaux}"
+									 th:if="${listofNiveaux}"  th:each="n:${listofNiveaux}">
 
 										<option th:each="c:${n.listofClasses}"
 											th:if="${c.estEnseignantDeClasse(profConnecte.idUsers)==1 and c.geteffectifEleve()>0}"
@@ -44,14 +44,14 @@
 							</div>
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<div class="form-group">
-								<label th:inline="text"> Année Scolaire: <span
+								<label th:inline="text">[[#{donneeNoteV1.label_anneeScolaire}]] : <span
 									class="redcolor">[[${anneeActive.intituleAnnee}]]</span></label>
 								<input type="hidden" name="idAnneeActive" id="idAnneeActive" 
 									class="form-control" th:value="${anneeActive.idPeriodes}" />
 							</div>
 							
-							<button type="submit" class="btn btn-primary  pull-right">
-								<span class="glyphicon glyphicon-send"></span> Envoyer
+							<button type="submit" class="btn btn-primary  pull-right" th:inline="text">
+								<span class="glyphicon glyphicon-send"></span> [[#{donneeNoteV1.bouton_envoyer}]]
 							</button>
 						</div>
 						
@@ -60,24 +60,21 @@
 					<!-- ici on va afficher le form qui permettra de choisir la séquence et le cours pour lequel on veut saisir les notes -->
 					
 					<div th:if="${(listofTrimestresAnnee == null or listofCoursClasse == null) and affichechoixmatiereetseq == 'oui'}">
-						<h4 align="justify" class="alert alert-danger">Aucune séquence n'est encore active ou 
-						alors aucun cours n'est encore assigné à cette classe vous concernant: Contacter 
-						l'administrateur si l'inquiétude persiste. </h4>
+						<h4 align="justify" class="alert alert-danger" th:inline="text">[[#{donneeNoteV1.msgerreur1}]] .</h4>
 					</div>
 					
 					<div th:if="${(listofTrimestresAnnee == null or listofCoursClasse == null) and affichechoixmatiereetseq == 'non'}">
-						<h4 align="justify" class="alert alert-info">Choisir la séquence et la classe puis envoyer vos choix en 
-						cliquant sur envoyer. Les matières pour cette classe seront affichés</h4>
+						<h4 align="justify" class="alert alert-info" th:inline="text">[[#{donneeNoteV1.msgerreur2}]] .</h4>
 					</div>
 					
 					<form action="#" class="form-inline"
 						th:action="@{/logesco/users/getformSaisieNotesV1}" method="get" th:if="${listofTrimestresAnnee != null and listofCoursClasse != null}">
 						
 						<div>
-							<h4>Classe Concernée: 
-								<span  th:if="${classeConcerne}"  th:inline="text">
+							<h4 th:inline="text">[[#{donneeNoteV1.label_classeconcerne}]] : 
+								<span  th:if="${classeConcerne}"  th:inline="text"><kbd>
 									[[${classeConcerne.codeClasses}]] [[${classeConcerne.specialite.codeSpecialite}]] 
-									[[${classeConcerne.numeroClasses}]]
+									[[${classeConcerne.numeroClasses}]]</kbd>
 								</span>
 							</h4>
 						</div>
@@ -86,7 +83,7 @@
 							<tbody>
 								<tr th:each="t:${listofTrimestresAnnee}">
 									<td>
-										<kbd><span  th:inline="text">Trimestre <span
+										<kbd><span  th:inline="text">[[#{donneeNoteV1.label_trimestre}]] <span
 										class="redcolor">N°<b>[[${t.numeroTrim}]]</b></span>&nbsp; &nbsp;&nbsp;
 										
 											<!-- Séquence <span class="redcolor">N°</span>
@@ -102,14 +99,14 @@
 											<tbody>
 												<tr th:each="s:${t.listofsequence}" th:if="${s.etatPeriodes == true}">
 													<td>
-														<kbd> Séquence  <span  th:inline="text" >N°[[${s.numeroSeq}]]</span></kbd>
+														<kbd th:inline="text"> [[#{donneeNoteV1.label_sequence}]]  <span  th:inline="text" >N°[[${s.numeroSeq}]]</span></kbd>
 														
 														<table class="table table-bordered" th:if="${listofCoursClasse}">
 															<thead class="thead-light">
 																<tr>
-																	<th class="text-center" scope="col">MATIERE</th>
-																	<th class="text-center" scope="col">INTITULE COURS</th>
-																	<th class="text-center" scope="col">COEF</th>
+																	<th class="text-center" scope="col" th:inline="text">[[#{donneeNoteV1.th_matiere}]]</th>
+																	<th class="text-center" scope="col" th:inline="text">[[#{donneeNoteV1.th_intitulecours}]]</th>
+																	<th class="text-center" scope="col" >COEF</th>
 																    <th class="text-center" scope="col">ACTION</th>
 																</tr>
 															</thead>
@@ -138,8 +135,8 @@
 																					idSequenceConcerne=${s.idPeriodes}, 
 																					idClassesConcerne=${coursClasse.classe.idClasses}, 
 																					typeEval='CC',
-																					idCoursConcerne=${coursClasse.idCours})}" role="button">
-																					<span class="glyphicon glyphicon-pencil"></span> Saisir les notes D1
+																					idCoursConcerne=${coursClasse.idCours})}" role="button" th:inline="text">
+																					<span class="glyphicon glyphicon-pencil"></span> [[#{donneeNoteV1.bouton_saisirnoteD1}]]
 																				</a>
 																			</span> 
 																			
@@ -149,8 +146,8 @@
 																					idSequenceConcerne=${s.idPeriodes}, 
 																					idClassesConcerne=${coursClasse.classe.idClasses}, 
 																					typeEval='DS',
-																					idCoursConcerne=${coursClasse.idCours})}" role="button">
-																					<span class="glyphicon glyphicon-pencil"></span> Saisir les notes D2
+																					idCoursConcerne=${coursClasse.idCours})}" role="button" th:inline="text">
+																					<span class="glyphicon glyphicon-pencil"></span> [[#{donneeNoteV1.bouton_saisirnoteD2}]]
 																				</a>
 																			</span>
 																		</div>

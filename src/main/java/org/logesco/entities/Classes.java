@@ -101,7 +101,10 @@ public class Classes implements Serializable{
 	 ************************************************************************/
 	@ManyToOne
 	Proffesseurs proffesseur;
-
+	
+	
+	
+	
 	/**
 	 * 
 	 */

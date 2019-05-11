@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MatiereGroupe2Trimestre" pageWidth="547" pageHeight="842" columnWidth="547" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6edfd05c-5764-4729-9f69-a270f2aeaa4d">
 	<property name="ireport.zoom" value="1.3310000000000006"/>
 	<property name="ireport.x" value="0"/>
@@ -24,7 +25,7 @@
 	<detail>
 		<band height="12" splitType="Stretch">
 			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="146" y="0" width="32" height="12" uuid="2b4284aa-371f-4698-ab31-d6b1c43a5daa"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="156" y="0" width="34" height="12" uuid="2b4284aa-371f-4698-ab31-d6b1c43a5daa"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
 					<topPen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -38,7 +39,7 @@
 				<textFieldExpression><![CDATA[$F{note_trim_g2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="96" y="0" width="25" height="12" uuid="d383929c-09c6-4ab2-9645-ffd4234f4e2c"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="96" y="0" width="30" height="12" uuid="d383929c-09c6-4ab2-9645-ffd4234f4e2c"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
 					<topPen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -52,7 +53,7 @@
 				<textFieldExpression><![CDATA[$F{note_1_g2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="203" y="0" width="54" height="12" forecolor="#FFFFFF" backcolor="#9ABEE4" uuid="8df01b51-d68d-4030-942c-3de6b54574c8"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="215" y="0" width="54" height="12" forecolor="#FFFFFF" backcolor="#9ABEE4" uuid="8df01b51-d68d-4030-942c-3de6b54574c8"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
 					<topPen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -66,7 +67,7 @@
 				<textFieldExpression><![CDATA[$F{total_trim_g2}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="311" y="0" width="25" height="12" uuid="093a283b-7c04-4ce6-9312-4f676c9ff7f8"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="319" y="0" width="25" height="12" uuid="093a283b-7c04-4ce6-9312-4f676c9ff7f8"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
 					<topPen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -80,7 +81,7 @@
 				<textFieldExpression><![CDATA[$F{rang_g2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="257" y="0" width="54" height="12" uuid="67ac2fc4-1d27-4b49-97d8-54da1cb7ea45"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="269" y="0" width="50" height="12" uuid="67ac2fc4-1d27-4b49-97d8-54da1cb7ea45"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
 					<topPen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -105,10 +106,10 @@
 				<textElement>
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{matiere_g2}+'\n'+$F{prof_g2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{matiere_g2}.toUpperCase()+'\n'+$F{prof_g2}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="336" y="0" width="40" height="12" uuid="1600a3e1-c77a-4392-b78c-f5007aef1bd8"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="344" y="0" width="40" height="12" uuid="1600a3e1-c77a-4392-b78c-f5007aef1bd8"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
 					<topPen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -122,7 +123,7 @@
 				<textFieldExpression><![CDATA[$F{moy_classe_g2}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="419" y="0" width="128" height="12" uuid="56c89915-7659-4edd-9070-e6ed1519b17e"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="427" y="0" width="120" height="12" uuid="56c89915-7659-4edd-9070-e6ed1519b17e"/>
 				<box topPadding="1" leftPadding="4" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
 					<topPen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -136,7 +137,7 @@
 				<textFieldExpression><![CDATA[$F{appreciation_g2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.0;-###0.0" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="178" y="0" width="25" height="12" uuid="8c66bc39-c681-48bb-a6bc-5baa3eba716c"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="190" y="0" width="25" height="12" uuid="8c66bc39-c681-48bb-a6bc-5baa3eba716c"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
 					<topPen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -150,7 +151,7 @@
 				<textFieldExpression><![CDATA[$F{coef_g2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="121" y="0" width="25" height="12" uuid="341c71c7-26e3-48a3-b75b-c206a7119698"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="126" y="0" width="30" height="12" uuid="341c71c7-26e3-48a3-b75b-c206a7119698"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
 					<topPen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -164,7 +165,7 @@
 				<textFieldExpression><![CDATA[$F{note_2_g2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="376" y="0" width="43" height="12" uuid="2ac1b443-968c-443d-b42f-47c978efd435"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="384" y="0" width="43" height="12" uuid="2ac1b443-968c-443d-b42f-47c978efd435"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
 					<topPen lineWidth="0.25" lineColor="#2E6DAD"/>

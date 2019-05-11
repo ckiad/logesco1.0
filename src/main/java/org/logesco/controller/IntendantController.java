@@ -3,30 +3,37 @@
  */
 package org.logesco.controller;
 
+import java.io.File;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 
+import org.logesco.entities.Annee;
 import org.logesco.entities.Classes;
 import org.logesco.entities.Eleves;
 import org.logesco.entities.Etablissement;
 import org.logesco.entities.Niveaux;
-import org.logesco.form.UpdateMtScoClassesForm;
+import org.logesco.modeles.Recu_versement;
 import org.logesco.services.IUsersService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.jasperreports.JasperReportsPdfView;
 
 /**
  * @author cedrickiadjeu
@@ -35,13 +42,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping(path="/logesco/users/intendant")
 public class IntendantController {
+	@Value("${dir.emblemes.logo}")
+	private String logoetabDir;
+	
+	@Autowired
+	private ApplicationContext applicationContext;
+	
 	@Autowired
 	private IUsersService usersService;
+	
 	
 ////////////////////////////////////DEBUT DES REQUETES DE TYPE GET ////////////////////////////////////////////
 	public void constructModelInscriptionEleves(Model model, HttpServletRequest request, int numPageEleves,
 			 long idClasseSelect){
 		
+		HttpSession session=request.getSession();
 		/*
 		 * Il faut faire la liste des classes et placer dans le model puisqu'on 
 		 * va s'en servir pour les etiquetes des classes et cette liste se fait lorsque la page se charge
@@ -65,13 +80,14 @@ public class IntendantController {
 			 * utilisé pour savoir dans quel classe on se trouvait 
 			 */
 			model.addAttribute("idClasseSelect", idClasseSelect);
+			
 			/*
 			 * On va rechercher la classe selectionné car on doit la placer aussi dans le model
 			 */
 			Classes classeSelect = usersService.findClasses(idClasseSelect);
 			model.addAttribute("classeSelect", classeSelect);
 			
-			System.err.println("Voici la classe choisi "+classeSelect);
+			//System.err.println("Voici la classe choisi "+classeSelect);
 			
 			/*
 			 * Il faut vérifier si le montant de la scolarité pour les élèves de la classe selectionnée
@@ -79,24 +95,26 @@ public class IntendantController {
 			 * Il est configuré lorsqu'il est strictement supérieur à 0
 			 */
 			if(classeSelect != null){
-				System.err.println("Voici la classe choisi "+classeSelect.getMontantScolarite());
+				//System.err.println("Voici la classe choisi "+classeSelect.getMontantScolarite());
 				if(classeSelect.getMontantScolarite() > 0){
+					
+				
 				/*
 				 * Il faut maintenant la liste des élèves de cette classe
 				 */
 				int effectifprovClasse=usersService.getEffectifProvisoireClasse(idClasseSelect);
 				model.addAttribute("effectifprovClasse", effectifprovClasse);
 				
-				
-				
 				//On garde le numpageeleve dans la session puisqu'apres modification il va falloir revenir sur la page qui etait affiche
-				HttpSession session=request.getSession();
 				session.setAttribute("numPageEleves", numPageEleves);
 				
 				Page<Eleves> pageofEleves=usersService.findPageElevesClasse(idClasseAEnvoyer,	
 						numPageEleves, 10);
 				
-				System.err.println("liste des élèves dans la liste "+pageofEleves.getContent().size());
+				List<Eleves> listofAllEleves = usersService.findListElevesClasse(idClasseAEnvoyer);
+				model.addAttribute("listofAllEleves", listofAllEleves);
+				
+				//System.err.println("liste des élèves dans la liste "+pageofEleves.getContent().size());
 				
 				if(pageofEleves != null){
 					if(pageofEleves.getContent().size()!=0){
@@ -106,10 +124,10 @@ public class IntendantController {
 						model.addAttribute("listofPagesEleves", listofPagesEleves);
 							
 						model.addAttribute("pageCouranteEleves", numPageEleves);
-						System.err.println("la liste des élève contient "+pageofEleves.getContent().size());
+						//System.err.println("la liste des élève contient "+pageofEleves.getContent().size());
 					}
 					else{
-						System.err.println("cette classe ne contient encore aucun élève");
+						//System.err.println("cette classe ne contient encore aucun élève");
 						model.addAttribute("erreurClasseVide", "erreurClasseVide");
 					}
 			    }
@@ -137,149 +155,156 @@ public class IntendantController {
 	@GetMapping(path="/versementSco")
 	public String versementSco(Model model, HttpServletRequest request,	
 			@RequestParam(name="numPageEleves", defaultValue="0") int numPageEleves,
-			@RequestParam(name="montantScolarite", defaultValue="0") double montantScolarite,
 			@RequestParam(name="montantAVerse", defaultValue="0") double montantAVerse,
 			@RequestParam(name="idEleveAModif", defaultValue="0") long idEleveAModif,
 			@RequestParam(name="idClasseSelect", defaultValue="-1") long idClasseSelect) throws ParseException{
 		
+		HttpSession session=request.getSession();
 		/*
 		 * Il faut rechercher l'élève dont on va modifier l'état d'inscription au cas où le montant 
-		 * deja versé de sa scolarité atteint au moins le montant de la scolarité. 
+		 * deja versé de sa scolarité atteint  le montant de la scolarité. 
 		 */
-		System.err.println("Appel à la fonction d'enregistrement de versement ");
+		//System.err.println("Appel à la fonction d'enregistrement de versement ");
 		
-		int repServeur = usersService.enregVersementSco(idEleveAModif, montantAVerse, montantScolarite);
+		int repServeur = usersService.enregVersementSco(idEleveAModif, montantAVerse);
 		
+		/*
+		 * System.err.println("Le montant versé est enregistré et il faut à présent sortir 
+		 * un reçu qui approuve ce versement. Ce reçu ne sort que si l'enregistrement s'est bien passé c'est 
+		 * pourquoi dans le code on va d'abord interprété les cas ou l'opération s'est mal passé avant d'appeler
+		 * la fonction qui impremera le reçu de versement donc apres repServeur == -1 et repServeur == -2");
+		 */
 		
-		System.err.println("idEleveAModif=="+idEleveAModif+"  montantAVerse=="+montantAVerse
-				+"  montantScolarite=="+montantScolarite+" repServeur=="+repServeur);
+		/*//System.err.println("idEleveAModif=="+idEleveAModif+"  montantAVerse=="+montantAVerse
+				+"  montantScolarite=="+montantScolarite+" repServeur=="+repServeur);*/
 		
 		if(repServeur == -1) return "redirect:/logesco/users/intendant/getinscriptionEleves?updateetatInsceleveserror"
-				+ "&&montantScolarite="+montantScolarite
 				+ "&&idClasseSelect="+idClasseSelect
 				+ "&&numPageEleves="+numPageEleves;
 		
 		if(repServeur == -2) return "redirect:/logesco/users/intendant/getinscriptionEleves?updateetatInsceleveserrorMt"
-				+ "&&montantScolarite="+montantScolarite
 				+ "&&idClasseSelect="+idClasseSelect
 				+ "&&numPageEleves="+numPageEleves;
 		
+		/*
+		 * System.err.println("Comme indiqué plus haut, on va donc maintenant appeler la fonction qui 
+		 * va imprimé le reçu de versement car ici on est sur que le versement s'est bien effectué");
+		 */
+		
+		/*
+		 * on place en session l'operation qui vient d'etre realiser et l'eleve concerne par cette operation
+		 * On placera aussi dans la session une indication d'une opération pas encore imprime
+		 * Ainsi, au rechargement de la page, le bouton d'impression va apparaitre pour que cette 
+		 * dernière opération puisse être imprimé. Si il effectue plus d'une opération sans impression, 
+		 * c'est toujours la toute derniere operation qui sera imprimé. mais il peut retrouver une opération
+		 * effectué sur un élève quelconque du moment ou il connait son nom et sa classe. 
+		 * On va donc appeler la fonction qui retourne la dernière opération sur un compteInscription donne
+		 */
+		session.setAttribute("idEleveConcerne", idEleveAModif);
+		
+		Long idOperation_a_imprimer  = usersService.getLastOperationOnCompte(idEleveAModif);
+		System.out.println("Operation recherche");
+		if(idOperation_a_imprimer!=null) {
+			session.setAttribute("idOperation_a_imprimer", idOperation_a_imprimer);
+			session.setAttribute("operation_presente", "1");
+			System.out.println("Operation trouver et placer en session");
+		}
 		return "redirect:/logesco/users/intendant/getinscriptionEleves?updateetatInscelevessuccess"
-				+ "&&montantScolarite="+montantScolarite
 				+ "&&idClasseSelect="+idClasseSelect
 				+ "&&numPageEleves="+numPageEleves;
 		
+		/*return "redirect:/logesco/users/intendant/lancerEditionsRecuVersement?"
+				+ "&&montantScolarite="+montantScolarite
+				+"&&montantAVerse="+montantAVerse
+				+"&&idEleveAModif="+idEleveAModif;*/
+		
 	}
 	
-	public void constructModelConfigMtScoClasse(UpdateMtScoClassesForm updateMtScoClassesForm,	Model model, 
-			HttpServletRequest request, int numPageClasses){
+	/*
+	 * On va ici construire le recu de versement en pdf qui sera imprimé avec une imprimante matricielle
+	 * pour eviter un gaspillage de papier car ce recu ne tient pas sur un format entier
+	 */
+	@GetMapping(path="/lancerEditionsRecuVersement")
+	public ModelAndView lancerEditionsRecuVersement(Model model, HttpServletRequest request,
+			@RequestParam(name="idEleveConcerne", defaultValue="0") long idEleveConcerne,
+			@RequestParam(name="idOperation_a_imprimer", defaultValue="0") long idOperation_a_imprimer){
 		
-		List<Classes> listofClasses=usersService.findListClasse();
+		Etablissement etablissementConcerne = usersService.getEtablissement();
+		Annee anneeScolaire = usersService.findAnneeActive();
+		if(etablissementConcerne == null ||  anneeScolaire == null ){
+			return null;
+		}
+		Map<String, Object> parameters = new HashMap<String, Object>();
 		
-		model.addAttribute("listofClasses", listofClasses);
-		
-		/*
-		 * Ces deux valeurs doivent être modifie après le clic sur le bouton modifier pour les valeurs soient bien mise
-		 * dans l'interface et non les valeurs vides comme indiqué par défaut ici. 
-		 */
-		model.addAttribute("labelClasseAConfig", "");
-		model.addAttribute("idClasseAConfig", "0");
-		
-		updateMtScoClassesForm.setIdclasseAConfig(0);
-		updateMtScoClassesForm.setLabelclasseAConfig("");
-		updateMtScoClassesForm.setNumPageClasses(numPageClasses);
-		updateMtScoClassesForm.setMontantScolarite(0);
-		
-		Page<Classes> pageofClasses=
-				usersService.findPageClasse(numPageClasses, 5);
-		
-		if(pageofClasses.getContent().size()!=0){
-			model.addAttribute("listpageofClasses", pageofClasses.getContent());
-			int[] listofPagesClasses=new int[pageofClasses.getTotalPages()];
-			
-			model.addAttribute("listofPagesClasses", listofPagesClasses);
-			
-			model.addAttribute("pageCourante", numPageClasses);
-			System.err.println("numPageClasses  "+numPageClasses);
+		parameters.put("delegation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
+		parameters.put("delegation_en", etablissementConcerne.getDeleguationdeptuteleanglaisEtab().toUpperCase());
+		parameters.put("etablissement_fr", etablissementConcerne.getNomsEtab().toUpperCase());
+		parameters.put("etablissement_en", etablissementConcerne.getNomsanglaisEtab().toUpperCase());
+		String adresse = "BP "+etablissementConcerne.getBpEtab()+
+				"  TEL: "+etablissementConcerne.getNumtel1Etab();
+		parameters.put("adresse", adresse);
+		parameters.put("annee_scolaire_fr", "Année Académique "+anneeScolaire.getIntituleAnnee());
+		parameters.put("annee_scolaire_en", "Academic year "+anneeScolaire.getIntituleAnnee());
+		parameters.put("ministere_fr", etablissementConcerne.getMinisteretuteleEtab());
+		parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
+		parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
+		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
+
+		File f=new File(logoetabDir+etablissementConcerne.getLogoEtab());
+
+		if(f.exists()==true){
+			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
+		}
+		else{
+			parameters.put("logo", "src/main/resources/static/images/logobekoko.png");
 		}
 		
-	}
-	
-	@GetMapping(path="/getconfigClasses")
-	public String getconfigClasses(UpdateMtScoClassesForm updateMtScoClassesForm,	Model model, HttpServletRequest request,
-			@RequestParam(name="numPageClasses", defaultValue="0") int numPageClasses) throws ParseException{
-		/*
-		 * Il faut la liste des classes dans le modèle pour qu'on puisse pour chaque classe définir le montant de la scolarité voulu
-		 */
-		this.constructModelConfigMtScoClasse(updateMtScoClassesForm,	model, request, numPageClasses);
-		return "users/configMtScoClasse";
-	}
-	
-	public void constructModelModifMtScoClasse(UpdateMtScoClassesForm updateMtScoClassesForm, Model model, 
-			HttpServletRequest request, long idClassesAConfig, int numPageClasses){
+		Date dateJour = new Date();
+		SimpleDateFormat spd = new SimpleDateFormat("yyyy-MM-dd");//"dd-MM-yyyy"
+		String dateString = spd.format(dateJour);
+		parameters.put("date_jour", dateString);
 		
-		/*
-		 * On va rechercher la classe selectionné car on doit l'utiliser pour initialiser la page
-		 */
-		Classes classeAConfig = usersService.findClasses(idClassesAConfig);
+		String numero_recu=usersService.getIdentifiantOperation(idOperation_a_imprimer);
+		parameters.put("numero_recu", numero_recu);
 		
+		double montantTransaction = usersService.getMontantOperation(idOperation_a_imprimer);
+		parameters.put("montant", montantTransaction+" F cfa");
 		
-		/*
-		 * On doit donc modifier dans le modèle les valeurs idClasseAConfig et labelClasseAConfig afin que le formulaire recoivent
-		 * les valeurs de la classe qu'on souhaite configurer le montant de la scolarité
-		 */
-		String labelClasseAConfig = classeAConfig.getCodeClasses()+" "+classeAConfig.getSpecialite().getCodeSpecialite()+" "
-				+ classeAConfig.getNumeroClasses();
-		Long idClasseAConfig = classeAConfig.getIdClasses();
-		
-		model.addAttribute("labelClasseAConfig", labelClasseAConfig);
-		model.addAttribute("idClasseAConfig", idClasseAConfig);
-		
-		updateMtScoClassesForm.setIdclasseAConfig(idClasseAConfig.longValue());
-		updateMtScoClassesForm.setLabelclasseAConfig(labelClasseAConfig);
-		updateMtScoClassesForm.setNumPageClasses(numPageClasses);
-		updateMtScoClassesForm.setMontantScolarite(classeAConfig.getMontantScolarite());
-		
-		Page<Classes> pageofClasses=
-				usersService.findPageClasse(numPageClasses, 5);
-		
-		if(pageofClasses.getContent().size()!=0){
-			model.addAttribute("listpageofClasses", pageofClasses.getContent());
-			int[] listofPagesClasses=new int[pageofClasses.getTotalPages()];
-			
-			model.addAttribute("listofPagesClasses", listofPagesClasses);
-			
-			model.addAttribute("pageCourante", numPageClasses);
-			System.err.println("numPageClasses  "+numPageClasses);
+		Eleves eleveConcerne = usersService.findEleves(idEleveConcerne);
+		if(eleveConcerne==null){
+			return null;
 		}
+		String classeString=eleveConcerne.getClasse().getCodeClasses()+
+				eleveConcerne.getClasse().getSpecialite().getCodeSpecialite()+
+				eleveConcerne.getClasse().getNumeroClasses();
 		
+		String recu_de=(eleveConcerne.getNomsEleves()+" "+eleveConcerne.getPrenomsEleves()).toUpperCase();
+		recu_de+=" pour la classe de ";
+		recu_de+=classeString;
+		parameters.put("recu_de", recu_de);
+		
+		String nature_versement="Frais de scolarité / School fees ";
+		parameters.put("nature_versement", nature_versement);
+		
+		long montant_long = Math.round(montantTransaction);
+		String montant_en_lettre_fr = usersService.ecritEnLettreNombrePlusDeDouze9(montant_long, true);
+		parameters.put("montant_verse_lettre_fr", montant_en_lettre_fr+" Francs cfa");
+		
+		String montant_en_lettre_en = usersService.writeInLetterNumberOverTwelve9(montant_long);
+		parameters.put("montant_verse_lettre_en", montant_en_lettre_en+" Francs cfa");
+		
+		Collection<Recu_versement> collectionofEleveprovClasse = new ArrayList<Recu_versement>();
+		Recu_versement rv=new Recu_versement();
+		collectionofEleveprovClasse.add(rv);
+		parameters.put("datasource", collectionofEleveprovClasse);
+		JasperReportsPdfView view = new JasperReportsPdfView();
+		view.setUrl("classpath:/reports/compiled/recus/recu.jasper");
+		view.setApplicationContext(applicationContext);
+		
+		return new ModelAndView(view, parameters);
 	}
 	
-	@GetMapping(path="/getmodifMtScoClasses")
-	public String getmodifMtScoClasses(@ModelAttribute("updateMtScoClassesForm") 
-			UpdateMtScoClassesForm updateMtScoClassesForm,	Model model, HttpServletRequest request,
-			@RequestParam(name="idClassesAConfig", defaultValue="0") long idClassesAConfig,
-			@RequestParam(name="numPageClasses", defaultValue="0") int numPageClasses) throws ParseException{
-		/*
-		 * Il faut la liste des classes dans le modèle pour qu'on puisse pour chaque classe définir le montant de la scolarité voulu
-		 */
-		this.constructModelModifMtScoClasse(updateMtScoClassesForm, model, request, idClassesAConfig, numPageClasses);
-		
-		return "users/configMtScoClasse";
-	}
 	
-	/*@GetMapping(path="/getenregMtClasses")
-	public String getenregMtClasses(Model model, HttpServletRequest request,
-			@RequestParam(name="idClassesAConfig", defaultValue="0") long idClassesAConfig,
-			@RequestParam(name="montantScolarite", defaultValue="0") double montantScolarite,
-			@RequestParam(name="numPageClasses", defaultValue="0") int numPageClasses) throws ParseException{
-		
-		System.err.println("il faut configurer la classe d'id "+idClassesAConfig+" en fixant le montant sco a "+montantScolarite);
-		
-		return "redirect:/logesco/users/intendant/getmodifMtScoClasses?updateclassesuccess"
-				+ "&&idClassesAConfig="+idClassesAConfig
-				+ "&&numPageClasses="+numPageClasses;
-	}*/
 	
 	
 	@GetMapping(path="/getrapportVersement")
@@ -307,41 +332,7 @@ public class IntendantController {
 ////////////////////////////////////FIN DES REQUETES DE TYPE GET ////////////////////////////////////////////	
 
 ////////////////////////////////////DEBUT DES REQUETES DE TYPE POST ////////////////////////////////////////////
-	@PostMapping(path="/postenregMtClasses")
-	public String postenregMtClasses( @Valid @ModelAttribute("updateMtScoClassesForm") 
-		UpdateMtScoClassesForm updateMtScoClassesForm,	BindingResult bindingResult,	Model model, 
-		HttpServletRequest request, HttpServletResponse response) 
-				throws ParseException, Exception{
-		
-		System.err.println("classe == "+updateMtScoClassesForm.getIdclasseAConfig()+
-				"  Montant == "+updateMtScoClassesForm.getMontantScolarite());
-		
-		if (bindingResult.hasErrors()) {
-			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE  "+bindingResult);
-			return "redirect:/logesco/users/intendant/getmodifMtScoClasses?updatemtclasseerror"
-				+ "&&idClassesAConfig="+updateMtScoClassesForm.getIdclasseAConfig()
-				+ "&&numPageClasses="+updateMtScoClassesForm.getNumPageClasses();
-		}
-		
-		/*
-		 * On va appeler la methode du service metier pour fixer les montants 
-		 */
-		
-		int ret = usersService.setMontantScoClasse(updateMtScoClassesForm.getIdclasseAConfig(), 
-				updateMtScoClassesForm.getMontantScolarite());
-		
-		System.err.println("classe == "+updateMtScoClassesForm.getIdclasseAConfig()+
-				"  Montant == "+updateMtScoClassesForm.getMontantScolarite()+" ret == "+ret);
-		
-		if(ret == 0) return "redirect:/logesco/users/intendant/getmodifMtScoClasses?updatemtclasseerrorclasse"
-				+ "&&idClassesAConfig="+updateMtScoClassesForm.getIdclasseAConfig()
-				+ "&&numPageClasses="+updateMtScoClassesForm.getNumPageClasses();
-		
-		
-		return "redirect:/logesco/users/intendant/getmodifMtScoClasses?updatemtclassesuccess"
-				+ "&&idClassesAConfig="+updateMtScoClassesForm.getIdclasseAConfig()
-				+ "&&numPageClasses="+updateMtScoClassesForm.getNumPageClasses();
-	}
+	
 ////////////////////////////////////FIN DES REQUETES DE TYPE POST ////////////////////////////////////////////		
 	
 }

@@ -71,7 +71,7 @@ public class CenseurController {
 				model.addAttribute("listofPagesMatieres", listofPagesMatieres);
 				
 				model.addAttribute("pageCouranteMatiere", numPageMatiere);
-				System.err.println("numPageMatiere  "+numPageMatiere);
+				//System.err.println("numPageMatiere  "+numPageMatiere);
 				session.setAttribute("numPageMatiere", numPageMatiere);
 			}
 		}
@@ -127,7 +127,7 @@ public class CenseurController {
 		 */
 		Classes classeSelect = usersService.findClasses(idClasseAssocie);
 		if(classeSelect != null) {
-			System.err.println("idclasseSelect *** "+classeSelect.getCodeClasses());
+			//System.err.println("idclasseSelect *** "+classeSelect.getCodeClasses());
 			
 			updateCoursForm.setIdClasseSelect(classeSelect.getIdClasses());
 			model.addAttribute("classeSelect", classeSelect);
@@ -145,19 +145,19 @@ public class CenseurController {
 				model.addAttribute("listofPagesCours", listofPagesCours);
 				
 				model.addAttribute("pageCouranteCours", numPageCours);
-				System.err.println("numPageCours  "+numPageCours);
+				//System.err.println("numPageCours  "+numPageCours);
 				session.setAttribute("numPageCours", numPageCours);
 			}
 		}
 		
 		
-		System.err.println("liste cours page par page charge ");
+		//System.err.println("liste cours page par page charge ");
 		/*
 		 * On charge la liste des matieres dans le model pour le formulaire
 		 */
 		List<Matieres> listofMatiere = usersService.findAllMatieres();
 		model.addAttribute("listofMatiere", listofMatiere);
-		System.err.println("liste matiere charge  === ");
+		//System.err.println("liste matiere charge  === ");
 		
 		
 		/*
@@ -165,13 +165,13 @@ public class CenseurController {
 		 */
 		List<Niveaux> listofNiveaux = usersService.findAllNiveaux();
 		model.addAttribute("listofNiveaux", listofNiveaux);
-		System.err.println("liste niveau chargé  === ");
+		//System.err.println("liste niveau chargé  === ");
 		/*
 		 * On charge la liste des classes dans le model pour le formulaire
 		 */
 		List<Classes> listofClasses = usersService.findAllClasse();
 		model.addAttribute("listofClasses", listofClasses);
-		System.err.println("liste classe charge === ");
+		//System.err.println("liste classe charge === ");
 		/*
 		 * On charge la liste des Proffesseurs dans le model pour le formulaire
 		 */
@@ -208,7 +208,7 @@ public class CenseurController {
 		List<Enseignants> listofenseignants = usersService.findAllEnseignants();
 		if(listofenseignants.size()	!=	0)	model.addAttribute("listofenseignants", listofenseignants);
 		
-		System.err.println("liste users chargé  === ");
+		//System.err.println("liste users chargé  === ");
 		
 		/*
 		 * On doit rechercher la cours dont le id est passe en paramètre au cas où ca existe
@@ -216,7 +216,7 @@ public class CenseurController {
 		
 		Cours coursConcerne = usersService.findCours(idCours);
 		if(coursConcerne!=null){
-			System.err.println(" coursConcerne  === trouve");
+			//System.err.println(" coursConcerne  === trouve");
 			updateCoursForm.setCodeCours(coursConcerne.getCodeCours());
 			updateCoursForm.setIntituleCours(coursConcerne.getIntituleCours());
 			updateCoursForm.setCoefCours(coursConcerne.getCoefCours());
@@ -229,7 +229,7 @@ public class CenseurController {
 			session.setAttribute("coursConcerne", coursConcerne);
 		}
 		else{
-			System.err.println(" coursConcerne  === NONtrouve");
+			//System.err.println(" coursConcerne  === NONtrouve");
 			//Car l'idMatiere ne doit pas être null lors de l'appel à la methode updateMatiere au niveau du metier 
 			updateCoursForm.setIdCours(new Long(0));
 			/*updateCoursForm.setIdClasseAssocie(new Long(0));
@@ -241,7 +241,7 @@ public class CenseurController {
 			 */
 		}
 		
-		System.err.println(" TOUS EST TERMINE");
+		//System.err.println(" TOUS EST TERMINE");
 		
 	}
 	
@@ -257,7 +257,7 @@ public class CenseurController {
 	@RequestParam(name="taillePage", defaultValue="15") int taillePage,
 	Model model, HttpServletRequest request){
 		
-		System.err.println("idClasseAssocie *** "+idClasseAssocie);
+		//System.err.println("idClasseAssocie *** "+idClasseAssocie);
 		
 		this.constructModelUpdateCours(model,	request,	updateCoursForm,		idCours,	idMatiereAssocie,	idUsersAssocie, 
 				idClasseAssocie,	numPageCours,	taillePage);
@@ -314,7 +314,7 @@ public class CenseurController {
 			model.addAttribute("listofPagesSequence", listofPagesSequences);
 			
 			model.addAttribute("pageCouranteSequence", numPageTrim);
-			System.err.println("numPageSequence  "+numPageTrim);
+			//System.err.println("numPageSequence  "+numPageTrim);
 		}*/
 		
 		/*
@@ -331,7 +331,7 @@ public class CenseurController {
 				model.addAttribute("listofPagesTrimestre", listofPagesTrimestres);
 				
 				model.addAttribute("pageCouranteTrimestre", numPageTrim);
-				System.err.println("numPageTrimestre  "+numPageTrim);
+				//System.err.println("numPageTrimestre  "+numPageTrim);
 			}
 		}
 	
@@ -386,7 +386,7 @@ public class CenseurController {
 			model.addAttribute("listofPagesTrimestre", listofPagesTrimestres);
 			
 			model.addAttribute("pageCouranteTrimestre", numPageAn);
-			System.err.println("numPageTrimestre  "+numPageAn);
+			//System.err.println("numPageTrimestre  "+numPageAn);
 		}*/
 		
 		/*
@@ -403,7 +403,7 @@ public class CenseurController {
 				model.addAttribute("listofPagesAnnee", listofPagesAnnee);
 				
 				model.addAttribute("pageCouranteAnnee", numPageAn);
-				System.err.println("numPageAnnee  "+numPageAn);
+				//System.err.println("numPageAnnee  "+numPageAn);
 			}
 		}
 	}
@@ -494,7 +494,7 @@ public class CenseurController {
 			model.addAttribute("listofPagesClasses", listofPagesClasses);
 			
 			model.addAttribute("pageCouranteClasses", numPageClasses);
-			System.err.println("numPageClasses  "+numPageClasses);
+			//System.err.println("numPageClasses  "+numPageClasses);
 		}*/
 		
 		/*  List<Niveaux> listofNiveaux = usersService.findAllNiveaux();
@@ -511,7 +511,7 @@ public class CenseurController {
 				model.addAttribute("listofPagesNiveaux", listofPagesNiveaux);
 				
 				model.addAttribute("pageCouranteNiveaux", numPageNiveaux);
-				System.err.println("numPageNiveaux  "+numPageNiveaux);
+				//System.err.println("numPageNiveaux  "+numPageNiveaux);
 			}
 		}
 		updateTitulaireForm.setNumPageNiveaux(numPageNiveaux);
@@ -582,7 +582,7 @@ public class CenseurController {
 			HttpServletRequest request, HttpServletResponse response) 
 					throws ParseException, Exception, IOException{
 		
-		System.err.println("ICI AU DEBUT DE postUPDATEMatieres USERSUSERSUSERS");
+		//System.err.println("ICI AU DEBUT DE postUPDATEMatieres USERSUSERSUSERS");
 		
 		int cleExistante=0;
 		int numPageMatiere = 0;
@@ -592,13 +592,13 @@ public class CenseurController {
 			if(cle.equals("matiereConcerne")) cleExistante=cleExistante+1;
 		}
 		
-		System.err.println("LES CLES RECHERCHEES EXISTENT BEL ET BIEN DANS "+cleExistante);
+		//System.err.println("LES CLES RECHERCHEES EXISTENT BEL ET BIEN DANS "+cleExistante);
 		if(cleExistante==2){
 			numPageMatiere = (Integer)request.getSession().getAttribute("numPageMatiere");
 			matiereConcerne = (Matieres)request.getSession().getAttribute("matiereConcerne");
 		}
 		if (bindingResult.hasErrors()) {
-			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE updateMatière");
+			//System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE updateMatière");
 			
 			if(matiereConcerne!=null) {
 				this.constructModelUpdateMatiere(model, request, updateMatieresForm, 
@@ -639,7 +639,7 @@ public class CenseurController {
 			HttpServletRequest request, HttpServletResponse response) 
 					throws ParseException, Exception, IOException{
 		
-		System.err.println("ICI AU DEBUT DE postupdateCours CENSEURCENSEURCENSEURCENSEUR");
+		//System.err.println("ICI AU DEBUT DE postupdateCours CENSEURCENSEURCENSEURCENSEUR");
 		
 		int cleExistante=0;
 		int numPageCours = 0;
@@ -649,17 +649,17 @@ public class CenseurController {
 			if(cle.equals("coursConcerne")) cleExistante=cleExistante+1;
 		}
 		
-		System.err.println("LES CLES RECHERCHEES EXISTENT BEL ET BIEN DANS "+cleExistante);
+		//System.err.println("LES CLES RECHERCHEES EXISTENT BEL ET BIEN DANS "+cleExistante);
 		if(cleExistante==2){
 			numPageCours = (Integer)request.getSession().getAttribute("numPageCours");
 			coursConcerne = (Cours)request.getSession().getAttribute("coursConcerne");
 		}
 		
 		if (bindingResult.hasErrors()) {
-			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE updateCours");
+			//System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE updateCours");
 			
 			if(coursConcerne	!=	null) {
-				System.err.println("ERREUR DE REMPLISSAGE coursConcerne  === ");
+				//System.err.println("ERREUR DE REMPLISSAGE coursConcerne  === ");
 				/*this.constructModelUpdateCours(model, request, updateCoursForm, 
 						coursConcerne.getIdCours(), coursConcerne.getMatiere().getIdMatiere(), 
 						coursConcerne.getProffesseur().getIdUsers(), coursConcerne.getClasse().getIdClasses(), numPageCours, 3);*/
@@ -673,7 +673,7 @@ public class CenseurController {
 				
 			}
 			else{
-				System.err.println("ERREUR DE REMPLISSAGE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!coursConcerne  === ");
+				//System.err.println("ERREUR DE REMPLISSAGE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!coursConcerne  === ");
 				/*this.constructModelUpdateCours(model, request, updateCoursForm, 
 						new Long(0), new Long(0), new Long(0), new Long(0), 0, 3);*/
 				return "redirect:/logesco/users/censeur/getupdateCours?updateCourserror";
@@ -708,7 +708,7 @@ public class CenseurController {
 					+ "&&idClasseAssocie="+updateCoursForm.getIdClasseSelect()
 					+ "&&numPageCours="+numPageCours;
 			
-			System.err.println("idClasseAssocieSelectionner *** "+updateCoursForm.getIdClasseSelect());
+			//System.err.println("idClasseAssocieSelectionner *** "+updateCoursForm.getIdClasseSelect());
 			
 			return "redirect:/logesco/users/censeur/getupdateCours?enregcourssuccess"
 					+ "&&idClasseAssocie="+updateCoursForm.getIdClasseSelect()
@@ -725,10 +725,10 @@ public class CenseurController {
 					throws ParseException, Exception, IOException{
 		
 		if (bindingResult.hasErrors()) {
-			System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE updateTitulaireClasse");
+			//System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE updateTitulaireClasse");
 			
-			System.out.println("valeur de la classe "+updateTitulaireForm.getIdClassesConcerne());
-			System.out.println("valeur du user "+updateTitulaireForm.getIdUsersTitulaire());
+			//System.out.println("valeur de la classe "+updateTitulaireForm.getIdClassesConcerne());
+			//System.out.println("valeur du user "+updateTitulaireForm.getIdUsersTitulaire());
 			
 			if(updateTitulaireForm.getIdClassesConcerne() == null){
 				return "redirect:/logesco/users/censeur/getupdateTitulaire?updatetutulaireerror"
@@ -773,8 +773,8 @@ public class CenseurController {
 		/*
 		 * Il faut effectuer la liste des cours qui passe dans la classe
 		 */
-		/*System.err.println("On veut les cours de la classe "+getrapportEvalSeqForm.getIdclasseRapport());
-		System.err.println("Avec les evaluations de la séquence "+getrapportEvalSeqForm.getIdsequenceRapport());*/
+		/*//System.err.println("On veut les cours de la classe "+getrapportEvalSeqForm.getIdclasseRapport());
+		//System.err.println("Avec les evaluations de la séquence "+getrapportEvalSeqForm.getIdsequenceRapport());*/
 		
 		List<Cours> listcoursofClasses = usersService.getListCoursClasse(getrapportEvalSeqForm.getIdclasseRapport());
 		

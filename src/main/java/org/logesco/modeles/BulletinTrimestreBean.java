@@ -114,6 +114,9 @@ public class BulletinTrimestreBean implements Serializable {
     private String exclusion;
     private String avertissement;
     private String blame_conduite;
+    private String rapport_disc1;
+    private String rapport_disc2;
+    private String rapport_disc3;
 
     // Informations sur les rappels des moyennes des sequences antérieures
     private String rappel_1;
@@ -125,9 +128,12 @@ public class BulletinTrimestreBean implements Serializable {
 
     // Informations sur l'appreciation du travail de l'eleve
     private String appreciation;
+    private String avertissement_travail;
+    private String blame_travail;
     private String tableau_hon;
     private String tableau_enc;
     private String tableau_fel;
+    private String distinction;
 
     // Décision du conseil de classe
     private String decision_conseil;
@@ -1536,6 +1542,102 @@ public class BulletinTrimestreBean implements Serializable {
 	 */
 	public void setVille(String ville) {
 		this.ville = ville;
+	}
+
+
+	/**
+	 * @return the avertissement_travail
+	 */
+	public String getAvertissement_travail() {
+		return avertissement_travail;
+	}
+
+
+	/**
+	 * @param avertissement_travail the avertissement_travail to set
+	 */
+	public void setAvertissement_travail(String avertissement_travail) {
+		this.avertissement_travail = avertissement_travail;
+	}
+
+
+	/**
+	 * @return the blame_travail
+	 */
+	public String getBlame_travail() {
+		return blame_travail;
+	}
+
+
+	/**
+	 * @param blame_travail the blame_travail to set
+	 */
+	public void setBlame_travail(String blame_travail) {
+		this.blame_travail = blame_travail;
+	}
+
+
+	/**
+	 * @return the rapport_disc1
+	 */
+	public String getRapport_disc1() {
+		return rapport_disc1;
+	}
+
+
+	/**
+	 * @param rapport_disc1 the rapport_disc1 to set
+	 */
+	public void setRapport_disc1(String rapport_disc1) {
+		this.rapport_disc1 = rapport_disc1;
+	}
+
+
+	/**
+	 * @return the rapport_disc2
+	 */
+	public String getRapport_disc2() {
+		return rapport_disc2;
+	}
+
+
+	/**
+	 * @param rapport_disc2 the rapport_disc2 to set
+	 */
+	public void setRapport_disc2(String rapport_disc2) {
+		this.rapport_disc2 = rapport_disc2;
+	}
+
+
+	/**
+	 * @return the rapport_disc3
+	 */
+	public String getRapport_disc3() {
+		return rapport_disc3;
+	}
+
+
+	/**
+	 * @param rapport_disc3 the rapport_disc3 to set
+	 */
+	public void setRapport_disc3(String rapport_disc3) {
+		this.rapport_disc3 = rapport_disc3;
+	}
+
+
+	/**
+	 * @return the distinction
+	 */
+	public String getDistinction() {
+		return distinction;
+	}
+
+
+	/**
+	 * @param distinction the distinction to set
+	 */
+	public void setDistinction(String distinction) {
+		this.distinction = distinction;
 	}
 	
 	

@@ -14,9 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.logesco.LogescoApplication;
 import org.logesco.dao.*;
 import org.logesco.entities.*;
 import org.logesco.modeles.*;
@@ -117,17 +114,42 @@ public class UsersServiceImplementation implements IUsersService {
 	
 	@Autowired
 	private MatriculeRepository	 matriculeRepository;
-
+	
+	@Autowired
+	private RapportDisciplinaireRepository	 rapportdisciplinaireRepository;
+	
+	@Autowired
+	private SanctionDisciplinaireRepository	 sanctionDiscRepository;
+	
+	@Autowired
+	private DecisionRepository	 decisionRepository;
+	
+	@Autowired
+	private DecisionConseilRepository	 decisionConseilRepository;
+	
+	@Autowired
+	private SanctionTravailRepository	 sanctionTravRepository;
+	
+	@Autowired
+	private IdentOperationRepository	 identOpRepository;
 	
 	private UtilitairesBulletins ub;
 	
-	private static Logger log = LogescoApplication.log;
+	//private static Logger log = LogescoApplication.log;
 
-	/*@Autowired
-	private BulletinsTrimRepository	 bulletinsTrimRepository;
+	public String[] ch_unites = {"zéro", "un", "deux", "trois", "quatre", "cinq", "six", "sept",
+            "huit","neuf", "dix", "onze", "douze", "treize", "quatorze",
+              "quinze", "seize", "dix-sept", "dix-huit", "dix-neuf"};
 
-	@Autowired
-	private BulletinsAnRepository	 bulletinsAnRepository;*/
+	public String[] ch_dizaines = {"", "", "vingt", "trente", "quarante", "cinquante", "soixante",
+		"", "quatre-vingt"};
+
+	public String[] ch_units = {"zero", "one", "two", "three", "four", "five", "six", "seven",
+	  "eight","nine", "ten", "eleven", "twelve", "thirteen", "fourteen",
+	    "fiveteen", "sixteen", "seventeen", "eighteen", "nineteen"};
+
+	public String[] ch_tens = {"", "", "twenty", "thirty", "forty", "fifty", "sixty",
+		"seventy", "eighty", "ninety"};
 
 	/*
 	 * Début de l'implémentation des méthodes de l'interface
@@ -144,10 +166,10 @@ public class UsersServiceImplementation implements IUsersService {
 
 	@Override
 	public Etablissement getEtablissement() {
-		log.log(Level.DEBUG, "getEtablissement(): chargement de l'etablissement a gérer par un User");
+		/*log.log(Level.DEBUG, "getEtablissement(): chargement de l'etablissement a gérer par un User");*/
 		ArrayList<Etablissement> listEtab=(ArrayList<Etablissement>) etabRepository.findAll();
 		if(!(listEtab.isEmpty())) return listEtab.get(0);
-		log.log(Level.WARN, "Erreur de recuperation de l'établissement dans getEtablissement()");
+		/*log.log(Level.WARN, "Erreur de recuperation de l'établissement dans getEtablissement()");*/
 		return null;
 	}
 
@@ -242,7 +264,7 @@ public class UsersServiceImplementation implements IUsersService {
 
 	@Override
 	public Long updateProffesseurs(Long idUsers, Proffesseurs proffesseurs){
-		log.log(Level.DEBUG, "Lancement de updateProffesseurs: ");
+		/*log.log(Level.DEBUG, "Lancement de updateProffesseurs: ");*/
 		Long idProfModif=new Long(-10);
 
 		Proffesseurs profAModif=this.findProffesseurs(idUsers);
@@ -319,7 +341,7 @@ public class UsersServiceImplementation implements IUsersService {
 			////System.err.println("Nous voici a l'execution   777");
 			idProfModif=profUpdate.getIdUsers();
 		}
-		log.log(Level.DEBUG, "fin de l'exécution de updateProffesseurs");
+		/*log.log(Level.DEBUG, "fin de l'exécution de updateProffesseurs");*/
 		return idProfModif;
 	}
 
@@ -1029,7 +1051,7 @@ public class UsersServiceImplementation implements IUsersService {
 
 	@Override
 	public int deleteUsers(Long idUsers) {
-		log.log(Level.DEBUG, "lancement de deleteUsers avec ses rôles"+idUsers);
+		/*log.log(Level.DEBUG, "lancement de deleteUsers avec ses rôles"+idUsers);*/
 		Utilisateurs usersAssocie=this.findUtilisateurs(idUsers);
 		List<UtilisateursRoles> listofRoles=(List<UtilisateursRoles>)usersAssocie.getListofusersRoles();
 		for(UtilisateursRoles usersRoles : listofRoles){
@@ -1043,7 +1065,7 @@ public class UsersServiceImplementation implements IUsersService {
 		Enseignants enseignantAssocie=this.findEnseignants(idUsers);
 		if(censeurAssocie!=null){
 			//alors c'est un censeur qu'on veut supprimer
-			log.log(Level.DEBUG, "suppression du censeur "+idUsers);
+			/*log.log(Level.DEBUG, "suppression du censeur "+idUsers);*/
 			censeurRepository.delete(censeurAssocie);
 			//System.err.println("******************** On a supprimer le censeur associe **********************");
 
@@ -1051,24 +1073,24 @@ public class UsersServiceImplementation implements IUsersService {
 		}
 		else if(sgAssocie!=null){
 			//alors c'est un sg qu'on veut supprimer
-			log.log(Level.DEBUG, "suppression du SG "+idUsers);
+			/*log.log(Level.DEBUG, "suppression du SG "+idUsers);*/
 			sgRepository.delete(sgAssocie);
 			//System.err.println("******************** On a supprimer le sg associe **********************");
 			return 1;
 		}
 		else if(intendantAssocie!=null){
 			intendantRepository.delete(intendantAssocie);
-			log.log(Level.DEBUG, "suppression de l'intendant "+idUsers);
+			/*log.log(Level.DEBUG, "suppression de l'intendant "+idUsers);*/
 			//System.err.println("******************** On a supprimer le intendant associe **********************");
 			return 1;
 		}
 		else if(enseignantAssocie!=null){
 			enseignantRepository.delete(enseignantAssocie);
-			log.log(Level.DEBUG, "suppression de l'enseignant "+idUsers);
+			/*log.log(Level.DEBUG, "suppression de l'enseignant "+idUsers);*/
 			//System.err.println("******************** On a supprimer le enseignant associe **********************");
 			return 1;
 		}
-		log.log(Level.DEBUG, "fin de l'exécution de deleteUsers "+idUsers);
+		/*log.log(Level.DEBUG, "fin de l'exécution de deleteUsers "+idUsers);*/
 		return 0;
 	}
 
@@ -1443,10 +1465,10 @@ public class UsersServiceImplementation implements IUsersService {
 
 
 	@Override
-	public int enregVersementSco(Long idEleveConcerne, double montantAVerser, double montantScolarite) {
+	public int enregVersementSco(Long idEleveConcerne, double montantAVerser) {
 		//System.err.println("debut de enregVersementSco ");
+		
 		if(montantAVerser < 0) montantAVerser *= -1;
-		if(montantScolarite < 0) montantScolarite *= -1;
 		/*
 		 * Rechercher l'élève dont on a l'id
 		 * Recuperer son compte associe
@@ -1476,14 +1498,17 @@ public class UsersServiceImplementation implements IUsersService {
 			 * Il faut maintenant enregistrer cette opération de versement
 			 */
 			Operations operation = new Operations();
-			operation.setTypeOperation("versement");
-			operation.setMontantOperation(montantAVerser);
-			operation.setDateOperation(new Date());
 			operation.setCompteinscription(eleveConcerne.getCompteInscription());
+			operation.setDateOperation(new Date());
+			operation.setIdentifiantOperation(this.getNumeroOperation());
+			operation.setMontantOperation(montantAVerser);
+			operation.setTypeOperation("versement");
+			
+			
 
 			operationsRepository.save(operation);
 
-			if(nouveauMontant >= montantScolarite) {
+			if(nouveauMontant >= eleveConcerne.getClasse().getMontantScolarite()) {
 				eleveConcerne.setEtatInscEleves("inscrit");
 				elevesRepository.save(eleveConcerne);
 				return 2;
@@ -1858,26 +1883,26 @@ public class UsersServiceImplementation implements IUsersService {
 
 	@Override
 	public int deleteMatiere(Long idMatiere) {
-		log.log(Level.DEBUG, "Lancement de deleteMatiere "+idMatiere);
+		/*log.log(Level.DEBUG, "Lancement de deleteMatiere "+idMatiere);*/
 		Matieres matiereASupprim = this.findMatieres(idMatiere);
 		if(matiereASupprim == null)	return -1;
 		if(matiereASupprim.getListofCours().size() != 0) return 0;
 
 		matieresRepository.delete(idMatiere);
-		log.log(Level.DEBUG, "suppression d'une matiere "+idMatiere);
+		/*log.log(Level.DEBUG, "suppression d'une matiere "+idMatiere);*/
 		return 1;
 	}
 
 
 	@Override
 	public int deleteCours(Long idCours) {
-		log.log(Level.DEBUG, "Lancement de deleteCours "+idCours);
+		/*log.log(Level.DEBUG, "Lancement de deleteCours "+idCours);*/
 		Cours coursASupprim = this.findCours(idCours);
 		if(coursASupprim == null) return -1;
 		if(coursASupprim.getListofEval().size() != 0) return 0;
 
 		coursRepository.delete(idCours);
-		log.log(Level.DEBUG, "suppression d'un cours "+idCours);
+		/*log.log(Level.DEBUG, "suppression d'un cours "+idCours);*/
 		return 1;
 	}
 
@@ -1893,8 +1918,8 @@ public class UsersServiceImplementation implements IUsersService {
 	@Override
 	public int swicthEtatPeriodesSeq(Long idPeriode) {
 		Sequences seq = sequenceRepository.findOne(idPeriode);
-		log.log(Level.DEBUG, "Lancement de la methode  "
-				+ "swicthEtatPeriodesSeq(actif, bloqué) "+idPeriode);
+		/*log.log(Level.DEBUG, "Lancement de la methode  "
+				+ "swicthEtatPeriodesSeq(actif, bloqué) "+idPeriode);*/
 		if(seq == null) return 0;
 		if(seq.isEtatPeriodes() == false) {
 			if(seq.getTrimestre().isEtatPeriodes() == true){
@@ -1946,8 +1971,8 @@ public class UsersServiceImplementation implements IUsersService {
 	@Override
 	public int swicthEtatPeriodesTrim(Long idPeriode) {
 		Trimestres trim = trimestreRepository.findOne(idPeriode);
-		log.log(Level.DEBUG, "Lancement de la methode  "
-				+ "swicthEtatPeriodesTrim(actif, bloqué) "+idPeriode);
+		/*log.log(Level.DEBUG, "Lancement de la methode  "
+				+ "swicthEtatPeriodesTrim(actif, bloqué) "+idPeriode);*/
 		if(trim == null) return 0;
 		for(Sequences seq : trim.getListofsequence()){
 			if(seq.isEtatPeriodes()==true){
@@ -1985,8 +2010,8 @@ public class UsersServiceImplementation implements IUsersService {
 	@Override
 	public int swicthEtatPeriodesAnnee(Long idPeriode) {
 		Annee annee = anneeRepository.findOne(idPeriode);
-		log.log(Level.DEBUG, "Lancement de la methode  "
-				+ "swicthEtatPeriodesAnnee(actif, bloqué) "+idPeriode);
+		/*log.log(Level.DEBUG, "Lancement de la methode  "
+				+ "swicthEtatPeriodesAnnee(actif, bloqué) "+idPeriode);*/
 		if(annee == null) return 0;
 		if(annee.isEtatPeriodes() == false) {
 			annee.setEtatPeriodes(true);
@@ -2006,8 +2031,8 @@ public class UsersServiceImplementation implements IUsersService {
 		Classes classeConcerne = this.findClasses(idClasseConcerne);
 		Proffesseurs profTitulaire = this.findProffesseurs(idProfTitulaire);
 
-		log.log(Level.DEBUG, "Lancement de la methode  "
-				+ "setTitulaireClasse "+idClasseConcerne+" idProf "+idProfTitulaire);
+		/*log.log(Level.DEBUG, "Lancement de la methode  "
+				+ "setTitulaireClasse "+idClasseConcerne+" idProf "+idProfTitulaire);*/
 
 		if((classeConcerne == null) || (profTitulaire == null)) return -1;
 		//System.err.println("la classe "+classeConcerne.getIdClasses() + " sera dirige par "+profTitulaire.getNomsPers());
@@ -2022,7 +2047,7 @@ public class UsersServiceImplementation implements IUsersService {
 
 		/*
 		 * Il faut recuperer s'il existe l'ancien titulaire de la classe. 
-		 * Par la suite aprs avoir set le nouveau titulaire, on regarde si l'ancien est encore titulaire
+		 * Par la suite apres avoir set le nouveau titulaire, on regarde si l'ancien est encore titulaire
 		 * si non on le supprime le role.
 		 * S'il existe et qu'il n'est desormais dirigeant d'aucune classe, alors le retirer le role titulaire
 		 */
@@ -2159,8 +2184,8 @@ public class UsersServiceImplementation implements IUsersService {
 	@Override
 	public int saveEvaluation (String contenuEval, Cours coursEval, Date dateEval, int proportionEval, Sequences seqEval, String typeEval){
 
-		log.log(Level.DEBUG, "Lancement de la methode  "
-				+ "saveEvaluation ");
+		/*log.log(Level.DEBUG, "Lancement de la methode  "
+				+ "saveEvaluation ");*/
 		
 		int ret = 0;
 		/*
@@ -2232,6 +2257,39 @@ public class UsersServiceImplementation implements IUsersService {
 		return ret;
 	}
 
+	@Override
+	public int updateProportionEvaluation(Long idEval, int new_proportion){
+		int ret = -1;
+		int newproportionEval_associe = 0;
+		Evaluations evalConcerne = this.findEvaluations(idEval);
+		if(evalConcerne == null) {
+			System.err.println("yyyyyyyyyyyyyyyyy evalConcerne non trouve au "
+					+ " moment du changement de proportion d'évaluation dans updateProportionEvaluation");
+			return -1;
+		}
+		if(new_proportion<=100){
+			newproportionEval_associe = 100 - new_proportion;
+			String typeEval_associe = evalConcerne.getTypeEval().equalsIgnoreCase("CC")==true?"DS":"CC";
+			System.err.println("le type d'évaluation associe est "+typeEval_associe);
+			
+			Evaluations evalDeTypeAssocieExist = this.findEvaluations(evalConcerne.getCours().getIdCours(), 
+					evalConcerne.getSequence().getIdPeriodes(), typeEval_associe);
+			/*
+			 * On met a jour evalConcerne
+			 */
+			evalConcerne.setProportionEval(new_proportion);
+			evalRepository.save(evalConcerne);
+			ret = 1;
+			if(evalDeTypeAssocieExist!=null){
+				evalDeTypeAssocieExist.setProportionEval(newproportionEval_associe);
+				evalRepository.save(evalDeTypeAssocieExist);
+				ret = 2;
+			}
+		}
+		return ret;
+	}
+	
+	
 	@Override
 	public int getNumeroEleve(List<Eleves> listofEleve, Long idEleve){
 		int numEleve = 0;
@@ -2335,8 +2393,8 @@ public class UsersServiceImplementation implements IUsersService {
 
 	@Override
 	public int saveNoteEvalEleve(Long idEval, Long idEleves, double valNote){
-		log.log(Level.DEBUG, "Lancement de la methode  "
-				+ "saveNoteEvalEleve ");
+		/*log.log(Level.DEBUG, "Lancement de la methode  "
+				+ "saveNoteEvalEleve ");*/
 		Evaluations evalConcerne = this.findEvaluations(idEval);
 		Eleves eleveConcerne = this.findEleves(idEleves);
 
@@ -2374,8 +2432,8 @@ public class UsersServiceImplementation implements IUsersService {
 
 	public int saveRAbsenceSeqEleve(Long idEleves, Long idSequence, int nbreHJ, int nbreHNJ,
 			int nbreHConsigne,	int nbreJExclusion, boolean avertConduite, boolean blameConduite){
-		log.log(Level.DEBUG, "Lancement de la methode  "
-				+ "saveRAbsenceSeqEleve ");
+		/*log.log(Level.DEBUG, "Lancement de la methode  "
+				+ "saveRAbsenceSeqEleve ");*/
 		Eleves eleveConcerne = this.findEleves(idEleves);
 		Sequences sequenceConcerne = this.findSequences(idSequence);
 
@@ -2398,16 +2456,7 @@ public class UsersServiceImplementation implements IUsersService {
 			rabsExist.setNbreheureJustifie(nbreHJ);
 			rabsExist.setNbreheureNJustifie(nbreHNJ);
 
-			/*
-			 * debut des ajouts du 29-08-2018
-			 */
-			rabsExist.setAvertConduite(avertConduite);
-			rabsExist.setBlameConduite(blameConduite);
-			rabsExist.setConsigne(nbreHConsigne);
-			rabsExist.setJourExclusion(nbreJExclusion);
-			/*
-			 * fin des ajouts du 29-08-2018
-			 */
+			
 
 			rapportDAbsenceRepository.save(rabsExist);
 		}
@@ -2419,16 +2468,7 @@ public class UsersServiceImplementation implements IUsersService {
 			rabs.setNbreheureJustifie(nbreHJ);
 			rabs.setNbreheureNJustifie(nbreHNJ);
 
-			/*
-			 * debut des ajouts du 29-08-2018
-			 */
-			rabs.setAvertConduite(avertConduite);
-			rabs.setBlameConduite(blameConduite);
-			rabs.setConsigne(nbreHConsigne);
-			rabs.setJourExclusion(nbreJExclusion);
-			/*
-			 * fin des ajouts du 29-08-2018
-			 */
+			
 
 			rapportDAbsenceRepository.save(rabs);
 		}
@@ -2473,8 +2513,8 @@ public class UsersServiceImplementation implements IUsersService {
 	@Override
 	public int setMontantScoClasse(Long idClasseAConfig, double montantScolarite){
 
-		log.log(Level.DEBUG, "Lancement de la methode  "
-				+ "setMontantScoClasse ");
+		/*log.log(Level.DEBUG, "Lancement de la methode  "
+				+ "setMontantScoClasse ");*/
 		Classes classeAConfig = this.findClasses(idClasseAConfig);
 
 		if(classeAConfig == null) return 0;
@@ -2563,6 +2603,36 @@ public class UsersServiceImplementation implements IUsersService {
 			matriculeRepository.save(mat);//ca va modifier celui qu'on a pris en BD
 			
 			String suffixe = "";
+			if((next_numero >= 0)&&(next_numero < 10)){
+				suffixe = "000"+next_numero;
+			}
+			else if((next_numero >= 10)&&(next_numero < 100)){
+				suffixe = "00"+next_numero;
+			}
+			if((next_numero >= 100)&&(next_numero < 1000)){
+				suffixe = "0"+next_numero;
+			}
+			if((next_numero >= 1000)&&(next_numero < 10000)){
+				suffixe = ""+next_numero;
+			}
+			matricule = prefixe+suffixe;
+			System.err.println("prefixe "+prefixe+" suffixe "+suffixe);
+			return matricule;
+			
+			
+		}
+		else{
+			/*
+			 * Ceci signifie qu'il n'y a pas d'enregistrement dans la table matricule permettant 
+			 * de fabriquer les matricules des élèves
+			 * On doit donc faire un premier enregistrement
+			 */
+			int numero = 1;
+			Matricule mat = new Matricule();
+			mat.setValeur(numero);
+			matriculeRepository.save(mat);
+			
+			String suffixe = "";
 			if((numero >= 0)&&(numero < 10)){
 				suffixe = "000"+numero;
 			}
@@ -2579,15 +2649,8 @@ public class UsersServiceImplementation implements IUsersService {
 			System.err.println("prefixe "+prefixe+" suffixe "+suffixe);
 			return matricule;
 			
+		}
 			
-		}
-		else{
-			System.err.println("il ya un probleme dans la generation des matricules puisque la valeur du "
-					+ " numero qu'on recupere dans la table matricule est vide");
-			return "aucun";
-		}
-		
-		
 	}
 
 	/*public String getNextMatriculeforIndex(String codeEtab, String annee, int index){
@@ -2673,8 +2736,8 @@ public class UsersServiceImplementation implements IUsersService {
 
 	@Override
 	public Collection<EleveBean2> generateReleveNote(Long idClasse){
-		log.log(Level.DEBUG, "Lancement de la methode generateReleveNote "
-				+ "avec idClasse="+idClasse);
+		/*log.log(Level.DEBUG, "Lancement de la methode generateReleveNote "
+				+ "avec idClasse="+idClasse);*/
 		List<EleveBean2> listofEleve2 = new ArrayList<EleveBean2>();
 		List<EleveBean> listofEleveBean = new ArrayList<EleveBean>();
 		Classes classe = this.findClasses(idClasse);
@@ -2800,8 +2863,8 @@ public class UsersServiceImplementation implements IUsersService {
 	@Override
 	public Collection<PV_SequenceBean> generatePVSequence(Long idClasse,	Long idCours, 
 			Long idSequence){
-		log.log(Level.DEBUG, "Lancement de la methode generatePVSequence "
-				+ "avec idClasse="+idClasse+" idCours="+idCours+"idSequence="+idSequence);
+		/*log.log(Level.DEBUG, "Lancement de la methode generatePVSequence "
+				+ "avec idClasse="+idClasse+" idCours="+idCours+"idSequence="+idSequence);*/
 		Classes classe = this.findClasses(idClasse);
 		Sequences sequence = this.findSequences(idSequence);
 		
@@ -2844,8 +2907,11 @@ public class UsersServiceImplementation implements IUsersService {
 			Long idSequence) {*/
 	public Map<String, Object> generateCollectionofBulletinSequence_opt(Long idClasse, 
 			Long idSequence) {
-		log.log(Level.DEBUG, "Lancement de la methode generateCollectionofBulletinSequence_opt "
+		/*log.log(Level.DEBUG, "Lancement de la methode generateCollectionofBulletinSequence_opt "
+				+ "avec idClasse="+idClasse+" idSequence "+idSequence);*/
+		System.out.println("Lancement de la methode generateCollectionofBulletinSequence_opt "
 				+ "avec idClasse="+idClasse+" idSequence "+idSequence);
+		
 		Map<String, Object> donnee = new HashMap<String, Object>();
 		
 		//java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
@@ -2864,6 +2930,14 @@ public class UsersServiceImplementation implements IUsersService {
 		 if((classeConcerne==null) || (sequenceConcerne==null)) {
 			//System.err.println("les données de calcul du bean bulletin sont errone donc rien n'est possible ");
 			return null;
+		 }
+		 
+		 String lang="";
+		 if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+			 lang="fr";
+		 }
+		 else{
+			 lang="en";
 		 }
 		 
 		 /*
@@ -2969,7 +3043,13 @@ public class UsersServiceImplementation implements IUsersService {
 						etablissementConcerne.getNumtel1Etab()+"/"+etablissementConcerne.getEmailEtab());
 				bulletinSeq.setDevise_en(etablissementConcerne.getDeviseanglaisEtab());
 				bulletinSeq.setDevise_fr(etablissementConcerne.getDeviseEtab());
-				bulletinSeq.setTitre_bulletin("Bulletin de note de la séquence "+sequenceConcerne.getNumeroSeq());
+				
+				if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+					bulletinSeq.setTitre_bulletin("Bulletin de note de la séquence "+sequenceConcerne.getNumeroSeq());
+				}
+				else{
+					bulletinSeq.setTitre_bulletin("Report card of sequence "+sequenceConcerne.getNumeroSeq());
+				}
 				bulletinSeq.setAnnee_scolaire_en("School year "+anneeScolaire.getIntituleAnnee());
 				bulletinSeq.setAnnee_scolaire_fr("Année scolaire "+anneeScolaire.getIntituleAnnee());
 				
@@ -3066,12 +3146,16 @@ public class UsersServiceImplementation implements IUsersService {
 				/***********************
 				 * Informations sur la conduite sequentiel de l'élève
 				 */
-				RapportDAbsence rabs = eleve.getRapportDAbsenceSeq(idSequence);
-				if(rabs!=null){
+				//List<RapportDAbsence> listofRabs = eleve.getListRapportDAbsenceSeq(idSequence);
+				
+				bulletinSeq.setAbsence_J(eleve.getNbreHeureAbscenceJustifie(idSequence));
+				bulletinSeq.setAbsence_NJ(eleve.getNbreHeureAbscenceNonJustifie(idSequence));
+				
+				/*if(rabs!=null){
 					bulletinSeq.setAbsence_NJ(rabs.getNbreheureNJustifie());
 					bulletinSeq.setAbsence_J(rabs.getNbreheureJustifie());
-					bulletinSeq.setConsigne(rabs.getConsigne()+"h");
-					bulletinSeq.setExclusion(rabs.getJourExclusion()+" J");
+					bulletinSeq.setConsigne("");
+					bulletinSeq.setExclusion("");
 					bulletinSeq.setAvertissement("");
 					bulletinSeq.setBlame_conduite("");
 				}
@@ -3082,11 +3166,16 @@ public class UsersServiceImplementation implements IUsersService {
 					bulletinSeq.setExclusion("");
 					bulletinSeq.setAvertissement("");
 					bulletinSeq.setBlame_conduite("");
-				}
+				}*/
 				/**************************
 				 * Informations sur le rappel de la moyenne et du rang sequentiel
 				 */
-				bulletinSeq.setRappel_1("Séquence "+sequenceConcerne.getNumeroSeq());
+				if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+					bulletinSeq.setRappel_1("Séquence "+sequenceConcerne.getNumeroSeq());
+				}
+				else{
+					bulletinSeq.setRappel_1("Sequence "+sequenceConcerne.getNumeroSeq());
+				}
 				
 				double moy_seq = ub.getMoyenneSequentiel(eleve, sequenceConcerne);
 				
@@ -3105,10 +3194,13 @@ public class UsersServiceImplementation implements IUsersService {
 				/****************************
 				 * Informations sur l'appreciation du travail de l'élève
 				 */
+				/*
+				 * A traduire en fonction de la langue de la classe
+				 */
 				bulletinSeq.setTableau_hon("");
 				bulletinSeq.setTableau_enc("");
 				bulletinSeq.setTableau_fel("");
-				String appreciation = ub.calculAppreciation(moy_seq);
+				String appreciation = ub.calculAppreciation(moy_seq,lang);
 				bulletinSeq.setAppreciation(appreciation);
 				String distinction = ub.calculDistinction(moy_seq);
 				if(distinction.equals("TH")==true){
@@ -3169,8 +3261,16 @@ public class UsersServiceImplementation implements IUsersService {
 				
 				LigneSequentielGroupeCours ligneSequentielGroupeCoursScientifique = 
 						ub.getLigneSequentielGroupeCours(eleve, listofCoursScientifique, sequenceConcerne);
-		
-				bulletinSeq.setNom_g1("Scientifique");
+				
+				/*
+				 * A traduire en fonction de la langue de la classe
+				 */
+				if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+					bulletinSeq.setNom_g1("Scientifique");
+				}
+				else{
+					bulletinSeq.setNom_g1("Scientific");
+				}
 				
 				double total_coef_g1 = ligneSequentielGroupeCoursScientifique.getTotalCoefElevePourGroupeCours();
 				
@@ -3234,8 +3334,13 @@ public class UsersServiceImplementation implements IUsersService {
 				
 				LigneSequentielGroupeCours ligneSequentielGroupeCoursLitteraire = 
 						ub.getLigneSequentielGroupeCours(eleve, listofCoursLitteraire, sequenceConcerne);
-		
-				bulletinSeq.setNom_g2("Litteraire");
+				
+				if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+					bulletinSeq.setNom_g2("Litteraire");
+				}
+				else{
+					bulletinSeq.setNom_g2("Literary");
+				}
 				
 				double total_coef_g2 = ligneSequentielGroupeCoursLitteraire.getTotalCoefElevePourGroupeCours();
 				
@@ -3300,8 +3405,13 @@ public class UsersServiceImplementation implements IUsersService {
 								
 				LigneSequentielGroupeCours ligneSequentielGroupeCoursDivers = 
 						ub.getLigneSequentielGroupeCours(eleve, listofCoursDivers, sequenceConcerne);
-		
-				bulletinSeq.setNom_g3("Divers");
+				
+				if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+					bulletinSeq.setNom_g3("Divers");
+				}
+				else{
+					bulletinSeq.setNom_g3("Others");
+				}
 				
 				double total_coef_g3 = ligneSequentielGroupeCoursDivers.getTotalCoefElevePourGroupeCours();
 				
@@ -3426,7 +3536,7 @@ public class UsersServiceImplementation implements IUsersService {
 						mGrp1SeqBean.setPourcentage_g1(pourcentage_g1);
 					}
 					
-					String appreciationNote = ub.calculAppreciation(note_seq_g1);
+					String appreciationNote = ub.calculAppreciation(note_seq_g1,lang);
 					mGrp1SeqBean.setAppreciation_g1(appreciationNote);
 					
 					//On ajoute la ligne de cours dans le groupe correspondant
@@ -3507,7 +3617,7 @@ public class UsersServiceImplementation implements IUsersService {
 						mGrp2SeqBean.setPourcentage_g2(pourcentage_g2);
 					}
 		
-					String appreciationNote = ub.calculAppreciation(note_seq_g2);
+					String appreciationNote = ub.calculAppreciation(note_seq_g2,lang);
 					mGrp2SeqBean.setAppreciation_g2(appreciationNote);
 					
 					//On ajoute la ligne de cours dans le groupe correspondant
@@ -3585,7 +3695,7 @@ public class UsersServiceImplementation implements IUsersService {
 						mGrp3SeqBean.setPourcentage_g3(pourcentage_g3);
 					}
 		
-					String appreciationNote = ub.calculAppreciation(note_seq_g3);
+					String appreciationNote = ub.calculAppreciation(note_seq_g3,lang);
 					mGrp3SeqBean.setAppreciation_g3(appreciationNote);
 					
 					//On ajoute la ligne de cours dans le groupe correspondant
@@ -3638,8 +3748,16 @@ public class UsersServiceImplementation implements IUsersService {
 			Annee annee, Classes classe , double tauxReussite, double moyenne_general,	
 			Sequences sequence, List<Eleves> listofElevesOrdreDecroissantMoyenneSequentiel){
 		
-		log.log(Level.DEBUG, "Lancement de la methode getRapportConseilClasseSequentiel ");
+		/*log.log(Level.DEBUG, "Lancement de la methode getRapportConseilClasseSequentiel ");*/
 		FicheConseilClasseBean ficheCC = new FicheConseilClasseBean();
+		
+		String lang="";
+		if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+			lang="fr";
+		}
+		else{
+			lang="en";
+		}
 		
 		/****
 		 * Information d'entete du rapport de conseil de classe
@@ -3662,9 +3780,16 @@ public class UsersServiceImplementation implements IUsersService {
 		ficheCC.setDevise_fr(etab.getDeviseEtab());
 		
 		ficheCC.setAnnee(annee.getIntituleAnnee());
-		ficheCC.setPeriode("Séquence "+sequence.getNumeroSeq());
-		String titre_fiche = "CONSEIL DE CLASSE DE LA SEQUENCE: "+sequence.getNumeroSeq();
-		ficheCC.setTitre_fiche(titre_fiche);
+		if(lang.equalsIgnoreCase("fr")==true){
+			ficheCC.setPeriode("Séquence "+sequence.getNumeroSeq());
+			String titre_fiche = "CONSEIL DE CLASSE DE LA SEQUENCE: "+sequence.getNumeroSeq();
+			ficheCC.setTitre_fiche(titre_fiche);
+		}
+		else{
+			ficheCC.setPeriode("Sequence "+sequence.getNumeroSeq());
+			String titre_fiche = "CLASS COUNCIL OF SEQUENCE: "+sequence.getNumeroSeq();
+			ficheCC.setTitre_fiche(titre_fiche);
+		}
 		String profPrincipal = " "+classe.getProffesseur().getNomsPers()+" "+classe.getProffesseur().getPrenomsPers();
 		profPrincipal=profPrincipal.toUpperCase();
 		ficheCC.setEnseignant(profPrincipal);
@@ -3755,6 +3880,7 @@ public class UsersServiceImplementation implements IUsersService {
 		
 		ficheCC.setG_classe(g_classe);
 		ficheCC.setF_classe(f_classe);
+		t_classe = g_classe+f_classe;
 		ficheCC.setT_classe(t_classe);
 		ficheCC.setG_nonclasse(g_nonclasse);
 		ficheCC.setF_nonclasse(f_nonclasse);
@@ -3764,14 +3890,16 @@ public class UsersServiceImplementation implements IUsersService {
 		ficheCC.setT_nbremoy(t_nbremoy);
 		ficheCC.setG_pourcentage(pourCG);
 		ficheCC.setF_pourcentage(pourCF);
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try{
 			tauxReussite=df.parse(df.format(tauxReussite)).doubleValue();
 			moyenne_general=df.parse(df.format(moyenne_general)).doubleValue();
 		}
 		catch(Exception e){
 			
-		}
+		}*/
+		tauxReussite = this.ub.tronqueDouble(tauxReussite, 2);
+		moyenne_general = this.ub.tronqueDouble(moyenne_general, 2);
 		ficheCC.setT_pourcentage(tauxReussite);
 		ficheCC.setMg_classe(moyenne_general);
 		
@@ -4054,8 +4182,8 @@ public class UsersServiceImplementation implements IUsersService {
 
 	public Map<String, Object> generateCollectionofBulletinTrimestre_opt(Long idClasse,
 				Long idTrimestre) {
-		log.log(Level.DEBUG, "Lancement de la methode generateCollectionofBulletinTrimestre_opt avec "
-				+ "idClasse= "+idClasse+" idTrimestre="+idTrimestre);
+		/*log.log(Level.DEBUG, "Lancement de la methode generateCollectionofBulletinTrimestre_opt avec "
+				+ "idClasse= "+idClasse+" idTrimestre="+idTrimestre);*/
 		Map<String, Object> donnee = new HashMap<String, Object>();
 		
 		 long startTime = System.currentTimeMillis();
@@ -4074,6 +4202,13 @@ public class UsersServiceImplementation implements IUsersService {
 		 if((classeConcerne==null) || (trimestreConcerne==null)) {
 			//System.err.println("les données de calcul du bean bulletin sont errone donc rien n'est possible ");
 			return null;
+		 }
+		 String lang="";
+		 if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+			 lang="fr";
+		 }
+		 else{
+			 lang="en";
 		 }
 		 
 		 /*
@@ -4188,7 +4323,12 @@ public class UsersServiceImplementation implements IUsersService {
 						etablissementConcerne.getNumtel1Etab()+"/"+etablissementConcerne.getEmailEtab());
 				bulletinTrim.setDevise_en(etablissementConcerne.getDeviseanglaisEtab());
 				bulletinTrim.setDevise_fr(etablissementConcerne.getDeviseEtab());
-				bulletinTrim.setTitre_bulletin("Bulletin de note du trimestre "+trimestreConcerne.getNumeroTrim());
+				if(lang.equalsIgnoreCase("fr")==true){
+					bulletinTrim.setTitre_bulletin("Bulletin de note du trimestre "+trimestreConcerne.getNumeroTrim());
+				}
+				else{
+					bulletinTrim.setTitre_bulletin("Report card of term "+trimestreConcerne.getNumeroTrim());
+				}
 				bulletinTrim.setAnnee_scolaire_en("School year "+anneeScolaire.getIntituleAnnee());
 				bulletinTrim.setAnnee_scolaire_fr("Année scolaire "+anneeScolaire.getIntituleAnnee());
 				
@@ -4228,15 +4368,15 @@ public class UsersServiceImplementation implements IUsersService {
 				 */
 				for(Sequences seq : trimestreConcerne.getListofsequence()){
 					if(seq.getNumeroSeq()%2==1){
-						bulletinTrim.setLabel_note_1("Note"+seq.getNumeroSeq());
+						bulletinTrim.setLabel_note_1("N S"+seq.getNumeroSeq());
 					}
 					else{
-						bulletinTrim.setLabel_note_2("Note"+seq.getNumeroSeq());
+						bulletinTrim.setLabel_note_2("N S"+seq.getNumeroSeq());
 					}
 				}
 				
-				bulletinTrim.setLabel_trimestre("NoteT"+trimestreConcerne.getNumeroTrim());
-				bulletinTrim.setLabel_trim_x_coef("NoteT"+trimestreConcerne.getNumeroTrim()+"*Coef");
+				bulletinTrim.setLabel_trimestre("N T"+trimestreConcerne.getNumeroTrim());
+				bulletinTrim.setLabel_trim_x_coef("N T"+trimestreConcerne.getNumeroTrim()+"*Coef");
 		
 				/***********
 				 * Information sur les totaux trimestriels
@@ -4299,10 +4439,8 @@ public class UsersServiceImplementation implements IUsersService {
 				 */
 				int nhaj = 0;
 				int nhanj = 0;
-				int nhc = 0;
-				int nje = 0;
 				
-				for(Sequences seq : trimestreConcerne.getListofsequence()){
+				/*for(Sequences seq : trimestreConcerne.getListofsequence()){
 					RapportDAbsence rabs = eleve.getRapportDAbsenceSeq(seq.getIdPeriodes());
 					if(rabs!=null){
 						nhaj = nhaj + rabs.getNbreheureJustifie();
@@ -4310,12 +4448,15 @@ public class UsersServiceImplementation implements IUsersService {
 						nhc = nhc + rabs.getConsigne();
 						nje = nje + rabs.getJourExclusion();
 					}
-				}
+				}*/
+				
+				nhanj = eleve.getNbreHeureAbsenceNonJustifie(trimestreConcerne);
+				nhaj = eleve.getNbreHeureAbsenceJustifie(trimestreConcerne);
 				
 				bulletinTrim.setAbsence_NJ(nhanj);
 				bulletinTrim.setAbsence_J(nhaj);
-				bulletinTrim.setConsigne(nhc+"h");
-				bulletinTrim.setExclusion(nje+" J");
+				bulletinTrim.setConsigne("");
+				bulletinTrim.setExclusion("");
 				bulletinTrim.setAvertissement("");
 				bulletinTrim.setBlame_conduite("");
 				
@@ -4330,7 +4471,12 @@ public class UsersServiceImplementation implements IUsersService {
 							mapofElevesOrdreDecroissantMoyenneSequentiel.get(seq.getIdPeriodes());
 					
 					if(seq.getNumeroSeq()%2==1){
-						bulletinTrim.setRappel_1("Sequence "+seq.getNumeroSeq());
+						if(lang.equalsIgnoreCase("fr")==true){
+							bulletinTrim.setRappel_1("Séquence "+seq.getNumeroSeq());
+						}
+						else{
+							bulletinTrim.setRappel_1("Sequence "+seq.getNumeroSeq());
+						}
 						
 						double moy_seq = ub.getMoyenneSequentiel(eleve, seq);
 						
@@ -4349,7 +4495,13 @@ public class UsersServiceImplementation implements IUsersService {
 						}
 					}
 					else{
-						bulletinTrim.setRappel_2("Sequence "+seq.getNumeroSeq());
+						
+						if(lang.equalsIgnoreCase("fr")==true){
+							bulletinTrim.setRappel_2("Sequence "+seq.getNumeroSeq());
+						}
+						else{
+							bulletinTrim.setRappel_2("Séquence "+seq.getNumeroSeq());
+						}
 						
 						double moy_seq = ub.getMoyenneSequentiel(eleve, seq);
 						
@@ -4379,7 +4531,7 @@ public class UsersServiceImplementation implements IUsersService {
 				bulletinTrim.setTableau_hon("");
 				bulletinTrim.setTableau_enc("");
 				bulletinTrim.setTableau_fel("");
-				String appreciation = ub.calculAppreciation(moy_trim);
+				String appreciation = ub.calculAppreciation(moy_trim,lang);
 				bulletinTrim.setAppreciation(appreciation);
 				String distinction = ub.calculDistinction(moy_trim);
 				if(distinction.equals("TH")==true){
@@ -4442,8 +4594,13 @@ public class UsersServiceImplementation implements IUsersService {
 				
 				LigneTrimestrielGroupeCours ligneTrimestrielGroupeCoursScientifique = 
 						ub.getLigneTrimestrielGroupeCours(eleve, listofCoursScientifique, trimestreConcerne);
-		
-				bulletinTrim.setNom_g1("Scientifique");
+				
+				if(lang.equalsIgnoreCase("fr")==true){
+					bulletinTrim.setNom_g1("Scientifique");
+				}
+				else{
+					bulletinTrim.setNom_g1("Scientific");
+				}
 				
 				double total_coef_g1 = ligneTrimestrielGroupeCoursScientifique.getTotalCoefElevePourGroupeCours();
 				
@@ -4509,7 +4666,12 @@ public class UsersServiceImplementation implements IUsersService {
 				LigneTrimestrielGroupeCours ligneTrimestrielGroupeCoursLitteraire = 
 						ub.getLigneTrimestrielGroupeCours(eleve, listofCoursLitteraire, trimestreConcerne);
 		
-				bulletinTrim.setNom_g2("Litteraire");
+				if(lang.equalsIgnoreCase("fr")==true){
+					bulletinTrim.setNom_g2("Litteraire");
+				}
+				else{
+					bulletinTrim.setNom_g2("Literary");
+				}
 				
 				double total_coef_g2 = ligneTrimestrielGroupeCoursLitteraire.getTotalCoefElevePourGroupeCours();
 				
@@ -4575,7 +4737,12 @@ public class UsersServiceImplementation implements IUsersService {
 				LigneTrimestrielGroupeCours ligneTrimestrielGroupeCoursDivers = 
 						ub.getLigneTrimestrielGroupeCours(eleve, listofCoursDivers, trimestreConcerne);
 		
-				bulletinTrim.setNom_g3("Divers");
+				if(lang.equalsIgnoreCase("fr")==true){
+					bulletinTrim.setNom_g3("Divers");
+				}
+				else{
+					bulletinTrim.setNom_g3("Orthers");
+				}
 				
 				double total_coef_g3 = ligneTrimestrielGroupeCoursDivers.getTotalCoefElevePourGroupeCours();
 				
@@ -4727,7 +4894,7 @@ public class UsersServiceImplementation implements IUsersService {
 						mGrp1TrimBean.setPourcentage_g1(pourcentage_g1);
 					}
 					
-					String appreciationNote = ub.calculAppreciation(noteCoursTrim);
+					String appreciationNote = ub.calculAppreciation(noteCoursTrim,lang);
 					mGrp1TrimBean.setAppreciation_g1(appreciationNote);
 					
 					//On ajoute la ligne de cours dans le groupe correspondant
@@ -4834,7 +5001,7 @@ public class UsersServiceImplementation implements IUsersService {
 						mGrp2TrimBean.setPourcentage_g2(pourcentage_g2);
 					}
 					
-					String appreciationNote = ub.calculAppreciation(noteCoursTrim);
+					String appreciationNote = ub.calculAppreciation(noteCoursTrim,lang);
 					mGrp2TrimBean.setAppreciation_g2(appreciationNote);
 					
 
@@ -4946,7 +5113,7 @@ public class UsersServiceImplementation implements IUsersService {
 					mGrp3TrimBean.setPourcentage_g3(pourcentage_g3);
 				}
 				
-				String appreciationNote = ub.calculAppreciation(noteCoursTrim);
+				String appreciationNote = ub.calculAppreciation(noteCoursTrim,lang);
 				mGrp3TrimBean.setAppreciation_g3(appreciationNote);
 				
 
@@ -5007,8 +5174,8 @@ public class UsersServiceImplementation implements IUsersService {
 	@Override
 	public Map<String, Object> generateCollectionofBulletinTrimAnnee(Long idClasse, Long idTrimestre) {
 		// TODO Auto-generated method stub
-		log.log(Level.DEBUG, "Lancement de la methode generateCollectionofBulletinTrimAnnee avec "
-				+ "idClasse= "+idClasse+" idTrimestre="+idTrimestre);
+		/*log.log(Level.DEBUG, "Lancement de la methode generateCollectionofBulletinTrimAnnee avec "
+				+ "idClasse= "+idClasse+" idTrimestre="+idTrimestre);*/
 		Map<String, Object> donnee = new HashMap<String, Object>();
 		
 		long startTime = System.currentTimeMillis();
@@ -5028,7 +5195,15 @@ public class UsersServiceImplementation implements IUsersService {
 			//System.err.println("les données de calcul du bean bulletin sont errone donc rien n'est possible ");
 			return null;
 		 }
-		
+		 
+		String lang="";
+		 if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+			 lang="fr";
+		 }
+		 else{
+			 lang="en";
+		 }
+		 
 		 /*
 			 * Ici on est sur que la classe est bel et bien retrouver. On doit faire le bulletin de tous les élèves de la classe.
 			 * mais si un élève n'est pas régulier son bulletin devient particulier
@@ -5150,7 +5325,12 @@ public class UsersServiceImplementation implements IUsersService {
 						etablissementConcerne.getNumtel1Etab()+"/"+etablissementConcerne.getEmailEtab());
 				bulletinTrimAn.setDevise_en(etablissementConcerne.getDeviseanglaisEtab());
 				bulletinTrimAn.setDevise_fr(etablissementConcerne.getDeviseEtab());
-				bulletinTrimAn.setTitre_bulletin("Bulletin de note du trimestre "+trimestreConcerne.getNumeroTrim());
+				if(lang.equalsIgnoreCase("fr")==true){
+					bulletinTrimAn.setTitre_bulletin("Bulletin de note du trimestre "+trimestreConcerne.getNumeroTrim());
+				}
+				else{
+					bulletinTrimAn.setTitre_bulletin("Report card of term "+trimestreConcerne.getNumeroTrim());
+				}
 				bulletinTrimAn.setAnnee_scolaire_en("School year "+anneeScolaire.getIntituleAnnee());
 				bulletinTrimAn.setAnnee_scolaire_fr("Année scolaire "+anneeScolaire.getIntituleAnnee());
 				
@@ -5191,16 +5371,16 @@ public class UsersServiceImplementation implements IUsersService {
 				 */
 				for(Sequences seq : trimestreConcerne.getListofsequence()){
 					if(seq.getNumeroSeq()%2==1){
-						bulletinTrimAn.setLabel_note_1("Note"+seq.getNumeroSeq());
+						bulletinTrimAn.setLabel_note_1("N S"+seq.getNumeroSeq());
 					}
 					else{
-						bulletinTrimAn.setLabel_note_2("Note"+seq.getNumeroSeq());
+						bulletinTrimAn.setLabel_note_2("N S"+seq.getNumeroSeq());
 					}
 				}
 				
 
-				bulletinTrimAn.setLabel_trimestre("NoteT"+trimestreConcerne.getNumeroTrim());
-				bulletinTrimAn.setLabel_trim_x_coef("NoteT"+trimestreConcerne.getNumeroTrim()+"*Coef");
+				bulletinTrimAn.setLabel_trimestre("N T"+trimestreConcerne.getNumeroTrim());
+				bulletinTrimAn.setLabel_trim_x_coef("N T"+trimestreConcerne.getNumeroTrim()+"*Coef");
 		
 				/***********
 				 * Information sur les totaux trimestriels
@@ -5243,7 +5423,12 @@ public class UsersServiceImplementation implements IUsersService {
 				/********************************
 				 * Info sur le resultat annuel a ce stade de l'élève
 				 */
-				bulletinTrimAn.setRappel_an("Résultat annuel");
+				if(lang.equalsIgnoreCase("fr")==true){
+					bulletinTrimAn.setRappel_an("Résultat annuel");
+				}
+				else{
+					bulletinTrimAn.setRappel_an("Annual result");
+				}
 				double moy_an = ub.getMoyenneAnnuel(eleve, anneeScolaire);
 				
 				if(moy_an>0)	bulletinTrimAn.setMoy_an(moy_an);
@@ -5315,7 +5500,12 @@ public class UsersServiceImplementation implements IUsersService {
 				
 				
 				if(trimestreConcerne.getNumeroTrim()==1){
+					if(lang.equalsIgnoreCase("fr")==true){
 					bulletinTrimAn.setRappel_3("Trimestre1");
+					}
+					else{
+						bulletinTrimAn.setRappel_3("Term 1");
+					}
 					bulletinTrimAn.setRappel_4("");
 					bulletinTrimAn.setRappel_5("");
 					double r_moy_3 = ub.getMoyenneTrimestriel(eleve, trimestre1);
@@ -5329,7 +5519,12 @@ public class UsersServiceImplementation implements IUsersService {
 					}
 				}
 				else if(trimestreConcerne.getNumeroTrim()==2){
-					bulletinTrimAn.setRappel_3("Trimestre1");
+					if(lang.equalsIgnoreCase("fr")==true){
+						bulletinTrimAn.setRappel_3("Trimestre1");
+					}
+					else{
+						bulletinTrimAn.setRappel_3("Term 1");
+					}
 					double r_moy_3 = ub.getMoyenneTrimestriel(eleve, trimestre1);
 					bulletinTrimAn.setR_moy_3(r_moy_3);
 					
@@ -5340,7 +5535,12 @@ public class UsersServiceImplementation implements IUsersService {
 						bulletinTrimAn.setR_rang_3("");
 					}
 					
-					bulletinTrimAn.setRappel_4("Trimestre2");
+					if(lang.equalsIgnoreCase("fr")==true){
+						bulletinTrimAn.setRappel_4("Trimestre2");
+					}
+					else{
+						bulletinTrimAn.setRappel_4("Term 2");
+					}
 					double r_moy_4 = ub.getMoyenneTrimestriel(eleve, trimestre2);
 					bulletinTrimAn.setR_moy_4(r_moy_4);
 					
@@ -5354,7 +5554,12 @@ public class UsersServiceImplementation implements IUsersService {
 					
 				}
 				else if(trimestreConcerne.getNumeroTrim()==3){
-					bulletinTrimAn.setRappel_3("Trimestre1");
+					if(lang.equalsIgnoreCase("fr")==true){
+						bulletinTrimAn.setRappel_3("Trimestre1");
+					}
+					else{
+						bulletinTrimAn.setRappel_3("Term 1");
+					}
 					double r_moy_3 = ub.getMoyenneTrimestriel(eleve, trimestre1);
 					bulletinTrimAn.setR_moy_3(r_moy_3);
 					
@@ -5365,7 +5570,12 @@ public class UsersServiceImplementation implements IUsersService {
 						bulletinTrimAn.setR_rang_3("");
 					}
 					
-					bulletinTrimAn.setRappel_4("Trimestre2");
+					if(lang.equalsIgnoreCase("fr")==true){
+						bulletinTrimAn.setRappel_4("Trimestre2");
+					}
+					else{
+						bulletinTrimAn.setRappel_4("Term 2");
+					}
 					double r_moy_4 = ub.getMoyenneTrimestriel(eleve, trimestre2);
 					bulletinTrimAn.setR_moy_4(r_moy_4);
 					
@@ -5376,7 +5586,12 @@ public class UsersServiceImplementation implements IUsersService {
 						bulletinTrimAn.setR_rang_4("");
 					}
 					
-					bulletinTrimAn.setRappel_5("Trimestre3");
+					if(lang.equalsIgnoreCase("fr")==true){
+						bulletinTrimAn.setRappel_5("Trimestre3");
+					}
+					else{
+						bulletinTrimAn.setRappel_5("term 3");
+					}
 					double r_moy_5 = ub.getMoyenneTrimestriel(eleve, trimestre3);
 					bulletinTrimAn.setR_moy_5(r_moy_5);
 					
@@ -5418,7 +5633,7 @@ public class UsersServiceImplementation implements IUsersService {
 				int nhc = 0;
 				int nje = 0;
 				
-				for(Sequences seq : trimestreConcerne.getListofsequence()){
+				/*for(Sequences seq : trimestreConcerne.getListofsequence()){
 					RapportDAbsence rabs = eleve.getRapportDAbsenceSeq(seq.getIdPeriodes());
 					if(rabs!=null){
 						nhaj = nhaj + rabs.getNbreheureJustifie();
@@ -5426,7 +5641,10 @@ public class UsersServiceImplementation implements IUsersService {
 						nhc = nhc + rabs.getConsigne();
 						nje = nje + rabs.getJourExclusion();
 					}
-				}
+				}*/
+				
+				nhanj = eleve.getNbreHeureAbsenceNonJustifie(trimestreConcerne);
+				nhaj = eleve.getNbreHeureAbsenceJustifie(trimestreConcerne);
 				
 				bulletinTrimAn.setAbsence_NJ(nhanj);
 				bulletinTrimAn.setAbsence_J(nhaj);
@@ -5446,7 +5664,12 @@ public class UsersServiceImplementation implements IUsersService {
 							mapofElevesOrdreDecroissantMoyenneSequentiel.get(seq.getIdPeriodes());
 					
 					if(seq.getNumeroSeq()%2==1){
-						bulletinTrimAn.setRappel_1("Sequence "+seq.getNumeroSeq());
+						if(lang.equalsIgnoreCase("fr")==true){
+							bulletinTrimAn.setRappel_1("Séquence "+seq.getNumeroSeq());
+						}
+						else{
+							bulletinTrimAn.setRappel_1("Sequence "+seq.getNumeroSeq());
+						}
 						
 						double moy_seq = ub.getMoyenneSequentiel(eleve, seq);
 						if(moy_seq>0){
@@ -5464,8 +5687,12 @@ public class UsersServiceImplementation implements IUsersService {
 						}
 					}
 					else{
-						bulletinTrimAn.setRappel_2("Sequence "+seq.getNumeroSeq());
-						
+						if(lang.equalsIgnoreCase("fr")==true){
+							bulletinTrimAn.setRappel_2("Séquence "+seq.getNumeroSeq());
+						}
+						else{
+							bulletinTrimAn.setRappel_2("Sequence "+seq.getNumeroSeq());
+						}
 						double moy_seq = ub.getMoyenneSequentiel(eleve, seq);
 						if(moy_seq>0){
 							bulletinTrimAn.setR_moy_2(moy_seq);
@@ -5489,7 +5716,7 @@ public class UsersServiceImplementation implements IUsersService {
 				bulletinTrimAn.setTableau_hon("");
 				bulletinTrimAn.setTableau_enc("");
 				bulletinTrimAn.setTableau_fel("");
-				String appreciation = ub.calculAppreciation(moy_trim);
+				String appreciation = ub.calculAppreciation(moy_trim,lang);
 				bulletinTrimAn.setAppreciation(appreciation);
 				String distinction = ub.calculDistinction(moy_trim);
 				if(distinction.equals("TH")==true){
@@ -5552,7 +5779,12 @@ public class UsersServiceImplementation implements IUsersService {
 				LigneTrimestrielGroupeCours ligneTrimestrielGroupeCoursScientifique = 
 						ub.getLigneTrimestrielGroupeCours(eleve, listofCoursScientifique, trimestreConcerne);
 		
-				bulletinTrimAn.setNom_g1("Scientifique");
+				if(lang.equalsIgnoreCase("fr")==true){
+					bulletinTrimAn.setNom_g1("Scientifique");
+				}
+				else{
+					bulletinTrimAn.setNom_g1("Scientific");
+				}
 				
 				double total_coef_g1 = ligneTrimestrielGroupeCoursScientifique.getTotalCoefElevePourGroupeCours();
 				
@@ -5613,7 +5845,12 @@ public class UsersServiceImplementation implements IUsersService {
 				LigneTrimestrielGroupeCours ligneTrimestrielGroupeCoursLitteraire = 
 						ub.getLigneTrimestrielGroupeCours(eleve, listofCoursLitteraire, trimestreConcerne);
 		
-				bulletinTrimAn.setNom_g2("Litteraire");
+				if(lang.equalsIgnoreCase("fr")==true){
+					bulletinTrimAn.setNom_g2("Litteraire");
+				}
+				else{
+					bulletinTrimAn.setNom_g2("Literary");
+				}
 				
 				double total_coef_g2 = ligneTrimestrielGroupeCoursLitteraire.getTotalCoefElevePourGroupeCours();
 				
@@ -5674,8 +5911,12 @@ public class UsersServiceImplementation implements IUsersService {
 				LigneTrimestrielGroupeCours ligneTrimestrielGroupeCoursDivers = 
 						ub.getLigneTrimestrielGroupeCours(eleve, listofCoursDivers, trimestreConcerne);
 		
-				bulletinTrimAn.setNom_g3("Divers");
-				
+				if(lang.equalsIgnoreCase("fr")==true){
+					bulletinTrimAn.setNom_g3("Divers");
+				}
+				else{
+					bulletinTrimAn.setNom_g3("Others");
+				}
 				double total_coef_g3 = ligneTrimestrielGroupeCoursDivers.getTotalCoefElevePourGroupeCours();
 				
 				bulletinTrimAn.setTotal_coef_g3(total_coef_g3);
@@ -5816,7 +6057,7 @@ public class UsersServiceImplementation implements IUsersService {
 						mGrp1TrimBean.setPourcentage_g1(pourcentage_g1);
 					}
 					
-					String appreciationNote = ub.calculAppreciation(noteCoursTrim);
+					String appreciationNote = ub.calculAppreciation(noteCoursTrim,lang);
 					mGrp1TrimBean.setAppreciation_g1(appreciationNote);
 					
 					//On ajoute la ligne de cours dans le groupe correspondant
@@ -5918,7 +6159,7 @@ public class UsersServiceImplementation implements IUsersService {
 						mGrp2TrimBean.setPourcentage_g2(pourcentage_g2);
 					}
 					
-					String appreciationNote = ub.calculAppreciation(noteCoursTrim);
+					String appreciationNote = ub.calculAppreciation(noteCoursTrim,lang);
 					mGrp2TrimBean.setAppreciation_g2(appreciationNote);
 					
 
@@ -6024,7 +6265,7 @@ public class UsersServiceImplementation implements IUsersService {
 					mGrp3TrimBean.setPourcentage_g3(pourcentage_g3);
 				}
 				
-				String appreciationNote = ub.calculAppreciation(noteCoursTrim);
+				String appreciationNote = ub.calculAppreciation(noteCoursTrim,lang);
 				mGrp3TrimBean.setAppreciation_g3(appreciationNote);
 				
 
@@ -6091,9 +6332,16 @@ public class UsersServiceImplementation implements IUsersService {
 			Annee annee, Classes classe , double tauxReussite, double moyenne_general,	
 			Trimestres trimestre, List<Eleves> listofElevesOrdreDecroissantMoyenneTrimestriel){
 		
-		log.log(Level.DEBUG, "Lancement de la methode getRapportConseilClasseTrimestriel ");
+		/*log.log(Level.DEBUG, "Lancement de la methode getRapportConseilClasseTrimestriel ");*/
 		FicheConseilClasseBean ficheCC = new FicheConseilClasseBean();
 		
+		String lang="";
+		if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+			lang="fr";
+		}
+		else{
+			lang="en";
+		}
 		/****
 		 * Information d'entete du rapport de conseil de classe
 		 */
@@ -6115,9 +6363,17 @@ public class UsersServiceImplementation implements IUsersService {
 		ficheCC.setDevise_fr(etab.getDeviseEtab());
 		
 		ficheCC.setAnnee(annee.getIntituleAnnee());
-		ficheCC.setPeriode("Trimestre "+trimestre.getNumeroTrim());
-		String titre_fiche = "CONSEIL DE CLASSE DU TRIMESTRE: "+trimestre.getNumeroTrim();
-		ficheCC.setTitre_fiche(titre_fiche);
+		if(lang.equalsIgnoreCase("fr")==true){
+			ficheCC.setPeriode("Trimestre "+trimestre.getNumeroTrim());
+			String titre_fiche = "CONSEIL DE CLASSE DU TRIMESTRE: "+trimestre.getNumeroTrim();
+			ficheCC.setTitre_fiche(titre_fiche);
+		}
+		else{
+			ficheCC.setPeriode("Term "+trimestre.getNumeroTrim());
+			String titre_fiche = "CLASS COUNCIL OF SEQUENCE: "+trimestre.getNumeroTrim();
+			ficheCC.setTitre_fiche(titre_fiche);
+		}
+		
 		String profPrincipal = " "+classe.getProffesseur().getNomsPers()+" "+classe.getProffesseur().getPrenomsPers();
 		profPrincipal=profPrincipal.toUpperCase();
 		ficheCC.setEnseignant(profPrincipal);
@@ -6208,6 +6464,7 @@ public class UsersServiceImplementation implements IUsersService {
 				
 				ficheCC.setG_classe(g_classe);
 				ficheCC.setF_classe(f_classe);
+				t_classe = g_classe + f_classe;
 				ficheCC.setT_classe(t_classe);
 				ficheCC.setG_nonclasse(g_nonclasse);
 				ficheCC.setF_nonclasse(f_nonclasse);
@@ -6217,14 +6474,16 @@ public class UsersServiceImplementation implements IUsersService {
 				ficheCC.setT_nbremoy(t_nbremoy);
 				ficheCC.setG_pourcentage(pourCG);
 				ficheCC.setF_pourcentage(pourCF);
-				java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+				/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 				try{
 					tauxReussite=df.parse(df.format(tauxReussite)).doubleValue();
 					moyenne_general=df.parse(df.format(moyenne_general)).doubleValue();
 				}
 				catch(Exception e){
 					
-				}
+				}*/
+				tauxReussite =  this.ub.tronqueDouble(tauxReussite, 2);
+				moyenne_general = this.ub.tronqueDouble(moyenne_general, 2);
 				ficheCC.setT_pourcentage(tauxReussite);
 				ficheCC.setMg_classe(moyenne_general);
 
@@ -6509,8 +6768,8 @@ public class UsersServiceImplementation implements IUsersService {
 			Long idAnnee){*/
 	public Map<String, Object> generateCollectionofBulletinAnnee(Long idClasse,
 			Long idAnnee){
-		log.log(Level.DEBUG, "Lancement de la methode generateCollectionofBulletinAnnee avec "
-				+ "idClasse= "+idClasse+" idAnnee="+idAnnee);
+		/*log.log(Level.DEBUG, "Lancement de la methode generateCollectionofBulletinAnnee avec "
+				+ "idClasse= "+idClasse+" idAnnee="+idAnnee);*/
 		Map<String, Object> donnee = new HashMap<String, Object>();
 		
 		long startTime = System.currentTimeMillis();
@@ -6528,6 +6787,13 @@ public class UsersServiceImplementation implements IUsersService {
 			return null;
 		 }
 		 
+		 String lang="";
+		 if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+			 lang ="fr";
+		 }
+		 else{
+			 lang="en";
+		 }
 		 
 		 /*
 			 * Ici on est sur que la classe est bel et bien retrouver. On doit faire le bulletin de tous les élèves de la classe.
@@ -6643,8 +6909,13 @@ public class UsersServiceImplementation implements IUsersService {
 						etablissementConcerne.getNumtel1Etab()+"/"+etablissementConcerne.getEmailEtab());
 				bulletinAn.setDevise_en(etablissementConcerne.getDeviseanglaisEtab());
 				bulletinAn.setDevise_fr(etablissementConcerne.getDeviseEtab());
-				bulletinAn.setTitre_bulletin("Bulletin de note de l'année scolaire "+
-						anneeScolaire.getIntituleAnnee());
+				if(lang.equalsIgnoreCase("fr")==true){
+					bulletinAn.setTitre_bulletin("Bulletin de note de l'année scolaire "+
+							anneeScolaire.getIntituleAnnee());
+				}
+				else{
+					bulletinAn.setTitre_bulletin("Report card of school year "+anneeScolaire.getIntituleAnnee());
+				}
 				bulletinAn.setAnnee_scolaire_en("School year "+anneeScolaire.getIntituleAnnee());
 				bulletinAn.setAnnee_scolaire_fr("Année scolaire "+anneeScolaire.getIntituleAnnee());
 				
@@ -6685,17 +6956,17 @@ public class UsersServiceImplementation implements IUsersService {
 				 */
 				for(Trimestres trim : anneeScolaire.getListoftrimestre()){
 					if(trim.getNumeroTrim()==1){
-						bulletinAn.setLabel_note_1("Note"+trim.getNumeroTrim());
+						bulletinAn.setLabel_note_1("T"+trim.getNumeroTrim());
 					}
 					else if(trim.getNumeroTrim()==2){
-						bulletinAn.setLabel_note_2("Note"+trim.getNumeroTrim());
+						bulletinAn.setLabel_note_2("T"+trim.getNumeroTrim());
 					}
 					else if(trim.getNumeroTrim()==3){
-						bulletinAn.setLabel_note_3("Note"+trim.getNumeroTrim());
+						bulletinAn.setLabel_note_3("T"+trim.getNumeroTrim());
 					}
 				}
-				bulletinAn.setLabel_annuel("Note An");
-				bulletinAn.setLabel_ann_x_coef("Note An"+"*Coef");
+				bulletinAn.setLabel_annuel("N An");
+				bulletinAn.setLabel_ann_x_coef("N An"+"*Coef");
 
 				/***********
 				 * Information sur les totaux annuels
@@ -6755,7 +7026,7 @@ public class UsersServiceImplementation implements IUsersService {
 				int nhc = 0;
 				int nje = 0;
 				
-				for(Trimestres trim : anneeScolaire.getListoftrimestre()){
+				/*for(Trimestres trim : anneeScolaire.getListoftrimestre()){
 					for(Sequences seq : trim.getListofsequence()){
 						RapportDAbsence rabs = eleve.getRapportDAbsenceSeq(seq.getIdPeriodes());
 						if(rabs!=null){
@@ -6765,7 +7036,10 @@ public class UsersServiceImplementation implements IUsersService {
 							nje = nje + rabs.getJourExclusion();
 						}
 					}
-				}
+				}*/
+				
+				nhanj = eleve.getNbreHeureAbsenceNonJustifie(anneeScolaire);
+				nhaj = eleve.getNbreHeureAbsenceJustifie(anneeScolaire);
 				
 				bulletinAn.setAbsence_NJ(nhanj);
 				bulletinAn.setAbsence_J(nhaj);
@@ -6784,7 +7058,13 @@ public class UsersServiceImplementation implements IUsersService {
 							mapofElevesOrdreDecroissantMoyenneTrimestriel.get(trim.getIdPeriodes());
 					
 					if(trim.getNumeroTrim() == 1){
-						bulletinAn.setRappel_1("trimestre"+trim.getNumeroTrim());
+						if(lang.equalsIgnoreCase("fr")==true){
+							bulletinAn.setRappel_1("Trimestre "+trim.getNumeroTrim());
+						}
+						else{
+							bulletinAn.setRappel_1("Term "+trim.getNumeroTrim());
+						}
+						
 						double moy_trim = ub.getMoyenneTrimestriel(eleve, trim);
 						if(moy_trim>0){
 							bulletinAn.setR_moy_1(moy_trim);
@@ -6801,7 +7081,12 @@ public class UsersServiceImplementation implements IUsersService {
 						}
 					}//trim1
 					else if(trim.getNumeroTrim() == 2){
-						bulletinAn.setRappel_2("trimestre"+trim.getNumeroTrim());
+						if(lang.equalsIgnoreCase("fr")==true){
+						bulletinAn.setRappel_2("Trimestre"+trim.getNumeroTrim());
+						}
+						else{
+							bulletinAn.setRappel_2("Term "+trim.getNumeroTrim());
+						}
 						double moy_trim = ub.getMoyenneTrimestriel(eleve, trim);
 						if(moy_trim>0){
 							bulletinAn.setR_moy_2(moy_trim);
@@ -6818,7 +7103,12 @@ public class UsersServiceImplementation implements IUsersService {
 						}
 					}//fin trim2
 					else if(trim.getNumeroTrim() == 3){
-						bulletinAn.setRappel_3("trimestre"+trim.getNumeroTrim());
+						if(lang.equalsIgnoreCase("fr")==true){
+							bulletinAn.setRappel_3("Trimestre"+trim.getNumeroTrim());
+						}
+						else{
+							bulletinAn.setRappel_3("Term "+trim.getNumeroTrim());
+						}
 						double moy_trim = ub.getMoyenneTrimestriel(eleve, trim);
 						if(moy_trim>0){
 							bulletinAn.setR_moy_3(moy_trim);
@@ -6844,7 +7134,7 @@ public class UsersServiceImplementation implements IUsersService {
 				bulletinAn.setTableau_hon("");
 				bulletinAn.setTableau_enc("");
 				bulletinAn.setTableau_fel("");
-				String appreciation = ub.calculAppreciation(moy_an);
+				String appreciation = ub.calculAppreciation(moy_an,lang);
 				bulletinAn.setAppreciation(appreciation);
 				String distinction = ub.calculDistinction(moy_an);
 				if(distinction.equals("TH")==true){
@@ -6907,7 +7197,12 @@ public class UsersServiceImplementation implements IUsersService {
 				LigneAnnuelGroupeCours ligneAnnuelGroupeCoursScientifique = 
 						ub.getLigneAnnuelGroupeCours(eleve, listofCoursScientifique, anneeScolaire);
 		
-				bulletinAn.setNom_g1("Scientifique");
+				if(lang.equalsIgnoreCase("fr")==true){
+					bulletinAn.setNom_g1("Scientifique");
+				}
+				else{
+					bulletinAn.setNom_g1("Scientific");
+				}
 				
 				double total_coef_g1 = ligneAnnuelGroupeCoursScientifique.getTotalCoefElevePourGroupeCours();
 				
@@ -6971,7 +7266,12 @@ public class UsersServiceImplementation implements IUsersService {
 				LigneAnnuelGroupeCours ligneAnnuelGroupeCoursLitteraire = 
 						ub.getLigneAnnuelGroupeCours(eleve, listofCoursLitteraire, anneeScolaire);
 		
-				bulletinAn.setNom_g2("Litteraire");
+				if(lang.equalsIgnoreCase("fr")==true){
+					bulletinAn.setNom_g2("Litteraire");
+				}
+				else{
+					bulletinAn.setNom_g2("Literary");
+				}
 				
 				double total_coef_g2 = ligneAnnuelGroupeCoursLitteraire.getTotalCoefElevePourGroupeCours();
 				
@@ -7035,7 +7335,12 @@ public class UsersServiceImplementation implements IUsersService {
 				LigneAnnuelGroupeCours ligneAnnuelGroupeCoursDivers = 
 						ub.getLigneAnnuelGroupeCours(eleve, listofCoursDivers, anneeScolaire);
 		
-				bulletinAn.setNom_g3("Divers");
+				if(lang.equalsIgnoreCase("fr")==true){
+					bulletinAn.setNom_g3("Divers");
+				}
+				else{
+					bulletinAn.setNom_g3("Others");
+				}
 				
 				double total_coef_g3 = ligneAnnuelGroupeCoursDivers.getTotalCoefElevePourGroupeCours();
 				
@@ -7190,7 +7495,7 @@ public class UsersServiceImplementation implements IUsersService {
 						mGrp1AnBean.setPourcentage_g1(pourcentage_g1);
 					}
 					
-					String appreciationNote = ub.calculAppreciation(noteCoursAn);
+					String appreciationNote = ub.calculAppreciation(noteCoursAn,lang);
 					mGrp1AnBean.setAppreciation_g1(appreciationNote);
 					
 					//On ajoute la ligne de cours dans le groupe correspondant
@@ -7302,7 +7607,7 @@ public class UsersServiceImplementation implements IUsersService {
 						mGrp2AnBean.setPourcentage_g2(pourcentage_g2);
 					}
 					
-					String appreciationNote = ub.calculAppreciation(noteCoursAn);
+					String appreciationNote = ub.calculAppreciation(noteCoursAn,lang);
 					mGrp2AnBean.setAppreciation_g2(appreciationNote);
 					
 					//On ajoute la ligne de cours dans le groupe correspondant
@@ -7414,7 +7719,7 @@ public class UsersServiceImplementation implements IUsersService {
 						mGrp3AnBean.setPourcentage_g3(pourcentage_g3);
 					}
 					
-					String appreciationNote = ub.calculAppreciation(noteCoursAn);
+					String appreciationNote = ub.calculAppreciation(noteCoursAn,lang);
 					mGrp3AnBean.setAppreciation_g3(appreciationNote);
 					
 					//On ajoute la ligne de cours dans le groupe correspondant
@@ -7463,9 +7768,16 @@ public class UsersServiceImplementation implements IUsersService {
 			Annee annee, Classes classe , double tauxReussite, double moyenne_general,	
 			List<Eleves> listofElevesOrdreDecroissantMoyenneAnnuel){
 		
-		log.log(Level.DEBUG, "Lancement de la methode getRapportConseilClasseAnnuel ");
+		/*log.log(Level.DEBUG, "Lancement de la methode getRapportConseilClasseAnnuel ");*/
 		FicheConseilClasseBean ficheCC = new FicheConseilClasseBean();
 		
+		String lang="";
+		if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+			lang="fr";
+		}
+		else{
+			lang="en";
+		}
 		/****
 		 * Information d'entete du rapport de conseil de classe
 		 */
@@ -7487,9 +7799,16 @@ public class UsersServiceImplementation implements IUsersService {
 		ficheCC.setDevise_fr(etab.getDeviseEtab());
 		
 		ficheCC.setAnnee(annee.getIntituleAnnee());
-		ficheCC.setPeriode("Année scolaire "+annee.getIntituleAnnee());
-		String titre_fiche = "CONSEIL DE CLASSE DE L'ANNEE: "+annee.getIntituleAnnee();
-		ficheCC.setTitre_fiche(titre_fiche);
+		if(lang.equalsIgnoreCase("fr")==true){
+			ficheCC.setPeriode("Année scolaire "+annee.getIntituleAnnee());
+			String titre_fiche = "CONSEIL DE CLASSE DE L'ANNEE: "+annee.getIntituleAnnee();
+			ficheCC.setTitre_fiche(titre_fiche);
+		}
+		else{
+			ficheCC.setPeriode("School year "+annee.getIntituleAnnee());
+			String titre_fiche = "CLASS COUNCIL OF YEAR: "+annee.getIntituleAnnee();
+			ficheCC.setTitre_fiche(titre_fiche);
+		}
 		String profPrincipal = " "+classe.getProffesseur().getNomsPers()+" "+classe.getProffesseur().getPrenomsPers();
 		profPrincipal=profPrincipal.toUpperCase();
 		ficheCC.setEnseignant(profPrincipal);
@@ -7581,6 +7900,7 @@ public class UsersServiceImplementation implements IUsersService {
 		
 		ficheCC.setG_classe(g_classe);
 		ficheCC.setF_classe(f_classe);
+		t_classe = g_classe + f_classe;
 		ficheCC.setT_classe(t_classe);
 		ficheCC.setG_nonclasse(g_nonclasse);
 		ficheCC.setF_nonclasse(f_nonclasse);
@@ -7590,14 +7910,16 @@ public class UsersServiceImplementation implements IUsersService {
 		ficheCC.setT_nbremoy(t_nbremoy);
 		ficheCC.setG_pourcentage(pourCG);
 		ficheCC.setF_pourcentage(pourCF);
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try{
 			tauxReussite=df.parse(df.format(tauxReussite)).doubleValue();
 			moyenne_general=df.parse(df.format(moyenne_general)).doubleValue();
 		}
 		catch(Exception e){
 			
-		}
+		}*/
+		tauxReussite = this.ub.tronqueDouble(tauxReussite, 2);
+		moyenne_general = this.ub.tronqueDouble(moyenne_general, 2);
 		ficheCC.setT_pourcentage(tauxReussite);
 		ficheCC.setMg_classe(moyenne_general);
 		
@@ -7862,7 +8184,7 @@ public class UsersServiceImplementation implements IUsersService {
 	
 		@Override
 	public Collection<EleveBean> generateCollectionofEleveprovClasse(Long idClasse) {
-		log.log(Level.DEBUG, "Lancement de la methode generateCollectionofEleveprovClasse ");
+		/*log.log(Level.DEBUG, "Lancement de la methode generateCollectionofEleveprovClasse ");*/
 		Classes classeSelect = this.findClasses(idClasse);
 		if(classeSelect == null) return null;
 		List<EleveBean> collectionofEleveprovClasse = new ArrayList<EleveBean>();
@@ -7896,7 +8218,7 @@ public class UsersServiceImplementation implements IUsersService {
 	@Override
 	public Collection<EleveBean> generateCollectionofElevedefClasse(Long idClasse, 
 			double montantMin){
-		log.log(Level.DEBUG, "Lancement de la methode generateCollectionofElevedefClasse ");
+		/*log.log(Level.DEBUG, "Lancement de la methode generateCollectionofElevedefClasse ");*/
 		Classes classeSelect = this.findClasses(idClasse);
 		if(classeSelect == null) return null;
 		List<EleveBean> collectionofElevedefClasse = new ArrayList<EleveBean>();
@@ -7929,7 +8251,7 @@ public class UsersServiceImplementation implements IUsersService {
 	
 	public Collection<PersonnelBean> generateCollectionofPersonnelBean(){
 		List<PersonnelBean> listofPersonnelBean = new ArrayList<PersonnelBean>();
-		log.log(Level.DEBUG, "Lancement de la methode generateCollectionofPersonnelBean ");
+		/*log.log(Level.DEBUG, "Lancement de la methode generateCollectionofPersonnelBean ");*/
 		//On commence par le proviseur ou le chef d'etablissement
 		List<Proviseur> listofProviseur = this.findAllProviseur();
 		if(listofProviseur!=null){
@@ -8143,6 +8465,192 @@ public class UsersServiceImplementation implements IUsersService {
 	}
 	
 
+	@Override
+	public Collection<PersonnelBean> generateCollectionofCenseurBean() {
+		List<PersonnelBean> listofPersonnelBean = new ArrayList<PersonnelBean>();
+				List<Censeurs> listofCenseur = this.findAllCenseurs();
+				if(listofCenseur!=null){
+					for(Censeurs c : listofCenseur){
+						String noms_prenoms = (c.getNomsPers()+"  "+
+								c.getPrenomsPers()).toUpperCase();
+						SimpleDateFormat spd = new SimpleDateFormat("dd/MM/yyyy");
+						String date = spd.format(c.getDatenaissPers());
+						String date_naiss = date;
+						String lieu_naiss = "à "+c.getLieunaissPers();
+						String numcni = c.getNumcniPers();
+						String sexe = c.getSexePers().toLowerCase();
+						String nationalite = c.getNationalitePers();
+						String grade = c.getGradePers();
+						String statut = c.getStatutPers();
+						String diplome = c.getDiplomePers();
+						String specialite = c.getSpecialiteProf();
+						String fonction  = "CENSEUR";
+						String numtel1 = c.getNumtel1Pers();
+						String numtel2 = c.getNumtel2Pers();
+						String adresse = c.getEmailPers();
+						
+						PersonnelBean pb = new PersonnelBean();
+						pb.setAdresse(adresse);
+						pb.setDate_naiss(date_naiss);
+						pb.setLieu_naiss(lieu_naiss);
+						pb.setDiplome(diplome);
+						pb.setSpecialite(specialite);
+						pb.setFonction(fonction);
+						pb.setGrade(grade);
+						pb.setStatut(statut);
+						pb.setNoms_prenoms(noms_prenoms);
+						pb.setNumcni(numcni);
+						pb.setSexe(sexe);
+						pb.setNationalite(nationalite);
+						pb.setNumtel1(numtel1);
+						pb.setNumtel2(numtel2);
+						
+						listofPersonnelBean.add(pb);
+					}
+				}
+		return listofPersonnelBean;
+	}
+
+
+	@Override
+	public Collection<PersonnelBean> generateCollectionofSgBean() {
+		List<PersonnelBean> listofPersonnelBean = new ArrayList<PersonnelBean>();
+		List<SG> listofSg = this.findAllSG();
+		if(listofSg!=null){
+			for(SG sg : listofSg){
+				String noms_prenoms = (sg.getNomsPers()+"  "+
+						sg.getPrenomsPers()).toUpperCase();
+				SimpleDateFormat spd = new SimpleDateFormat("dd/MM/yyyy");
+				String date = spd.format(sg.getDatenaissPers());
+				String date_naiss = date;
+				String lieu_naiss = "à "+sg.getLieunaissPers();
+				String numcni = sg.getNumcniPers();
+				String sexe = sg.getSexePers().toLowerCase();
+				String nationalite = sg.getNationalitePers();
+				String grade = sg.getGradePers();
+				String statut = sg.getStatutPers();
+				String diplome = sg.getDiplomePers();
+				String specialite = sg.getSpecialiteProf();
+				String fonction  = "SG";
+				String numtel1 = sg.getNumtel1Pers();
+				String numtel2 = sg.getNumtel2Pers();
+				String adresse = sg.getEmailPers();
+				
+				PersonnelBean pb = new PersonnelBean();
+				pb.setAdresse(adresse);
+				pb.setDate_naiss(date_naiss);
+				pb.setLieu_naiss(lieu_naiss);
+				pb.setDiplome(diplome);
+				pb.setSpecialite(specialite);
+				pb.setFonction(fonction);
+				pb.setGrade(grade);
+				pb.setStatut(statut);
+				pb.setNoms_prenoms(noms_prenoms);
+				pb.setNumcni(numcni);
+				pb.setSexe(sexe);
+				pb.setNationalite(nationalite);
+				pb.setNumtel1(numtel1);
+				pb.setNumtel2(numtel2);		
+				listofPersonnelBean.add(pb);
+			}
+		}
+		return listofPersonnelBean;
+	}
+
+
+	@Override
+	public Collection<PersonnelBean> generateCollectionofEnseignantBean() {
+		List<PersonnelBean> listofPersonnelBean = new ArrayList<PersonnelBean>();
+		List<Enseignants> listofEns = this.findAllEnseignants();
+		if(listofEns!=null){
+			for(Enseignants ens : listofEns){
+				String noms_prenoms = (ens.getNomsPers()+"  "+
+						ens.getPrenomsPers()).toUpperCase();
+				SimpleDateFormat spd = new SimpleDateFormat("dd/MM/yyyy");
+				String date = spd.format(ens.getDatenaissPers());
+				String date_naiss = date;
+				String lieu_naiss = "à "+ens.getLieunaissPers();
+				String numcni = ens.getNumcniPers();
+				String sexe = ens.getSexePers().toLowerCase();
+				String nationalite = ens.getNationalitePers();
+				String grade = ens.getGradePers();
+				String statut = ens.getStatutPers();
+				String diplome = ens.getDiplomePers();
+				String specialite = ens.getSpecialiteProf();
+				String fonction  = "ENSEIGNANT";
+				String numtel1 = ens.getNumtel1Pers();
+				String numtel2 = ens.getNumtel2Pers();
+				String adresse = ens.getEmailPers();
+				
+				PersonnelBean pb = new PersonnelBean();
+				pb.setAdresse(adresse);
+				pb.setDate_naiss(date_naiss);
+				pb.setLieu_naiss(lieu_naiss);
+				pb.setDiplome(diplome);
+				pb.setSpecialite(specialite);
+				pb.setFonction(fonction);
+				pb.setGrade(grade);
+				pb.setStatut(statut);
+				pb.setNoms_prenoms(noms_prenoms);
+				pb.setNumcni(numcni);
+				pb.setSexe(sexe);
+				pb.setNationalite(nationalite);
+				pb.setNumtel1(numtel1);
+				pb.setNumtel2(numtel2);
+				
+				listofPersonnelBean.add(pb);
+			}
+		}
+		return listofPersonnelBean;
+	}
+
+
+	@Override
+	public Collection<PersonnelBean> generateCollectionofIntendantBean() {
+		List<PersonnelBean> listofPersonnelBean = new ArrayList<PersonnelBean>();
+		List<Intendant> listofInt = this.findAllIntendant();
+		if(listofInt!=null){
+			for(Intendant intendant : listofInt){
+				String noms_prenoms = (intendant.getNomsPers()+"  "+
+						intendant.getPrenomsPers()).toUpperCase();
+				SimpleDateFormat spd = new SimpleDateFormat("dd/MM/yyyy");
+				String date = spd.format(intendant.getDatenaissPers());
+				String date_naiss = date;
+				String lieu_naiss = "à "+intendant.getLieunaissPers();
+				String numcni = intendant.getNumcniPers();
+				String sexe = intendant.getSexePers().toLowerCase();
+				String nationalite = intendant.getNationalitePers();
+				String grade = intendant.getGradePers();
+				String statut = intendant.getStatutPers();
+				String diplome = intendant.getDiplomePers();
+				String specialite = intendant.getSpecialiteProf();
+				String fonction  = "INTENDANT";
+				String numtel1 = intendant.getNumtel1Pers();
+				String numtel2 = intendant.getNumtel2Pers();
+				String adresse = intendant.getEmailPers();
+				
+				PersonnelBean pb = new PersonnelBean();
+				pb.setAdresse(adresse);
+				pb.setDate_naiss(date_naiss);
+				pb.setLieu_naiss(lieu_naiss);
+				pb.setDiplome(diplome);
+				pb.setSpecialite(specialite);
+				pb.setFonction(fonction);
+				pb.setGrade(grade);
+				pb.setStatut(statut);
+				pb.setNoms_prenoms(noms_prenoms);
+				pb.setNumcni(numcni);
+				pb.setSexe(sexe);
+				pb.setNationalite(nationalite);
+				pb.setNumtel1(numtel1);
+				pb.setNumtel2(numtel2);		
+				listofPersonnelBean.add(pb);
+			}
+		}
+		return listofPersonnelBean;
+	}
+	
+	
 
 	/*********************
 	 * Fin des codes des différentes fonction qui entre dans la fabrication et l'édition des bulletins
@@ -8226,6 +8734,899 @@ public class UsersServiceImplementation implements IUsersService {
 		if(classe==null || cours==null || trimestre==null) return -1;
 		int nbre = ub.getNbreSousNoteDansCourspourTrim(classe, cours, trimestre);
 		return nbre;
+	}
+
+
+	@Override
+	public int getEffectifInsolvableDansClasse(Long idClasse) {
+		// TODO Auto-generated method stub
+		Classes classe = this.findClasses(idClasse);
+		if(classe == null) return -1;
+		double montantScoClasse = classe.getMontantScolarite();
+		int nbre_elv_insolvable = 0;
+		
+		for(Eleves eleve : classe.getListofEleves()){
+			if(eleve.getCompteInscription().getMontant()<montantScoClasse){
+				nbre_elv_insolvable+=1;
+			}
+		}
+		
+		return nbre_elv_insolvable;
+	}
+
+
+	@Override
+	public List<Eleves> getListElevesInsolvable(Long idClasse) {
+		Classes classe = this.findClasses(idClasse);
+		if(classe == null) return null;
+		double montantScoClasse = classe.getMontantScolarite();
+		List<Eleves> listofEleveInsolvable = new ArrayList<Eleves>();
+		for(Eleves eleve : classe.getListofEleves()){
+			if(eleve.getCompteInscription().getMontant()<montantScoClasse){
+				listofEleveInsolvable.add(eleve);
+			}
+		}
+		return listofEleveInsolvable;
+	}
+
+
+	@Override
+	public Collection<EleveInsolvableBean> generateListEleveInsolvable(Long idClasse) {
+		// TODO Auto-generated method stub
+		List<EleveInsolvableBean> listofInsolvable = new ArrayList<EleveInsolvableBean>();
+		SimpleDateFormat spd1 = new SimpleDateFormat("yyyy-MM-dd");
+		Classes classe = this.findClasses(idClasse);
+		if(classe == null) return listofInsolvable;
+		List<Eleves> listofEleve = this.getListElevesInsolvable(idClasse);
+		for(Eleves eleve : listofEleve){
+			EleveInsolvableBean eleveInsolvable = new EleveInsolvableBean();
+			
+			 String datelieuString="";
+			 datelieuString = spd1.format(eleve.getDatenaissEleves());
+			 datelieuString+=" à ";
+			 datelieuString+=eleve.getLieunaissEleves();
+			 
+			 eleveInsolvable.setDate_lieunaissance(datelieuString);
+			 
+			 double montantVerse = eleve.getCompteInscription().getMontant();
+			 
+			 eleveInsolvable.setMontant_verse(""+montantVerse);
+			 
+			eleveInsolvable.setNumero(eleve.getNumero((List<Eleves>) classe.getListofEleves()));
+			
+			String noms_prenoms = eleve.getNomsEleves().toUpperCase()+" "+eleve.getPrenomsEleves();
+			eleveInsolvable.setNoms_prenoms(noms_prenoms);
+			
+			 listofInsolvable.add(eleveInsolvable);
+		}
+		return listofInsolvable;
+	}
+
+
+	@Override
+	public Page<Eleves> findPageElevesInsolvable(Long idClasses, int numPage, int taillePage) {
+		return elevesRepository.findPageElevesInsolvableDansClasse(idClasses, new PageRequest(numPage, taillePage));
+	}
+
+
+	
+
+	@Override
+	public Long getLastOperationOnCompte(Long idEleveConcerne) {
+		List<Operations> listofOperationOnCompte = this.findListAllOperationsEleve(idEleveConcerne);
+		if(listofOperationOnCompte == null) return null;
+		if(listofOperationOnCompte.size()>0){
+			Operations opOnCompte = listofOperationOnCompte.get(0);
+			return opOnCompte.getIdOperation();
+		}
+		return null;
+	}
+
+
+	@Override
+	public double getMontantOperation(Long idOperation) {
+		// TODO Auto-generated method stub
+		Operations op = this.findOperation(idOperation);
+		if(op==null) return 0;
+		return op.getMontantOperation();
+	}
+
+
+	@Override
+	public String getIdentifiantOperation(Long idOperation) {
+		// TODO Auto-generated method stub
+		Operations op = this.findOperation(idOperation);
+		if(op==null) return "";
+		return op.getIdentifiantOperation();
+	}
+
+
+	@Override
+	public String getNumeroOperation() {
+		// TODO Auto-generated method stub
+		int numeroop=0;
+		if(identOpRepository.findAll().size()>0){
+			IdentOperation identop = identOpRepository.findAll().get(0);
+			int numero = identop.getNumero();
+			int next_numero = numero +1;
+			identop.setNumero(next_numero);
+			identOpRepository.save(identop);
+			numeroop = next_numero;
+		}
+		else{
+			/*
+			 * C'est la toute première fois qu'on initialise l'enregistrement de la table identOperation
+			 * pour la generation efficace des numeros des operations (transactions)
+			 */
+			int numero = 1;
+			IdentOperation identop = new IdentOperation();
+			identop.setNumero(numero);
+			identOpRepository.save(identop);
+			numeroop = numero;
+		}
+		
+		return ""+numeroop;
+	}
+
+
+	@Override
+	public int saveRAbsenceSeqEleve(Long idEleves, Long idSequence, int nbreHJ, int nbreHNJ, Date date_enreg) {
+		// TODO Auto-generated method stub
+		Eleves eleveConcerne = this.findEleves(idEleves);
+		Sequences sequenceConcerne = this.findSequences(idSequence);
+		Date dateJour = new Date();
+		if(eleveConcerne == null || sequenceConcerne == null) return -3;
+		if(dateJour.compareTo(date_enreg)<0) return -2;
+		if(nbreHJ<0 || nbreHNJ<0) return -1;
+		//On récupere les heures qui existent le cas écheant
+		int total_nbreHJ = eleveConcerne.getNbreHeureAbscenceJustifie(idSequence);
+		int total_nbreNHJ = eleveConcerne.getNbreHeureAbscenceNonJustifie(idSequence);
+		//On ajoute ceux qui ont ete envoye dans la requete
+		total_nbreHJ+=nbreHJ;
+		total_nbreNHJ+=nbreHNJ;
+		//On vérifie donc qu'apres l'opération on aura pas les heures justifiés > aux heures non justifiées
+		if(total_nbreHJ>total_nbreNHJ) return 0;
+		/*
+		 * Tout est fin pret pour qu'un enregistrement soit effectue tout en gardant la coherence
+		 */
+		RapportDAbsence rapportDAbsence = new RapportDAbsence();
+		rapportDAbsence.setDateenreg(date_enreg);
+		rapportDAbsence.setEleve(eleveConcerne);
+		rapportDAbsence.setNbreheureJustifie(nbreHJ);
+		rapportDAbsence.setNbreheureNJustifie(nbreHNJ);
+		rapportDAbsence.setSequence(sequenceConcerne);
+		
+		rapportDAbsenceRepository.save(rapportDAbsence);
+		return 1;
+	}
+
+
+	@Override
+	public int saveRDisciplineSeqEleve(Long idEleves, Long idSequence, Date date_enreg, int nbreperiode, String unite,
+			String motif, Long idSanctionDisc) {
+		// TODO Auto-generated method stub
+		Eleves eleve = this.findEleves(idEleves);
+		Sequences sequence = this.findSequences(idSequence);
+		SanctionDisciplinaire sanctionDisc = this.findSanctionDisciplinaire(idSanctionDisc);
+		Date dateJour = new Date();
+		if(eleve == null || sequence == null || sanctionDisc == null ) return -3;
+		if(dateJour.compareTo(date_enreg)<0) return -2;
+		if(nbreperiode<0) return -1;
+		if(nbreperiode>0 && unite.equalsIgnoreCase("RAS")==true) return 0;
+		
+		RapportDisciplinaire rapDisc = new RapportDisciplinaire();
+		rapDisc.setDateenreg(date_enreg);
+		rapDisc.setEleve(eleve);
+		rapDisc.setMotif(motif);
+		rapDisc.setNbreperiode(nbreperiode);
+		rapDisc.setSanctionDisc(sanctionDisc);
+		rapDisc.setSequence(sequence);
+		rapDisc.setUnite(unite);
+		
+		
+		rapportdisciplinaireRepository.save(rapDisc);
+		
+		return 1;
+	}
+
+
+	@Override
+	public int deleteRapportDisciplinaire(Long idRdisc) {
+		// TODO Auto-generated method stub
+		rapportdisciplinaireRepository.delete(idRdisc);
+		return 1;
+	}
+
+
+
+	@Override
+	public String ecritEnLettreNombreDeux9(long nbre, boolean accord) {
+
+		String chaine_result="";
+		int nbre_dizaines;
+		int nbre_unites;
+		if(nbre>=20){
+			//System.out.println("nbre>=20");
+			if(nbre>=60){
+				//System.out.println("nbre>=60");
+				nbre_dizaines=2*((new Long(nbre)).intValue()/20);
+				nbre_unites=(new Long(nbre)).intValue()%20;
+			}
+			else{
+				nbre_dizaines=(new Long(nbre)).intValue()/10;
+				nbre_unites=(new Long(nbre)).intValue()%10;
+				//System.out.println("nbre_dizaines="+nbre_dizaines+" nbre_unites="+nbre_unites);
+			}
+			
+			chaine_result+=this.ch_dizaines[nbre_dizaines];
+			//System.out.println("on ajoute "+this.ch_dizaines[nbre_dizaines]+" car nbre_dizaines="+nbre_dizaines);
+			
+			if(accord==true && nbre_dizaines==8 && nbre_unites==0){
+				chaine_result+="s";
+				//System.out.println("on ajoute s");
+			}
+			
+			if((nbre_unites%10==1) && nbre_dizaines!=8){
+				chaine_result+=" et ";
+				//System.out.println("on ajoute et");
+			}
+			else if(nbre_unites!=0){
+				chaine_result+="-";
+				//System.out.println("on ajoute -");
+			}
+		}
+		else{
+			nbre_unites=(new Long(nbre)).intValue();
+		}
+		
+		if(nbre==0 || nbre_unites!=0){
+			chaine_result+=this.ch_unites[nbre_unites];
+			//System.out.println("on ajoute "+this.ch_unites[nbre_unites]+" car nbre_unites="+nbre_unites);
+		}
+		
+		return chaine_result;
+	
+	}
+
+
+	@Override
+	public String ecritEnLettreNombreTrois9(long nbre, boolean accord) {
+
+		String chaine_result="";
+		int nbre_centaines;
+		int nbre99;
+		
+		nbre_centaines=(new Long(nbre)).intValue()/100;
+		nbre99=(new Long(nbre)).intValue()%100;
+		
+		if(nbre_centaines>=1){
+			if(nbre_centaines>=2){
+				chaine_result+=this.ch_unites[nbre_centaines];
+				chaine_result+=" ";
+			}
+			
+			chaine_result+="cent";
+			if(accord==true && nbre_centaines>=2 && nbre99==0){
+				chaine_result+="s";
+			}
+			
+			if(nbre99!=0){
+				chaine_result+=" ";
+			}
+		}
+		
+		if(nbre==0 || nbre99!=0){
+			String chaine_result99=ecritEnLettreNombreDeux9(nbre99, accord);
+			chaine_result+=chaine_result99;
+		}
+		
+		return chaine_result;
+	
+	}
+
+
+	@Override
+	public String ecritEnLettreNombreQuatre9(long nbre, boolean accord) {
+
+		String chaine_result="";
+		long nbre_milliers;
+		long nbre999;
+		
+		nbre_milliers=nbre/1000;
+		nbre999=nbre%1000;
+		
+		if(nbre_milliers>=1){
+			if(nbre_milliers>=2){
+				String chaine_result999=ecritEnLettreNombreTrois9(nbre_milliers, false);
+				chaine_result+=chaine_result999;
+				chaine_result+=" ";
+			}
+			
+			chaine_result+="mille";
+			
+			if(nbre999!=0){
+				chaine_result+=" ";
+			}
+		}
+		
+		if(nbre==0 || nbre999!=0){
+			String chaine_result999=ecritEnLettreNombreTrois9(nbre999, true);
+			chaine_result+=chaine_result999;
+		}
+		
+		return chaine_result;
+	
+	}
+
+
+	@Override
+	public String ecritEnLettreNombreCinq9(long nbre, boolean accord) {
+
+		String chaine_result="";
+		long nbre_dizaine_milliers;
+		long nbre9999;
+		
+		nbre_dizaine_milliers=nbre/1000;
+		nbre9999=nbre%1000;
+		
+		if(nbre_dizaine_milliers>=1){
+			if(nbre_dizaine_milliers>=2){
+				String chaine_result9999=ecritEnLettreNombreQuatre9(nbre_dizaine_milliers, false);
+				chaine_result+=chaine_result9999;
+				chaine_result+=" ";
+			}
+			chaine_result+="mille";
+			if(nbre9999!=0){
+				chaine_result+=" ";
+			}
+			
+		}
+		
+		if(nbre==0 || nbre9999!=0){
+			String chaine_result9999=ecritEnLettreNombreQuatre9(nbre9999, true);
+			chaine_result+=chaine_result9999;
+		}
+		
+		return chaine_result;
+	
+	}
+
+
+	@Override
+	public String ecritEnLettreNombreSix9(long nbre, boolean accord) {
+
+		String chaine_result="";
+		long nbre_centaine_milliers;
+		long nbre99999;
+		
+		nbre_centaine_milliers=nbre/1000;
+		nbre99999=nbre%1000;
+		
+		if(nbre_centaine_milliers>=1){
+			if(nbre_centaine_milliers>=2){
+				String chaine_result99999=ecritEnLettreNombreCinq9(nbre_centaine_milliers, false);
+				chaine_result+=chaine_result99999;
+				chaine_result+=" ";
+			}
+			chaine_result+="mille";
+			if(nbre99999!=0){
+				chaine_result+=" ";
+			}
+			
+		}
+		
+		if(nbre==0 || nbre99999!=0){
+			String chaine_result99999=ecritEnLettreNombreCinq9(nbre99999, true);
+			chaine_result+=chaine_result99999;
+		}
+		
+		return chaine_result;
+	
+	}
+
+
+	@Override
+	public String ecritEnLettreNombreNeuf9(long nbre, boolean accord) {
+
+		String chaine_result="";
+		long nbre_millions;
+		long nbre999999;
+		
+		nbre_millions=nbre/1000000;
+		nbre999999=nbre%1000000;
+		
+		if(nbre_millions>=1){
+			//System.out.println("if1");
+			if(nbre_millions>=2){
+				//System.out.println("if2");
+				String chaine_result999999=ecritEnLettreNombreTrois9(nbre_millions, false);
+				chaine_result+=chaine_result999999;
+				chaine_result+=" ";
+				//System.out.println("1=="+chaine_result);
+			}
+			else if(nbre_millions==1){
+				chaine_result+="un ";
+				//System.out.println("A1=="+chaine_result);
+			}
+			chaine_result+="million";
+			//System.out.println("2=="+chaine_result);
+			
+			if(nbre_millions>1){
+				chaine_result+="s";
+			}
+			
+			if(nbre999999!=0){
+				//System.out.println("if4");
+				chaine_result+=" ";
+				//System.out.println("3=="+chaine_result);
+			}
+			
+		}
+		
+		if(nbre==0 || nbre999999!=0){
+			//System.out.println("if5");
+			String chaine_result999999=ecritEnLettreNombreSix9(nbre999999, true);
+			chaine_result+=chaine_result999999;
+			//System.out.println("4=="+chaine_result);
+		}
+		//System.out.println("5=="+chaine_result);
+		return chaine_result;
+	
+	}
+
+
+	@Override
+	public String ecritEnLettreNombreDouze9(long nbre, boolean accord) {
+
+		String chaine_result="";
+		long nbre_milliards;
+		long nbre999999999;
+		
+		nbre_milliards=nbre/1000000000;
+		nbre999999999=nbre%1000000000;
+		
+		if(nbre_milliards>=1){
+			//System.out.println("if6");
+			if(nbre_milliards>=2){
+				//System.out.println("if7");
+				String chaine_result999999999=ecritEnLettreNombreTrois9(nbre_milliards, false);
+				chaine_result+=chaine_result999999999;
+				chaine_result+=" ";
+				//System.out.println("6=="+chaine_result);
+			}
+			else if(nbre_milliards==1){
+				chaine_result+="un ";
+				//System.out.println("B1=="+chaine_result);
+			}
+			chaine_result+="milliard";
+			//System.out.println("7=="+chaine_result);
+			
+			if(nbre_milliards>1){
+				chaine_result+="s";
+			}
+			
+			if(nbre999999999!=0){
+				//System.out.println("if8");
+				chaine_result+=" ";
+				//System.out.println("8=="+chaine_result);
+			}
+			
+		}
+		
+		if(nbre==0 || nbre999999999!=0){
+			//System.out.println("if9");
+			String chaine_result999999999=ecritEnLettreNombreNeuf9(nbre999999999, true);
+			chaine_result+=chaine_result999999999;
+			//System.out.println("9=="+chaine_result);
+		}
+		//System.out.println("10=="+chaine_result);
+		return chaine_result;
+	
+	}
+
+
+	@Override
+	public String ecritEnLettreNombrePlusDeDouze9(long nbre, boolean accord) {
+
+		String chaine_result="";
+		long nbre_milliards;
+		long nbrePlusDeNeuf9;
+		
+		String s_diviseur="1000000000";
+		long diviseur=Long.parseLong(s_diviseur);
+		
+		nbre_milliards=nbre/diviseur;
+		nbrePlusDeNeuf9=nbre%diviseur;
+		
+		if(nbre_milliards<1){
+			chaine_result+= ecritEnLettreNombreDouze9(nbre,accord);
+		}
+		else{
+			chaine_result+=ecritEnLettreNombreDouze9(nbre_milliards,accord);
+			chaine_result+= " ";
+			chaine_result+= "milliard";
+			if(nbre_milliards>1){
+				chaine_result+= "s";
+			}
+			chaine_result+= " ";
+			chaine_result+= ecritEnLettreNombreDouze9(nbrePlusDeNeuf9,accord);
+		}
+		
+		return chaine_result;
+	
+	}
+
+
+	@Override
+	public String writeInLetterNumberTwo9(long nbre) {
+
+		String chaine_result="";
+		int nbre_tens;
+		int nbre_units;
+		if(nbre>=20){
+			nbre_tens=(new Long(nbre)).intValue()/10;
+			nbre_units=(new Long(nbre)).intValue()%10;
+			chaine_result+=this.ch_tens[nbre_tens];
+			if(nbre_units!=0){
+				chaine_result+="-";
+			}
+		}
+		else{
+			nbre_units=(new Long(nbre)).intValue();
+		}
+		if(nbre==0 || nbre_units!=0){
+			chaine_result+=this.ch_units[nbre_units];
+		}
+		return chaine_result;
+	
+	}
+
+
+	@Override
+	public String writeInLetterNumberThree9(long nbre) {
+
+		String chaine_result="";
+		int nbre_hundred;
+		int nbre99;
+		
+		nbre_hundred=(new Long(nbre)).intValue()/100;
+		nbre99=(new Long(nbre)).intValue()%100;
+		if(nbre_hundred>0){
+			chaine_result+=this.ch_units[nbre_hundred];
+			chaine_result+=" ";
+			chaine_result+="hundred";
+		}
+		if(nbre_hundred>0 && nbre99>0){
+			chaine_result+=" ";
+			chaine_result+="and";
+			chaine_result+=" ";
+			chaine_result+=writeInLetterNumberTwo9(nbre99);
+		}
+		
+		if(nbre_hundred==0 && nbre99>0){
+			chaine_result+=writeInLetterNumberTwo9(nbre99);
+		}
+		
+		
+		return chaine_result;
+	
+	}
+
+
+	@Override
+	public String writeInLetterNumberFour9(long nbre) {
+
+		String chaine_result="";
+		long nbre_thousand;
+		long nbre999;
+		
+		nbre_thousand=nbre/1000;
+		nbre999=nbre%1000;
+		
+		chaine_result+=writeInLetterNumberThree9(nbre_thousand);
+		chaine_result+=" ";
+		chaine_result+="thousand";
+		chaine_result+=" ";
+		chaine_result+=writeInLetterNumberThree9(nbre999);
+		
+		return chaine_result;
+	
+	}
+
+
+	@Override
+	public String writeInLetterNumberFive9(long nbre) {
+
+		String chaine_result="";
+		long nbre_thousand;
+		long nbre9999;
+		
+		nbre_thousand=nbre/1000;
+		nbre9999=nbre%1000;
+		
+		chaine_result+=writeInLetterNumberTwo9(nbre_thousand);
+		chaine_result+=" ";
+		chaine_result+="thousand";
+		chaine_result+=" ";
+		chaine_result+=writeInLetterNumberThree9(nbre9999);
+		
+		return chaine_result;
+	
+	}
+
+
+	@Override
+	public String writeInLetterNumberSix9(long nbre) {
+
+		String chaine_result="";
+		long nbre_thousand;
+		long nbre99999;
+		
+		nbre_thousand=nbre/1000;
+		nbre99999=nbre%1000;
+		if(nbre_thousand>0){
+			chaine_result+=writeInLetterNumberThree9(nbre_thousand);
+			chaine_result+=" ";
+			chaine_result+="thousand";
+			chaine_result+=" ";
+		}
+		if(nbre99999>0){
+			chaine_result+=writeInLetterNumberThree9(nbre99999);
+		}
+		
+		return chaine_result;
+	
+	}
+
+
+	@Override
+	public String writeInLetterNumberNine9(long nbre) {
+
+		String chaine_result="";
+		long nbre_million;
+		long nbre999999;
+		
+		nbre_million=nbre/1000000;
+		nbre999999=nbre%1000000;
+		if(nbre_million>0){
+			chaine_result+=writeInLetterNumberThree9(nbre_million);
+			chaine_result+=" ";
+			chaine_result+="million";
+			chaine_result+=" ";
+		}
+		if(nbre999999>0){
+			chaine_result+=writeInLetterNumberSix9(nbre999999);
+		}
+		
+		return chaine_result;
+	
+	}
+
+
+	@Override
+	public String writeInLetterNumberTwelve9(long nbre) {
+
+		String chaine_result="";
+		long nbre_billion;
+		long nbre9999999;
+		
+		nbre_billion=nbre/1000000000;
+		nbre9999999=nbre%1000000000;
+		if(nbre_billion>0){
+			chaine_result+=writeInLetterNumberThree9(nbre_billion);
+			chaine_result+=" ";
+			chaine_result+="billion";
+			chaine_result+=" ";
+		}
+		if(nbre9999999>0){
+			chaine_result+=writeInLetterNumberNine9(nbre9999999);
+		}
+		
+		return chaine_result;
+	
+	}
+
+
+	@Override
+	public String writeInLetterNumberOverTwelve9(long nbre) {
+
+		String chaine_result="";
+		long nbre_billion;
+		long nbre99999999;
+		
+		String s_diviseur="1000000000";
+		long diviseur=Long.parseLong(s_diviseur);
+		
+		nbre_billion=nbre/diviseur;
+		nbre99999999=nbre%diviseur;
+		
+		if(nbre_billion<1){
+			chaine_result+= writeInLetterNumberTwelve9(nbre);
+		}
+		else{
+			chaine_result+= writeInLetterNumberTwelve9(nbre_billion);
+			chaine_result+= " ";
+			chaine_result+= "billion";
+			chaine_result+= " ";
+			chaine_result+= writeInLetterNumberTwelve9(nbre99999999);
+		}
+		
+		return chaine_result;
+	
+	}
+	
+	
+
+
+	@Override
+	public Page<Operations> findPageOperations(Date datemin, Date datemax, int numPage, int taillePage) {
+		return operationsRepository.findPageOperations(datemin, datemax, new PageRequest(numPage, taillePage));
+	}
+
+
+	@Override
+	public List<Operations> findListAllOperations(Date datemin, Date datemax) {
+		return operationsRepository.findAllOperationEntreDate(datemin, datemax);
+	}
+
+
+	@Override
+	public Operations findOperation(long idOperation) {
+		return operationsRepository.findOne(idOperation);
+	}
+
+
+	@Override
+	public double calculMontantTotalListOperation(List<Operations> listOperation) {
+		double montant=0.0;
+		for(Operations op : listOperation){
+			montant+= op.getMontantOperation();
+		}
+		return montant;
+	}
+
+
+	@Override
+	public Collection<OperationBean> generateListOperation(Date datemin, Date datemax) {
+		// TODO Auto-generated method stub
+		List<OperationBean> listofOperationBean = new ArrayList<OperationBean>();
+		SimpleDateFormat spd = new SimpleDateFormat("yyyy-MM-dd");
+		int numero = 1;
+		for(Operations op : this.findListAllOperations(datemin, datemax)){
+			OperationBean opBean = new OperationBean();
+			opBean.setDate_operation(spd.format(op.getDateOperation()));
+			String noms = op.getCompteinscription().getEleveProprietaire().getNomsEleves().toUpperCase();
+			String prenoms = op.getCompteinscription().getEleveProprietaire().getPrenomsEleves();
+			opBean.setEleve_concerne(noms+" "+prenoms);
+			opBean.setMontant(op.getMontantOperation());
+			opBean.setNumero_ordre(op.getIdentifiantOperation());
+			opBean.setNumero(numero);
+			
+			listofOperationBean.add(opBean);
+			
+			numero+=1;
+		}
+		return listofOperationBean;
+	}
+
+
+	@Override
+	public List<Operations> findListAllOperationsEleve(Long idEleve) {
+		return operationsRepository.findAllOperationEleve(idEleve);
+	}
+
+
+	@Override
+	public Collection<OperationBean> generateListOperationEleve(Long idEleve) {
+		// TODO Auto-generated method stub
+
+		List<OperationBean> listofOperationBean = new ArrayList<OperationBean>();
+		SimpleDateFormat spd = new SimpleDateFormat("yyyy-MM-dd");
+		int numero = 1;
+		for(Operations op : this.findListAllOperationsEleve(idEleve)){
+			OperationBean opBean = new OperationBean();
+			opBean.setDate_operation(spd.format(op.getDateOperation()));
+			String noms = op.getCompteinscription().getEleveProprietaire().getNomsEleves().toUpperCase();
+			String prenoms = op.getCompteinscription().getEleveProprietaire().getPrenomsEleves();
+			opBean.setEleve_concerne(noms+" "+prenoms);
+			opBean.setMontant(op.getMontantOperation());
+			opBean.setNumero_ordre(op.getIdentifiantOperation());
+			opBean.setNumero(numero);
+			
+			listofOperationBean.add(opBean);
+			
+			numero+=1;
+		}
+		return listofOperationBean;
+	
+	}
+
+
+	@Override
+	public List<SanctionDisciplinaire> findListAllSanctionDisciplinaire() {
+		// TODO Auto-generated method stub
+		return sanctionDiscRepository.findAllByOrderByCodeSancDiscAscIntituleSancDiscAsc();
+	}
+
+
+	@Override
+	public SanctionDisciplinaire findSanctionDisciplinaire(Long idSanctionDisc) {
+		// TODO Auto-generated method stub
+		return sanctionDiscRepository.findOne(idSanctionDisc);
+	}
+
+
+	@Override
+	public List<SanctionTravail> findListAllSanctionTravail() {
+		// TODO Auto-generated method stub
+		return sanctionTravRepository.findAllByOrderByCodeSancTravAscIntituleSancTravAsc();
+	}
+
+
+	@Override
+	public SanctionTravail findSanctionTravail(Long idSanctionTrav) {
+		// TODO Auto-generated method stub
+		return sanctionTravRepository.findOne(idSanctionTrav);
+	}
+
+
+	@Override
+	public List<Decision> findListAllDecision() {
+		// TODO Auto-generated method stub
+		return decisionRepository.findAllByOrderByCodeDecisionAscIntituleDecisionAsc();
+	}
+
+
+	@Override
+	public DecisionConseil findDecisionConseilPeriode(Long idEleves, Long idPeriode) {
+		// TODO Auto-generated method stub
+		return decisionConseilRepository.findDecisionConseilPeriode(idEleves, idPeriode);
+	}
+
+
+	@Override
+	public int saveDecisionConseilSeq(Long idEleves, Long idSequence, Long idSanctionDisc, int nbreperiode,
+			String unite, Long idSanctionTravAssocie) {
+		// TODO Auto-generated method stub
+		Eleves eleve = this.findEleves(idEleves);
+		Sequences sequence = this.findSequences(idSequence);
+		SanctionDisciplinaire sanctionDisc = this.findSanctionDisciplinaire(idSanctionDisc);
+		SanctionTravail sanctionTrav = this.findSanctionTravail(idSanctionTravAssocie);
+		
+		if(sanctionTrav == null || sanctionDisc == null || eleve == null || sequence == null) return -1;
+		
+		if(nbreperiode<0) return 0;
+		if(nbreperiode>0 && unite.equalsIgnoreCase("RAS")==true) return 0;
+		
+		DecisionConseil decConseil = this.findDecisionConseilPeriode(idEleves, idSequence);
+		
+		if(decConseil == null){
+			DecisionConseil dc = new DecisionConseil();
+			dc.setDecisionAssocie(null);
+			dc.setEleveConcerne(eleve);
+			dc.setNbreperiode(nbreperiode);
+			dc.setPeriodeConcerne(sequence);
+			dc.setSanctionDiscAssocie(sanctionDisc);
+			dc.setSanctionTravAssocie(sanctionTrav);
+			dc.setUnite(unite);
+			
+			decisionConseilRepository.save(dc);
+		}
+		else{
+			decConseil.setDecisionAssocie(null);
+			decConseil.setNbreperiode(nbreperiode);
+			decConseil.setSanctionDiscAssocie(sanctionDisc);
+			decConseil.setSanctionTravAssocie(sanctionTrav);
+			decConseil.setUnite(unite);
+		}
+		
+		return 1;
+	}
+
+
+	@Override
+	public UtilitairesBulletins getUtilitairesBulletins() {
+		return this.ub;
 	}
 	
 

@@ -4,7 +4,6 @@
 package org.logesco.services;
 
 import java.io.Serializable;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,6 +11,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.logesco.entities.Annee;
 import org.logesco.entities.Classes;
@@ -51,6 +51,34 @@ public class UtilitairesBulletins implements Serializable {
 	public UtilitairesBulletins() {
 		// TODO Auto-generated constructor stub
 	}
+	
+	
+	public  String tronque(String chaine, int nbDecimales) {
+	      String avant;
+	      String apres;
+
+	      StringTokenizer st = new StringTokenizer(chaine,"."); 
+	      if(st.countTokens()>2) return null;
+	      avant = st.nextToken(); 
+	      if (st.hasMoreTokens()) apres = st.nextToken(); 
+	      else return avant;
+	      
+	     if (apres.length() <= nbDecimales) return chaine;
+	      return chaine.substring(0, chaine.length() - 
+				      apres.length() + nbDecimales);
+	    }
+	
+	public double tronqueDouble(double nbre, int nbDecimales){
+		double d=-100000000;
+		String nbre_a_tronque = ""+nbre;
+		String nbre_tronque = this.tronque(nbre_a_tronque, nbDecimales);
+		if(nbre_tronque!=null){
+			d = Double.parseDouble(nbre_tronque);
+		}
+		return d;
+	}
+
+	
 	
 public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> listofEleves){
 		
@@ -162,34 +190,49 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 
 	
 	
-	public String calculAppreciation(Double note){
+	public String calculAppreciation(Double note, String lang){
 		String appreciation = "";
 		if(note == null) return appreciation;
 		//Double note = new Double(this.getNote_seq_g1());
 		if (note <= 3.0) {
-			appreciation = "NUL";
+			appreciation = "NUL"+"(F)";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"NUL":"NULL"+" (F)";
 		} else if((note >3.0) && (note < 6.0))  {
 			appreciation = "MAUVAIS";
-		}else if((note >=6.0) && (note < 8.0))  {
+			appreciation = lang.equalsIgnoreCase("fr")==true?"MAUVAIS":"BAD"+" (F)";
+		}else if((note >=6.0) && (note < 7.0))  {
 			appreciation = "FAIBLE";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"FAIBLE":"POOR"+" (F)";
+		}else if((note >=7.0) && (note < 8.0))  {
+			appreciation = "FAIBLE";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"FAIBLE":"POOR"+" (E)";
 		}else if((note >=8.0) && (note < 9.0))  {
 			appreciation = "INSUFFISANT";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"INSUFFISANT":"INSUFFICIENT"+" (D/C-)";
 		}else if((note >=9.0) && (note < 10.0))  {
 			appreciation = "MEDIOCRE";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"MEDIOCRE":"MEDIOCRE"+" (C/C+)";
 		}else if((note >=10.0) && (note < 11.0))  {
 			appreciation = "PASSABLE";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"PASSABLE":"AVERAGE"+" (B-/B)";
 		}else if((note >=11.0) && (note < 12.0))  {
 			appreciation = "MOYEN";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"MOYEN":"MEDIUM"+" (B-/B)";
 		}else if((note >=12.0) && (note < 14.0))  {
 			appreciation = "ASSEZ BIEN";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"ASSEZ BIEN":"FAIRLY GOOD"+" (B+/A-)";
 		}else if((note >=14.0) && (note < 16.0))  {
 			appreciation = "BIEN";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"BIEN":"GOOD"+" (A)";
 		}else if((note >=16.0) && (note < 18.0))  {
 			appreciation = "TRES BIEN";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"TRES BIEN":"VERY GOOD"+" (A+)";
 		}else if((note >=18.0) && (note < 20.0))  {
 			appreciation = "EXCELLENT";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"EXCELLENT":"EXCELLENT"+" (A+)";
 		}else if(note==20.0)  {
 			appreciation = "PARFAIT";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"PARFAIT":"PERFECT"+" (A+)";
 		}
 		return appreciation;
 	}
@@ -363,14 +406,16 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		
 		pourCF = pourCF*100;
 
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			pourCG =df.parse(df.format(pourCG)).doubleValue();
 			pourCF =df.parse(df.format(pourCF)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		pourCG = this.tronqueDouble(pourCG, 2);
+		pourCF = this.tronqueDouble(pourCF, 2);
 		
 		mapofEff.put("nbreG7_50", nbreG7_50);
 		mapofEff.put("nbreG10", nbreG10);
@@ -540,14 +585,16 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		
 		pourCF = pourCF*100;
 
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			pourCG =df.parse(df.format(pourCG)).doubleValue();
 			pourCF =df.parse(df.format(pourCF)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		pourCG = this.tronqueDouble(pourCG, 2);
+		pourCF = this.tronqueDouble(pourCF, 2);
 		
 		mapofEff.put("nbreG7_50", nbreG7_50);
 		mapofEff.put("nbreG10", nbreG10);
@@ -717,14 +764,17 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		
 		pourCF = pourCF*100;
 
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			pourCG =df.parse(df.format(pourCG)).doubleValue();
 			pourCF =df.parse(df.format(pourCF)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		pourCG = this.tronqueDouble(pourCG, 2);
+		pourCF = this.tronqueDouble(pourCF, 2);
+		
 		
 		mapofEff.put("nbreG7_50", nbreG7_50);
 		mapofEff.put("nbreG10", nbreG10);
@@ -841,13 +891,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			possedeunenote = 1;
 		}
 		
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			noteFinale =df.parse(df.format(noteFinale)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		noteFinale = this.tronqueDouble(noteFinale, 2);
 
 		if(possedeunenote == 1)	return noteFinale; else return -1;
 	}
@@ -873,13 +924,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			noteFinale = soenoteFinale/nbreNote;
 		}
 		
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			noteFinale =df.parse(df.format(noteFinale)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		noteFinale = this.tronqueDouble(noteFinale, 2);
 
 		if(possedeunenote == 1)		return noteFinale; else return -1;
 
@@ -905,13 +957,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			noteFinale = soenoteFinale/nbreNote;
 		}
 		
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			noteFinale =df.parse(df.format(noteFinale)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		noteFinale = this.tronqueDouble(noteFinale, 2);
 
 		if(possedeunenote == 1)		return noteFinale; else return -1;
 
@@ -1220,13 +1273,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			}
 		}
 		
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			soeValeurNote =df.parse(df.format(soeValeurNote)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		soeValeurNote = this.tronqueDouble(soeValeurNote, 2);
 
 		if(possedeTotal == 1) return soeValeurNote; else return -1;
 		
@@ -1247,13 +1301,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			}
 		}
 		
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			totalNoteTrim =df.parse(df.format(totalNoteTrim)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		totalNoteTrim = this.tronqueDouble(totalNoteTrim, 2);
 		
 		if(possedeTotal == 1) return totalNoteTrim; else return -1;
 	}
@@ -1346,13 +1401,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			possedeMoy = 1;
 		}
 		
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			moyenne =df.parse(df.format(moyenne)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		moyenne = this.tronqueDouble(moyenne, 2);
 
 		if(possedeMoy == 1) return moyenne; else return -1;
 		
@@ -1360,37 +1416,20 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 	
 	public double getMoyenneTrimestriel(Eleves eleve, Trimestres trimestre){
 		double moyenne = -1;
-		/*double soeMoySeq = 0;
-		int possedeMoy =  0;
-		int nbreMoy = 0;*/
 		
 		double totalPointsTrim = this.getTotalPointsTrimestriel(eleve, trimestre);
 		double totalCoef = this.getSommeCoefCoursComposeTrimestre(eleve, trimestre);
 		if(totalCoef>0)	moyenne = totalPointsTrim/totalCoef;
-		/*for(Sequences seq : trimestre.getListofsequence()){
-			double moySeq = this.getMoyenneSequentiel(eleve, seq);
-			//System.err.println("moyseq "+seq.getNumeroSeq()+" est de "+moySeq);
-			if(moySeq >= 0){
-				soeMoySeq = soeMoySeq + moySeq;
-				possedeMoy = 1;
-				nbreMoy ++;
-			}
-		}
 		
-		if(nbreMoy == 1){
-			moyenne = soeMoySeq;
-		}
-		else if(nbreMoy == 2){
-			moyenne = soeMoySeq/2;
-		}*/
 		
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			moyenne =df.parse(df.format(moyenne)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		moyenne = this.tronqueDouble(moyenne, 2);
 
 		
 		if(moyenne > -1) return moyenne; else return -1;
@@ -1399,41 +1438,20 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 	
 	public double getMoyenneAnnuel(Eleves eleve, Annee annee){
 		double moyenne = -1;
-		/*double soeMoyTrim = 0;
-		int possedeMoy =  0;
-		int nbreMoy = 0;*/
 		
 		double totalPointsTrim = this.getTotalPointsAnnuel(eleve, annee);
 		double totalCoef = this.getSommeCoefCoursComposeAnnee(eleve, annee);
 		if(totalCoef>0)	moyenne = totalPointsTrim/totalCoef;
 		
-		/*for(Trimestres trim : annee.getListoftrimestre()){
-			double moyTrim = this.getMoyenneTrimestriel(eleve, trim);
-			if(moyTrim >= 0){
-				soeMoyTrim = soeMoyTrim + moyTrim;
-				possedeMoy = 1;
-				nbreMoy ++;
-			}
-		}
 		
-
-		if(nbreMoy == 1){
-			moyenne = soeMoyTrim;
-		}
-		else if(nbreMoy == 2){
-			moyenne = soeMoyTrim/2;
-		}
-		else if(nbreMoy == 3){
-			moyenne = soeMoyTrim/3;
-		}*/
-		
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			moyenne =df.parse(df.format(moyenne)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		moyenne = this.tronqueDouble(moyenne, 2);
 
 
 		if(moyenne > -1) return moyenne; else return -1;
@@ -1495,14 +1513,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			double taux = nbre_Moyenne/nbreElvRegulier_Seq;
 			taux = taux * 100;
 			rapportSequentielClasse.setTauxReussiteSequentiel(taux);
-			/*try {
-				taux =df.parse(df.format(taux)).doubleValue();
-				////System.err.println("taux calcule et tronquer "+taux);
-				rapportSequentielClasse.setTauxReussiteSequentiel(taux);
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}*/
+			
 		}
 		
 		double soe_Moy = soeMoy;
@@ -1543,7 +1554,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		int nbreElvRegulierTrim = listofEleveRegulier.size();
 		rapportTrimestreClasse.setEffectifEleveRegulier(nbreElvRegulierTrim);
 		
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		//java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		
 		double moygen = 0;
 		double soeMoy=0;
@@ -1581,14 +1592,16 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			double nbreElvRegulier_Trim = nbreElvRegulierTrim;
 			double taux = nbre_Moyenne/nbreElvRegulier_Trim;
 			taux = taux * 100;
-			try {
+			/*try {
 				taux =df.parse(df.format(taux)).doubleValue();
 				////System.err.println("taux calcule et tronquer "+taux);
 				rapportTrimestreClasse.setTauxReussiteTrimestriel(taux);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
+			taux = this.tronqueDouble(taux, 2);
+			rapportTrimestreClasse.setTauxReussiteTrimestriel(taux);
 		}
 		
 		if(nbreelvayantMoy>0){
@@ -1597,13 +1610,15 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			moygen = soe_Moy/nbreelvayant_Moy;
 		}
 		
-		try {
+		/*try {
 			moygen =df.parse(df.format(moygen)).doubleValue();
 			rapportTrimestreClasse.setMoyenneGeneralTrimestre(moygen);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		moygen = this.tronqueDouble(moygen, 2);
+		rapportTrimestreClasse.setMoyenneGeneralTrimestre(moygen);
 		
 		
 		
@@ -1629,7 +1644,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		int nbreElvRegulierAn = listofEleveRegulier.size();
 		rapportAnneeClasse.setEffectifEleveRegulier(nbreElvRegulierAn);
 		
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		//java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		
 		double moygen = 0;
 		double soeMoy=0;
@@ -1667,14 +1682,17 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			double nbreElvRegulier_An = nbreElvRegulierAn;
 			double taux = nbre_Moyenne/nbreElvRegulier_An;
 			taux = taux * 100;
-			try {
+			/*try {
 				taux =df.parse(df.format(taux)).doubleValue();
 				////System.err.println("taux calcule et tronquer "+taux);
 				rapportAnneeClasse.setTauxReussiteAnnuel(taux);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
+			taux = this.tronqueDouble(taux, 2);
+			rapportAnneeClasse.setTauxReussiteAnnuel(taux);
+			
 		}
 		
 		if(nbreelvayantMoy>0){
@@ -1683,13 +1701,15 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			moygen = soe_Moy/nbreelvayant_Moy;
 		}
 		
-		try {
+		/*try {
 			moygen =df.parse(df.format(moygen)).doubleValue();
 			rapportAnneeClasse.setMoyenneGeneralAnnuel(moygen);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		moygen = this.tronqueDouble(moygen, 2);
+		rapportAnneeClasse.setMoyenneGeneralAnnuel(moygen);
 		
 		return rapportAnneeClasse;
 		
@@ -2150,7 +2170,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			ligneSequentielGroupeCours.setMoyenneSeqElevePourGroupeCours(moygrp);
 			ligneSequentielGroupeCours.setTotalNoteSeqElevePourGroupeCours(soeValeurNotegrp);
 			
-			java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+			/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 			
 			try {
 				moygrp =df.parse(df.format(moygrp)).doubleValue();
@@ -2161,7 +2181,12 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
+			moygrp = this.tronqueDouble(moygrp, 2);
+			soeValeurNotegrp = this.tronqueDouble(soeValeurNotegrp, 2);
+			
+			ligneSequentielGroupeCours.setMoyenneSeqElevePourGroupeCours(moygrp);
+			ligneSequentielGroupeCours.setTotalNoteSeqElevePourGroupeCours(soeValeurNotegrp);
 			
 		}
 		else{
@@ -2204,7 +2229,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 				ligneTrimestrielGroupeCours.setTotalCoefElevePourGroupeCours(soeCoefCoursgrpCompose);
 			}
 			
-			java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+			/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 			
 			try {
 				moygrp =df.parse(df.format(moygrp)).doubleValue();
@@ -2215,7 +2240,13 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
+			
+			moygrp = this.tronqueDouble(moygrp, 2);
+			soeValeurNoteTrimgrp = this.tronqueDouble(soeValeurNoteTrimgrp, 2);
+			
+			ligneTrimestrielGroupeCours.setMoyenneTrimElevePourGroupeCours(moygrp);
+			ligneTrimestrielGroupeCours.setTotalNoteTrimElevePourGroupeCours(soeValeurNoteTrimgrp);
 			
 		}
 		else{
@@ -2261,7 +2292,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 				ligneAnnuelGroupeCours.setTotalCoefElevePourGroupeCours(soeCoefCoursgrpCompose);
 			}
 			
-			java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+			/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 			
 			try {
 				moygrp =df.parse(df.format(moygrp)).doubleValue();
@@ -2272,7 +2303,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
+			
+			moygrp = this.tronqueDouble(moygrp, 2);
+			soeValeurNoteTrimgrp = this.tronqueDouble(soeValeurNoteTrimgrp, 2);
+			
+			ligneAnnuelGroupeCours.setMoyenneAnElevePourGroupeCours(moygrp);
+			ligneAnnuelGroupeCours.setTotalNoteAnElevePourGroupeCours(soeValeurNoteTrimgrp);
+			
 			
 		}
 		else{
@@ -2309,13 +2347,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			moygrp = soeValeurNotegrp/soeCoefCoursgrp;
 			////System.err.println("soeValeurNotegrp=="+soeValeurNotegrp+"|soeCoefCoursgrp=="+soeCoefCoursgrp+"|moygrp calcule == "+moygrp);
 			
-			java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+			/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 			try {
 				moygrp =df.parse(df.format(moygrp)).doubleValue();
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
+			moygrp = this.tronqueDouble(moygrp, 2);
 		}
 		
 		if(possedeNote == 1) return moygrp; else return -1;
@@ -2340,13 +2379,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		
 		if(nbreMoy>0){
 			moygrp = soemoygrp/nbreMoy;
-			java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+			/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 			try {
 				moygrp =df.parse(df.format(moygrp)).doubleValue();
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
+			moygrp = this.tronqueDouble(moygrp, 2);
 		}
 		
 		if(possedeNote == 1) return moygrp; else return -1;
@@ -2370,13 +2410,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		
 		if(nbreMoy>0){
 			moygrp = soemoygrp/nbreMoy;
-			java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+			/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 			try {
 				moygrp =df.parse(df.format(moygrp)).doubleValue();
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
+			moygrp = this.tronqueDouble(moygrp, 2);
 		}
 		
 		if(possedeNote == 1) return moygrp; else return -1;
@@ -2735,13 +2776,15 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		
 		moygen = soemoygrpCours/nbreeleveCours;
 		
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			moygen =df.parse(df.format(moygen)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		
+		moygen = this.tronqueDouble(moygen, 2);
 		
 		return moygen;
 		
@@ -2763,13 +2806,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		
 		if(nbreMoy>0) moygen = soemoygen/nbreMoy;
 		
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			moygen =df.parse(df.format(moygen)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		moygen =  this.tronqueDouble(moygen, 2);
 		
 		return moygen;
 	}
@@ -2790,13 +2834,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		
 		if(nbreMoy>0) moygen = soemoygen/nbreMoy;
 		
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			moygen =df.parse(df.format(moygen)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		moygen = this.tronqueDouble(moygen, 2);
 		
 		return moygen;
 	}
@@ -2826,13 +2871,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		
 		if(nbreeleveCours>0) tauxreussite = (nbremoygrpCours/nbreeleveCours)*100;
 		
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			tauxreussite =df.parse(df.format(tauxreussite)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		tauxreussite = this.tronqueDouble(tauxreussite, 2);
 		
 		if(nbreeleveCours>0) return tauxreussite; else return -1;
 	}
@@ -2853,13 +2899,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		//System.err.println("tauxreussite trim "+trimestre.getNumeroTrim()+" == "+soetauxreussite);
 		if(nbretaux>0) tauxreussite = soetauxreussite/nbretaux;
 		
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			tauxreussite =df.parse(df.format(tauxreussite)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		tauxreussite = this.tronqueDouble(tauxreussite, 2);
 		
 		if(nbretaux>0) return tauxreussite; else return -1;
 	}
@@ -2880,13 +2927,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		//System.err.println("tauxreussite trim "+trimestre.getNumeroTrim()+" == "+soetauxreussite);
 		if(nbretaux>0) tauxreussite = soetauxreussite/nbretaux;
 		
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			tauxreussite =df.parse(df.format(tauxreussite)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		tauxreussite = this.tronqueDouble(tauxreussite, 2);
 		
 		if(nbretaux>0) return tauxreussite; else return -1;
 	}
@@ -3146,14 +3194,15 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			pourcentage = pourcentage/effectifregulier;
 		}
 
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			pourcentage =df.parse(df.format(pourcentage)).doubleValue();
 			//System.err.println("pourcentagessss "+pourcentage);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		pourcentage = this.tronqueDouble(pourcentage, 2);
 		
 		rapportSequentielCours.setTauxReussiteCoursSeq(pourcentage);
 		//return pourcentage;
@@ -3173,13 +3222,15 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		}
 		
 		moygen = soeNoteFinaleCours/nbreeleveCours;
-		try {
+		/*try {
 			moygen =df.parse(df.format(moygen)).doubleValue();
 			rapportSequentielCours.setMoyenneGeneralCoursSeq(moygen);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		moygen = this.tronqueDouble(moygen, 2);
+		rapportSequentielCours.setMoyenneGeneralCoursSeq(moygen);
 		
 		
 		
@@ -3231,13 +3282,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		
 		pourcentage = (nbreNote/effectifregulier)*100;
 
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			pourcentage =df.parse(df.format(pourcentage)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		pourcentage = this.tronqueDouble(pourcentage, 2);
 		
 		
 
@@ -3260,13 +3312,15 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		}
 		
 		moygen = soeNoteFinaleCours/nbreeleveCours;
-		try {
+		/*try {
 			moygen =df.parse(df.format(moygen)).doubleValue();
 			rapportTrimestrielCours.setMoyenneGeneralCoursTrim(moygen);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		moygen = this.tronqueDouble(moygen, 2);
+		rapportTrimestrielCours.setMoyenneGeneralCoursTrim(moygen);
 		
 		
 		return rapportTrimestrielCours;
@@ -3319,13 +3373,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		
 		pourcentage = (nbreNote/effectifregulier)*100;
 
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			pourcentage =df.parse(df.format(pourcentage)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		pourcentage = this.tronqueDouble(pourcentage, 2);
 		
 		
 
@@ -3348,13 +3403,15 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		}
 		
 		moygen = soeNoteFinaleCours/nbreeleveCours;
-		try {
+		/*try {
 			moygen =df.parse(df.format(moygen)).doubleValue();
 			rapportAnnuelCours.setMoyenneGeneralCoursAn(moygen);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		moygen = this.tronqueDouble(moygen, 2);
+		rapportAnnuelCours.setMoyenneGeneralCoursAn(moygen);
 		
 		
 
@@ -3628,13 +3685,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		
 		moygen = soeNoteFinaleCours/nbreeleveCours;
 
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			moygen =df.parse(df.format(moygen)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		moygen = this.tronqueDouble(moygen, 2);
 		
 		return moygen;
 		
@@ -3657,13 +3715,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			moygen = soemoygen/nbremoygen;
 		}
 		
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			moygen =df.parse(df.format(moygen)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		moygen = this.tronqueDouble(moygen, 2);
 		
 		return moygen;
 	}
@@ -3686,13 +3745,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			moygen = soemoygen/nbremoygen;
 		}
 		
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			moygen =df.parse(df.format(moygen)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		moygen = this.tronqueDouble(moygen, 2);
 		
 		return moygen;
 	}
@@ -3709,13 +3769,15 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		if(effectifreguliers>0 && nbreNotes>=0)	pourcentage = (nbreNote/effectifregulier)*100;
 		//System.out.println("nbreNote "+nbreNote+" effectifregulier "+effectifregulier+" pourcentage "+pourcentage);
 		
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			pourcentage =df.parse(df.format(pourcentage)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		pourcentage = this.tronqueDouble(pourcentage, 2);
+		
 		return pourcentage;
 		
 	}
@@ -3731,13 +3793,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		
 		if(effectifreguliers>0 && nbreNotes>=0)	pourcentage = (nbreNote/effectifregulier)*100;
 		
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			pourcentage =df.parse(df.format(pourcentage)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		pourcentage = this.tronqueDouble(pourcentage, 2);
 		
 		return pourcentage;
 	}
@@ -3753,13 +3816,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		
 		if(effectifreguliers>0 && nbreNotes>=0)	pourcentage = (nbreNote/effectifregulier)*100;
 		
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			pourcentage =df.parse(df.format(pourcentage)).doubleValue();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		pourcentage = this.tronqueDouble(pourcentage, 2);
 		
 		return pourcentage;
 		
@@ -3977,6 +4041,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		
 		return listofSousRapport3Sequence;
 	}
+	
 	
 
 }

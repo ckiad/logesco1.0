@@ -6,30 +6,31 @@
 	layout:decorator="users/userslayout">
 <head>
 <meta charset="UTF-8"/>
-<title>Procès verbaux trimestriels</title>
+<title th:inline="text">[[#{listpvevaltrim.titre_page}]] </title>
 </head>
 <body>
 <span layout:fragment="titre_boite">
-        <kbd>Génération des procès verbaux recapitulatif d'un trimestre</kbd>
+        <kbd th:inline="text">[[#{listpvevaltrim.titre_boite}]] </kbd>
 </span>
 
 <div layout:fragment="formactionusers">
 <!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
-<div class="col-md-7  col-md-offset-1">
+<div class="col-md-8  col-md-offset-1">
 	
 	<form action="#" th:action="@{/logesco/users/postlistprocesverbalEvalTrim}" 
 				method="post"   class="form-inline" th:object="${getrapportEvalTrimForm}">
 			
 			<div th:if="${param.listprocesverbalEvalTrimerror}">
-					<h4 align="justify" class="alert alert-danger">Vérifier que la classe et le trimestre ont bien 
-					été sélectionnée. Contactez l'administrateur le cas écheant. </h4>
+					<h4 align="justify" class="alert alert-danger" th:inline="text">
+						[[#{listpvevaltrim.labelerreur_listprocesverbalEvalTrimerror}]]. 
+					</h4>
 				</div>
 			
 				<fieldset class="col-md-12" >
-					<legend class="text-primary">Sélectionner la classe pour laquelle le procès verbal sera demandé</legend>
+					<legend class="text-primary" th:inline="text">[[#{listpvevaltrim.legend_selectclasse}]]</legend>
 					
 					<div class="form-group">
-						<label for="idclasseRapport"> Classe à consulter: <span
+						<label for="idclasseRapport" th:inline="text">[[#{listpvevaltrim.label_selectclasse}]] : <span
 							class="redcolor">*</span></label> 
 							
 						<select class="form-control" name="idclasseRapport"
@@ -39,7 +40,7 @@
 							 th:if="${listofNiveauxForPV}"
 										th:each="n:${listofNiveauxForPV}">
 
-								<option th:each="c:${n.listofClasses}"
+								<option th:each="c:${n.listofClasses}" th:if="${c.geteffectifEleve()>0}"
 									th:value="${c.idClasses}" th:inline="text">
 									[[${c.codeClasses}]] [[${c.specialite.codeSpecialite}]]
 											[[${c.numeroClasses}]]</option>
@@ -57,7 +58,7 @@
 										th:each="n:${listofNiveauxDirigesForPV}">
 										
 								<option th:each="c:${n.listofClasses}" 
-									th:if="${c.estEnseignantTitulaireDeClasse(profConnecte.idUsers)==1}"
+									th:if="${c.estEnseignantTitulaireDeClasse(profConnecte.idUsers)==1 and c.geteffectifEleve()>0}"
 									th:value="${c.idClasses}" th:inline="text">
 									[[${c.codeClasses}]] [[${c.specialite.codeSpecialite}]]
 											[[${c.numeroClasses}]]
@@ -67,7 +68,7 @@
 						</select>
 						
 						<div class="form-group">
-							<label for="idsequenceRapport">Trimestre: <span
+							<label for="idsequenceRapport" th:inline="text">[[#{listpvevaltrim.label_trimestre}]]: <span
 								class="redcolor">*</span></label> 
 							<select class="form-control" name="idtrimestreRapport"
 									id="idtrimestreRapport"  th:value="*{idtrimestreRapport}">
@@ -80,8 +81,8 @@
 						</div>
 						
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;		
-						<button type="submit" class="btn btn-primary  pull-right">
-							<span class="glyphicon glyphicon-send"></span> Envoyer
+						<button type="submit" class="btn btn-primary  pull-right" th:inline="text">
+							<span class="glyphicon glyphicon-send"></span> [[#{listpvevaltrim.bouton_envoyer}]]
 						</button>
 					</div>
 				</fieldset>
@@ -89,8 +90,8 @@
 			</form>
 			
 			<fieldset  class="col-md-12" th:if="${session.erreurcoursRapportTrim}">
-				<h4 align="justify" class="alert alert-warning">
-					Aucun cours n'existe dans la classe sélectionnée.
+				<h4 align="justify" class="alert alert-warning" th:inline="text">
+					[[#{listpvevaltrim.warning_coursinexistant}]].
 				</h4>
 			</fieldset>
 			<h4>&nbsp;</h4>
@@ -98,17 +99,17 @@
 			 est déjà enregistrée dans le trimestre pour le cours indiquée -->
 			<fieldset  class="col-md-12" th:if="${session.listcoursofClassesRapportTrim}">
 				
-				<legend class="text-primary" >Classe sélectionnée: 
+				<legend class="text-primary" th:inline="text">[[#{listpvevaltrim.classeselect}]]: 
 					<span th:inline="text"  class="redcolor">[[${session.classeRapportTrim}]]</span>
-					pour Trimestre  <span th:inline="text"  class="redcolor">[[${session.trimestreRapportTrim}]]</span>
+					[[#{listpvevaltrim.pourtrim}]]   <span th:inline="text"  class="redcolor">[[${session.trimestreRapportTrim}]]</span>
 				</legend>
 				<table class="table table-striped">
 					<caption></caption>
 					<thead class="thead-light">
 						<tr>
-							<th scope="col">MATIERE</th>
-							<th scope="col">ENSEIGNANT </th>
-							<th scope="col" >PROCES VERBAL </th>
+							<th scope="col" th:inline="text">[[#{listpvevaltrim.th_matiere}]]</th>
+							<th scope="col" th:inline="text">[[#{listpvevaltrim.th_enseignant}]] </th>
+							<th scope="col" th:inline="text">[[#{listpvevaltrim.th_pv}]] </th>
 						</tr>
 					</thead>
 					<tbody>
@@ -125,8 +126,8 @@
 										th:if="${cours.gettailleListEvalTrim(session.numerotrimdeRapportTrim, session.listofEvaltrim)} != 0"
 										th:href="@{/logesco/users/getprocesverbalresumeNotesTrim(idCours=${cours.idCours},
 										idTrimestre=${session.numerotrimdeRapportTrim})}"
-										role="button" target="_blank">
-										<span class="glyphicon glyphicon-list-alt"></span> Voir le procès verbal trimestriel
+										role="button" target="_blank" th:inline="text">
+										<span class="glyphicon glyphicon-list-alt"></span> [[#{listpvevaltrim.bouton_voirpvtrim}]]
 								</a>
 								
 							</td>

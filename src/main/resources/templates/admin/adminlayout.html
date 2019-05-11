@@ -60,7 +60,7 @@
 	<!--debut de la conception d'une barre des menus avec les boutons munis de liste deroulante et groupe -->
 
 		<div class="container reculeverticalementbar">
-			<div class="btn-group btn-group-justified" >
+			<div class="btn-group btn-group-justified" ><!-- ,'ROLE_SUPERADMIN' -->
 				<div class="btn-group" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_SUPERADMIN')">
 					<button type="button" class="btn btn-default dropdown-toggle"
 						data-toggle="dropdown">
@@ -73,13 +73,13 @@
 						<li class="divider"></li>
 						<li><a href="#" th:href="@{/logesco/admin/getupdateUsername}">Modifier un nom d'utilisateur</a></li>
 						<li class="divider"></li>
-						<li><a href="#" th:href="@{/logesco/admin/getupdatePassword}">Reinitialiser un mot de passe</a></li>
+						<li><a href="#" th:href="@{/logesco/admin/getresetPassword}">Reinitialiser un mot de passe</a></li>
 					</ul>
 				</div>
 				<div class="btn-group" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_SUPERADMIN')">
 					<button type="button" class="btn btn-default dropdown-toggle"
 						data-toggle="dropdown">
-						L'établissement &nbsp;<span class="caret"></span>
+						Etablissement &nbsp;<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" role="menu">
 						<li><a href="#" th:href="@{/logesco/admin/getupdateEtablissement}">Enregistrer les données de l'établissement</a></li>
@@ -99,21 +99,23 @@
 				<div class="btn-group" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_SUPERADMIN')">
 					<button type="button" class="btn btn-default dropdown-toggle"
 						data-toggle="dropdown">
-						Les périodes de l'année&nbsp;<span class="caret"></span>
+						Périodes&nbsp;<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" role="menu">
 						<li><a href="#" th:href="@{/logesco/admin/getupdateSequences}">Enregistrer/Modifier les séquences</a></li>
 						<li class="divider"></li>
 						<li><a href="#" th:href="@{/logesco/admin/getupdateTrimestres}">Enregistrer/Modifier les trimestres</a></li>
-						<li class="divider"></li>
-						<li><a href="#"  th:href="@{/logesco/admin/getupdateAnnee}">Enregistrer/Modifier l'année scolaire</a></li>
+						<li class="divider" sec:authorize="hasAnyRole('ROLE_ADMIN')"></li>
+						<li sec:authorize="hasAnyRole('ROLE_ADMIN')">
+							<a href="#"  th:href="@{/logesco/admin/getupdateAnnee}">Enregistrer/Modifier l'année scolaire</a>
+						</li>
 					</ul>
 				</div>
 				
 				<div class="btn-group" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_SUPERADMIN')">
 					<button type="button" class="btn btn-default dropdown-toggle"
 						data-toggle="dropdown">
-						Les spécialités &nbsp;<span class="caret"></span>
+						Spécialités &nbsp;<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" role="menu">
 						<li><a href="#"  th:href="@{/logesco/admin/getupdateSpecialites}">Gérer les spécialités</a></li>
@@ -123,7 +125,7 @@
 				<div class="btn-group" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_SUPERADMIN')">
 					<button type="button" class="btn btn-default dropdown-toggle"
 						data-toggle="dropdown">
-						Les classes &nbsp;<span class="caret"></span>
+						Classes &nbsp;<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" role="menu">
 						<li>
@@ -147,36 +149,65 @@
 						<li>
 							<a href="#" >Exporter la configuration des cours d'une classe</a>
 						</li>
-						<!-- <li class="divider"></li>
+						<li class="divider"></li>
 						<li>
 							<a href="#">
-								Passer un conseil de classe séquentiel
+								Configurer un conseil de classe séquentiel
 							</a>
 						</li>
 						<li class="divider"></li>
 						<li>
 							<a href="#">
-								Passer un conseil de classe trimestriel
+								Configurer un conseil de classe trimestriel
 							</a>
-						</li>-->
+						</li>
 						<li class="divider"></li>
 						<li>
 							<a href="#">
-								Passer un conseil de classe annuel
+								Configurer un conseil de classe annuel
 							</a>
 						</li>
 					</ul>
 				</div>
 				
+				
 				<div class="btn-group" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_SUPERADMIN')">
 					<button type="button" class="btn btn-default dropdown-toggle"
 						data-toggle="dropdown">
-						Les rôles utilisateurs &nbsp;<span class="caret"></span>
+						Décisions &nbsp;<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li>
+							<a href="#" th:href="@{/logesco/admin/getupdateSanctionDisc}">
+								Ajouter des sanctions disciplinaires
+							</a>
+						</li>
+						<li class="divider"></li>
+						<li>
+							<a href="#" th:href="@{/logesco/admin/getupdateSanctionTrav}">
+								Ajouter des distinctions dues au travail
+							</a>
+						</li>
+						<li class="divider"></li>
+						<li>
+							<a href="#" th:href="@{/logesco/admin/getupdateDecision}">
+								Ajouter des décisions
+							</a>
+						</li>
+					</ul>
+				</div>
+				
+				
+				<div class="btn-group" sec:authorize="hasAnyRole('ROLE_ADMIN')">
+					<button type="button" class="btn btn-default dropdown-toggle"
+						data-toggle="dropdown">
+						Rôles utilisateurs &nbsp;<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" role="menu">
 						<li><a href="#" th:href="@{/logesco/admin/getupdateRoles}">Ajouter des rôles à des utilisateurs</a></li>
 					</ul>
 				</div>
+				
 				
 				
 			</div>
@@ -248,7 +279,7 @@
 	<footer>
 		<div class="navbar-fixed-bottom">
 			<span class="alert alert-info">
-			<small>CopyRight SchoolMind appeler le 678470262 en cas de souci</small></span>
+			<small>&copy; kiadjeu appeler le 678470262 en cas de souci</small></span>
 		</div>
 	</footer>
 <!-- fin de la partie pied de la page d'index -->

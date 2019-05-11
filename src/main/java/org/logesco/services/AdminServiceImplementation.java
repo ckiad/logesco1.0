@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.logesco.LogescoApplication;
 import org.logesco.dao.*;
 import org.logesco.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,16 +71,22 @@ public class AdminServiceImplementation implements IAdminService {
 	@Autowired
 	private EnseignantsRepository enseignantRepository;
 	
-	private static Logger log = LogescoApplication.log;
+	@Autowired
+	private SanctionTravailRepository sanctionTravRepository;
+	@Autowired
+	private SanctionDisciplinaireRepository sanctionDiscRepository;
+	@Autowired
+	private DecisionRepository decisionRepository;
+	
 	
 	@Override
 	public Utilisateurs getUsers(String username) {
-		log.log(Level.DEBUG, "**** LANCEMENT DE LA METHODE  getUsers() **** "+username);
+		/*log.log(Level.DEBUG, "**** LANCEMENT DE LA METHODE  getUsers() **** "+username);*/
 		
 		Utilisateurs users=usersRepository.getUtilisateursByUsername(username);
 		if(users==null) return null;// new RuntimeException("utilisateur "+username+" introuvable")
 		
-		log.log(Level.DEBUG, "**** FIN DE L'EXECUTION DE LA METHODE getUsers() **** "+username);
+		/*log.log(Level.DEBUG, "**** FIN DE L'EXECUTION DE LA METHODE getUsers() **** "+username);*/
 		
 		return users;
 	}
@@ -109,6 +112,22 @@ public class AdminServiceImplementation implements IAdminService {
 			return -2;
 		}
 		
+	}
+	
+	@Override
+	public int resetPassword( String newPassword, 
+			String newPasswordConfirm, String username){
+		if(!(newPassword.equals(newPasswordConfirm))) return 0;
+		Pbkdf2PasswordEncoder p=new Pbkdf2PasswordEncoder();
+		Utilisateurs users=this.getUsers(username);
+		if(users!=null){
+				users.setPassword(p.encode(newPassword));
+				usersRepository.save(users);
+				return 1;
+		}
+		else{
+			return -1;
+		}
 	}
 
 	@Override
@@ -213,13 +232,13 @@ public class AdminServiceImplementation implements IAdminService {
 			return etabExistant.getIdEtab();
 		}
 		
-		log.log(Level.DEBUG, "**** ENREGISTREMENT DE L'ETABLISSEMENT "
-				+ "DANS saveEtablissement**** ");
+		/*log.log(Level.DEBUG, "**** ENREGISTREMENT DE L'ETABLISSEMENT "
+				+ "DANS saveEtablissement**** ");*/
 		
 		Etablissement etabEnregistre=etabRepository.save(etab);
 		
-		log.log(Level.DEBUG, "**** FIN DE L'ENREGISTREMENT DE L'ETABLISSEMENT "
-				+ "DANS saveEtablissement**** ");
+		/*log.log(Level.DEBUG, "**** FIN DE L'ENREGISTREMENT DE L'ETABLISSEMENT "
+				+ "DANS saveEtablissement**** ");*/
 		
 		return etabEnregistre.getIdEtab();
 	}
@@ -1114,7 +1133,7 @@ public class AdminServiceImplementation implements IAdminService {
 			return classeRechercher;
 		}
 		catch(Exception e){
-			log.log(Level.WARN, "**** EXCEPTION DANS findClasses **** "+e.getMessage());
+			/*log.log(Level.WARN, "**** EXCEPTION DANS findClasses **** "+e.getMessage());*/
 			return null;
 		}
 	}
@@ -1127,8 +1146,8 @@ public class AdminServiceImplementation implements IAdminService {
 			return classeRechercher;
 		}
 		catch(Exception e){
-			log.log(Level.WARN, "**** EXCEPTION DANS findClasses(code, numero, specialite) **** "
-					+e.getMessage());
+			/*log.log(Level.WARN, "**** EXCEPTION DANS findClasses(code, numero, specialite) **** "
+					+e.getMessage());*/
 			return null;
 		}
 	}
@@ -1147,7 +1166,7 @@ public class AdminServiceImplementation implements IAdminService {
 			return sectionRechercher;
 		}
 		catch(Exception e){
-			log.log(Level.WARN, "**** EXCEPTION DANS findSections **** "+e.getMessage());
+			/*log.log(Level.WARN, "**** EXCEPTION DANS findSections **** "+e.getMessage());*/
 			return null;
 		}
 	}
@@ -1159,7 +1178,7 @@ public class AdminServiceImplementation implements IAdminService {
 			return niveauRechercher;
 		}
 		catch(Exception e){
-			log.log(Level.WARN, "**** EXCEPTION DANS findNiveaux **** "+e.getMessage());
+			/*log.log(Level.WARN, "**** EXCEPTION DANS findNiveaux **** "+e.getMessage());*/
 			return null;
 		}
 	}
@@ -1172,7 +1191,7 @@ public class AdminServiceImplementation implements IAdminService {
 			return niveauRechercher;
 		}
 		catch(Exception e){
-			log.log(Level.WARN, "**** EXCEPTION DANS findNiveaux **** "+e.getMessage());
+			/*log.log(Level.WARN, "**** EXCEPTION DANS findNiveaux **** "+e.getMessage());*/
 			return null;
 		}
 	}
@@ -1188,8 +1207,8 @@ public class AdminServiceImplementation implements IAdminService {
 		Classes classesenreg=classesRepository.save(classes);
 		
 		if(classesenreg!=null) return 1;
-		log.log(Level.WARN, "**** ERREUR D'ENREGISTREMENT DE LA CLASSE DANS "
-				+ "saveClasses ADMIN**** ");
+		/*log.log(Level.WARN, "**** ERREUR D'ENREGISTREMENT DE LA CLASSE DANS "
+				+ "saveClasses ADMIN**** ");*/
 		return -1;
 	}
 	
@@ -1221,8 +1240,8 @@ public class AdminServiceImplementation implements IAdminService {
 		Classes classesUpdate=classesRepository.save(classesAModif);
 		
 		if(classesUpdate!=null) return 1;
-		log.log(Level.WARN, "**** ERREUR de mise a jour DE LA CLASSE DANS "
-				+ "updateClasses ADMIN**** ");
+		/*log.log(Level.WARN, "**** ERREUR de mise a jour DE LA CLASSE DANS "
+				+ "updateClasses ADMIN**** ");*/
 		return -1;
 	}
 
@@ -1263,10 +1282,43 @@ public class AdminServiceImplementation implements IAdminService {
 	public Page<Roles> findPageRole(int numPage, int taillePage) {
 		return rolesRepository.findAll(new PageRequest(numPage, taillePage));
 	}
+	
+	public Page<SanctionDisciplinaire> findPageSanctionDisc(int numPage, int taillePage){
+		return sanctionDiscRepository.findAllByOrderByCodeSancDiscAscIntituleSancDiscAsc(new PageRequest(numPage, taillePage));
+	}
+	
+	public Page<SanctionTravail> findPageSanctionTrav(int numPage, int taillePage){
+		return sanctionTravRepository.findAllByOrderByCodeSancTravAscIntituleSancTravAsc(new PageRequest(numPage, taillePage));
+	}
+	
+	public Page<Decision> findPageDecision(int numPage, int taillePage){
+		return decisionRepository.findAllByOrderByCodeDecisionAscIntituleDecisionAsc(new PageRequest(numPage, taillePage));
+	}
 
 	@Override
 	public List<UtilisateursRoles> findAllUsersRoles() {
 		return usersrolesRepository.findAll();
+	}
+	
+	@Override
+	public List<Utilisateurs> findAllUsers(){
+		List<UtilisateursRoles> listofusersRoles = this.findAllUsersRoles();
+		List<Utilisateurs> listofUsers = new ArrayList<Utilisateurs>();
+		for(UtilisateursRoles userRole: listofusersRoles){
+			if(userRole.getRoleAssocie().getRole().equalsIgnoreCase("ADMIN")==false){
+				//Avant d'ajouter on regarde s'il n'est pas déjà dans la liste afin d'eliminer les doublons
+				int compt = 0;
+				for(Utilisateurs user : listofUsers){
+					if(user.getUsername().equalsIgnoreCase(userRole.getUsers().getUsername())==true){
+						compt+=1;
+					}
+				}
+				if(compt==0){
+					listofUsers.add(userRole.getUsers());
+				}
+			}
+		}
+		return listofUsers;
 	}
 
 	@Override
@@ -1280,7 +1332,7 @@ public class AdminServiceImplementation implements IAdminService {
 			return roleRechercher;
 		}
 		catch(Exception e){
-			log.log(Level.WARN, "**** ERREUR dans findRoles ADMIN**** "+e.getMessage());
+			/*log.log(Level.WARN, "**** ERREUR dans findRoles ADMIN**** "+e.getMessage());*/
 		}
 		return roleRechercher;
 	}
@@ -1293,7 +1345,7 @@ public class AdminServiceImplementation implements IAdminService {
 		if(roleExist!=null) return 0;
 		Roles roleEnreg=rolesRepository.save(role);
 		if(roleEnreg!=null) return 1;
-		log.log(Level.WARN, "**** ERREUR D'ENREGISTREMENT DE role DANS saveRoles ADMIN**** ");
+		/*log.log(Level.WARN, "**** ERREUR D'ENREGISTREMENT DE role DANS saveRoles ADMIN**** ");*/
 		return -1;
 	}
 
@@ -1318,6 +1370,21 @@ public class AdminServiceImplementation implements IAdminService {
 	public Matieres findMatieres(Long idMatiere) {
 		
 		return matieresRepository.findOne(idMatiere);
+	}
+	
+	@Override
+	public SanctionDisciplinaire findSanctionDisciplinaire(Long idSancDisc) {
+		return sanctionDiscRepository.findOne(idSancDisc);
+	}
+	
+	@Override
+	public SanctionTravail findSanctionTravail(Long idSancTrav){
+		return sanctionTravRepository.findOne(idSancTrav);
+	}
+	
+	@Override
+	public Decision findDecision(Long idDecision){
+		return decisionRepository.findOne(idDecision);
 	}
 	
 	@Override
@@ -1398,6 +1465,231 @@ public class AdminServiceImplementation implements IAdminService {
 		matieresRepository.save(matiereAModif);
 		return 2;
 	}
+	
+	@Override
+	public SanctionDisciplinaire findSanctionDisciplinaire(String code){
+		return sanctionDiscRepository.findByCodeSancDisc(code);
+	}
+	
+	@Override
+	public SanctionDisciplinaire findSanctionDisciplinaireEn(String codeEn){
+		return sanctionDiscRepository.findByCodeSancDiscEn(codeEn);
+	}
+	
+	@Override
+	public int updateSanctionDisciplinaire(SanctionDisciplinaire sanctionDisc){
+		SanctionDisciplinaire sanctionDiscExistCode =sanctionDiscRepository.findByCodeSancDisc(sanctionDisc.getCodeSancDisc());
+		SanctionDisciplinaire sanctionDiscExistCodeEn = sanctionDiscRepository.findByCodeSancDiscEn(sanctionDisc.getCodeSancDiscEn());
+		
+		SanctionDisciplinaire sanctionDiscAModif = sanctionDiscRepository.findOne(sanctionDisc.getIdSancDisc());
+		
+		if(sanctionDiscAModif == null) {
+
+			/*
+			 * Alors on veut faire un nouvel enregistrement
+			 */
+			
+			if((sanctionDiscExistCode!=null)||(sanctionDiscExistCodeEn!=null)) return 0;
+			
+			SanctionDisciplinaire sanctionDisciplinaire = new SanctionDisciplinaire();
+			sanctionDisciplinaire.setCodeSancDisc(sanctionDisc.getCodeSancDisc());
+			sanctionDisciplinaire.setCodeSancDiscEn(sanctionDisc.getCodeSancDiscEn());
+			sanctionDisciplinaire.setIntituleSancDisc(sanctionDisc.getIntituleSancDisc());
+			sanctionDisciplinaire.setIntituleSancDiscEn(sanctionDisc.getIntituleSancDiscEn());
+			
+			sanctionDiscRepository.save(sanctionDisciplinaire);
+			return 1;
+		
+		}
+		
+		/*
+		 * A ce niveau cela signifie qu'on veut faire une mise à jour de la sanctionDisciplinaire trouvé en BD
+		 * donc sanctionDiscAModif est != null
+		 * On va donc vérifier si le nouveau code est différent de l'ancien et le cas échéant vérifier que 
+		 * la contrainte ne sera pas violé
+		 */
+		
+		if(!(sanctionDisc.getCodeSancDisc().equals(sanctionDiscAModif.getCodeSancDisc()))||
+				!(sanctionDisc.getCodeSancDiscEn().equals(sanctionDiscAModif.getCodeSancDiscEn()))){
+			/*
+			 * il ne sont pas égaux donc on veut aussi modifier le code 
+			 * on va donc se rassurer que la contrainte ne sera pas violé
+			 * et cette contrainte n'est pas viole lorsque sanctionDiscExistCode est null 
+			 * car dans ce cas aucune sanction n'existe avec l'un des nouveau code
+			 */
+			
+			if(!(sanctionDisc.getCodeSancDisc().equals(sanctionDiscAModif.getCodeSancDisc()))){
+				if(sanctionDiscExistCode!=null) return 0;
+			}
+			
+			if(!(sanctionDisc.getCodeSancDiscEn().equals(sanctionDiscAModif.getCodeSancDiscEn()))){
+				if(sanctionDiscExistCodeEn!=null) return 0;
+			}
+			
+			
+			/*
+			 * Ici on est sur qu'aucun des deux codes ne va viole la contrainte d'unicite
+			 */
+			sanctionDiscAModif.setCodeSancDisc(sanctionDisc.getCodeSancDisc());
+			sanctionDiscAModif.setCodeSancDiscEn(sanctionDisc.getCodeSancDiscEn());
+			sanctionDiscAModif.setIntituleSancDisc(sanctionDisc.getIntituleSancDisc());
+			sanctionDiscAModif.setIntituleSancDiscEn(sanctionDisc.getIntituleSancDiscEn());
+			
+			sanctionDiscRepository.save(sanctionDiscAModif);
+			return 2;
+			
+		}
+		
+		/*
+		 * Ici on est sur que les 2 code sont égaux donc c'est pas le code qu'on veut modifier
+		 * mais juste le reste des données. 
+		 */
+		sanctionDiscAModif.setIntituleSancDisc(sanctionDisc.getIntituleSancDisc());
+		sanctionDiscAModif.setIntituleSancDiscEn(sanctionDisc.getIntituleSancDiscEn());
+		
+		sanctionDiscRepository.save(sanctionDiscAModif);
+		return 2;
+		
+	}
+	
+	@Override
+	public int updateSanctionTravail(SanctionTravail sanctionTrav){
+		SanctionTravail sanctionTravExistCode =sanctionTravRepository.findByCodeSancTrav(sanctionTrav.getCodeSancTrav());
+		SanctionTravail sanctionTravExistCodeEn = sanctionTravRepository.findByCodeSancTravEn(sanctionTrav.getCodeSancTravEn());
+		
+		SanctionTravail sanctionTravAModif = sanctionTravRepository.findOne(sanctionTrav.getIdSancTrav());
+		
+		if(sanctionTravAModif == null) {
+			/*
+			 * Alors on veut faire un nouvel enregistrement
+			 */
+			
+			if((sanctionTravExistCode!=null)||(sanctionTravExistCodeEn!=null)) return 0;
+			
+			SanctionTravail sanctionTravail = new SanctionTravail();
+			sanctionTravail.setCodeSancTrav(sanctionTrav.getCodeSancTrav());
+			sanctionTravail.setCodeSancTravEn(sanctionTrav.getCodeSancTravEn());
+			sanctionTravail.setIntituleSancTrav(sanctionTrav.getIntituleSancTrav());
+			sanctionTravail.setIntituleSancTravEn(sanctionTrav.getIntituleSancTravEn());
+			
+			sanctionTravRepository.save(sanctionTravail);
+			return 1;
+		}
+		/*
+		 * A ce niveau cela signifie qu'on veut faire une mise à jour de la sanctionTravail trouvé en BD
+		 * donc sanctionTravAModif est != null
+		 * On va donc vérifier si le nouveau code est différent de l'ancien et le cas échéant vérifier que 
+		 * la contrainte ne sera pas violé
+		 */
+		if(!(sanctionTrav.getCodeSancTrav().equals(sanctionTravAModif.getCodeSancTrav()))||
+				!(sanctionTrav.getCodeSancTravEn().equals(sanctionTravAModif.getCodeSancTravEn()))){
+			
+			/*
+			 * il ne sont pas égaux donc on veut aussi modifier le code 
+			 * on va donc se rassurer que la contrainte ne sera pas violé
+			 * et cette contrainte n'est pas viole lorsque sanctionTravExistCode est null 
+			 * car dans ce cas aucune sanction n'existe avec l'un des nouveau code
+			 */
+			if(!(sanctionTrav.getCodeSancTrav().equals(sanctionTravAModif.getCodeSancTrav()))){
+				if(sanctionTravExistCode!=null) return 0;
+			}
+			
+			if(!(sanctionTrav.getCodeSancTravEn().equals(sanctionTravAModif.getCodeSancTravEn()))){
+				if(sanctionTravExistCodeEn!=null) return 0;
+			}
+			
+			/*
+			 * Ici on est sur qu'aucun des deux codes ne va viole la contrainte d'unicite
+			 */
+			sanctionTravAModif.setCodeSancTrav(sanctionTrav.getCodeSancTrav());
+			sanctionTravAModif.setCodeSancTravEn(sanctionTrav.getCodeSancTravEn());
+			sanctionTravAModif.setIntituleSancTrav(sanctionTrav.getIntituleSancTrav());
+			sanctionTravAModif.setIntituleSancTravEn(sanctionTrav.getIntituleSancTravEn());
+			
+			sanctionTravRepository.save(sanctionTravAModif);
+			return 2;
+			
+		}
+		
+		/*
+		 * Ici on est sur que les 2 code sont égaux donc c'est pas le code qu'on veut modifier
+		 * mais juste le reste des données. 
+		 */
+		sanctionTravAModif.setIntituleSancTrav(sanctionTrav.getIntituleSancTrav());
+		sanctionTravAModif.setIntituleSancTravEn(sanctionTrav.getIntituleSancTravEn());
+		
+		sanctionTravRepository.save(sanctionTravAModif);
+		return 2;
+		
+		
+	}
+	
+	@Override
+	public int updateDecision(Decision decision){
+		Decision decisionExistCode =decisionRepository.findByCodeDecision(decision.getCodeDecision());
+		Decision decisionExistCodeEn = decisionRepository.findByCodeDecisionEn(decision.getCodeDecisionEn());
+		
+		Decision decisionAModif = decisionRepository.findOne(decision.getIdDecision());
+		
+		if(decisionAModif == null) {
+			/*
+			 * Alors on veut faire un nouvel enregistrement
+			 */
+			
+			if((decisionExistCode!=null)||(decisionExistCodeEn!=null)) return 0;
+			
+			Decision newdecision = new Decision();
+			newdecision.setCodeDecision(decision.getCodeDecision());
+			newdecision.setCodeDecisionEn(decision.getCodeDecisionEn());
+			newdecision.setIntituleDecision(decision.getIntituleDecision());
+			newdecision.setIntituleDecisionEn(decision.getIntituleDecisionEn());
+			
+			decisionRepository.save(newdecision);
+			return 1;
+		}
+		
+		/*
+		 * A ce niveau cela signifie qu'on veut faire une mise à jour de la decision trouvé en BD
+		 * donc decisionAModif est != null
+		 * On va donc vérifier si le nouveau code est différent de l'ancien et le cas échéant vérifier que 
+		 * la contrainte ne sera pas violé
+		 */
+		if(!(decision.getCodeDecision().equals(decisionAModif.getCodeDecision()))||
+				!(decision.getCodeDecisionEn().equals(decisionAModif.getCodeDecisionEn()))){
+			/*
+			 * il ne sont pas égaux donc on veut aussi modifier le code 
+			 * on va donc se rassurer que la contrainte ne sera pas violé
+			 * et cette contrainte n'est pas viole lorsque decisionExistCode est null 
+			 * car dans ce cas aucune sanction n'existe avec l'un des nouveau code
+			 */
+			if(decisionExistCode!=null || decisionExistCodeEn!=null) return 0;
+			
+			/*
+			 * Ici on est sur qu'aucun des deux codes ne va viole la contrainte d'unicite
+			 */
+			decisionAModif.setCodeDecision(decision.getCodeDecision());
+			decisionAModif.setCodeDecisionEn(decision.getCodeDecisionEn());
+			decisionAModif.setIntituleDecision(decision.getIntituleDecision());
+			decisionAModif.setIntituleDecisionEn(decision.getIntituleDecisionEn());
+			
+			decisionRepository.save(decisionAModif);
+			return 2;
+			
+		}
+		
+		/*
+		 * Ici on est sur que les 2 codes sont égaux donc c'est pas le code qu'on veut modifier
+		 * mais juste le reste des données. 
+		 */
+		decisionAModif.setIntituleDecision(decision.getIntituleDecision());
+		decisionAModif.setIntituleDecisionEn(decision.getIntituleDecisionEn());
+		
+		decisionRepository.save(decisionAModif);
+		return 2;
+		
+		
+	}
+	
 
 	@Override
 	public int deleteMatiere(Long idMatiere) {
@@ -1407,6 +1699,38 @@ public class AdminServiceImplementation implements IAdminService {
 		if(matiereASupprim.getListofCours().size() != 0) return 0;
 		
 		matieresRepository.delete(idMatiere);
+		return 1;
+	}
+	
+	@Override
+	public int deleteSanctionDisciplinaire(Long idSanctionDisc){
+		SanctionDisciplinaire sanctionDisc = this.findSanctionDisciplinaire(idSanctionDisc);
+		if(sanctionDisc == null) return -3;
+		if(sanctionDisc.getListofRDisc().size()>0) return 0;
+		if(sanctionDisc.getListofDecisionConseil().size()>0) return -1;
+		/*if(sanctionDisc.getListofCST().size()>0) return -2;*/
+		
+		sanctionDiscRepository.delete(idSanctionDisc);
+		return 1;
+	}
+	
+	@Override
+	public int deleteSanctionTravail(Long idSanctionTrav){
+		SanctionTravail sanctionTrav = this.findSanctionTravail(idSanctionTrav);
+		if(sanctionTrav == null) return -1;
+		if(sanctionTrav.getListofDecisionConseil().size()>0) return 0;
+		
+		sanctionTravRepository.delete(idSanctionTrav);
+		return 1;
+	}
+	
+	@Override
+	public int deleteDecision(Long idDecision){
+		Decision decision = this.findDecision(idDecision);
+		if(decision == null) return -1;
+		if(decision.getListofDecisionConseil().size()>0) return 0;
+		
+		decisionRepository.delete(idDecision);
 		return 1;
 	}
 
@@ -1490,6 +1814,47 @@ public class AdminServiceImplementation implements IAdminService {
 	}
 
 	@Override
+	public int ajouterRoleUser(Long idUser, String role){
+		Utilisateurs user = this.getUsers(idUser);
+		if(user == null) return 0;
+		Roles roles=rolesRepository.findByRole(role);
+		if(roles==null) return 0;
+		/*
+		 * Avant d'ajouter, on regarde s'il a déja et si c'est le cas on laisse sinon on ajoute
+		 */
+		List<UtilisateursRoles> listofuserRolesAssocie = (List<UtilisateursRoles>) user.getListofusersRoles();
+		int compt = 0;
+		for(UtilisateursRoles userrole : listofuserRolesAssocie){
+			if(userrole.getRoleAssocie().getRole().equalsIgnoreCase(role)==true) compt+=1;
+		}
+		
+		if(compt == 0){
+			/*
+			 * Alors celui ci n'a pas encore le role enseignant et on souhaite comme ca l'attribuer un cours
+			 * donc il faut lui ajouter le role enseignant
+			 */
+			UtilisateursRoles usersroles=new UtilisateursRoles();
+			usersroles.setUsers(user);
+			usersroles.setRoleAssocie(roles);
+			usersrolesRepository.save(usersroles);
+		}
+		
+		return 1;
+	}
+	
+	@Override
+	public int retirerRoleUser(Long idUser, String role){
+		Utilisateurs user = this.getUsers(idUser);
+		if(user == null) return -1;
+		Roles roles=rolesRepository.findByRole(role);
+		if(roles==null) return -1;
+		UtilisateursRoles usersroles=usersrolesRepository.getUtilisateursRoles(idUser, role);
+		if(usersroles == null) return 0;
+		usersrolesRepository.delete(usersroles);
+		return 1;
+	}
+	
+	@Override
 	public int updateCours(Cours cours, Long idMatiereAssocie, Long idProfAssocie, Long idClasseAssocie) {
 		//Cours coursExistCode = coursRepository.findByCodeCours(cours.getCodeCours());
 		
@@ -1501,7 +1866,13 @@ public class AdminServiceImplementation implements IAdminService {
 		
 		Classes classeAssocie = classesRepository.findOne(idClasseAssocie);
 		
-		if((matiereAssocie == null) || (profAssocie == null) || (classeAssocie == null)){
+		/*
+		 * Il faut ajouter le role enseignant si le user n'a pas encore ce role
+		 */
+		String role = "ENSEIGNANT";
+		int ret = this.ajouterRoleUser(profAssocie.getIdUsers(), role);
+		
+		if((matiereAssocie == null) || (profAssocie == null) || (classeAssocie == null)|| (ret != 1)){
 			return -1;
 		}
 		
@@ -1543,8 +1914,6 @@ public class AdminServiceImplementation implements IAdminService {
 		/*
 		 * A ce niveau cela signifie qu'on veut faire une mise à jour du cours trouvé en BD
 		 * donc matiereAModif est != null
-		 * On va donc vérifier si le nouveau code est différent de l'ancien et le cas échéant vérifier que 
-		 * la contrainte ne sera pas violé
 		 */
 		if(!(cours.getCodeCours().equals(coursAModif.getCodeCours()))){
 			//if(coursExistCode != null) return 0;
@@ -1567,6 +1936,18 @@ public class AdminServiceImplementation implements IAdminService {
 			}
 			
 			if(profAssocie.getIdUsers().longValue() != coursAModif.getProffesseur().getIdUsers().longValue()){
+				/*
+				 * Lorsqu'on veut en fait changer de prof, il faut se rassurer que l'ancien a encore un cours 
+				 * qu'il enseigne sinon, il faut lui retirer le role. Pour cela, il faut récuperer la liste de tous les 
+				 * cours qu'il enseigne et voir si apres modification elle ne sera pas vide. En d'autres termes, il 
+				 * faut vérifier si cette liste a une taille >1 car si c'est exactement 1 alors apres modif elle sera 
+				 * vide
+				 */
+				List<Cours> listcoursEnseigne = (List<Cours>) coursAModif.getProffesseur().getListofCours();
+				if(listcoursEnseigne.size()==1){
+					String role1="ENSEIGNANT";
+					this.retirerRoleUser(coursAModif.getProffesseur().getIdUsers(), role1);
+				}
 				coursAModif.setProffesseur(profAssocie);
 			}
 			
@@ -1600,6 +1981,18 @@ public class AdminServiceImplementation implements IAdminService {
 		}
 		
 		if(profAssocie.getIdUsers().longValue() != coursAModif.getProffesseur().getIdUsers().longValue()){
+			/*
+			 * Lorsqu'on veut en fait changer de prof, il faut se rassurer que l'ancien a encore un cours 
+			 * qu'il enseigne sinon, il faut lui retirer le role. Pour cela, il faut récuperer la liste de tous les 
+			 * cours qu'il enseigne et voir si apres modification elle ne sera pas vide. En d'autres termes, il 
+			 * faut vérifier si cette liste a une taille >1 car si c'est exactement 1 alors apres modif elle sera 
+			 * vide
+			 */
+			List<Cours> listcoursEnseigne = (List<Cours>) coursAModif.getProffesseur().getListofCours();
+			if(listcoursEnseigne.size()==1){
+				String role1="ENSEIGNANT";
+				this.retirerRoleUser(coursAModif.getProffesseur().getIdUsers(), role1);
+			}
 			coursAModif.setProffesseur(profAssocie);
 		}
 		

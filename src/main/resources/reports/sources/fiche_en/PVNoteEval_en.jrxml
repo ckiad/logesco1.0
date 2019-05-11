@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BulletinSequence" pageWidth="595" pageHeight="842" columnWidth="547" leftMargin="24" rightMargin="24" topMargin="9" bottomMargin="7" uuid="e8673864-3cf8-4cb2-8672-af01395c8a06">
 	<property name="ireport.zoom" value="1.4641000000000006"/>
 	<property name="ireport.x" value="29"/>
@@ -132,42 +132,42 @@
 				<textElement textAlignment="Center">
 					<font fontName="Arial Narrow" size="8" isItalic="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{devise_fr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{devise_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="224" y="83" width="100" height="10" uuid="ed63ea09-6e7c-4dec-88ad-c3d5651f5142"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial Narrow" size="8" isItalic="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{devise_en}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{devise_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="1" y="4" width="199" height="10" uuid="ea1dabc9-facb-48bd-a7d7-a12975867784"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial Narrow" size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{deleguation_fr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{deleguation_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="1" y="15" width="199" height="10" uuid="dd01d04a-d4ea-404f-ac4f-f41e0b702601"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial Narrow" size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{deleguation_en}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{deleguation_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="1" y="25" width="199" height="10" uuid="3ef7b665-6438-4521-b025-0aa916d33198"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial Narrow" size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{etablissement_fr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{etablissement_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="1" y="35" width="199" height="10" uuid="22577d37-ad15-4feb-8f91-959e0cb83db0"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial Narrow" size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{etablissement_en}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{etablissement_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="1" y="45" width="199" height="10" uuid="73691450-519f-4fa0-9735-473197e35b8f"/>
@@ -181,35 +181,35 @@
 				<textElement textAlignment="Center">
 					<font fontName="Arial Narrow" size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{annee_scolaire_fr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{annee_scolaire_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="1" y="66" width="199" height="10" uuid="2aa3b2f4-9e8f-4448-bff5-b6feaaa94dcf"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial Narrow" size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{annee_scolaire_en}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{annee_scolaire_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="346" y="43" width="200" height="10" uuid="b8ed68fa-8e76-4196-bbde-bad9722deeeb"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial Narrow" size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ministere_fr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ministere_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="346" y="53" width="199" height="10" uuid="472f186f-c14c-40de-a0ea-14b54998bb01"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial Narrow" size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ministere_en}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ministere_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="119" y="108" width="271" height="22" uuid="68416ab2-12e7-47e1-af74-99dd8246731d"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial Narrow" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{titre_pv}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{titre_pv}.toUpperCase()]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -324,7 +324,7 @@
 				<textElement textAlignment="Justified">
 					<font fontName="Arial Narrow" size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{noms_prenoms}+" NE(E) LE "+$F{date_naissance}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{noms_prenoms}.toUpperCase()+" NE(E) LE "+$F{date_naissance}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="350" y="0" width="60" height="11" uuid="ef32a027-3f54-4024-92e2-4abd36344bba">
@@ -343,6 +343,19 @@
 			</textField>
 		</band>
 	</detail>
+	<pageFooter>
+		<band height="18">
+			<staticText>
+				<reportElement x="22" y="7" width="504" height="10" uuid="d52bd7e2-5896-4419-b9bc-435185a02ff0">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial Narrow" size="8" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Copyright (C) Kiadjeuc (Logesco 1.0) Contact: 678470262/695093228]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
 	<summary>
 		<band height="103">
 			<textField>

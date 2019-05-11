@@ -11,7 +11,9 @@ import java.util.Map;
 import org.logesco.entities.*;
 import org.logesco.modeles.EleveBean;
 import org.logesco.modeles.EleveBean2;
+import org.logesco.modeles.EleveInsolvableBean;
 import org.logesco.modeles.FicheConseilClasseBean;
+import org.logesco.modeles.OperationBean;
 import org.logesco.modeles.PV_NoteBean;
 import org.logesco.modeles.PV_SequenceBean;
 import org.logesco.modeles.PV_TrimestreBean;
@@ -482,6 +484,41 @@ public interface IUsersService {
 	 * Elle retourne 0 si aucun élève n'est enregistré dans la classe ou dans l'établissement
 	 ******************************************************************************/
 	public int getEffectifProvisoireClasse(Long idClasse);
+	
+	/*******************************************************************
+	 * Cette methode retourne l'effectif des insolvables dans une classe dont l'identifiant est passé
+	 * en paramètre. Lorsqu'aucun élève n'est insolvable dans la classe elle retourne 0. 
+	 * Si la classe est inexistante, elle retourne -1;
+	 * @param idClasse
+	 * @return
+	 */
+	public int getEffectifInsolvableDansClasse(Long idClasse);
+	
+	/***************************************************************
+	 * Cette fonction retourne la liste des élèves insolvable d'une classe. 
+	 * Elle retourne une liste vide au cas où aucun élève de la classe n'est insolvable
+	 * et null si la classe dont l'identifiant est envoyé n'est pas trouvé
+	 * @param idClasse
+	 * @return
+	 */
+	public List<Eleves> getListElevesInsolvable(Long idClasse);
+	
+	/*****************************************
+	 * Cette methode retourne la liste des élèves insolvables qui doit doit etre 
+	 * imprime en PDF
+	 * @param idClasse
+	 * @return
+	 */
+	public Collection<EleveInsolvableBean> generateListEleveInsolvable(Long idClasse);
+	
+	/*************************************************************************************************
+	 * Cette fonction retourne la liste des élèves insolvables dans une classe page par page. 
+	 * @param idClasses
+	 * @param numPage
+	 * @param taillePage
+	 * @return
+	 */
+	public Page<Eleves> findPageElevesInsolvable(Long idClasses,	int numPage,	int taillePage);
 
 	/*****************************************************************************
 	 * Cette methode retourne le nombre d'eleve considere comme etant définitivement inscrit
@@ -523,10 +560,14 @@ public interface IUsersService {
 
 	
 	/**************************************************************************************
-	 * Cette methode retourne le matricule du prochain eleve à enregistrer dans la base de donnée.
+	 * Cette methode retourne le numero utilise dans la generation du matricule du dernier 
+	 * eleve à enregistrer dans la base de donnée.
 	 * Ce matricule est concu en concatenant le code de l'établissement au quatre chiffres de l'année
 	 * suivi d'un tiret et du numéro d'enregistrement de l'élève. Ce numéro d'enregistrement tiendra sur 
 	 * 4 chiffres.
+	 * Donc on a toujours un et un seul enregistrement dans la table matricule dont le champ valeur 
+	 * indique le numero d'enregistrement du dernier élève enregistré. Ainsi, le prochain eleve aura ce numero
+	 * incrémente de 1
 	 * @param annee
 	 * @param codeEtab
 	 * @return
@@ -662,11 +703,51 @@ public interface IUsersService {
 	 * 2  si le versement s'est bien effectué et que l'état d'inscription de l'élève passe desormais à inscrit.
 	 * 1  si le versement s'est bien effectué et que l'état d'inscription de l'élève passe désormais à en cours
 	 * 0  si le versement s'est bien effectué et que l'état d'inscription de l'élève ne doit pas changé. Ici c'est 
-	 * 	dans le cas où il va rester à non inscrit donc le montant de sa scolarité reste à 0
+	 * 	dans le cas où il va rester à non inscrit donc le montant de sa scolarité reste inchangé car rien ne 
+	 * s'est passé
 	 * -1 si il ya une erreur quelconque
 	 ******************************************************************************************/
-	public int enregVersementSco(Long idEleveConcerne, double montantAVerser, double montantScolarite);
+	public int enregVersementSco(Long idEleveConcerne, double montantAVerser);
+	
+	/***********************************************************************************************
+	 * Cette methode retourne l'identifiant de la dernière opération sur un compteInscription
+	 * Cette opération est forcément celle qui a le plus grand numero. On va donc convertir 
+	 * la chaine qui correspond à cet identifiant en long puis faire les comparaisons et prendre 
+	 * celle qui a le plus grand identifiant
+	 * Elle prend en paramètre l'idEleve donc le compteInscription est concerne par l'operation
+	 * @param idEleveConcerne
+	 * @return
+	 */
+	public Long getLastOperationOnCompte(Long idEleveConcerne);
+	
+	/*****************************************************************************************************
+	 * Cette fonction retourne le montant d'une operation donc l'identifiant est passe en parametre
+	 * @param idOperation
+	 * @return
+	 */
+	public double getMontantOperation(Long idOperation);
+	
+	/***********************************************************
+	 * Cette fonction retourne l'identifiant de l'operation qui doit apparaitre sur le 
+	 * recu de versement
+	 * @param idOperation
+	 * @return
+	 */
+	public String getIdentifiantOperation(Long idOperation);
 
+	/********************************
+	 * Cette fonction retourne le nombre de transaction financière déjà effectué.
+	 * Ce nombre correspondra au numéro de la transaction qui doit apparaitre 
+	 * sur la prochaine facture qu'éditera le système. 
+	 * Cette methode retourne une chaine de caractère qui correspondra à ce nombre 
+	 * Comme on peut supprimer des lignes dans la table operation, on aura une table 
+	 * qui aura la charge de compter le nombre d'enregistrement déjà effectué. Ainsi, a chaque fois 
+	 * qu'on recherchera un numero pour une operation, on lit le champ numero de l'enregistrement 
+	 * unique qui se trouvera dans cette table. On va l'incrémenter de 1.
+	 * @return
+	 */
+	public String getNumeroOperation();
+	
 	/*******************************************************************************************
 	 * Methode qui retourne la liste de toutes les matières enregistrés dans la base de données page par page
 	 * Elle retourne une liste vide au cas ou aucune matière n'est encore enregistré
@@ -964,6 +1045,20 @@ public interface IUsersService {
 	 */
 	public int saveEvaluation (String contenuEval, Cours coursEval, Date dateEval, int proportionEval, Sequences seqEval, String typeEval);
 
+	/******************************
+	 * Cette fonction met à jour la proportion d'une évaluation et retourne un entier positif lorsque tout 
+	 * s'est bien passé. Entre temps, une évaluation peut être associe a une autre dans la meme séquence
+	 * par exple dans le cas ou deux evaluations ont été enregistré pour le même cours dans la même 
+	 * séquence. Donc cette fonction va du même coup se rassurer si une evaluation associe existe et la
+	 * mettre aussi a jour directement afin que la somme des proportions des deux evaluations ne 
+	 * soit pas superieur a 100
+	 * 
+	 * elle retourne 1 si tout s'est bien passé et qu'aucune evaluation associe n'existe
+	 * 							2 si tout s'est bien passé et que l'évaluation associe a été mis a jour du meme coup
+	 * 							-1 si une erreur s'est produite pendant la mise à jour
+	 */
+	public int updateProportionEvaluation(Long idEval, int new_proportion);
+	
 	/*************************************************************************************************
 	 * Cette methode retourne l'évaluation qui correspond à un cours, une séquence et un type d'évaluation donné
 	 * Sachant qu'un cours passe dans une classe et une seule. 
@@ -1048,27 +1143,55 @@ public interface IUsersService {
 	public int saveNoteEvalEleve(Long idEval, Long idEleves, double valNote);
 
 	/**********************************************************************************************
-	 * Methode qui enregistre ou met à jour le rapport des heures d'absence d'un éleve pour une séquence donnée
+	 * Methode qui enregistre le rapport des heures d'absence d'un éleve pour une séquence donnée
 	 * l'identifiant de l'élève, de la sequence sont pris en paramètre. Les heures d'absences justifiés et non justifiés
 	 * constituant le rapport des absences et aussi pris en paramètre.
 	 * @param idEleves
 	 * @param idSequence
 	 * @param nbreHJ
 	 * @param nbreHNJ
-	 * @param nbreHConsigne
-	 * @param nbreJExclusion
-	 * @param avertConduite
-	 * @param blameConduite
 	 * @return
 	 * 
 	 * Elle retourne 1 si tout s'est bien passé
-	 * 						0 si les heures d'absence saisies sont négatif
-	 * 						-1 en cas de tout autre erreur
+	 * 							 0 si les heures justifies sont superieur au heure non justifie car on ne peut justifie ce qu'on
+	 * a pas eu
+	 * 						    -1 si les heures d'absence saisies sont négatif
+	 * 						    -2 si la date_enreg est ultérieure à la date du jour
+	 * 						    -3 en cas de toutes autres erreurs
 	 */
-	public int saveRAbsenceSeqEleve(Long idEleves, Long idSequence, int nbreHJ, int nbreHNJ, 
-			int nbreHConsigne,	int nbreJExclusion, boolean avertConduite, boolean blameConduite);
+	public int saveRAbsenceSeqEleve(Long idEleves, Long idSequence, int nbreHJ, int nbreHNJ, Date date_enreg);
 
 
+	/**********************************************************************************************************
+	 * Methode permettant d'enregistrer une rapport disciplinaire pour un élève dans une séquence. 
+	 * Un rapport disciplinaire est lie a une sanction disciplinaire et cette sanction est infligée pour un 
+	 * motif.  Elle peut s'exprimer en un nombre de periode avec une unite en heure ou en jour.
+	 * @param idEleves
+	 * @param idSequence
+	 * @param date_enreg
+	 * @param nbreperiode
+	 * @param unite
+	 * @param motif
+	 * @param idSanctionDisc
+	 * @return
+	 * 
+	 * Elle retourne 1 si tout s'est bien passe
+	 * 							0 si nbreperiode est positif et unite vide
+	 * 							-1 si le nbreperiode est négatif
+	 * 							-2 si la date_enreg est ultérieure à la date du jour
+	 * 							-3 dans tous les autres cas
+	 */
+	public int saveRDisciplineSeqEleve(Long idEleves, Long idSequence, Date date_enreg, int nbreperiode, 
+			String unite, String motif, Long idSanctionDisc);
+	
+	/*************************************************************
+	 * Cette methode supprime un rapport disciplinaire enregistrée
+	 * @param idRdisc
+	 * @return
+	 */
+	public int deleteRapportDisciplinaire(Long idRdisc);
+	
+	
 	/*************************************************************
 	 * Methode qui retourne la NotesEval d'un élève à une évaluations.
 	 * Elle prend donc en paramètre l'idEleves et l'idEval
@@ -1242,7 +1365,40 @@ public interface IUsersService {
 	 */
 	public Collection<EleveBean> generateCollectionofElevedefClasse(Long idClasse, double montantMin);
 	
+	/***************************************************************
+	 * Cette methode retourne la liste des membres du personnel
+	 * de l'établissement sans distinction de fonction
+	 * @return
+	 */
 	public Collection<PersonnelBean> generateCollectionofPersonnelBean();
+	
+	/**********************************************************************
+	 * Cette methode retourne la liste des membres du personnel
+	 * ayant la fonction CENSEUR dans l'établissement. 
+	 * @return
+	 */
+	public Collection<PersonnelBean> generateCollectionofCenseurBean();
+	
+	/**********************************************************************
+	 * Cette methode retourne la liste des membres du personnel
+	 * ayant la fonction SG dans l'établissement. 
+	 * @return
+	 */
+	public Collection<PersonnelBean> generateCollectionofSgBean();
+	
+	/**********************************************************************
+	 * Cette methode retourne la liste des membres du personnel
+	 * ayant la fonction ENSEIGNANT dans l'établissement. 
+	 * @return
+	 */
+	public Collection<PersonnelBean> generateCollectionofEnseignantBean();
+	
+	/**********************************************************************
+	 * Cette methode retourne la liste des membres du personnel
+	 * ayant la fonction INTENDANT dans l'établissement. 
+	 * @return
+	 */
+	public Collection<PersonnelBean> generateCollectionofIntendantBean();
 	
 	/*******************************************************************************************
 	 * Cette methode calcule et génère tous les bulletins trimestriel d'une classe pour affichage. Il ne les 
@@ -1298,6 +1454,180 @@ public interface IUsersService {
 	
 	public int getNbreSousNoteDansCourspourTrim(Long idClasse, Long idCours, 
 			Long idTrimestre);
+	
+	
+	/*******
+	 * Cette fonction converti les nombres qui ont au plus 2 chiffres en toutes lettres
+	 * dans la langue française.
+	 * @param nbre
+	 * @param accord
+	 * @return
+	 */
+	public String ecritEnLettreNombreDeux9(long nbre, boolean accord);
+	
+	public String ecritEnLettreNombreTrois9(long nbre, boolean accord);
+	
+	public String ecritEnLettreNombreQuatre9(long nbre, boolean accord);
+	
+	public String ecritEnLettreNombreCinq9(long nbre, boolean accord);
+	
+	public String ecritEnLettreNombreSix9(long nbre, boolean accord);
+	
+	public String ecritEnLettreNombreNeuf9(long nbre, boolean accord);
+	
+	public String ecritEnLettreNombreDouze9(long nbre, boolean accord);
+	
+	/*****************************
+	 * Cette fonction recupère n'importe quel nombre ecrit en chiffre et le converti en 
+	 * toutes lettres dans la langue française en se servant des fonctions auxilliaires 
+	 * ci-dessus.
+	 * @param nbre
+	 * @param accord
+	 * @return
+	 */
+	public String ecritEnLettreNombrePlusDeDouze9(long nbre, boolean accord);
+	
+	/**********************************
+	 * Cette fonction converti les nombres qui ont au plus 2 chiffres en toutes lettres
+	 * dans la langue anglaise
+	 * @param nbre
+	 * @return
+	 */
+	public String writeInLetterNumberTwo9(long nbre);
+	
+	public String writeInLetterNumberThree9(long nbre);
+	
+	public String writeInLetterNumberFour9(long nbre);
+	
+	public String writeInLetterNumberFive9(long nbre);
+	
+	public String writeInLetterNumberSix9(long nbre);
+	
+	public String writeInLetterNumberNine9(long nbre);
+	
+	public String writeInLetterNumberTwelve9(long nbre);
+	
+	/********************************************************
+	 *  Cette fonction recupère n'importe quel nombre ecrit en chiffre et le converti en 
+	 *  toutes lettres en langue anglaise en se servant des fonctions auxilliaires ci-dessus.
+	 * @param nbre
+	 * @return
+	 */
+	public String writeInLetterNumberOverTwelve9(long nbre);
+	
+	/*******************************************************************
+	 * Cette fonction retourne les opérations financière operer entre 
+	 * la datemin et la datemax passé en paramètre. Il les retourne 
+	 * page par page selon la taille d'une page passé en paramètre 
+	 * @param datemin
+	 * @param datemax
+	 * @param taillePage
+	 * @return
+	 */
+	public Page<Operations> findPageOperations(Date datemin, Date datemax,	int numPage, int taillePage);
+	
+	/**********************************************************
+	 * Cette fonction retourne la liste de toutes les opérations
+	 * effectue entre les deux date indiquée
+	 * @param datemin
+	 * @param datemax
+	 * @return
+	 */
+	public List<Operations> findListAllOperations(Date datemin, Date datemax);
+	
+	/*************************
+	 * Cette fonction retourne une opération dont l'id est passe en paramètre
+	 * @param idOperation
+	 * @return
+	 */
+	public Operations findOperation(long idOperation);
+	
+	/******************************************
+	 * cette fonction calcule la somme de tous les montants encaissé pour chacune des 
+	 * opérations contenues dans la liste des opérations passé en paramètre
+	 * @param listOperation
+	 * @return
+	 */
+	public double calculMontantTotalListOperation (List<Operations> listOperation);
+	
+	/*************************************************************
+	 * Cette methode retourne une collection contenant les opérations de versement réalisées entre 
+	 * la datemin et la datemax
+	 * @param datemin
+	 * @param datemax
+	 * @return
+	 */
+	public Collection<OperationBean> generateListOperation(Date datemin, Date datemax);
+	
+	
+	public List<Operations> findListAllOperationsEleve(Long idEleve);
+	
+	/***************************************************************************
+	 * Cette methode retourne la collection contenant les opérations de versement effectués
+	 * dans le système pour le compte de l'élève dont l'identifiant est passé en paramètre. 
+	 * @param idEleve
+	 * @return
+	 */
+	public Collection<OperationBean> generateListOperationEleve(Long idEleve);
+	
+	/**************************************************
+	 * Cette methode retourne la liste des sanctions disciplinaire existant dans le système
+	 * @return
+	 */
+	public List<SanctionDisciplinaire> findListAllSanctionDisciplinaire();
+	
+	public SanctionDisciplinaire findSanctionDisciplinaire(Long idSanctionDisc);
+	
+	/**************************************************
+	 * Cette methode retourne la liste des sanctions travail existant dans le système
+	 * @return
+	 */
+	public List<SanctionTravail> findListAllSanctionTravail();
+	
+	public SanctionTravail findSanctionTravail(Long idSanctionTrav);
+	
+	/**************************************************
+	 * Cette methode retourne la liste des decision existant dans le système
+	 * @return
+	 */
+	public List<Decision> findListAllDecision();
+	
+	/*************************************************************************************
+	 * Cette methode retourne la decision du conseil de classe d'un élève pendant une 
+	 * periode donnee (sequence, trimestre ou annee). Si aucune n'est encore enregistrée, 
+	 * elle retourne null
+	 * @param idEleves
+	 * @param idPeriode
+	 * @return
+	 */
+	public DecisionConseil findDecisionConseilPeriode(Long idEleves, Long idPeriode);
+	
+	/*********************************************************************************
+	 * Cette methode enregistre en BD la decision prise pendant un conseil de classe 
+	 * séquentiel pour un élève. 
+	 * @param idEleves
+	 * @param idSequence
+	 * @param idSanctionDisc
+	 * @param nbreperiode
+	 * @param unite
+	 * @param idSanctionTravAssocie
+	 * @return
+	 * 
+	 * 		Cette methode retourne -1 si l'eleve ou la séquence ou alors des sanction associe n'ont pas été trouve
+	 * 													  0 si les paramètres nbreperiode et unite ne sont pas coherent 
+	 * (nbreperiode>0 et unite=RAS ou alors nbreperiode<0)
+	 * 													  1 si tout s'est bien passé et la décision du conseil bien enregistré
+	 * 														
+	 */
+	public int saveDecisionConseilSeq(Long idEleves, Long idSequence, Long idSanctionDisc, int nbreperiode,
+			String unite, Long idSanctionTravAssocie);
+	
+	/******************************************************
+	 * Cette methode retourne la classe utilitaire qui a permis
+	 * de calculer toutes les données présentées sur un bulletin
+	 * @return
+	 */
+	public UtilitairesBulletins getUtilitairesBulletins();
 	
 	
 }

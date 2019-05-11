@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="admin/adminlayout">
+<head>
+<meta charset="UTF-8"/>
+<title>Sanctions disciplinaires</title>
+</head>
+<body>
+<div layout:fragment="formactionadmin">
+<!-- debut du FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
+<div class="col-md-10  col-md-offset-1  reculeverticalementmodifpasswordform">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h4>Gestion des différentes sanctions disciplinaires</h4>
+		</div>
+		<div class="panel-body">
+		
+			<form action="#" th:action="@{/logesco/admin/postupdateSanctionDisc}"
+						th:object="${updateSanctionDiscForm}" method="post"  class="form-inline">
+					
+				<div th:if="${param.enregsanctionDiscsuccess}">
+					<h4 align="justify" class="alert alert-success">Sanction disciplinaire ajoutée avec succès</h4>
+				</div>
+				
+				<div th:if="${param.updatesanctionDiscsuccess}">
+					<h4 align="justify" class="alert alert-success">Sanction disciplinaire mis à jour avec succès</h4>
+				</div>
+				
+				<div th:if="${param.supprimsanctionDiscsuccess}">
+					<h4 align="justify" class="alert alert-success">Sanction disciplinaire supprimée avec succès</h4>
+				</div>
+				
+				<div th:if="${param.updatesanctionDiscerrorCode}">
+					<h4 align="justify" class="alert alert-danger">Un des codes saisies doit être déjà utilisé par une autre sanction disciplinaire</h4>
+				</div>
+				
+				<div th:if="${param.supprimsanctionDiscerrorRD}">
+					<h4 align="justify" class="alert alert-danger">Suppression annulée car la sanction est déjà associée à un rapport disciplinaire d'un élève</h4>
+				</div>
+				
+				<div th:if="${param.supprimsanctionDiscerrorDC}">
+					<h4 align="justify" class="alert alert-danger">Suppression annulée car la sanction est déjà associée à des décisions de conseil de classe </h4>
+				</div>
+				
+				<div th:if="${param.supprimsanctionDiscerrorCST}">
+					<h4 align="justify" class="alert alert-danger">Suppression annulée car la sanction est déjà associée à des conditions de sanction travail d'une classe</h4>
+				</div>
+				
+				<div th:if="${param.supprimsanctionDiscerror}">
+					<h4 align="justify" class="alert alert-danger">Suppression impossible car l'id de la sanction est introuvable</h4>
+				</div>
+						
+				<table class="table table-striped">
+					<thead class="thead-light">
+						<tr>
+							<th class="text-center" scope="col">CODE</th>
+							<th class="text-center" scope="col">CODE 2<sup>nd</sup> LANGUE</th>
+							<th class="text-center" scope="col">INTITULE</th>
+							<th class="text-center" scope="col">INTITULE 2<sup>nd</sup> LANGUE</th>
+						    <th class="text-center" scope="col">ACTION</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+								<div class="form-group">
+									<input type="text" name="codeSancDisc" id="codeSancDisc"
+												class="form-control"  th:value="*{codeSancDisc}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+								</div>
+								<div th:if="${#fields.hasErrors('codeSancDisc')}"
+												th:errors="*{codeSancDisc}" class="redcolor">Erreur de code de sanction disci</div>
+							</td>
+							<td>
+								<div class="form-group">
+									<input type="text" name="codeSancDiscEn" id="codeSancDiscEn"
+												class="form-control"  th:value="*{codeSancDiscEn}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+								</div>
+								<div th:if="${#fields.hasErrors('codeSancDiscEn')}"
+												th:errors="*{codeSancDiscEn}" class="redcolor">Erreur de code de sanction En disci</div>
+							</td>
+							<td>
+								<div class="form-group">
+									<input type="text" name="intituleSancDisc" id="intituleSancDisc"
+												class="form-control"  th:value="*{intituleSancDisc}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+								</div>
+								<div th:if="${#fields.hasErrors('intituleSancDisc')}"
+												th:errors="*{intituleSancDisc}" class="redcolor">Erreur de intitule de sanction disci</div>
+					
+							</td>
+							<td>
+								<div class="form-group">
+									<input type="text" name="intituleSancDiscEn" id="intituleSancDiscEn"
+												class="form-control"  th:value="*{intituleSancDiscEn}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+								</div>
+								<div th:if="${#fields.hasErrors('intituleSancDiscEn')}"
+												th:errors="*{intituleSancDiscEn}" class="redcolor">Erreur de intitule de sanction disci</div>
+								
+								<input type="hidden" name="idSanctionDisc"
+										id="idSanctionDisc" class="form-control" th:value="*{idSanctionDisc}" th:field="*{idSanctionDisc}"/>
+								
+							</td>
+							<td>
+								<button type="submit" class="btn btn-primary  pull-right">
+											<span class="glyphicon glyphicon-save"></span> Envoyer
+								</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>		
+				<hr/>
+				<table class="table table-striped">
+					<tbody>	
+						<!-- LISTE DES DIFFERENTES SANCTIONS DISCIPLINAIRES ENREGISTREES AU CAS OU CETTE 
+						LISTE EST DEJA DANS LE MODELE -->
+						<tr th:each="sancDisc:${listofSanctionDisc}" th:if="${listofSanctionDisc}">
+							<td th:inline="text">[[${sancDisc.codeSancDisc}]] </td>
+							<td th:inline="text">[[${sancDisc.codeSancDiscEn}]] </td>
+							<td th:inline="text">[[${sancDisc.intituleSancDisc}]] </td>
+							<td th:inline="text">[[${sancDisc.intituleSancDiscEn}]] </td>
+							<td>
+							
+								<div>
+									<span>
+										<a class="btn btn-primary btn-sm pull-left" href="#" 
+											th:href="@{/logesco/admin/getupdateSanctionDisc(idSanctionDisc=${sancDisc.idSancDisc}, 
+											numPageSanctionDisc=${pageCouranteSanctionDisc})}" role="button">
+											<span class="glyphicon glyphicon-edit"></span> Modifier
+										</a>
+									
+										<a class="btn btn-danger btn-sm pull-right" href="#" 
+											th:href="@{/logesco/admin/getsupprimerSanctionDisc(idSanctionDisc=${sancDisc.idSancDisc})}" role="button">
+												<span class="glyphicon glyphicon-trash"></span> Supprimer
+										</a>
+									</span>
+								</div>
+								
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</form>
+		
+			<div class="container">
+					<ul class="pagination"><!-- nav nav-pills -->
+						<li th:each="p,status:${listofPagesSanctionDisc}" th:class="${status.index==pageCouranteSanctionDisc}?active:' ' ">
+							<a th:href="@{/logesco/admin/getupdateSanctionDisc(numPageSanctionDisc=${status.index},
+									idSanctionDisc=*{idSanctionDisc})}"
+									th:text="${status.index+1}"></a>
+						</li>
+					</ul>
+				</div> 
+			
+		</div>
+	</div>
+</div>
+<!-- fin du FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
+</div>
+</body>
+</html>

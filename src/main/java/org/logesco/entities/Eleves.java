@@ -111,6 +111,12 @@ public class Eleves implements Serializable {
 	 ******************************************/
 	@OneToMany(mappedBy="eleve")
 	Collection<RapportDAbsence> listofRabs;
+	
+	/*
+	 * Association avec la table RapportDisciplinaire
+	 ******************************************/
+	@OneToMany(mappedBy="eleve")
+	Collection<RapportDisciplinaire> listofRDisc;
 
 	/*
 	 * Association avec la table NotesEval
@@ -136,6 +142,11 @@ public class Eleves implements Serializable {
 	@OneToOne
 	CompteInscription compteInscription;
 
+	/*
+	 * Association avec la table DecisionConseil
+	 ******************************************/
+	@OneToMany(mappedBy="eleveConcerne")
+	Collection<DecisionConseil> listofDecisionConseil;
 
 
 	/**
@@ -550,14 +561,162 @@ public class Eleves implements Serializable {
 		this.compteInscription = compteInscription;
 	}
 
-	public RapportDAbsence getRapportDAbsenceSeq(Long idSequence){
-		RapportDAbsence rapportdabsenceSeq = null;
+	
+	
+	/**
+	 * @return the listofDecisionConseil
+	 */
+	public Collection<DecisionConseil> getListofDecisionConseil() {
+		return listofDecisionConseil;
+	}
+	
+	public DecisionConseil getDecisionConseilSeq(long idEleveConcerne, long idSequenceConcerne){
+		List<DecisionConseil> listofDecisionConseil = (List<DecisionConseil>) this.getListofDecisionConseil();
+		for(DecisionConseil dc: listofDecisionConseil){
+			if((dc.getPeriodeConcerne().getIdPeriodes().longValue() == idSequenceConcerne)
+					&& (dc.getEleveConcerne().getIdEleves().longValue() == idEleveConcerne))
+				return dc;
+		}
+		return null;
+	}
+
+	/**
+	 * @param listofDecisionConseil the listofDecisionConseil to set
+	 */
+	public void setListofDecisionConseil(Collection<DecisionConseil> listofDecisionConseil) {
+		this.listofDecisionConseil = listofDecisionConseil;
+	}
+
+	/**
+	 * @return the listofRDisc
+	 */
+	public Collection<RapportDisciplinaire> getListofRDisc() {
+		Comparator<RapportDisciplinaire> monComparator = new Comparator<RapportDisciplinaire>() {
+
+			@Override
+			public int compare(RapportDisciplinaire arg0, RapportDisciplinaire arg1) {
+				// TODO Auto-generated method stub
+				int n = 0;
+				if(arg0.getDateenreg().compareTo(arg1.getDateenreg())<0) n=-1;
+				
+				if(arg0.getDateenreg().compareTo(arg1.getDateenreg())>0) n=1;
+				
+				return n;
+			}
+			
+		};
+		Collections.sort((List<RapportDisciplinaire>)this.listofRDisc, monComparator);
+		return listofRDisc;
+	}
+	
+	public Collection<RapportDisciplinaire> getListofRDisc_DESC() {
+		Comparator<RapportDisciplinaire> monComparator = new Comparator<RapportDisciplinaire>() {
+
+			@Override
+			public int compare(RapportDisciplinaire arg0, RapportDisciplinaire arg1) {
+				// TODO Auto-generated method stub
+				int n = 0;
+				if(arg0.getDateenreg().compareTo(arg1.getDateenreg())<0) n=1;
+				
+				if(arg0.getDateenreg().compareTo(arg1.getDateenreg())>0) n=-1;
+				
+				return n;
+			}
+			
+		};
+		Collections.sort((List<RapportDisciplinaire>)this.listofRDisc, monComparator);
+		return listofRDisc;
+	}
+
+	/**
+	 * @param listofRDisc the listofRDisc to set
+	 */
+	public void setListofRDisc(Collection<RapportDisciplinaire> listofRDisc) {
+		this.listofRDisc = listofRDisc;
+	}
+
+	public List<RapportDAbsence> getListRapportDAbsenceSeq(Long idSequence){
+		List<RapportDAbsence> listofRabs = new ArrayList<RapportDAbsence>();
 		for(RapportDAbsence rabs : this.getListofRabs()){
 			if(rabs.getSequence().getIdPeriodes().longValue() == idSequence.longValue()){
-				rapportdabsenceSeq = rabs;
+				listofRabs.add(rabs);
+			}   
+		}
+		return listofRabs;
+	}
+	
+	public int getNbreHeureAbscenceJustifie(Long idSequence){
+		int som=0;
+		List<RapportDAbsence> listofRabs = null;
+		listofRabs = this.getListRapportDAbsenceSeq(idSequence);
+		for(RapportDAbsence rabs: listofRabs){
+			som +=rabs.getNbreheureJustifie();
+		}
+		return som;
+	}
+	
+	public List<RapportDisciplinaire> getListRapportDisciplinaireSeq(Long idSequence){
+		
+		List<RapportDisciplinaire> listofRapportDisc = new ArrayList<RapportDisciplinaire>();
+		for(RapportDisciplinaire rdisc: this.getListofRDisc()){
+			
+			if(rdisc.getSequence().getIdPeriodes().longValue() == idSequence.longValue()){
+				listofRapportDisc.add(rdisc);
 			}
 		}
-		return rapportdabsenceSeq;
+		return listofRapportDisc;
+	}
+	
+	public List<RapportDisciplinaire> getListRapportDisciplinaireSeq_DESC(Long idSequence){
+		List<RapportDisciplinaire> listofRapportDisc = new ArrayList<RapportDisciplinaire>();
+		for(RapportDisciplinaire rdisc: this.getListofRDisc_DESC()){
+			if(rdisc.getSequence().getIdPeriodes().longValue() == idSequence.longValue()){
+				listofRapportDisc.add(rdisc);
+			}
+		}
+		return listofRapportDisc;
+	}
+	
+	public int getNbreHeureAbscenceNonJustifie(Long idSequence){
+		int som=0;
+		List<RapportDAbsence> listofRabs = null;
+		listofRabs = this.getListRapportDAbsenceSeq(idSequence);
+		for(RapportDAbsence rabs: listofRabs){
+			som +=rabs.getNbreheureNJustifie();
+		}
+		return som;
+	}
+	
+	public int getNbreHeureAbsenceNonJustifie(Trimestres trim){
+		int som = 0;
+		for(Sequences seq: trim.getListofsequence()){
+			som+=this.getNbreHeureAbscenceNonJustifie(seq.getIdPeriodes());
+		}
+		return som;
+	}
+	
+	public int getNbreHeureAbsenceJustifie(Trimestres trim){
+		int som = 0;
+		for(Sequences seq: trim.getListofsequence()){
+			som+=this.getNbreHeureAbscenceJustifie(seq.getIdPeriodes());
+		}
+		return som;
+	}
+	
+	public int getNbreHeureAbsenceNonJustifie(Annee an){
+		int som = 0;
+		for(Trimestres trim: an.getListoftrimestre()){
+			som+=this.getNbreHeureAbsenceNonJustifie(trim);
+		}
+		return som;
+	}
+	
+	public int getNbreHeureAbsenceJustifie(Annee an){
+		int som = 0;
+		for(Trimestres trim: an.getListoftrimestre()){
+			som+=this.getNbreHeureAbsenceJustifie(trim);
+		}
+		return som;
 	}
 
 	/***

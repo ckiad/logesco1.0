@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ListeEleveParClasse" pageWidth="595" pageHeight="842" columnWidth="547" leftMargin="24" rightMargin="24" topMargin="21" bottomMargin="21" uuid="e8673864-3cf8-4cb2-8672-af01395c8a06">
 	<property name="ireport.zoom" value="1.4641000000000006"/>
 	<property name="ireport.x" value="0"/>
@@ -119,28 +119,28 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Times New Roman" size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ministere_fr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ministere_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="346" y="63" width="201" height="12" uuid="c7a46ee8-86a4-4eec-bec4-0dfc499e1dd2"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Times New Roman" size="9" isBold="true" isItalic="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ministere_en}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ministere_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="8" width="233" height="12" uuid="769326d9-0834-4eff-9cbe-17dc5afed27c"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Times New Roman" size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{delegation_fr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{delegation_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="30" width="233" height="12" forecolor="#2E6DAD" uuid="e0b843f3-49a6-4a98-8bb1-cfd2be67a585"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Times New Roman" size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{etablissement_fr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{etablissement_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="52" width="233" height="12" uuid="9653f0a4-c199-40ea-92ee-142c2c4b9bf2"/>
@@ -154,28 +154,28 @@
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Times New Roman" size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{annee_scolaire_fr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{annee_scolaire_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="19" width="233" height="12" uuid="c76e9ac7-48aa-4c73-9208-4eb8da7b92cc"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Times New Roman" size="9" isBold="true" isItalic="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{delegation_en}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{delegation_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="41" width="233" height="12" forecolor="#2E6DAD" uuid="eaf8981d-f817-4aa0-830e-ee3d889093f1"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Times New Roman" size="9" isBold="true" isItalic="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{etablissement_en}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{etablissement_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="74" width="233" height="12" uuid="279a405f-9955-4f56-91df-6d76f05f13c3"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Times New Roman" size="9" isBold="true" isItalic="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{annee_scolaire_en}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{annee_scolaire_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="0" y="114" width="547" height="1" uuid="2afcb3df-857d-4d3d-959f-1d81af46d792"/>
@@ -189,7 +189,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
 					<font fontName="Times New Roman" size="12" isBold="true" isUnderline="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{titre_liste}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{titre_liste}.toUpperCase()]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -283,6 +283,12 @@
 	</columnHeader>
 	<detail>
 		<band height="17" splitType="Stretch">
+			<rectangle>
+				<reportElement x="109" y="0" width="204" height="17" uuid="b771d149-60db-4220-b692-3aa57ab698cc">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</rectangle>
 			<textField>
 				<reportElement x="24" y="0" width="85" height="17" uuid="34a67176-3ee2-4179-a948-a3b015962e4c"/>
 				<box leftPadding="4">
@@ -298,18 +304,21 @@
 				<textFieldExpression><![CDATA[$F{matricule}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="109" y="0" width="204" height="17" uuid="121cbc79-de3d-4ac7-a069-0f12849840e6"/>
+				<reportElement x="112" y="0" width="200" height="16" uuid="121cbc79-de3d-4ac7-a069-0f12849840e6">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<box leftPadding="4">
 					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Justified" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{noms_prenoms}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{noms_prenoms}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="500" y="0" width="47" height="17" uuid="7a77a6ef-3ff6-457f-89f5-2524857b15e9"/>
@@ -370,7 +379,7 @@
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="25">
+		<band height="34">
 			<textField>
 				<reportElement x="462" y="3" width="37" height="21" uuid="df3af473-b69e-465b-8a65-9a5c7de4d61e"/>
 				<textElement textAlignment="Right"/>
@@ -381,17 +390,19 @@
 				<textElement textAlignment="Left"/>
 				<textFieldExpression><![CDATA[" sur " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="22" y="24" width="504" height="10" uuid="d65e16eb-f879-4413-b37f-c6630e9355d9">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial Narrow" size="8" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Copyright (C) Kiadjeuc (Logesco 1.0) Contact: 678470262/695093228]]></text>
+			</staticText>
 		</band>
 	</pageFooter>
 	<lastPageFooter>
 		<band height="25">
-			<staticText>
-				<reportElement x="0" y="13" width="430" height="10" uuid="c0dc3500-e75a-464f-b9ff-f2c7a1645200"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Courier New" size="8" isItalic="true"/>
-				</textElement>
-				<text><![CDATA[Contactez kiadjeu Software au 678470262 / 695093228 pour plus d'information]]></text>
-			</staticText>
 			<textField>
 				<reportElement x="461" y="5" width="39" height="20" uuid="4ec09a93-05c9-4e34-97be-193f0bafa3c6"/>
 				<textElement textAlignment="Right"/>

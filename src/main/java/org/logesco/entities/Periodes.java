@@ -47,6 +47,12 @@ public abstract class Periodes implements Serializable {
 	@NotNull
 	private boolean etatPeriodes;
 
+	
+	/******************************************
+	 * Mapping des associations avec les autres tables
+	 ******************************************/
+	
+	
 	/**
 	 * 
 	 */

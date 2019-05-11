@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="admin/adminlayout">
+<head>
+<meta charset="UTF-8"/>
+<title>Decision des bulletins</title>
+</head>
+<body>
+<div layout:fragment="formactionadmin">
+<!-- debut du FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
+<div class="col-md-10  col-md-offset-1  reculeverticalementmodifpasswordform">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h4>Gestion des différentes décisions à porter sur les bulletins selon les classes</h4>
+		</div>
+		<div class="panel-body">
+			<form action="#" th:action="@{/logesco/admin/postupdateDecision}"
+						th:object="${updateDecisionForm}" method="post"  class="form-inline">
+				
+				<div th:if="${param.enregdecisionsuccess}">
+					<h4 align="justify" class="alert alert-success">Decision enregistrée avec succès</h4>
+				</div>
+				
+				<div th:if="${param.updatedecisionsuccess}">
+					<h4 align="justify" class="alert alert-success">Decision mise à jour avec succès</h4>
+				</div>
+				
+				<div th:if="${param.supprimdecisionsuccess}">
+					<h4 align="justify" class="alert alert-success">Opération de suppression effectuée avec succès</h4>
+				</div>
+				
+				<div th:if="${param.updatedecisionerrorCode}">
+					<h4 align="justify" class="alert alert-danger">Erreur: Les différents codes de décision doivent être unique.</h4>
+				</div>
+				
+				<div th:if="${param.supprimdecisionerrorDC}">
+					<h4 align="justify" class="alert alert-danger">Erreur: La décision a déjà été associé à des décisions de conseil de classe.</h4>
+				</div>
+				
+				<div th:if="${param.supprimdecisionerror}">
+					<h4 align="justify" class="alert alert-danger">Erreur: idDecision à supprimer introuvable.</h4>
+				</div>
+				
+				<table class="table table-striped">
+					<thead class="thead-light">
+						<tr>
+							<th class="text-center" scope="col">CODE</th>
+							<th class="text-center" scope="col">CODE 2<sup>nd</sup> LANGUE</th>
+							<th class="text-center" scope="col">INTITULE</th>
+							<th class="text-center" scope="col">INTITULE 2<sup>nd</sup> LANGUE</th>
+						    <th class="text-center" scope="col">ACTION</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+								<div class="form-group">
+									<input type="text" name="codeDecision" id="codeDecision"
+												class="form-control"  th:value="*{codeDecision}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+								</div>
+								<div th:if="${#fields.hasErrors('codeDecision')}"
+												th:errors="*{codeDecision}" class="redcolor">Erreur de code de decision</div>
+							</td>
+							
+							<td>
+								<div class="form-group">
+									<input type="text" name="codeDecisionEn" id="codeDecisionEn"
+												class="form-control"  th:value="*{codeDecisionEn}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+								</div>
+								<div th:if="${#fields.hasErrors('codeDecisionEn')}"
+												th:errors="*{codeDecisionEn}" class="redcolor">Erreur de code de decision EN</div>
+							</td>
+							
+							<td>
+								<div class="form-group">
+									<input type="text" name="intituleDecision" id="intituleDecision"
+												class="form-control"  th:value="*{intituleDecision}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+								</div>
+								<div th:if="${#fields.hasErrors('intituleDecision')}"
+												th:errors="*{intituleDecision}" class="redcolor">Erreur de intitule decision</div>
+					
+							</td>
+							
+							<td>
+								<div class="form-group">
+									<input type="text" name="intituleDecisionEn" id="intituleDecisionEn"
+												class="form-control"  th:value="*{intituleDecisionEn}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+								</div>
+								<div th:if="${#fields.hasErrors('intituleDecisionEn')}"
+												th:errors="*{intituleDecisionEn}" class="redcolor">Erreur de intitule de intituleDecisionEn</div>
+								
+								<input type="hidden" name="idDecision"
+										id="idDecision" class="form-control" th:value="*{idDecision}" th:field="*{idDecision}"/>
+								
+							</td>
+							
+							<td>
+								<button type="submit" class="btn btn-primary  pull-right">
+											<span class="glyphicon glyphicon-save"></span> Envoyer
+								</button>
+							</td>
+							
+						</tr>
+					</tbody>
+				</table>
+				
+				<hr/>
+				<table class="table table-striped">
+					<tbody>	
+						<!-- LISTE DES DIFFERENTES DECISIONS  ENREGISTREES AU CAS OU CETTE 
+						LISTE EST DEJA DANS LE MODELE -->
+						<tr th:each="decision:${listofDecision}" th:if="${listofDecision}">
+							<td th:inline="text">[[${decision.codeDecision}]] </td>
+							<td th:inline="text">[[${decision.codeDecisionEn}]] </td>
+							<td th:inline="text">[[${decision.intituleDecision}]] </td>
+							<td th:inline="text">[[${decision.intituleDecisionEn}]] </td>
+							<td>
+							
+								<div>
+									<span>
+										<a class="btn btn-primary btn-sm pull-left" href="#" 
+											th:href="@{/logesco/admin/getupdateDecision(idDecision=${decision.idDecision}, 
+											numPageDecision=${pageCouranteDecision})}" role="button">
+											<span class="glyphicon glyphicon-edit"></span> Modifier
+										</a>
+									
+										<a class="btn btn-danger btn-sm pull-right" href="#" 
+											th:href="@{/logesco/admin/getsupprimerDecision(idDecision=${decision.idDecision})}" role="button">
+												<span class="glyphicon glyphicon-trash"></span> Supprimer
+										</a>
+									</span>
+								</div>
+								
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<div class="container">
+					<ul class="pagination"><!-- nav nav-pills -->
+						<li th:each="p,status:${listofPagesDecision}" th:class="${status.index==pageCouranteDecision}?active:' ' ">
+							<a th:href="@{/logesco/admin/getupdateDecision(numPageDecision=${status.index},
+									idDecision=*{idDecision})}"
+									th:text="${status.index+1}"></a>
+						</li>
+					</ul>
+				</div> 
+				
+			</form>
+		</div>
+	</div>
+</div>
+<!-- fin du FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
+</div>
+</body>
+</html>

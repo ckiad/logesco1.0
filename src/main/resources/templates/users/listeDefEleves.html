@@ -90,11 +90,11 @@
 								<tr th:each="eleve:${listdefofEleves}">
 									<!-- <td th:inline="text">[[${eleve.matriculeEleves}]] </td> -->
 								
-									<td th:inline="text">[[${#strings.capitalize(eleve.nomsEleves)}]] [[${eleve.prenomsEleves}]] </td>
+									<td th:inline="text">[[${#strings.toUpperCase(eleve.nomsEleves)}]] [[${eleve.prenomsEleves}]] </td>
 									
 									<td th:inline="text">
 										[[#{listeDefEleves.label_nele}]]
-										[[${eleve.datenaissEleves}]] [[#{listeDefEleves.label_a}]]
+										[[${#dates.format(eleve.datenaissEleves,"dd-MM-yyyy")}]] [[#{listeDefEleves.label_a}]]
 										[[${eleve.lieunaissEleves}]]</td>
 									
 									<td th:inline="text">[[${eleve.numtel1Parent}]]</td>

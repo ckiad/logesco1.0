@@ -6,11 +6,11 @@
 	layout:decorator="users/userslayout">
 <head>
 <meta charset="UTF-8"/>
-<title>Importer une liste d'élève</title>
+<title th:inline="text">[[#{enreglistelv.titre_page}]]</title>
 </head>
 <body>
 	<span layout:fragment="titre_boite">
-        <kbd>Importer une liste d'élève à partir d'un fichier Excel</kbd> 
+        <kbd th:inline="text">[[#{enreglistelv.titre_boite}]]</kbd> 
     </span>
 <div layout:fragment="formactionusers">
     <!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
@@ -20,34 +20,35 @@
 						th:object="${enregListElevesForm}">
 						
 						<fieldset th:if="${erreurDansFichier}" class="alert alert-danger">
-							<legend class="text-primary">Le fichier envoyé contient des erreurs</legend>
+							<legend class="text-primary" th:inline="text">[[#{enreglistelv.legend_erreurdsfichier}]]</legend>
 							<label th:inline="text">[[${erreurDansFichier}]]</label>
 						</fieldset>
 						
-						<fieldset th:if="${listofErrorEnreg}" class="alert alert-danger">
-							<legend class="text-primary">Le fichier envoyé contient des erreurs</legend>
-							les élèves suivant sont déjà enregistrés dans la base de données.
+						<fieldset th:if="${listofErrorEnreg}" class="alert alert-danger" >
+							<legend class="text-primary" th:inline="text">[[#{enreglistelv.legend_erreurdsfichier}]]</legend>
+							<span th:inline="text">[[#{enreglistelv.label_erreurelvexist}]].</span>
 							<ul th:each="error:${listofErrorEnreg}">
 								<li  th:inline="text">[[${error}]]</li>
 							</ul>
 						</fieldset>
 						
 						<fieldset th:if="${enregListSucces}" class="alert alert-success">
-							<legend class="text-primary">Enregistrement effectué avec succès</legend>
-							<label th:inline="text">Les élèves de la liste spécifiées ont été enregistré dans la 
-								classe de [[${classeenregListSucces}]] avec succès.</label>
+							<legend class="text-primary" th:inline="text"> [[#{enreglistelv.legend_enregsuccess}]]</legend>
+							<label th:inline="text" th:inline="text">
+								[[#{enreglistelv.label_enregsuccess}]]  [[${classeenregListSucces}]] [[#{enreglistelv.label_enregsuccesssuite}]].
+							</label>
 						</fieldset>
 						
 						<fieldset >
-							NB: Le fichier excel doit être rempli selon le modèle ci-joint 
+							<span th:inline="text">[[#{enreglistelv.label_modelefichier}]] </span>
 							<a class="btn btn-default btn-sm pull-right" href="modeles/modele recrutement.xlsx" 
-				      			role="button" target="_blank"
+				      			role="button" target="_blank" th:inline="text"
 				      			th:href="@{/modeles/modele recrutement.xlsx}">
-				      			<span class="glyphicon glyphicon-cloud-download"></span> Télécharger le modèle(.xlsx)
+				      			<span class="glyphicon glyphicon-cloud-download"></span>[[#{enreglistelv.bouton_telechargermodele}]]
 				      		</a>
 						</fieldset>
 						<fieldset class="col-md-6">
-							<legend class="text-primary">Classe concernée</legend>
+							<legend class="text-primary" th:inline="text">[[#{enreglistelv.legend_classeconcerne}]]</legend>
 								
 							<select class="form-control" name="idClasseConcerne"  
 									th:field="*{idClasseConcerne}"  id="idClasseConcerne" >
@@ -64,17 +65,17 @@
 							</fieldset>
 							
 							<fieldset class="col-md-6">
-								<legend class="text-primary">Modèle rempli</legend>
+								<legend class="text-primary" th:inline="text">[[#{enreglistelv.legend_modelerempli}]]</legend>
 								<div class="form-group">
-									<label for="filecheminFichier"> Uploader le fichier: </label> 
+									<label for="filecheminFichier" th:inline="text"> [[#{enreglistelv.label_uploadfichier}]]: </label> 
 									<input type="file" name="filecheminFichier" id="filecheminFichier" 
-										class="form-control-file" placeholder="Envoyer le fichier" 
+										class="form-control-file" th:placeholder="#{enreglistelv.placeholder_envoifichier}" 
 										accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"/>
 								</div>
 							</fieldset>
 							
-							<button type="submit" class="btn btn-primary  pull-right">
-								<span class="glyphicon glyphicon-save"></span> Envoyer
+							<button type="submit" class="btn btn-primary  pull-right" th:inline="text">
+								<span class="glyphicon glyphicon-save"></span> [[#{enreglistelv.bouton_envoyer}]]
 							</button>
 							
 			</form>

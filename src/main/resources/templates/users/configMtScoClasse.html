@@ -17,7 +17,7 @@
 <!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
 <div class="col-md-9">
 		
-		<form action="#" th:action="@{/logesco/users/intendant/postenregMtClasses}" 
+		<form action="#" th:action="@{/logesco/users/chefetab/postenregMtClasses}" 
 				method="post"   class="form-inline" th:object="${updateMtScoClassesForm}">
 				
 				<div th:if="${param.updatemtclasseerrorclasse}">
@@ -98,7 +98,7 @@
 			      				<div>
 			      				<span>
 			      					<a class="btn btn-primary btn-sm pull-right" href="#"  
-			      						th:href="@{/logesco/users/intendant/getmodifMtScoClasses(idClassesAConfig=${c.idClasses},
+			      						th:href="@{/logesco/users/chefetab/getmodifMtScoClasses(idClassesAConfig=${c.idClasses},
 			      						numPageClasses=${pageCourante})}" 
 			      						role="button" th:text="#{configMtScoClasse.bouton_modifier}">
 			      						<span class="glyphicon glyphicon-edit"></span> Modifier
@@ -113,7 +113,7 @@
 				<div class="container">
 					<ul class="pagination"><!-- nav nav-pills -->
 						<li th:each="p,status:${listofPagesClasses}" th:class="${status.index==pageCourante}?active:' ' ">
-							<a th:href="@{/logesco/users/intendant/getconfigClasses(numPageClasses=${status.index})}"
+							<a th:href="@{/logesco/users/chefetab/getconfigClasses(numPageClasses=${status.index})}"
 								 th:text="${status.index+1}"></a>
 						</li>
 					</ul>
@@ -121,7 +121,7 @@
 				</div> 
 				
 				<a class="btn btn-primary btn-lg pull-right" href="#" 
-			      						th:href="@{/logesco/users/intendant/exportlistClasses}" 
+			      						th:href="@{/logesco/users/chefetab/exportlistClasses}" 
 			      						role="button" th:text="#{configMtScoClasse.bouton_export}">
 			      						<span class="glyphicon glyphicon-list-alt"></span> Exporter la liste des classes
 			    </a>

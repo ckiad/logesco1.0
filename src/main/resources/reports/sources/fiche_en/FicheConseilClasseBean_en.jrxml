@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FicheStatistiqueMatiere" pageWidth="595" pageHeight="842" columnWidth="547" leftMargin="24" rightMargin="24" topMargin="9" bottomMargin="7" uuid="e8673864-3cf8-4cb2-8672-af01395c8a06">
 	<property name="ireport.zoom" value="1.3636363636363658"/>
 	<property name="ireport.x" value="139"/>
@@ -128,28 +128,28 @@
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{delegation_fr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{delegation_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="30" width="160" height="10" uuid="d5718326-9ecb-46c1-89b1-3e611826b495"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="false" isItalic="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{delegation_en}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{delegation_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="39" width="160" height="10" forecolor="#2E6DAD" uuid="0b940d54-0cb2-42ad-a0ec-7e4a44ed57e0"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Arial Narrow" size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{etablissement_fr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{etablissement_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="48" width="160" height="10" forecolor="#2E6DAD" uuid="529a69bb-3c40-4b2a-9a48-ce5807883a33"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Arial Narrow" size="8" isBold="false" isItalic="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{etablissement_en}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{etablissement_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="57" width="160" height="10" uuid="22187f3d-5bba-4c0a-956a-7468c72a424a"/>
@@ -163,28 +163,28 @@
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{annee_scolaire_fr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{annee_scolaire_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="75" width="160" height="10" uuid="e15e1203-6bac-487e-a83a-c08a5949af82"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="false" isItalic="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{annee_scolaire_en}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{annee_scolaire_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="190" y="85" width="168" height="10" uuid="c05fe17e-c911-47c0-ac16-60922b94f7eb"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true" isItalic="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{devise_fr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{devise_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="190" y="94" width="168" height="10" uuid="e2713a61-16b9-4c2d-8644-9bfa60dab617"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="false" isItalic="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{devise_en}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{devise_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<image>
 				<reportElement x="251" y="23" width="63" height="60" uuid="4de62d98-8fb6-4636-93c6-10ee577f4547"/>
@@ -223,14 +223,14 @@
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{ministere_fr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{ministere_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="417" y="68" width="131" height="10" uuid="dd8c01b4-4a3c-4a46-b9af-1b1957669ba5"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="false" isItalic="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{ministere_en}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{ministere_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="386" y="104" width="158" height="13" forecolor="#2E6DAD" backcolor="#FFFFFF" uuid="705b2c35-dc71-42c9-b6e5-435aafbf0487"/>
@@ -251,14 +251,14 @@
 				<textElement>
 					<font fontName="Arial Narrow" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Professeur principal: "+$F{enseignant}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Professeur principal: "+$F{enseignant}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="70" y="104" width="300" height="15" forecolor="#2E6DAD" uuid="42191c64-ec2c-4145-84ea-61a6739645ad"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial Narrow" size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{titre_fiche}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{titre_fiche}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement mode="Opaque" x="159" y="144" width="120" height="12" backcolor="#CCCCCC" uuid="6a1e9b03-a62c-45e7-97a9-e4b3b8a2ccd0"/>
@@ -519,7 +519,7 @@
 				<text><![CDATA[1. STATE OF PRESENCE ON THE COUNCIL]]></text>
 			</staticText>
 		</band>
-		<band height="207">
+		<band height="225">
 			<staticText>
 				<reportElement x="1" y="7" width="118" height="16" uuid="4646636e-86b1-4367-becb-8bfa1d4c21dc"/>
 				<textElement>
@@ -1429,7 +1429,7 @@
 		</band>
 		<band height="670">
 			<break>
-				<reportElement x="0" y="5" width="793" height="1" uuid="ac258673-2ce4-4113-810b-de7e88fed6c2">
+				<reportElement x="0" y="-3" width="793" height="1" uuid="ac258673-2ce4-4113-810b-de7e88fed6c2">
 					<printWhenExpression><![CDATA[$V{PAGE_COUNT}==1]]></printWhenExpression>
 				</reportElement>
 			</break>
@@ -2710,8 +2710,21 @@
 			</staticText>
 		</band>
 	</detail>
+	<pageFooter>
+		<band height="16">
+			<staticText>
+				<reportElement x="30" y="4" width="504" height="10" uuid="b6e906c4-b7b0-4c2d-bbc0-3a9dcf261d5a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial Narrow" size="8" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Copyright (C) Kiadjeuc (Logesco 1.0) Contact: 678470262/695093228]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
 	<summary>
-		<band height="54">
+		<band height="77">
 			<staticText>
 				<reportElement x="-8" y="24" width="108" height="16" uuid="d2616779-d301-48a5-aeae-b5c702bca9b1"/>
 				<textElement>

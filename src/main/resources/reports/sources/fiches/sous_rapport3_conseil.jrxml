@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MatiereGroupe1Sequence" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6edfd05c-5764-4729-9f69-a270f2aeaa4d">
 	<property name="ireport.zoom" value="1.3310000000000006"/>
 	<property name="ireport.x" value="0"/>
@@ -36,7 +36,7 @@
 				<textElement textAlignment="Justified">
 					<font fontName="Arial Narrow" size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{nom_matiere}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{nom_matiere}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="95" y="0" width="32" height="15" uuid="9faedc88-406e-4c46-96ca-40b24c45a1e4"/>
