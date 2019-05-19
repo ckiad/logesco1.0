@@ -1647,6 +1647,30 @@ public interface IUsersService {
 	public int saveDecisionConseilTrim(Long idEleves, Long idTrimestre, Long idSanctionDisc, int nbreperiode,
 			String unite, Long idSanctionTravAssocie);
 	
+	/***********************************************************
+	 * Cette methode retourne la decision dont l'identifiant est passé en paramètre. 
+	 * Si aucune décision n'est trouve, elle retourne null
+	 * @param idDecision
+	 * @return
+	 */
+	public Decision findDecision(Long idDecision);
+	
+	/***********************************************************************************************************
+	 * Cette methode enregistre en BD la décision prise pendant le conseil de classe annuel pour un élève
+	 * 
+	 * @param idElevesConcerne
+	 * @param idAnneeActive
+	 * @param idsanctionTravAssocie
+	 * @param idDecisionAssocie
+	 * @return
+	 * 
+	 * 		Cette methode retourne 0 si l'élève ou l'annee ou la sanctionTrav et ou la decision n'existe pas
+	 * 													 1 si tout se passe bien
+	 * 
+	 */
+	public int saveDecisionConseilAn(Long idElevesConcerne, Long idAnneeActive, 
+			Long idsanctionTravAssocie, Long idDecisionAssocie);
+	
 	/******************************************************
 	 * Cette methode retourne la classe utilitaire qui a permis
 	 * de calculer toutes les données présentées sur un bulletin

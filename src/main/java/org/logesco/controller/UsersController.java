@@ -3000,7 +3000,37 @@ public class UsersController {
 		return "users/formSaisieConseilClasseAn";
 	}
 	
-	
+	@GetMapping(path="/getUpdateDecisionConseilAn")
+	public String getUpdateDecisionConseilAn(Model model, HttpServletRequest request,
+			@RequestParam(name="idElevesConcerne", defaultValue="-1") Long idElevesConcerne,
+			@RequestParam(name="idAnneeActive", defaultValue="-1") Long idAnneeActive,
+			@RequestParam(name="idClasseConcerne", defaultValue="-1") Long idClasseConcerne,
+			@RequestParam(name="idDecisionAssocie", defaultValue="-1") Long idDecisionAssocie,
+			@RequestParam(name="idsanctionTravAssocie", defaultValue="-1") Long idsanctionTravAssocie,
+			@RequestParam(name="numPageEleves", defaultValue="0") int numPageEleves,
+			@RequestParam(name="taillePage", defaultValue="5") int taillePage){
+		
+		HttpSession session = request.getSession();
+		session.setAttribute("idElevesConcerne", idElevesConcerne);
+		
+		int ret = usersService.saveDecisionConseilAn(idElevesConcerne, idAnneeActive, 
+				idsanctionTravAssocie, idDecisionAssocie);
+		
+		if(ret == 0){
+			return "redirect:/logesco/users/getformSaisieConseilClasseAn?updateDecisionConseilAnError"
+					+ "&&idAnneeActive="+idAnneeActive
+					+ "&&idClasseConcerne="+idClasseConcerne
+					+ "&&numPageEleves="+numPageEleves
+					+ "&&taillePage="+taillePage;
+		}
+		
+		return "redirect:/logesco/users/getformSaisieConseilClasseAn?updateDecisionConseilAnSuccess"
+				+ "&&idAnneeActive="+idAnneeActive
+				+ "&&idClasseConcerne="+idClasseConcerne
+				+ "&&numPageEleves="+numPageEleves
+				+ "&&taillePage="+taillePage;
+		
+	}
 	
 	
 /////////////////////////// FIN DES REQUETES DE TYPES GET ///////////////////////////

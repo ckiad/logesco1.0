@@ -159,6 +159,12 @@
 												</h4>
 											</div>
 											
+											<div th:if="${param.updateDecisionConseilTrimSuccess}">
+												<h4 align="justify" class="alert alert-success" th:inline="text">
+													Décision de conseil enregistrée avec succès. 
+												</h4>
+											</div>
+											
 										</div>
 										<form action="#" class="form-inline"
 												th:action="@{/logesco/users/getUpdateDecisionConseilTrim}" method="get">

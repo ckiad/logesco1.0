@@ -9874,6 +9874,50 @@ public class UsersServiceImplementation implements IUsersService {
 		return 1;
 	}
 	
+	@Override
+	public Decision findDecision(Long idDecision){
+		return decisionRepository.findOne(idDecision);
+	}
+	
+	@Override
+	public int saveDecisionConseilAn(Long idEleves, Long idAnneeActive, 
+			Long idsanctionTravAssocie, Long idDecisionAssocie){
+		
+		Eleves eleve = this.findEleves(idEleves);
+		Annee annee = this.findAnnee(idAnneeActive);
+		SanctionTravail sanctionTrav = this.findSanctionTravail(idsanctionTravAssocie);
+		Decision decision = this.findDecision(idDecisionAssocie);
+		
+		if(eleve == null || annee == null || sanctionTrav == null || decision == null) return 0;
+		
+		DecisionConseil decConseil = this.findDecisionConseilPeriode(idEleves, idAnneeActive);
+		
+		if(decConseil == null){
+			DecisionConseil dc = new DecisionConseil();
+			dc.setDecisionAssocie(decision);
+			dc.setEleveConcerne(eleve);
+			dc.setPeriodeConcerne(annee);
+			dc.setSanctionDiscAssocie(null);
+			dc.setSanctionTravAssocie(sanctionTrav);
+			
+			decisionConseilRepository.save(dc);
+		}
+		else{
+			decConseil.setDecisionAssocie(decision);
+			decConseil.setEleveConcerne(eleve);
+			decConseil.setPeriodeConcerne(annee);
+			decConseil.setSanctionDiscAssocie(null);
+			decConseil.setSanctionTravAssocie(sanctionTrav);
+			
+			decisionConseilRepository.save(decConseil);
+		}
+		
+		return 1;
+	}
+	
+	
+	
+	
 	
 	
 

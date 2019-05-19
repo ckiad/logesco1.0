@@ -82,7 +82,7 @@
 				
 				<td>
 					<div th:each="trim:${anneeConcerne.getListoftrimestre()}">
-						<label class="redcolor" th:inline="text">Trim [[${trim.numeroTrim}]]:</label>
+						<!-- <label class="redcolor" th:inline="text">Trim [[${trim.numeroTrim}]]:</label> -->
 						<div th:each="seq:${trim.getListofsequence()}">
 							<label class="bluecolor" th:inline="text">Seq [[${seq.numeroSeq}]]:</label>
 							<ol>
@@ -95,13 +95,14 @@
 								</li>
 							</ol>
 						</div>
+						<!-- <label class="redcolor" th:inline="text">Trim [[${trim.numeroTrim}]]:</label> -->
 						<hr/>
 					</div>
 				</td>
 				
 				<td>
 					<div th:each="trim:${anneeConcerne.getListoftrimestre()}">
-						<label class="redcolor" th:inline="text">Trim [[${trim.numeroTrim}]]:</label>
+						<!-- <label class="redcolor" th:inline="text">Trim [[${trim.numeroTrim}]]:</label> -->
 						<div th:each="seq:${trim.getListofsequence()}">
 							<label class="bluecolor" th:inline="text">Seq [[${seq.numeroSeq}]]:</label>
 							<span th:inline="text" class="badge">
@@ -112,6 +113,14 @@
 								</b>
 							</span>
 						</div>
+						<label class="redcolor" th:inline="text">Trim [[${trim.numeroTrim}]]:</label>
+							<span th:inline="text" class="badge">
+								<b>
+									[[${eleve.getNbreHeureAbsenceNonJustifieTrim(trim)}]]/
+									[[${eleve.getNbreHeureAbsenceNonJustifieTrim(trim)}+
+									${eleve.getNbreHeureAbsenceJustifieTrim(trim)}]]
+								</b>
+							</span>
 						<hr/>
 					</div>
 					<hr/>
@@ -148,7 +157,18 @@
 									<div th:id="collapse+${eleve.idEleves}" class="panel-collapse  collapse in">
 										<div class="panel-body">
 											<div th:if="${session.idElevesConcerne == eleve.idEleves}">
-											
+												
+												<div th:if="${param.updateDecisionConseilAnError}">
+													<h4 align="justify" class="alert alert-danger" th:inline="text">
+														Erreur inconnue: Veuillez vous déconnecter et reprendre. 
+													</h4>
+												</div>
+												
+												<div th:if="${param.updateDecisionConseilAnSuccess}">
+													<h4 align="justify" class="alert alert-success" th:inline="text">
+														Décision de conseil enregistrée avec succès. 
+													</h4>
+												</div>
 											</div>
 											<form action="#" class="form-inline"
 												th:action="@{/logesco/users/getUpdateDecisionConseilAn}" method="get">
@@ -165,8 +185,8 @@
 																[[${sanctTrav.intituleSancTravEn}]] ( [[${sanctTrav.codeSancTravEn}]])
 															</option>
 													</select><br/><br/>
-													<label for="idsanctionTravAssocie">Décision finale: <span class="redcolor">*</span></label>
-													<select class="form-control" name="idDecision" id="idDecision">
+													<label for="idDecisionAssocie">Décision finale: <span class="redcolor">*</span></label>
+													<select class="form-control" name="idDecisionAssocie" id="idDecisionAssocie">
 															<option th:each="decision:${listofDecision}" th:value="${decision.idDecision}"
 																th:inline="text" th:if="${session.lang=='fr'}">
 																[[${decision.intituleDecision}]] ( [[${decision.codeDecision}]])

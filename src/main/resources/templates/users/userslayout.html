@@ -426,7 +426,7 @@
 				</div>
 
 				<div class="panel panel-info panel-menu" 
-						sec:authorize="hasAnyRole('ROLE_SG')">
+						sec:authorize="hasAnyRole('ROLE_SG','ROLE_PROVISEUR','ROLE_CENSEUR')">
 					<div class="panel-heading">
                             <h3 class="panel-title" th:inline="text">[[#{menu.discipline}]]&nbsp;</h3>
                             <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
@@ -434,15 +434,33 @@
                      <div class="panel-body">
                             <ul class="list-group">
                             	
-                            	<li class="list-group-item">
+                            	<li class="list-group-item" sec:authorize="hasAnyRole('ROLE_SG')">
                             		<a href="#" th:href="@{/logesco/users/sg/getdonneesSaisieRAbsences}" th:inline="text">
 										[[#{sousmenu_discipline.donneessaisieRAbsence}]]
 									</a>
                             	</li>
                             	
-                            	<li class="list-group-item">
+                            	<li class="list-group-item" sec:authorize="hasAnyRole('ROLE_SG')">
                             		<a href="#" th:href="@{/logesco/users/sg/getdonneesSaisieRDiscipline}" th:inline="text">
 										[[#{sousmenu_discipline.donneessaisieRDiscipline}]]
+									</a>
+                            	</li>
+                            	
+                            	<li class="list-group-item" sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_CENSEUR')">
+                            		<a href="#" th:href="@{/logesco/users/getdonneesRAbsCycle}" th:inline="text">
+										[[#{sousmenu_discipline.donneeRabsCycle}]]
+									</a>
+                            	</li>
+                            	
+                            	<li class="list-group-item" sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_CENSEUR')">
+                            		<a href="#" th:href="@{/logesco/users/getdonneesRabsNiveau}" th:inline="text">
+										[[#{sousmenu_discipline.donneeRabsNiveau}]]
+									</a>
+                            	</li>
+                            	
+                            	<li class="list-group-item" sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_CENSEUR')">
+                            		<a href="#" th:href="@{/logesco/users/getdonneesRabsClasse}" th:inline="text">
+										[[#{sousmenu_discipline.donneeRabsClasse}]]
 									</a>
                             	</li>
                             </ul>
@@ -491,6 +509,20 @@
                             		<a href="#" th:href="@{/logesco/users/getlistprocesverbalEvalTrim}" th:inline="text">
 										<span class="glyphicon glyphicon-list-alt"></span> [[#{sousmenu_notes.procesverbalTrimNotes}]]
 								  	</a>
+                            	</li>
+                            	
+                            	<li class="list-group-item" 
+                            			sec:authorize="hasAnyRole('ROLE_CENSEUR')">
+                            		<a href="#" th:href="@{/logesco/users/getliststatnotePeriode}"  th:inline="text">
+										<span class="glyphicon glyphicon-list-alt"></span> [[#{sousmenu_notes.liststatnotePeriode}]]
+									</a>
+                            	</li>
+                            	
+                            	<li class="list-group-item" 
+                            			sec:authorize="hasAnyRole('ROLE_CENSEUR')">
+                            		<a href="#" th:href="@{/logesco/users/getliststatmoyennePeriode}"  th:inline="text">
+										<span class="glyphicon glyphicon-list-alt"></span> [[#{sousmenu_notes.liststatmoyennePeriode}]]
+									</a>
                             	</li>
                             	
                             	<li class="list-group-item" 
