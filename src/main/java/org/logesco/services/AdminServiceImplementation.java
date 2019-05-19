@@ -1284,7 +1284,7 @@ public class AdminServiceImplementation implements IAdminService {
 	}
 	
 	public Page<SanctionDisciplinaire> findPageSanctionDisc(int numPage, int taillePage){
-		return sanctionDiscRepository.findAllByOrderByCodeSancDiscAscIntituleSancDiscAsc(new PageRequest(numPage, taillePage));
+		return sanctionDiscRepository.findAllByOrderByNiveauSeveriteAscCodeSancDiscAscIntituleSancDiscAsc(new PageRequest(numPage, taillePage));
 	}
 	
 	public Page<SanctionTravail> findPageSanctionTrav(int numPage, int taillePage){
@@ -1483,19 +1483,22 @@ public class AdminServiceImplementation implements IAdminService {
 		
 		SanctionDisciplinaire sanctionDiscAModif = sanctionDiscRepository.findOne(sanctionDisc.getIdSancDisc());
 		
+		SanctionDisciplinaire sanctionDiscAModifNS = sanctionDiscRepository.findByNiveauSeverite(sanctionDisc.getNiveauSeverite());
+		
 		if(sanctionDiscAModif == null) {
 
 			/*
 			 * Alors on veut faire un nouvel enregistrement
 			 */
 			
-			if((sanctionDiscExistCode!=null)||(sanctionDiscExistCodeEn!=null)) return 0;
+			if((sanctionDiscExistCode!=null)||(sanctionDiscExistCodeEn!=null)||(sanctionDiscAModifNS!=null)) return 0;
 			
 			SanctionDisciplinaire sanctionDisciplinaire = new SanctionDisciplinaire();
 			sanctionDisciplinaire.setCodeSancDisc(sanctionDisc.getCodeSancDisc());
 			sanctionDisciplinaire.setCodeSancDiscEn(sanctionDisc.getCodeSancDiscEn());
 			sanctionDisciplinaire.setIntituleSancDisc(sanctionDisc.getIntituleSancDisc());
 			sanctionDisciplinaire.setIntituleSancDiscEn(sanctionDisc.getIntituleSancDiscEn());
+			sanctionDisciplinaire.setNiveauSeverite(sanctionDisc.getNiveauSeverite());
 			
 			sanctionDiscRepository.save(sanctionDisciplinaire);
 			return 1;
@@ -1526,6 +1529,7 @@ public class AdminServiceImplementation implements IAdminService {
 				if(sanctionDiscExistCodeEn!=null) return 0;
 			}
 			
+			if(sanctionDisc.getNiveauSeverite() == sanctionDiscAModifNS.getNiveauSeverite()) return 0;
 			
 			/*
 			 * Ici on est sur qu'aucun des deux codes ne va viole la contrainte d'unicite
@@ -1534,6 +1538,7 @@ public class AdminServiceImplementation implements IAdminService {
 			sanctionDiscAModif.setCodeSancDiscEn(sanctionDisc.getCodeSancDiscEn());
 			sanctionDiscAModif.setIntituleSancDisc(sanctionDisc.getIntituleSancDisc());
 			sanctionDiscAModif.setIntituleSancDiscEn(sanctionDisc.getIntituleSancDiscEn());
+			sanctionDiscAModif.setNiveauSeverite(sanctionDisc.getNiveauSeverite());
 			
 			sanctionDiscRepository.save(sanctionDiscAModif);
 			return 2;

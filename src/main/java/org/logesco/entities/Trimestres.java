@@ -127,6 +127,27 @@ public class Trimestres extends Periodes implements Serializable {
 		Collections.sort((List<Sequences>)this.listofsequence, monComparator);
 		return listofsequence;
 	}
+	
+	/*******************************
+	 * Cette methode retourne la liste des séquences d'un trimestre dans l'ordre décroissant 
+	 * des numeros de séquences. Donc en fait de la séquence paire vers la séquence impaire
+	 * @return
+	 */
+	public Collection<Sequences> getListofsequence_DESC() {
+		Comparator<Sequences> monComparator = new Comparator<Sequences>() {
+
+			@Override
+			public int compare(Sequences arg0, Sequences arg1) {
+				int n = 0;
+				if(arg0.getNumeroSeq()<arg1.getNumeroSeq()) n = 1;
+				if(arg0.getNumeroSeq()>arg1.getNumeroSeq()) n = -1;
+				return n;
+			}
+			
+		};
+		Collections.sort((List<Sequences>)this.listofsequence, monComparator);
+		return listofsequence;
+	}
 
 	/**
 	 * @param listofsequence the listofsequence to set

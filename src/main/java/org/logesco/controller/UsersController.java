@@ -1653,14 +1653,16 @@ public class UsersController {
 		double nbM=new Double(nbre_moyennes).doubleValue();
 		double nbSM=new Double(nbre_sous_moyennes).doubleValue();
 		double pourRr = (nbM/(nbM+nbSM))*100;
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			pourRr =df.parse(df.format(pourRr)).doubleValue();
 			////System.out.println("pourcentagessss "+pourcentage);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		int nb_decimale = 3;
+		pourRr = usersService.getUtilitairesBulletins().tronqueDouble(pourRr, nb_decimale);
 		String pourR = ""+pourRr+" %";
 		String pourcc = "";
 		String pourds = "";
@@ -1799,14 +1801,16 @@ public class UsersController {
 		double nbM=new Double(nbre_moyennes).doubleValue();
 		double nbSM=new Double(nbre_sous_moyennes).doubleValue();
 		double pourRr = (nbM/(nbM+nbSM))*100;
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			pourRr =df.parse(df.format(pourRr)).doubleValue();
 			////System.out.println("pourcentagessss "+pourcentage);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		int nb_decimale = 3;
+		pourRr = usersService.getUtilitairesBulletins().tronqueDouble(pourRr, nb_decimale);
 		String pourR = ""+pourRr+" %";
 		
 		/*
@@ -2004,14 +2008,16 @@ public class UsersController {
 		double nbM=new Double(nbre_moyennes).doubleValue();
 		double nbSM=new Double(nbre_sous_moyennes).doubleValue();
 		double pourRr = (nbM/(nbM+nbSM))*100;
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			pourRr =df.parse(df.format(pourRr)).doubleValue();
 			////System.out.println("pourcentagessss "+pourcentage);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		int nb_decimale = 3;
+		pourRr = usersService.getUtilitairesBulletins().tronqueDouble(pourRr, nb_decimale);
 		String pourR = ""+pourRr+" %";
 		
 		List<PV_NoteBean> listofPV = (List<PV_NoteBean>) usersService.generatePVEvalAvecListeNote(listofNotesEvalSeq);
@@ -2128,14 +2134,16 @@ public class UsersController {
 		double nbM=new Double(nbre_moyennes).doubleValue();
 		double nbSM=new Double(nbre_sous_moyennes).doubleValue();
 		double pourRr = (nbM/(nbM+nbSM))*100;
-		java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
+		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			pourRr =df.parse(df.format(pourRr)).doubleValue();
 			////System.out.println("pourcentagessss "+pourcentage);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		int nb_decimale = 3;
+		pourRr = usersService.getUtilitairesBulletins().tronqueDouble(pourRr, nb_decimale);
 		String pourR = ""+pourRr+" %";
 		
 		List<PV_SequenceBean> listofPVSeq = (List<PV_SequenceBean>) usersService.generatePVSequence(classeConcerne.getIdClasses(), 
@@ -2600,6 +2608,7 @@ public class UsersController {
 		//HttpSession session = request.getSession();
 		model.addAttribute("idClasseConcerne", idClasseConcerne);
 		model.addAttribute("idSequenceConcerne", idSequenceConcerne);
+		model.addAttribute("numPageEleves", numPageEleves);
 		
 		/*
 		 * Il faut faire la liste des sanctions diciplinaire et placer dans le modele car on devra en choisir 
@@ -2668,7 +2677,8 @@ public class UsersController {
 			@RequestParam(name="unite", defaultValue="0") String unite,
 			@RequestParam(name="numPageEleves", defaultValue="0") int numPageEleves,
 			@RequestParam(name="taillePage", defaultValue="5") int taillePage){
-		
+		HttpSession session = request.getSession();
+		session.setAttribute("idElevesConcerne", idElevesConcerne);
 		try{
 			int nbre_periode = Integer.parseInt(nbreperiode);
 			if((nbre_periode>0 && unite.equalsIgnoreCase("RAS")==true)||(nbre_periode<0)){
@@ -2685,7 +2695,7 @@ public class UsersController {
 			//On recupere l'eleve associe
 			int ret = usersService.saveDecisionConseilSeq(idElevesConcerne, idSequenceConcerne, 
 					idsanctionDiscAssocie, nbre_periode, unite, idsanctionTravAssocie);
-			if (ret == -1) return "redirect:/logesco/users/getformSaisieConseilClasseSeq?"
+			if (ret == -1) return "redirect:/logesco/users/getformSaisieConseilClasseSeq?getformSaisieConseilClasseSeq"
 										+ "&&idSequenceConcerne="+idSequenceConcerne
 										+ "&&idClasseConcerne="+idClasseConcerne
 										+ "&&numPageEleves="+numPageEleves
@@ -2803,8 +2813,6 @@ public class UsersController {
 			}
 		}
 		
-		
-		
 	}
 	
 	@GetMapping(path="/getformSaisieConseilClasseTrim")
@@ -2819,6 +2827,180 @@ public class UsersController {
 		
 		return "users/formSaisieConseilClasseTrim";
 	}
+	
+	
+	@GetMapping(path="/getUpdateDecisionConseilTrim")
+	public String getUpdateDecisionConseilTrim(Model model, HttpServletRequest request,
+			@RequestParam(name="idElevesConcerne", defaultValue="-1") Long idElevesConcerne,
+			@RequestParam(name="idTrimestreConcerne", defaultValue="-1") Long idTrimestreConcerne,
+			@RequestParam(name="idClasseConcerne", defaultValue="-1") Long idClasseConcerne,
+			@RequestParam(name="idsanctionDiscAssocie", defaultValue="-1") Long idsanctionDiscAssocie,
+			@RequestParam(name="idsanctionTravAssocie", defaultValue="-1") Long idsanctionTravAssocie,
+			@RequestParam(name="nbreperiode", defaultValue="0") String nbreperiode,
+			@RequestParam(name="unite", defaultValue="0") String unite,
+			@RequestParam(name="numPageEleves", defaultValue="0") int numPageEleves,
+			@RequestParam(name="taillePage", defaultValue="5") int taillePage){
+		
+		HttpSession session = request.getSession();
+		session.setAttribute("idElevesConcerne", idElevesConcerne);
+		
+		try{
+			int nbre_periode = Integer.parseInt(nbreperiode);
+			if((nbre_periode>0 && unite.equalsIgnoreCase("RAS")==true)||(nbre_periode<0)){
+				return "redirect:/logesco/users/getformSaisieConseilClasseTrim?updateDecisionConseilTrimErrorUnite"
+						+ "&&idTrimestreConcerne="+idTrimestreConcerne
+						+ "&&idClasseConcerne="+idClasseConcerne
+						+ "&&numPageEleves="+numPageEleves
+						+ "&&taillePage="+taillePage;
+			}
+			
+			
+			/*
+			 * Le nombre de  periode et l'unite sont deja bien ie soit 0 soit >0 et unite!=RAS
+			 */
+			//On recupere l'eleve associe
+			int ret = usersService.saveDecisionConseilTrim(idElevesConcerne, idTrimestreConcerne, 
+					idsanctionDiscAssocie, nbre_periode, unite, idsanctionTravAssocie);
+			if (ret == -1) return "redirect:/logesco/users/getformSaisieConseilClasseTrim?getformSaisieConseilClasseTrim"
+										+ "&&idTrimestreConcerne="+idTrimestreConcerne
+										+ "&&idClasseConcerne="+idClasseConcerne
+										+ "&&numPageEleves="+numPageEleves
+										+ "&&taillePage="+taillePage;
+			
+			if(ret == 0) return "redirect:/logesco/users/getformSaisieConseilClasseTrim?updateDecisionConseilTrimErrorUnite"
+										+ "&&idTrimestreConcerne="+idTrimestreConcerne
+										+ "&&idClasseConcerne="+idClasseConcerne
+										+ "&&numPageEleves="+numPageEleves
+										+ "&&taillePage="+taillePage;
+			
+			
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			return "redirect:/logesco/users/getformSaisieConseilClasseTrim?updateDecisionConseilTrimErrorConvert"
+					+ "&&idTrimestreConcerne="+idTrimestreConcerne
+					+ "&&idClasseConcerne="+idClasseConcerne
+					+ "&&numPageEleves="+numPageEleves
+					+ "&&taillePage="+taillePage;
+		}
+		
+		
+		
+		return "redirect:/logesco/users/getformSaisieConseilClasseTrim?updateDecisionConseilTrimSuccess"
+					+ "&&idTrimestreConcerne="+idTrimestreConcerne
+					+ "&&idClasseConcerne="+idClasseConcerne
+					+ "&&numPageEleves="+numPageEleves
+					+ "&&taillePage="+taillePage;
+		
+	}
+	
+	
+	public void constructModelgetdonneesConseilAnnuel(Model model,	HttpServletRequest request){
+		
+		List<Classes> listofClasses = usersService.findAllClasse();
+		if(listofClasses.size()>0){
+			model.addAttribute("affichechoixclasse", "oui");
+		}
+		else{
+			model.addAttribute("affichechoixclasse", "non");
+		}
+		
+		/*
+		 * On place la liste des niveaux dans le modele sachant qu'on retrouvera les classes
+		 */
+		List<Niveaux> listofNiveaux = usersService.findAllNiveaux();
+		
+		model.addAttribute("listofNiveaux", listofNiveaux);
+		
+		
+		Annee anneeActive = usersService.findAnneeActive();
+		
+		if(anneeActive != null) {
+			model.addAttribute("anneeActive", anneeActive);
+			
+			/*List<Trimestres> listofTrimestreActif = usersService.findAllActiveTrimestre(anneeActive.getIdPeriodes());
+			model.addAttribute("listofTrimestreActif", listofTrimestreActif);
+			List<Trimestres> listofTrimestre = usersService.findAllTrimestresAnnee(anneeActive.getIdPeriodes());
+			model.addAttribute("listofTrimestre", listofTrimestre);*/
+		}
+		
+	}
+	
+	
+	@GetMapping(path="/getdonneesConseilAnnuel")
+	public String getdonneesConseilAnnuel(Model model, HttpServletRequest request){
+		
+		this.constructModelgetdonneesConseilAnnuel(model,	request);
+		
+		return "users/donneesConseilAnnuel";
+	}
+	
+	
+	public void constructModelgetformSaisieConseilClasseAn(Model model,	HttpServletRequest request,
+			Long idAnneeActive,	Long idClasseConcerne, int numPageEleves, int taillePage){
+		
+		model.addAttribute("idClasseConcerne", idClasseConcerne);
+		model.addAttribute("idAnneeActive", idAnneeActive);
+		
+		/*
+		 * 
+		 * Si cette liste est vide alors le conseil ne saurait se passé
+		 * On doit faire pareille avec la liste des sanctions travail (distinctions)
+		 * et pour la liste des décisions car etant donnée que c'est un conseil de classe annuel, ce sont les 
+		 * decisions qui sont plus importante. 
+		 */
+		//List<SanctionDisciplinaire> listofSanctionDisc = usersService.findListAllSanctionDisciplinaire();
+		List<SanctionTravail> listofSanctionTrav = usersService.findListAllSanctionTravail();
+		List<Decision> listofDecision = usersService.findListAllDecision();
+		
+		if(listofDecision.size()>0 && listofSanctionTrav.size()>0){
+			model.addAttribute("listofDecision", listofDecision);
+			model.addAttribute("listofSanctionTrav", listofSanctionTrav);
+			List<Eleves> listofAllEleve = usersService.findListElevesClasse(idClasseConcerne);
+			if(listofAllEleve != null){
+				model.addAttribute("listofAllEleve", listofAllEleve);
+				Annee anneeConcerne = usersService.findAnnee(idAnneeActive);
+				
+				Classes classeConcerne = usersService.findClasses(idClasseConcerne);
+				model.addAttribute("anneeConcerne", anneeConcerne);
+				model.addAttribute("classeConcerne", classeConcerne);
+				
+				Page<Eleves> pageofEleves=usersService.findPageElevesClasse(idClasseConcerne,	
+						numPageEleves, taillePage);
+				
+				model.addAttribute("ub", usersService.getUtilitairesBulletins());
+				
+				if(pageofEleves.getContent().size()!=0){
+					model.addAttribute("listofEleves", pageofEleves.getContent());
+					int[] listofPagesEleves=new int[pageofEleves.getTotalPages()];
+						
+					model.addAttribute("listofPagesEleves", listofPagesEleves);
+						
+					model.addAttribute("pageCouranteEleves", numPageEleves);
+					
+				}
+				
+			}
+		}
+		
+	}
+	
+	
+	
+	@GetMapping(path="/getformSaisieConseilClasseAn")
+	public String getformSaisieConseilClasseAn(Model model, HttpServletRequest request,
+			@RequestParam(name="idAnneeActive", defaultValue="-1") Long idAnneeActive,
+			@RequestParam(name="idClasseConcerne", defaultValue="0") Long idClasseConcerne,
+			@RequestParam(name="numPageEleves", defaultValue="0") int numPageEleves,
+			@RequestParam(name="taillePage", defaultValue="5") int taillePage){
+		
+		this.constructModelgetformSaisieConseilClasseAn(model,	request,	idAnneeActive,
+				idClasseConcerne, numPageEleves, taillePage);
+		
+		return "users/formSaisieConseilClasseAn";
+	}
+	
+	
 	
 	
 /////////////////////////// FIN DES REQUETES DE TYPES GET ///////////////////////////

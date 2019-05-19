@@ -110,7 +110,7 @@
 					</tbody>
 				</table>
 				
-				<div class="container">
+				<div class="col-md-9 container">
 					<ul class="pagination"><!-- nav nav-pills -->
 						<li th:each="p,status:${listofPagesClasses}" th:class="${status.index==pageCourante}?active:' ' ">
 							<a th:href="@{/logesco/users/chefetab/getconfigClasses(numPageClasses=${status.index})}"

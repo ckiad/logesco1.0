@@ -69,27 +69,25 @@
 				</td>
 				
 				<td>
-					<span th:inline="text" class="bluecolor">
-						<kbd>[[${ub.getMoyenneTrimestriel(eleve,trimestreConcerne)}]]</kbd>
-					</span>
+					<div th:each="seq:${trimestreConcerne.getListofsequence()}">
+						<label class="bluecolor" th:inline="text">Séquence [[${seq.numeroSeq}]]:</label>
+						<kbd th:inline="text" th:if="${ub.getMoyenneSequentiel(eleve,seq)>=0}">[[${ub.getMoyenneSequentiel(eleve,seq)}]]</kbd>
+					</div>
+					<hr/>
+					<div>
+						<label class="redcolor" th:inline="text">Trimestre [[${trimestreConcerne.numeroTrim}]]:</label>
+						<kbd th:inline="text" th:if="${ub.getMoyenneTrimestriel(eleve,trimestreConcerne)>=0}">[[${ub.getMoyenneTrimestriel(eleve,trimestreConcerne)}]]</kbd>
+					</div>
 				</td>
 				
 				<td>
 					<div th:each="seq:${trimestreConcerne.getListofsequence()}">
-						<label class="bluecolor" th:inline="text">Séquence [[${seq.numeroSeq}]]</label>
+						<label class="bluecolor" th:inline="text">Séquence [[${seq.numeroSeq}]]:</label>
 						<ol>
 							<li th:each="rdisc:${eleve.getListRapportDisciplinaireSeq(seq.idPeriodes)}">
 								<span th:inline="text" class="redcolor">
-									<b>
-									[[
-										${session.lang=='fr'}?
-										(
-											 ${rdisc.sanctionDisc.codeSancDisc}+' '+${rdisc.nbreperiode} +' '+ ${rdisc.unite}
-										):
-										(
-											 ${rdisc.sanctionDisc.codeSancDiscEn}+' '+${rdisc.nbreperiode} +' '+ ${rdisc.unite}
-										)
-									]]
+									<b> 
+										[[${rdisc.getRapportDisciplinaireString(session.lang)}]]
 									</b>
 								</span>
 							</li>
@@ -99,8 +97,8 @@
 				
 				<td>
 					<div th:each="seq:${trimestreConcerne.getListofsequence()}">
-						<label class="bluecolor" th:inline="text">Séquence [[${seq.numeroSeq}]]</label>
-						<span th:inline="text" class="redcolor">
+						<label class="bluecolor" th:inline="text">Séquence [[${seq.numeroSeq}]]:</label>
+						<span th:inline="text" class="badge">
 						<b>
 							[[${eleve.getNbreHeureAbscenceNonJustifie(seq.idPeriodes)}]]/
 							[[${eleve.getNbreHeureAbscenceNonJustifie(seq.idPeriodes)}+
@@ -108,24 +106,169 @@
 						</b>
 						</span>
 					</div>
+					<hr/>
 					<div>
-						<label class="bluecolor" th:inline="text">Total [[${trimestreConcerne.numeroTrim}]]</label>
-						<span th:inline="text" class="redcolor">
+						<label class="redcolor" th:inline="text">Total [[${trimestreConcerne.numeroTrim}]]:</label>
+						<span th:inline="text" class="badge">
 						<b>
-							[[${eleve.getNbreHeureAbscenceNonJustifie(trimestreConcerne)}]]/
-							[[${eleve.getNbreHeureAbscenceNonJustifie(trimestreConcerne)}+
-							${eleve.getNbreHeureAbscenceJustifie(trimestreConcerne)}]]
+							[[${eleve.getNbreHeureAbsenceNonJustifieTrim(trimestreConcerne)}]] /
+							[[${eleve.getNbreHeureAbsenceNonJustifieTrim(trimestreConcerne)}+
+							${eleve.getNbreHeureAbsenceJustifieTrim(trimestreConcerne)}]]
 						</b>
 						</span>
 					</div>
 				</td>
 				
+				<tr>
+				<td colspan="4">
+					<div class="col-md-1"></div> 
+					<div class="col-md-11">
+						<div class="panel-group" id="accordion">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h4 class="panel-title">
+										<a data-toggle="collapse" data-parent="#accordion" 
+											th:href="'#collapse'+${eleve.idEleves}">
+												Décision de conseil pour: 
+													<kbd th:inline="text">
+														[[${#strings.toUpperCase(eleve.nomsEleves)}]] [[${eleve.prenomsEleves}]]
+														[[${#dates.format(eleve.datenaissEleves,"yyyy-MM-dd")}]]
+													</kbd>
+										</a>
+									</h4>
+								</div>
+								<div th:id="collapse+${eleve.idEleves}" class="panel-collapse  collapse in">
+									<div class="panel-body">
+										<div th:if="${session.idElevesConcerne == eleve.idEleves}">
+											<div th:if="${param.updateDecisionConseilTrimErrorUnite}">
+												<h4 align="justify" class="alert alert-danger" th:inline="text">
+													Erreur sur la valeur saisie ou l'unité choisie: On ne peut saisir un nombre de période
+													sans unité ou un nombre de période négatif. 
+												</h4>
+											</div>
+											
+											<div th:if="${param.updateDecisionConseilTrimErrorConvert}">
+												<h4 align="justify" class="alert alert-danger" th:inline="text">
+													Vérifier la valeur saisie qui devrait être un entier positif. 
+												</h4>
+											</div>
+											
+											<div th:if="${param.getformSaisieConseilClasseTrim}">
+												<h4 align="justify" class="alert alert-danger" th:inline="text">
+													Erreur inconnue: Veuillez vous déconnecter et reprendre. 
+												</h4>
+											</div>
+											
+										</div>
+										<form action="#" class="form-inline"
+												th:action="@{/logesco/users/getUpdateDecisionConseilTrim}" method="get">
+												
+												<div class="form-group">
+													<label for="idsanctionDiscAssocie">Observation discipline: <span class="redcolor">*</span></label>
+													<br/>
+													<select class="form-control" name="idsanctionDiscAssocie" id="idsanctionDiscAssocie">
+															<option th:each="sanctDisc:${listofSanctionDisc}" th:value="${sanctDisc.idSancDisc}"
+																th:inline="text" th:if="${session.lang=='fr'}">
+																[[${sanctDisc.intituleSancDisc}]] ( [[${sanctDisc.codeSancDisc}]])
+															</option>
+															<option th:each="sanctDisc:${listofSanctionDisc}" th:value="${sanctDisc.idSancDisc}"
+																th:inline="text" th:if="${session.lang!='fr'}">
+																[[${sanctDisc.intituleSancDiscEn}]] ( [[${sanctDisc.codeSancDiscEn}]])
+															</option>
+													</select>	
+												</div>	
+												
+												<div class="form-group">
+													<label for="nbreperiode">Nombre de période :<span class="redcolor">*</span></label><br/>
+													<input type="text" name="nbreperiode" id="nbreperiode" class="form-control" value="0"/>
+												</div>
+												
+												<div class="form-group">
+													<label for="unite"> Unité :<span class="redcolor">*</span></label><br/>
+													<select class="form-control" name="unite" id="unite">
+														<option value="RAS">&nbsp;</option>
+														<option value="H" th:if="${session.lang=='fr'}">Heures(H)</option>
+														<option value="J" th:if="${session.lang=='fr'}">Jours(J)</option>
+														<option value="H" th:if="${session.lang!='fr'}">Hours(H)</option>
+														<option value="D" th:if="${session.lang!='fr'}">Days(D)</option>
+													</select>
+												</div>
+												<br/><hr/>
+												<div class="form-group">
+													<label for="idsanctionTravAssocie">Observation travail: <span class="redcolor">*</span></label>
+													<!-- <br/> -->
+													<select class="form-control" name="idsanctionTravAssocie" id="idsanctionTravAssocie">
+															<option th:each="sanctTrav:${listofSanctionTrav}" th:value="${sanctTrav.idSancTrav}"
+																th:inline="text" th:if="${session.lang=='fr'}">
+																[[${sanctTrav.intituleSancTrav}]] ( [[${sanctTrav.codeSancTrav}]])
+															</option>
+															<option th:each="sanctTrav:${listofSanctionTrav}" th:value="${sanctTrav.idSancTrav}"
+																th:inline="text" th:if="${session.lang!='fr'}">
+																[[${sanctTrav.intituleSancTravEn}]] ( [[${sanctTrav.codeSancTravEn}]])
+															</option>
+													</select><br/>
+													<span>
+														<label>Sanctions: </label><label class="greencolor" th:inline="text">
+															[[
+															${eleve.getDecisionConseilPeriode(idTrimestreConcerne)}==null?' ':
+															${eleve.getDecisionConseilPeriode(idTrimestreConcerne).getSanctionDiscDecisionConseilString(session.lang)}
+															]]
+														</label><br/>
+														<label>Distintions : </label><label class="greencolor" th:inline="text">
+															[[
+															${eleve.getDecisionConseilPeriode(idTrimestreConcerne)}==null?' ':
+															${eleve.getDecisionConseilPeriode(idTrimestreConcerne).getSanctionTravDecisionConseilString(session.lang)}
+															]]
+														</label>
+													</span>
+												</div>
+												<input type="hidden" name="idElevesConcerne" id="idElevesConcerne" 
+														class="form-control" 
+														th:value="${eleve.idEleves}" />
+												
+												<input type="hidden" name="idTrimestreConcerne" id="idTrimestreConcerne" 
+														class="form-control" 
+														th:value="${idTrimestreConcerne}" />
+												
+												<input type="hidden" name="idClasseConcerne" id="idClasseConcerne" 
+														class="form-control" 
+														th:value="${idClasseConcerne}" />
+												
+												<input type="hidden" name="numPageEleves" id="numPageEleves" 
+														class="form-control" 
+														th:value="${numPageEleves}" />
+												
+												<br/>
+												<button type="submit" class="btn btn-primary btn-sm  pull-right">
+													<span class="glyphicon glyphicon-save"></span> Enregistrer 
+												</button>
+												
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</td>
+			</tr>
 				
 			</tr>
+			
 		</tbody>
 		
-		
 	</table>
+	
+	<div class="col-md-9 container">
+			<ul class="pagination"><!-- nav nav-pills -->
+				<li th:each="p,status:${listofPagesEleves}" th:class="${status.index==pageCouranteEleves}?active:' ' ">
+					<a th:href="@{/logesco/users/getformSaisieConseilClasseTrim(idClasseConcerne=${idClasseConcerne},
+						idTrimestreConcerne=${idTrimestreConcerne},	numPageEleves=${status.index})}"
+						th:text="${status.index+1}"></a>
+				</li>
+			</ul>
+							
+	</div>
+	
 </div>
 <!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE   col-md-offset-1-->
 </div>

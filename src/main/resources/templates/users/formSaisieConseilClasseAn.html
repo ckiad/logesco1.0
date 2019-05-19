@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="users/userslayout">
+<head>
+<meta charset="UTF-8"/>
+<title th:inline="text">[[#{formsaisieconseilclassean.titre_page}]] </title>
+</head>
+<body>
+
+<span layout:fragment="titre_boite">
+    <kbd th:inline="text"> [[#{formsaisieconseilclassean.titre_boite}]] </kbd> 
+	<span th:inline="text" class="alert alert-warning"> 
+		<kbd th:inline="text">
+			[[${classeConcerne.codeClasses}]][[${classeConcerne.specialite.codeSpecialite}]] [[${classeConcerne.numeroClasses}]]
+			([[#{formsaisieconseilclassean.label_annee}]]: [[${anneeConcerne.intituleAnnee}]]).
+		</kbd>
+	</span>
+</span>
+
+<div layout:fragment="formactionusers">
+<!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE   col-md-offset-1-->
+<div class="col-md-9">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th></th>
+				<th colspan="3">PERIODE: 
+					<span th:inline="text" class="redcolor">Année scolaire [[${anneeConcerne.intituleAnnee}]] </span> 
+				</th>
+				<th></th>
+			</tr>
+			
+			<tr>
+				<th></th>
+				<th>Moyenne Obtenue</th>
+				<th>Sanction disciplinaire</th>
+				<th>Abs NJ/Total</th>
+				<!-- <th>DECISION DU CONSEIL DE CLASSE</th> -->
+			</tr>
+			
+			<tr>
+				<th colspan="3">NOMS ET PRENOMS</th>
+				<!-- <th>
+					<span th:inline="text" class="redcolor">N°[[${anneeConcerne.intituleAnnee}]] </span>
+				</th>
+				<th>
+					<span th:inline="text" class="redcolor">N°[[${trimestreConcerne.numeroTrim}]] </span>
+				</th>
+				<th>
+					<span th:inline="text" class="redcolor">N°[[${trimestreConcerne.numeroTrim}]] </span>
+				</th> -->
+				<!-- <th>Choix de la décision</th> -->
+			</tr>
+			
+		</thead>
+		<tbody th:if="${listofAllEleve}">
+			<tr th:each="eleve:${listofEleves}">
+				<td>
+					<span th:inline="text">
+						<b>
+						[[${eleve.getNumero(listofAllEleve)}]]) [[${#strings.toUpperCase(eleve.nomsEleves)}]] 
+						[[${eleve.prenomsEleves}]] <br/>
+						Né le <span class="bluecolor">[[${#dates.format(eleve.datenaissEleves,"dd-MM-yyyy")}]]</span> à [[${eleve.lieunaissEleves}]]
+						</b>
+					</span>
+				</td>
+				
+				<td>
+					<div th:each="trim:${anneeConcerne.getListoftrimestre()}">
+						<label class="bluecolor" th:inline="text">Trim [[${trim.numeroTrim}]]:</label>
+						<kbd th:inline="text" th:if="${ub.getMoyenneTrimestriel(eleve,trim)>=0}">[[${ub.getMoyenneTrimestriel(eleve,trim)}]]</kbd>
+					</div>
+					<hr/>
+					<div>
+						<label class="redcolor" th:inline="text">Année <!-- [[${anneeConcerne.intituleAnnee}]] -->:</label>
+						<kbd th:inline="text" th:if="${ub.getMoyenneAnnuel(eleve,anneeConcerne)>=0}">[[${ub.getMoyenneAnnuel(eleve,anneeConcerne)}]]</kbd>
+					</div>
+				</td>
+				
+				<td>
+					<div th:each="trim:${anneeConcerne.getListoftrimestre()}">
+						<label class="redcolor" th:inline="text">Trim [[${trim.numeroTrim}]]:</label>
+						<div th:each="seq:${trim.getListofsequence()}">
+							<label class="bluecolor" th:inline="text">Seq [[${seq.numeroSeq}]]:</label>
+							<ol>
+								<li th:each="rdisc:${eleve.getListRapportDisciplinaireSeq(seq.idPeriodes)}">
+									<span th:inline="text" class="redcolor">
+										<b> 
+											[[${rdisc.getRapportDisciplinaireString(session.lang)}]]
+										</b>
+									</span>
+								</li>
+							</ol>
+						</div>
+						<hr/>
+					</div>
+				</td>
+				
+				<td>
+					<div th:each="trim:${anneeConcerne.getListoftrimestre()}">
+						<label class="redcolor" th:inline="text">Trim [[${trim.numeroTrim}]]:</label>
+						<div th:each="seq:${trim.getListofsequence()}">
+							<label class="bluecolor" th:inline="text">Seq [[${seq.numeroSeq}]]:</label>
+							<span th:inline="text" class="badge">
+								<b>
+									[[${eleve.getNbreHeureAbscenceNonJustifie(seq.idPeriodes)}]]/
+									[[${eleve.getNbreHeureAbscenceNonJustifie(seq.idPeriodes)}+
+									${eleve.getNbreHeureAbscenceJustifie(seq.idPeriodes)}]]
+								</b>
+							</span>
+						</div>
+						<hr/>
+					</div>
+					<hr/>
+					<div>
+						<label class="redcolor" th:inline="text">Total<!--  [[${anneeConcerne.intituleAnnee}]] -->:</label>
+						<span th:inline="text" class="badge">
+						<b>
+							[[${eleve.getNbreHeureAbsenceNonJustifieAnnee(anneeConcerne)}]] /
+							[[${eleve.getNbreHeureAbsenceNonJustifieAnnee(anneeConcerne)}+
+							${eleve.getNbreHeureAbsenceJustifieAnnee(anneeConcerne)}]]
+						</b>
+						</span>
+					</div>
+				</td>
+				
+				<tr>
+					<td colspan="4">
+						<div class="col-md-1"></div> 
+						<div class="col-md-11">
+							<div class="panel-group" id="accordion">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h4 class="panel-title">
+											<a data-toggle="collapse" data-parent="#accordion" 
+												th:href="'#collapse'+${eleve.idEleves}">
+													Décision de conseil pour: 
+													<kbd th:inline="text">
+														[[${#strings.toUpperCase(eleve.nomsEleves)}]] [[${eleve.prenomsEleves}]]
+														[[${#dates.format(eleve.datenaissEleves,"yyyy-MM-dd")}]]
+													</kbd>
+											</a>
+										</h4>
+									</div>
+									<div th:id="collapse+${eleve.idEleves}" class="panel-collapse  collapse in">
+										<div class="panel-body">
+											<div th:if="${session.idElevesConcerne == eleve.idEleves}">
+											
+											</div>
+											<form action="#" class="form-inline"
+												th:action="@{/logesco/users/getUpdateDecisionConseilAn}" method="get">
+												
+												<div class="form-group">
+													<label for="idsanctionTravAssocie">Observation travail: <span class="redcolor">*</span></label>
+													<select class="form-control" name="idsanctionTravAssocie" id="idsanctionTravAssocie">
+															<option th:each="sanctTrav:${listofSanctionTrav}" th:value="${sanctTrav.idSancTrav}"
+																th:inline="text" th:if="${session.lang=='fr'}">
+																[[${sanctTrav.intituleSancTrav}]] ( [[${sanctTrav.codeSancTrav}]])
+															</option>
+															<option th:each="sanctTrav:${listofSanctionTrav}" th:value="${sanctTrav.idSancTrav}"
+																th:inline="text" th:if="${session.lang!='fr'}">
+																[[${sanctTrav.intituleSancTravEn}]] ( [[${sanctTrav.codeSancTravEn}]])
+															</option>
+													</select><br/><br/>
+													<label for="idsanctionTravAssocie">Décision finale: <span class="redcolor">*</span></label>
+													<select class="form-control" name="idDecision" id="idDecision">
+															<option th:each="decision:${listofDecision}" th:value="${decision.idDecision}"
+																th:inline="text" th:if="${session.lang=='fr'}">
+																[[${decision.intituleDecision}]] ( [[${decision.codeDecision}]])
+															</option>
+															<option th:each="decision:${listofDecision}" th:value="${decision.idDecision}"
+																th:inline="text" th:if="${session.lang!='fr'}">
+																[[${sanctTrav.intituleDecisionEn}]] ( [[${decision.codeDecisionEn}]])
+															</option>
+													</select>
+													<hr/>
+													<span>
+														<label>Distintions : </label><label class="greencolor" th:inline="text">
+															[[
+															${eleve.getDecisionConseilPeriode(idAnneeActive)}==null?' ':
+															${eleve.getDecisionConseilPeriode(idAnneeActive).getSanctionTravDecisionConseilString(session.lang)}
+															]]
+														</label><br/>
+														<label>Décision finale : </label><label class="greencolor" th:inline="text">
+															[[
+															${eleve.getDecisionConseilPeriode(idAnneeActive)}==null?' ':
+															${eleve.getDecisionConseilPeriode(idAnneeActive).getDecisionDecisionConseilString(session.lang)}
+															]]
+														</label>
+													</span>
+												</div>
+											
+												<input type="hidden" name="idElevesConcerne" id="idElevesConcerne" 
+														class="form-control" 
+														th:value="${eleve.idEleves}" />
+												
+												<input type="hidden" name="idAnneeActive" id="idAnneeActive" 
+														class="form-control" 
+														th:value="${idAnneeActive}" />
+												
+												<input type="hidden" name="idClasseConcerne" id="idClasseConcerne" 
+														class="form-control" 
+														th:value="${idClasseConcerne}" />
+												
+												<input type="hidden" name="numPageEleves" id="numPageEleves" 
+														class="form-control" 
+														th:value="${numPageEleves}" />
+												
+												<br/>
+												<button type="submit" class="btn btn-primary btn-sm  pull-right">
+													<span class="glyphicon glyphicon-save"></span> Enregistrer 
+												</button>
+												
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</td>
+				</tr>
+				
+			</tr>
+			
+		</tbody>
+		
+	</table>
+	
+	<div class="col-md-9 container">
+			<ul class="pagination"><!-- nav nav-pills -->
+				<li th:each="p,status:${listofPagesEleves}" th:class="${status.index==pageCouranteEleves}?active:' ' ">
+					<a th:href="@{/logesco/users/getformSaisieConseilClasseAn(idClasseConcerne=${idClasseConcerne},
+						idAnneeActive=${idAnneeActive},	numPageEleves=${status.index})}"
+						th:text="${status.index+1}"></a>
+				</li>
+			</ul>
+							
+	</div>
+	
+</div>
+<!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE   col-md-offset-1-->
+</div>
+
+
+</body>
+</html>

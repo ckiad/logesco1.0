@@ -834,7 +834,6 @@ public class Classes implements Serializable{
 
 	public int estEnseignantTitulaireDeClasse(Long idUsers){
 		try{
-			System.err.println("prof titulaire "+this.getProffesseur().getNomsPers()+" de classe "+this.codeClasses);
 			if(this.getProffesseur().getIdUsers().longValue() == idUsers.longValue()){
 				return 1;
 			}
@@ -1206,7 +1205,6 @@ public class Classes implements Serializable{
 	
 	
 	
-	
 	public double getTauxReussite(List<Eleves> listofEleveRegulier, Long idSequence){
 		double taux=0;
 		int nbreMoy = this.getNbreMoyennePourSeq(idSequence);
@@ -1469,7 +1467,7 @@ public class Classes implements Serializable{
 		return rapportSequentielClasse;
 	}
 	
-	
+
 
 
 }

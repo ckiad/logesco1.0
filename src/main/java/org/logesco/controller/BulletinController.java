@@ -56,6 +56,11 @@ public class BulletinController {
 		////System.err.println("dddddddddddddddddddddddddddddd");
 		String profConnect = request.getUserPrincipal().getName();
 		
+		if(profConnect == null) {
+			model.addAttribute("nonconnecte", "non connecte");
+			return ;
+		}
+		
 		Utilisateurs usersProf = usersService.findByUsername(profConnect);
 		
 		model.addAttribute("profConnecte", usersProf);
@@ -245,6 +250,11 @@ public class BulletinController {
 		////System.err.println("dddddddddddddddddddddddddddddd");
 		String profConnect = request.getUserPrincipal().getName();
 		
+		if(profConnect == null) {
+			model.addAttribute("nonconnecte", "non connecte");
+			return ;
+		}
+		
 		Utilisateurs usersProf = usersService.findByUsername(profConnect);
 		
 		model.addAttribute("profConnecte", usersProf);
@@ -315,7 +325,8 @@ public class BulletinController {
 		
         parameters.put("datasource", collectionficheCCT);
 		JasperReportsPdfView view = new JasperReportsPdfView();
-		Classes classeConcerne = (Classes)session.getAttribute("classeConcerneBulletinsSeq");
+		//System.out.println("session.getAttributeNames() = "+session.getAttributeNames());
+		Classes classeConcerne = (Classes)session.getAttribute("classeConcerneBulletinsTrim");
 		if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
 		view.setUrl("classpath:/reports/compiled/fiches/FicheConseilClasseBean.jasper");
 		}
@@ -438,6 +449,11 @@ public class BulletinController {
 		
 		////System.err.println("dddddddddddddddddddddddddddddd");
 		String profConnect = request.getUserPrincipal().getName();
+		
+		if(profConnect == null) {
+			model.addAttribute("nonconnecte", "non connecte");
+			return ;
+		}
 				
 		Utilisateurs usersProf = usersService.findByUsername(profConnect);
 				
@@ -588,7 +604,7 @@ public class BulletinController {
 		
         parameters.put("datasource", collectionficheCCA);
 		JasperReportsPdfView view = new JasperReportsPdfView();
-		Classes classeConcerne = (Classes)session.getAttribute("classeConcerneBulletinsSeq");
+		Classes classeConcerne = (Classes)session.getAttribute("classeConcerneBulletinsAn");
 		if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
 			view.setUrl("classpath:/reports/compiled/fiches/FicheConseilClasseBean.jasper");
 		}
@@ -609,6 +625,11 @@ public class BulletinController {
 		
 		////System.err.println("dddddddddddddddddddddddddddddd");
 		String profConnect = request.getUserPrincipal().getName();
+		
+		if(profConnect == null) {
+			model.addAttribute("nonconnecte", "non connecte");
+			return ;
+		}
 				
 		Utilisateurs usersProf = usersService.findByUsername(profConnect);
 		
@@ -781,7 +802,7 @@ public class BulletinController {
 		
         parameters.put("datasource", collectionficheCCA);
 		JasperReportsPdfView view = new JasperReportsPdfView();
-		Classes classeConcerne = (Classes)session.getAttribute("classeConcerneBulletinsSeq");
+		Classes classeConcerne = (Classes)session.getAttribute("classeConcerneBulletinsTrimAn");
 		if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
 			view.setUrl("classpath:/reports/compiled/fiches/FicheConseilClasseBean.jasper");
 		}

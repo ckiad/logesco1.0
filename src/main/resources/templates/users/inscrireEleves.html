@@ -165,7 +165,7 @@
 						</tbody>
 					</table>
 					
-					<div class="container">
+					<div class="col-md-9 container">
 							<ul class="pagination"><!-- nav nav-pills -->
 								<li th:each="p,status:${listofPagesEleves}" th:class="${status.index==pageCouranteEleves}?active:' ' ">
 									<a th:href="@{/logesco/users/intendant/getinscriptionEleves(idClasseSelect=${idClasseSelect},

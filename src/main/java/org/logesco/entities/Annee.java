@@ -113,6 +113,22 @@ public class Annee extends Periodes implements Serializable {
 		Collections.sort((List<Trimestres>)this.listoftrimestre, monComparator);
 		return listoftrimestre;
 	}
+	
+	public Collection<Trimestres> getListoftrimestre_DESC() {
+		Comparator<Trimestres> monComparator = new Comparator<Trimestres>() {
+
+			@Override
+			public int compare(Trimestres arg0, Trimestres arg1) {
+				int n = 0;
+				if(arg0.getNumeroTrim()<arg1.getNumeroTrim()) n = 1;
+				if(arg0.getNumeroTrim()>arg1.getNumeroTrim()) n = -1;
+				return n;
+			}
+			
+		};
+		Collections.sort((List<Trimestres>)this.listoftrimestre, monComparator);
+		return listoftrimestre;
+	}
 
 	/**
 	 * @param listoftrimestre the listoftrimestre to set

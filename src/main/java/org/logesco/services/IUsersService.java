@@ -1029,6 +1029,11 @@ public interface IUsersService {
 	 * Methode qui retourne un trimestre dont l'identifiant est passé en paramètre
 	 */
 	public Trimestres findTrimestres(Long idPeriodes);
+	
+	/**********************************************************************
+	 * Methode qui retourne une annee dont l'identifiant est passé en paramètre
+	 */
+	public Annee findAnnee(Long idPeriodes);
 
 	/*****************************************************************************************************
 	 * Methode permettant d'enregistrer ou de mettre à jour une évaluations pour un cours dans une séquence donnee
@@ -1620,6 +1625,26 @@ public interface IUsersService {
 	 * 														
 	 */
 	public int saveDecisionConseilSeq(Long idEleves, Long idSequence, Long idSanctionDisc, int nbreperiode,
+			String unite, Long idSanctionTravAssocie);
+	
+	/*************************************************************************************************************
+	 * Cette methode enregistre en BD la decision prise pendant le conseil de classe trimestriel pour un eleve.
+	 * @param idEleves
+	 * @param idTrimestre
+	 * @param idSanctionDisc
+	 * @param nbreperiode
+	 * @param unite
+	 * @param idSanctionTravAssocie
+	 * @return
+	 * 
+	 * 
+	 * 		cette methode retourne -1 si l'élève ou le trimestre ou alors des sanction associe n'ont pas été trouve		
+	 * 													  0 si les paramètres nbreperiode et unite ne sont pas coherent 
+	 * (nbreperiode>0 et unite=RAS ou alors nbreperiode<0)
+	 * 													  1 si tout s'est bien passé et la décision du conseil bien enregistré
+	 * 
+	 */
+	public int saveDecisionConseilTrim(Long idEleves, Long idTrimestre, Long idSanctionDisc, int nbreperiode,
 			String unite, Long idSanctionTravAssocie);
 	
 	/******************************************************

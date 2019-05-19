@@ -68,6 +68,16 @@ public class UtilitairesBulletins implements Serializable {
 				      apres.length() + nbDecimales);
 	    }
 	
+	public float tronqueDouble(float nbre, int nbDecimales){
+		float d=-100000000;
+		String nbre_a_tronque = ""+nbre;
+		String nbre_tronque = this.tronque(nbre_a_tronque, nbDecimales);
+		if(nbre_tronque!=null){
+			d = Float.parseFloat(nbre_tronque);
+		}
+		return d;
+	}
+	
 	public double tronqueDouble(double nbre, int nbDecimales){
 		double d=-100000000;
 		String nbre_a_tronque = ""+nbre;
@@ -188,7 +198,54 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		return listofElevesayantcomposeaumoinsunefois;
 	}
 
+	public String calculAppreciation(Float note, String lang){
+
+		String appreciation = "";
+		if(note == null) return appreciation;
+		//Double note = new Double(this.getNote_seq_g1());
+		if (note <= 3.0) {
+			appreciation = "NUL"+"(F)";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"NUL":"NULL"+" (F)";
+		} else if((note >3.0) && (note < 6.0))  {
+			appreciation = "MAUVAIS";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"MAUVAIS":"BAD"+" (F)";
+		}else if((note >=6.0) && (note < 7.0))  {
+			appreciation = "FAIBLE";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"FAIBLE":"POOR"+" (F)";
+		}else if((note >=7.0) && (note < 8.0))  {
+			appreciation = "FAIBLE";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"FAIBLE":"POOR"+" (E)";
+		}else if((note >=8.0) && (note < 9.0))  {
+			appreciation = "INSUFFISANT";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"INSUFFISANT":"INSUFFICIENT"+" (D/C-)";
+		}else if((note >=9.0) && (note < 10.0))  {
+			appreciation = "MEDIOCRE";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"MEDIOCRE":"MEDIOCRE"+" (C/C+)";
+		}else if((note >=10.0) && (note < 11.0))  {
+			appreciation = "PASSABLE";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"PASSABLE":"AVERAGE"+" (B-/B)";
+		}else if((note >=11.0) && (note < 12.0))  {
+			appreciation = "MOYEN";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"MOYEN":"MEDIUM"+" (B-/B)";
+		}else if((note >=12.0) && (note < 14.0))  {
+			appreciation = "ASSEZ BIEN";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"ASSEZ BIEN":"FAIRLY GOOD"+" (B+/A-)";
+		}else if((note >=14.0) && (note < 16.0))  {
+			appreciation = "BIEN";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"BIEN":"GOOD"+" (A)";
+		}else if((note >=16.0) && (note < 18.0))  {
+			appreciation = "TRES BIEN";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"TRES BIEN":"VERY GOOD"+" (A+)";
+		}else if((note >=18.0) && (note < 20.0))  {
+			appreciation = "EXCELLENT";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"EXCELLENT":"EXCELLENT"+" (A+)";
+		}else if(note==20.0)  {
+			appreciation = "PARFAIT";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"PARFAIT":"PERFECT"+" (A+)";
+		}
+		return appreciation;
 	
+	}
 	
 	public String calculAppreciation(Double note, String lang){
 		String appreciation = "";
@@ -237,7 +294,22 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		return appreciation;
 	}
 	
+	public String calculDistinction(Float note){
+
+		String distinction = "";
+		if(note == null) return distinction;
+		if(note>=12.0) {
+			distinction = "TH";
+		}
+		else if(note>=14){
+			distinction = "THE";
+		}
+		else if(note>=16){
+			distinction = "THF";
+		}
+		return distinction;
 	
+	}
 	
 	public String calculDistinction(Double note){
 		String distinction = "";
@@ -414,8 +486,9 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		pourCG = this.tronqueDouble(pourCG, 2);
-		pourCF = this.tronqueDouble(pourCF, 2);
+		int nb_decimale = 3;
+		pourCG = this.tronqueDouble(pourCG, nb_decimale);
+		pourCF = this.tronqueDouble(pourCF, nb_decimale);
 		
 		mapofEff.put("nbreG7_50", nbreG7_50);
 		mapofEff.put("nbreG10", nbreG10);
@@ -593,8 +666,9 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		pourCG = this.tronqueDouble(pourCG, 2);
-		pourCF = this.tronqueDouble(pourCF, 2);
+		int nb_decimale = 3;
+		pourCG = this.tronqueDouble(pourCG, nb_decimale);
+		pourCF = this.tronqueDouble(pourCF, nb_decimale);
 		
 		mapofEff.put("nbreG7_50", nbreG7_50);
 		mapofEff.put("nbreG10", nbreG10);
@@ -772,8 +846,9 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		pourCG = this.tronqueDouble(pourCG, 2);
-		pourCF = this.tronqueDouble(pourCF, 2);
+		int nb_decimale = 3;
+		pourCG = this.tronqueDouble(pourCG, nb_decimale);
+		pourCF = this.tronqueDouble(pourCF, nb_decimale);
 		
 		
 		mapofEff.put("nbreG7_50", nbreG7_50);
@@ -885,8 +960,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		int possedeunenote = -1;
 		List<NotesEval> listofNotesEvalDeCoursSeq = this.getNotesEvalEleve(eleve, cours, sequence);
 		for(NotesEval noteEval : listofNotesEvalDeCoursSeq){
-			double pour = (noteEval.getEvaluation().getProportionEval())*0.01;
-			double valeur = noteEval.getValeurnoteEval();
+			double pour = new Double((noteEval.getEvaluation().getProportionEval())*0.01).doubleValue();
+			double valeur = new Double( noteEval.getValeurnoteEval()).doubleValue();
 			noteFinale = noteFinale + (pour * valeur);
 			possedeunenote = 1;
 		}
@@ -898,8 +973,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		noteFinale = this.tronqueDouble(noteFinale, 2);
-
+		int nb_decimale = 3;
+		noteFinale = this.tronqueDouble(noteFinale, nb_decimale);
 		if(possedeunenote == 1)	return noteFinale; else return -1;
 	}
 	
@@ -931,7 +1006,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		noteFinale = this.tronqueDouble(noteFinale, 2);
+		int nb_decimale = 3;
+		noteFinale = this.tronqueDouble(noteFinale, nb_decimale);
 
 		if(possedeunenote == 1)		return noteFinale; else return -1;
 
@@ -964,7 +1040,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		noteFinale = this.tronqueDouble(noteFinale, 2);
+		int nb_decimale = 3;
+		noteFinale = this.tronqueDouble(noteFinale, nb_decimale);
 
 		if(possedeunenote == 1)		return noteFinale; else return -1;
 
@@ -1267,7 +1344,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		for(Cours cours : listofCoursDansClasse){
 			double valeurNoteCours = this.getValeurNotesFinaleEleve(eleve, cours, sequence);
 			if(valeurNoteCours >= 0){
-				double valeurCoefCours = cours.getCoefCours();
+				double valeurCoefCours = new Double(cours.getCoefCours()).doubleValue();
 				soeValeurNote = soeValeurNote+(valeurNoteCours*valeurCoefCours);
 				possedeTotal = 1;
 			}
@@ -1280,7 +1357,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		soeValeurNote = this.tronqueDouble(soeValeurNote, 2);
+		int nb_decimale = 3;
+		soeValeurNote = this.tronqueDouble(soeValeurNote, nb_decimale);
 
 		if(possedeTotal == 1) return soeValeurNote; else return -1;
 		
@@ -1295,7 +1373,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			double valeurNoteTrimCours = 
 					this.getValeurNotesFinaleEleveTrimestre(eleve, cours, trimestre);
 			if(valeurNoteTrimCours >= 0){
-				double valeurCoefCours = cours.getCoefCours();
+				double valeurCoefCours = new Double(cours.getCoefCours()).doubleValue();
 				totalNoteTrim = totalNoteTrim+(valeurNoteTrimCours*valeurCoefCours);
 				possedeTotal = 1;
 			}
@@ -1308,7 +1386,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		totalNoteTrim = this.tronqueDouble(totalNoteTrim, 2);
+		int nb_decimale = 3;
+		totalNoteTrim = this.tronqueDouble(totalNoteTrim, nb_decimale);
 		
 		if(possedeTotal == 1) return totalNoteTrim; else return -1;
 	}
@@ -1322,7 +1401,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			double valeurNoteTrimCours = 
 					this.getValeurNotesFinaleEleveAnnee(eleve, cours, annee);
 			if(valeurNoteTrimCours >= 0){
-				double valeurCoefCours = cours.getCoefCours();
+				double valeurCoefCours =  new Double(cours.getCoefCours()).doubleValue();
 				totalNoteAn = totalNoteAn+(valeurNoteTrimCours*valeurCoefCours);
 				possedeTotal = 1;
 			}
@@ -1337,7 +1416,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		for(Cours cours : listofCoursDansClasse){
 			double valeurNoteCours = this.getValeurNotesFinaleEleve(eleve, cours, sequence);
 			if(valeurNoteCours >= 0){
-				double valeurCoefCours = cours.getCoefCours();
+				double valeurCoefCours =  new Double(cours.getCoefCours()).doubleValue();
 				soeCoefCoursCompose = soeCoefCoursCompose+valeurCoefCours;
 			}
 		}
@@ -1351,7 +1430,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		for(Cours cours : listofCoursDansClasse){
 			double valeurNoteCours = this.getValeurNotesFinaleEleve(eleve, cours, sequence);
 			if(valeurNoteCours >= 0){
-				double valeurCoefCours = 1.0*cours.getCoefCours();
+				double valeurCoefCours = new Double(cours.getCoefCours()).doubleValue();
 				soeCoefCoursCompose = soeCoefCoursCompose+valeurCoefCours;
 			}
 		}
@@ -1366,7 +1445,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		for(Cours cours : listofCoursDansClasse){
 			double valeurNoteCours = this.getValeurNotesFinaleEleveTrimestre(eleve, cours, trimestre);
 			if(valeurNoteCours >= 0){
-				double valeurCoefCours = cours.getCoefCours();
+				double valeurCoefCours =  new Double(cours.getCoefCours()).doubleValue();
 				soeCoefCoursCompose = soeCoefCoursCompose+valeurCoefCours;
 			}
 		}
@@ -1379,7 +1458,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		for(Cours cours : listofCoursDansClasse){
 			double valeurNoteCours = this.getValeurNotesFinaleEleveAnnee(eleve, cours, annee);
 			if(valeurNoteCours >= 0){
-				double valeurCoefCours = cours.getCoefCours();
+				double valeurCoefCours =  new Double(cours.getCoefCours()).doubleValue();
 				soeCoefCoursCompose = soeCoefCoursCompose+valeurCoefCours;
 			}
 		}
@@ -1408,7 +1487,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		moyenne = this.tronqueDouble(moyenne, 2);
+		int nb_decimale = 3;
+		moyenne = this.tronqueDouble(moyenne, nb_decimale);
 
 		if(possedeMoy == 1) return moyenne; else return -1;
 		
@@ -1429,7 +1509,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		moyenne = this.tronqueDouble(moyenne, 2);
+		int nb_decimale = 3;
+		moyenne = this.tronqueDouble(moyenne, nb_decimale);
 
 		
 		if(moyenne > -1) return moyenne; else return -1;
@@ -1451,7 +1532,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		moyenne = this.tronqueDouble(moyenne, 2);
+		int nb_decimale = 3;
+		moyenne = this.tronqueDouble(moyenne, nb_decimale);
 
 
 		if(moyenne > -1) return moyenne; else return -1;
@@ -1600,7 +1682,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}*/
-			taux = this.tronqueDouble(taux, 2);
+			int nb_decimale = 3;
+			taux = this.tronqueDouble(taux, nb_decimale);
 			rapportTrimestreClasse.setTauxReussiteTrimestriel(taux);
 		}
 		
@@ -1617,7 +1700,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		moygen = this.tronqueDouble(moygen, 2);
+		int nb_decimale = 3;
+		moygen = this.tronqueDouble(moygen, nb_decimale);
 		rapportTrimestreClasse.setMoyenneGeneralTrimestre(moygen);
 		
 		
@@ -1690,7 +1774,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}*/
-			taux = this.tronqueDouble(taux, 2);
+			int nb_decimale = 3;
+			taux = this.tronqueDouble(taux, nb_decimale);
 			rapportAnneeClasse.setTauxReussiteAnnuel(taux);
 			
 		}
@@ -1708,7 +1793,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		moygen = this.tronqueDouble(moygen, 2);
+		int nb_decimale = 3;
+		moygen = this.tronqueDouble(moygen, nb_decimale);
 		rapportAnneeClasse.setMoyenneGeneralAnnuel(moygen);
 		
 		return rapportAnneeClasse;
@@ -2144,7 +2230,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		
 		for(Cours coursgrp : listofCours){
 			double valeurNoteCoursgrp = this.getValeurNotesFinaleEleve(eleve, coursgrp, sequence);
-			double coefCours =  coursgrp.getCoefCours();
+			double coefCours =  new Double(coursgrp.getCoefCours()).doubleValue();
 			//System.err.println("cours "+coursgrp.getCodeCours()+"|valeurNoteCoursgrp "+valeurNoteCoursgrp);
 			if(valeurNoteCoursgrp>=0){
 				soeValeurNotegrp = soeValeurNotegrp + (valeurNoteCoursgrp*coefCours);
@@ -2182,8 +2268,9 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}*/
-			moygrp = this.tronqueDouble(moygrp, 2);
-			soeValeurNotegrp = this.tronqueDouble(soeValeurNotegrp, 2);
+			int nb_decimale = 3;
+			moygrp = this.tronqueDouble(moygrp, nb_decimale);
+			soeValeurNotegrp = this.tronqueDouble(soeValeurNotegrp, nb_decimale);
 			
 			ligneSequentielGroupeCours.setMoyenneSeqElevePourGroupeCours(moygrp);
 			ligneSequentielGroupeCours.setTotalNoteSeqElevePourGroupeCours(soeValeurNotegrp);
@@ -2211,10 +2298,12 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		
 		for(Cours coursgrp : listofCours){
 			double valeurNoteTrimCoursgrp = this.getValeurNotesFinaleEleveTrimestre(eleve, coursgrp, trimestre);
-			double coefCours =  coursgrp.getCoefCours();
+			double coefCours =   new Double(coursgrp.getCoefCours()).doubleValue();
 			//System.err.println("cours "+coursgrp.getCodeCours()+"|valeurNoteCoursgrp "+valeurNoteCoursgrp);
 			if(valeurNoteTrimCoursgrp>=0){
+				//double in =soeValeurNoteTrimgrp;
 				soeValeurNoteTrimgrp = soeValeurNoteTrimgrp + (valeurNoteTrimCoursgrp*coefCours);
+				//System.out.println("soeValeurNoteTrimgrp :"+in+" "+"(valeurNoteTrimCoursgrp*coefCours): "+valeurNoteTrimCoursgrp+"*"+coefCours+" = "+soeValeurNoteTrimgrp);
 				soeCoefCoursgrpCompose = soeCoefCoursgrpCompose + coefCours;
 				possedeNote = 1;
 			}
@@ -2242,11 +2331,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 				e.printStackTrace();
 			}*/
 			
-			moygrp = this.tronqueDouble(moygrp, 2);
-			soeValeurNoteTrimgrp = this.tronqueDouble(soeValeurNoteTrimgrp, 2);
+			int nb_decimale = 3;
+			moygrp = this.tronqueDouble(moygrp, nb_decimale);
+			soeValeurNoteTrimgrp = this.tronqueDouble(soeValeurNoteTrimgrp, nb_decimale);
 			
 			ligneTrimestrielGroupeCours.setMoyenneTrimElevePourGroupeCours(moygrp);
 			ligneTrimestrielGroupeCours.setTotalNoteTrimElevePourGroupeCours(soeValeurNoteTrimgrp);
+			
+			//System.out.println("setTotalNoteTrimElevePourGroupeCours "+soeValeurNoteTrimgrp);
 			
 		}
 		else{
@@ -2274,7 +2366,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 
 		for(Cours coursgrp : listofCours){
 			double valeurNoteAnCoursgrp = this.getValeurNotesFinaleEleveAnnee(eleve, coursgrp, annee);
-			double coefCours =  coursgrp.getCoefCours();
+			double coefCours =   new Double(coursgrp.getCoefCours()).doubleValue();
 			//System.err.println("cours "+coursgrp.getCodeCours()+"|valeurNoteCoursgrp "+valeurNoteCoursgrp);
 			if(valeurNoteAnCoursgrp>=0){
 				soeValeurNoteTrimgrp = soeValeurNoteTrimgrp + (valeurNoteAnCoursgrp*coefCours);
@@ -2305,8 +2397,9 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 				e.printStackTrace();
 			}*/
 			
-			moygrp = this.tronqueDouble(moygrp, 2);
-			soeValeurNoteTrimgrp = this.tronqueDouble(soeValeurNoteTrimgrp, 2);
+			int nb_decimale = 3;
+			moygrp = this.tronqueDouble(moygrp, nb_decimale);
+			soeValeurNoteTrimgrp = this.tronqueDouble(soeValeurNoteTrimgrp, nb_decimale);
 			
 			ligneAnnuelGroupeCours.setMoyenneAnElevePourGroupeCours(moygrp);
 			ligneAnnuelGroupeCours.setTotalNoteAnElevePourGroupeCours(soeValeurNoteTrimgrp);
@@ -2335,7 +2428,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		for(Cours coursgrp : listofCours){
 			double valeurNoteCoursgrp = this.getValeurNotesFinaleEleve(eleve, coursgrp, sequence);
 			////System.err.println("valeurNoteCoursgrp de cours "+coursgrp.getCodeCours()+" est "+valeurNoteCoursgrp);
-			double coefcours = coursgrp.getCoefCours();
+			double coefcours =  new Double(coursgrp.getCoefCours()).doubleValue();
 			if(valeurNoteCoursgrp >= 0){
 				soeValeurNotegrp = soeValeurNotegrp + (valeurNoteCoursgrp*coefcours);
 				soeCoefCoursgrp = soeCoefCoursgrp + coefcours;
@@ -2354,7 +2447,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}*/
-			moygrp = this.tronqueDouble(moygrp, 2);
+			int nb_decimale = 3;
+			moygrp = this.tronqueDouble(moygrp, nb_decimale);
 		}
 		
 		if(possedeNote == 1) return moygrp; else return -1;
@@ -2386,7 +2480,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}*/
-			moygrp = this.tronqueDouble(moygrp, 2);
+			int nb_decimale = 3;
+			moygrp = this.tronqueDouble(moygrp, nb_decimale);
 		}
 		
 		if(possedeNote == 1) return moygrp; else return -1;
@@ -2417,7 +2512,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}*/
-			moygrp = this.tronqueDouble(moygrp, 2);
+			int nb_decimale = 3;
+			moygrp = this.tronqueDouble(moygrp, nb_decimale);
 		}
 		
 		if(possedeNote == 1) return moygrp; else return -1;
@@ -2783,8 +2879,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		
-		moygen = this.tronqueDouble(moygen, 2);
+		int nb_decimale = 3;
+		moygen = this.tronqueDouble(moygen, nb_decimale);
 		
 		return moygen;
 		
@@ -2813,7 +2909,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		moygen =  this.tronqueDouble(moygen, 2);
+		int nb_decimale = 3;
+		moygen =  this.tronqueDouble(moygen, nb_decimale);
 		
 		return moygen;
 	}
@@ -2841,7 +2938,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		moygen = this.tronqueDouble(moygen, 2);
+		int nb_decimale = 3;
+		moygen = this.tronqueDouble(moygen, nb_decimale);
 		
 		return moygen;
 	}
@@ -2878,7 +2976,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		tauxreussite = this.tronqueDouble(tauxreussite, 2);
+		int nb_decimale = 3;
+		tauxreussite = this.tronqueDouble(tauxreussite, nb_decimale);
 		
 		if(nbreeleveCours>0) return tauxreussite; else return -1;
 	}
@@ -2906,7 +3005,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		tauxreussite = this.tronqueDouble(tauxreussite, 2);
+		int nb_decimale = 3;
+		tauxreussite = this.tronqueDouble(tauxreussite, nb_decimale);
 		
 		if(nbretaux>0) return tauxreussite; else return -1;
 	}
@@ -2934,7 +3034,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		tauxreussite = this.tronqueDouble(tauxreussite, 2);
+		int nb_decimale = 3;
+		tauxreussite = this.tronqueDouble(tauxreussite, nb_decimale);
 		
 		if(nbretaux>0) return tauxreussite; else return -1;
 	}
@@ -3180,7 +3281,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		if(dernierexist == 1) rapportSequentielCours.setValeurNoteDernier(valeurNotedernier);
 		if(premierexist == 1) rapportSequentielCours.setValeurNotePremier(valeurNotepremier);
 
-		double pourcentage = 0.0;
+		double pourcentage = 0;
 		
 		int nbreNotes = this.getNbreNoteDansCourspourSeq(classe, cours, sequence);
 		double nbreNote = new Double(nbreNotes).doubleValue();
@@ -3202,7 +3303,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		pourcentage = this.tronqueDouble(pourcentage, 2);
+		int nb_decimale = 3;
+		pourcentage = this.tronqueDouble(pourcentage, nb_decimale);
 		
 		rapportSequentielCours.setTauxReussiteCoursSeq(pourcentage);
 		//return pourcentage;
@@ -3229,7 +3331,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		moygen = this.tronqueDouble(moygen, 2);
+		
+		moygen = this.tronqueDouble(moygen, nb_decimale);
 		rapportSequentielCours.setMoyenneGeneralCoursSeq(moygen);
 		
 		
@@ -3289,7 +3392,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		pourcentage = this.tronqueDouble(pourcentage, 2);
+		int nb_decimale = 3;
+		pourcentage = this.tronqueDouble(pourcentage, nb_decimale);
 		
 		
 
@@ -3319,7 +3423,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		moygen = this.tronqueDouble(moygen, 2);
+		
+		moygen = this.tronqueDouble(moygen, nb_decimale);
 		rapportTrimestrielCours.setMoyenneGeneralCoursTrim(moygen);
 		
 		
@@ -3380,7 +3485,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		pourcentage = this.tronqueDouble(pourcentage, 2);
+		int nb_decimale = 3;
+		pourcentage = this.tronqueDouble(pourcentage, nb_decimale);
 		
 		
 
@@ -3410,7 +3516,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		moygen = this.tronqueDouble(moygen, 2);
+		
+		moygen = this.tronqueDouble(moygen, nb_decimale);
 		rapportAnnuelCours.setMoyenneGeneralCoursAn(moygen);
 		
 		
@@ -3692,7 +3799,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		moygen = this.tronqueDouble(moygen, 2);
+		int nb_decimale = 3;
+		moygen = this.tronqueDouble(moygen, nb_decimale);
 		
 		return moygen;
 		
@@ -3722,7 +3830,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		moygen = this.tronqueDouble(moygen, 2);
+		int nb_decimale = 3;
+		moygen = this.tronqueDouble(moygen, nb_decimale);
 		
 		return moygen;
 	}
@@ -3752,13 +3861,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		moygen = this.tronqueDouble(moygen, 2);
+		int nb_decimale = 3;
+		moygen = this.tronqueDouble(moygen, nb_decimale);
 		
 		return moygen;
 	}
 	
 	public double getTauxReussiteCoursSeq(Classes classe, Cours cours, Sequences sequence){
-		double pourcentage = 0.0;
+		double pourcentage = 0;
 		int nbreNotes = this.getNbreNoteDansCourspourSeq(classe, cours, sequence);
 		int effectifreguliers = this.geteffectifEleveRegulierPourCoursDansSeq(classe, cours, sequence);
 
@@ -3776,7 +3886,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		pourcentage = this.tronqueDouble(pourcentage, 2);
+		int nb_decimale = 3;
+		pourcentage = this.tronqueDouble(pourcentage, nb_decimale);
 		
 		return pourcentage;
 		
@@ -3800,7 +3911,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		pourcentage = this.tronqueDouble(pourcentage, 2);
+		int nb_decimale = 3;
+		pourcentage = this.tronqueDouble(pourcentage, nb_decimale);
 		
 		return pourcentage;
 	}
@@ -3823,7 +3935,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		pourcentage = this.tronqueDouble(pourcentage, 2);
+		int nb_decimale = 3;
+		pourcentage = this.tronqueDouble(pourcentage, nb_decimale);
 		
 		return pourcentage;
 		

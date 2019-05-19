@@ -76,8 +76,8 @@
 					<ol>
 						<li th:each="rdisc:${eleve.getListRapportDisciplinaireSeq(sequenceConcerne.idPeriodes)}">
 							<span th:inline="text" class="redcolor">
-								<b>
-								[[
+								<b> [[${rdisc.getRapportDisciplinaireString(session.lang)}]]
+								<!-- [[
 									${session.lang=='fr'}?
 									(
 										 ${rdisc.sanctionDisc.codeSancDisc}+' '+${rdisc.nbreperiode} +' '+ ${rdisc.unite}
@@ -85,7 +85,7 @@
 									(
 										 ${rdisc.sanctionDisc.codeSancDiscEn}+' '+${rdisc.nbreperiode} +' '+ ${rdisc.unite}
 									)
-								]]
+								]] -->
 								</b>
 							</span>
 						</li>
@@ -110,13 +110,18 @@
 										<h4 class="panel-title">
 											<a data-toggle="collapse" data-parent="#accordion" 
 												th:href="'#collapse'+${eleve.idEleves}">
-												Faire le choix et enregistrer la décision du conseil de classe
+												Décision de conseil pour: 
+													<kbd th:inline="text">
+														[[${#strings.toUpperCase(eleve.nomsEleves)}]] [[${eleve.prenomsEleves}]] 
+														[[${#dates.format(eleve.datenaissEleves,"yyyy-MM-dd")}]]
+													</kbd>
 											</a>
 										</h4>
 									</div>
 									<div th:id="collapse+${eleve.idEleves}" class="panel-collapse  collapse in">
 										<div class="panel-body">
-										
+											
+										<div th:if="${session.idElevesConcerne == eleve.idEleves}">
 											<div th:if="${param.updateDecisionConseilSeqSuccess}">
 												<h4 align="justify" class="alert alert-success">
 													Décision enregistée avec succès
@@ -125,21 +130,23 @@
 											
 											<div th:if="${param.updateDecisionConseilSeqErrorConvert}">
 												<h4 align="justify" class="alert alert-danger">
-													Vérifier que le nombre de période est un nombre
+													Vérifier que le nombre de période est une valeur entière positive
 												</h4>
 											</div>
 											
 											<div th:if="${param.updateDecisionConseilSeqErrorUnite}">
 												<h4 align="justify" class="alert alert-danger">
-													Vérifier que le nombre de période est un nombre
+													Erreur sur la valeur saisie ou l'unité choisie: On ne peut saisir un nombre de période
+													sans unité ou un nombre de période négatif. 
 												</h4>
 											</div>
 											
 											<div th:if="${param.getformSaisieConseilClasseSeq}">
 												<h4 align="justify" class="alert alert-danger">
-													Erreur lors du chargement de la page
+													Erreur inconnue: Veuillez vous déconnecter et reprendre. 
 												</h4>
 											</div>
+										</div>
 										
 											<form action="#" class="form-inline"
 												th:action="@{/logesco/users/getUpdateDecisionConseilSeq}" method="get">
@@ -192,14 +199,14 @@
 													<span>
 														<label>Sanctions: </label><label class="greencolor" th:inline="text">
 															[[
-															${eleve.getDecisionConseilSeq(eleve.idEleves, idSequenceConcerne)}==null?' ':
-															${eleve.getDecisionConseilSeq(eleve.idEleves, idSequenceConcerne).getSanctionDiscDecisionConseilString(session.lang)}
+															${eleve.getDecisionConseilPeriode(idSequenceConcerne)}==null?' ':
+															${eleve.getDecisionConseilPeriode(idSequenceConcerne).getSanctionDiscDecisionConseilString(session.lang)}
 															]]
 														</label><br/>
 														<label>Distintions : </label><label class="greencolor" th:inline="text">
 															[[
-															${eleve.getDecisionConseilSeq(eleve.idEleves, idSequenceConcerne)}==null?' ':
-															${eleve.getDecisionConseilSeq(eleve.idEleves, idSequenceConcerne).getSanctionTravDecisionConseilString(session.lang)}
+															${eleve.getDecisionConseilPeriode(idSequenceConcerne)}==null?' ':
+															${eleve.getDecisionConseilPeriode(idSequenceConcerne).getSanctionTravDecisionConseilString(session.lang)}
 															]]
 														</label>
 													</span>
@@ -216,6 +223,10 @@
 												<input type="hidden" name="idClasseConcerne" id="idClasseConcerne" 
 														class="form-control" 
 														th:value="${idClasseConcerne}" />
+												
+												<input type="hidden" name="numPageEleves" id="numPageEleves" 
+														class="form-control" 
+														th:value="${numPageEleves}" />
 												
 												<br/>
 												<button type="submit" class="btn btn-primary btn-sm  pull-right">
@@ -235,7 +246,7 @@
 		</tbody>
 	</table>
 	
-	<div class="container">
+	<div class=" col-md-9 container">
 			<ul class="pagination"><!-- nav nav-pills -->
 				<li th:each="p,status:${listofPagesEleves}" th:class="${status.index==pageCouranteEleves}?active:' ' ">
 					<a th:href="@{/logesco/users/getformSaisieConseilClasseSeq(idClasseConcerne=${idClasseConcerne},

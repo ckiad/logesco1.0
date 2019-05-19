@@ -237,6 +237,45 @@ public class DecisionConseil implements Serializable {
 		}
 	}
 		
+	public String getSanctionDiscDecisionConseilStringCode(String lang){
+
+		if(this.sanctionDiscAssocie == null) return " ";
+		if(lang.equalsIgnoreCase("fr")==true){
+			String ch= this.sanctionDiscAssocie.getCodeSancDisc();
+			if(this.nbreperiode>0){
+				ch+=" "+this.nbreperiode+" "+this.unite;
+			}
+			return ch;
+		}
+		else{
+			String ch=this.sanctionDiscAssocie.getCodeSancDiscEn();
+			if(this.nbreperiode>0){
+				ch+=" "+this.nbreperiode+" "+this.unite;
+			}
+			return ch;
+		}
+	
+	}
+	
+	public String getSanctionDiscDecisionConseilStringIntitule(String lang){
+
+		if(this.sanctionDiscAssocie == null) return " ";
+		if(lang.equalsIgnoreCase("fr")==true){
+			String ch= this.sanctionDiscAssocie.getIntituleSancDisc();
+			if(this.nbreperiode>0){
+				ch+=" "+this.nbreperiode+" "+this.unite;
+			}
+			return ch;
+		}
+		else{
+			String ch=this.sanctionDiscAssocie.getIntituleSancDiscEn();
+			if(this.nbreperiode>0){
+				ch+=" "+this.nbreperiode+" "+this.unite;
+			}
+			return ch;
+		}
+	
+	}
 		
 	public String getSanctionTravDecisionConseilString(String lang){
 			if(this.sanctionTravAssocie == null) return " ";
@@ -253,6 +292,36 @@ public class DecisionConseil implements Serializable {
 			}
 	}
 	
+	public String getSanctionTravDecisionConseilStringCode(String lang){
+
+		if(this.sanctionTravAssocie == null) return " ";
+		if(lang.equalsIgnoreCase("fr")==true){
+			String ch = this.sanctionTravAssocie.getCodeSancTrav();
+			
+			return ch;
+		}
+		else{
+			String ch=this.sanctionTravAssocie.getCodeSancTravEn();
+			return ch;
+		}
+
+	}
+	
+	public String getSanctionTravDecisionConseilStringIntitule(String lang){
+
+		if(this.sanctionTravAssocie == null) return " ";
+		if(lang.equalsIgnoreCase("fr")==true){
+			String ch = this.sanctionTravAssocie.getIntituleSancTrav();
+			
+			return ch;
+		}
+		else{
+			String ch=this.sanctionTravAssocie.getIntituleSancTravEn();
+			return ch;
+		}
+
+	}
+	
 	public String getDecisionDecisionConseilString(String lang){
 		if(this.decisionAssocie == null) return " ";
 		if(lang.equalsIgnoreCase("fr")==true){
@@ -264,7 +333,31 @@ public class DecisionConseil implements Serializable {
 					this.decisionAssocie.getCodeDecisionEn()+")";
 		}
 	
-}
+	}
+	
+	public String getDecisionDecisionConseilStringCode(String lang){
+
+		if(this.decisionAssocie == null) return " ";
+		if(lang.equalsIgnoreCase("fr")==true){
+			return this.decisionAssocie.getCodeDecision();
+		}
+		else{
+			return this.decisionAssocie.getCodeDecisionEn();
+		}
+	
+	}
+	
+	public String getDecisionDecisionConseilStringIntitule(String lang){
+
+		if(this.decisionAssocie == null) return " ";
+		if(lang.equalsIgnoreCase("fr")==true){
+			return this.decisionAssocie.getIntituleDecision();
+		}
+		else{
+			return this.decisionAssocie.getIntituleDecisionEn();
+		}
+	
+	}
 	
 	
 

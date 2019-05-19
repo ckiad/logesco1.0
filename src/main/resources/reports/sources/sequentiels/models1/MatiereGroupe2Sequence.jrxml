@@ -22,7 +22,7 @@
 	</title>
 	<detail>
 		<band height="12" splitType="Stretch">
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="146" y="0" width="46" height="12" uuid="2b4284aa-371f-4698-ab31-d6b1c43a5daa"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -36,7 +36,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{note_seq_g2}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="217" y="0" width="54" height="12" forecolor="#FFFFFF" backcolor="#9ABEE4" uuid="8df01b51-d68d-4030-942c-3de6b54574c8"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -64,7 +64,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rang_g2}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="271" y="0" width="46" height="12" uuid="67ac2fc4-1d27-4b49-97d8-54da1cb7ea45"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -92,7 +92,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{matiere_g2}.toUpperCase()+'\n'+$F{prof_g2}.toUpperCase()]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="342" y="0" width="40" height="12" uuid="1600a3e1-c77a-4392-b78c-f5007aef1bd8"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -134,7 +134,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{coef_g2}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="382" y="0" width="43" height="12" uuid="2ac1b443-968c-443d-b42f-47c978efd435"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>

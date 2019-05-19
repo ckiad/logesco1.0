@@ -15,12 +15,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  */
 public interface SanctionDisciplinaireRepository extends JpaRepository<SanctionDisciplinaire, Long> {
-	public Page<SanctionDisciplinaire> findAllByOrderByCodeSancDiscAscIntituleSancDiscAsc(Pageable pageable);
+	public Page<SanctionDisciplinaire> findAllByOrderByNiveauSeveriteAscCodeSancDiscAscIntituleSancDiscAsc(Pageable pageable);
 	
-	public List<SanctionDisciplinaire> findAllByOrderByCodeSancDiscAscIntituleSancDiscAsc();
+	public List<SanctionDisciplinaire> findAllByOrderByNiveauSeveriteAscCodeSancDiscAscIntituleSancDiscAsc();
 	
 	
 	public SanctionDisciplinaire findByCodeSancDisc(String codeSancDisc);
 	
 	public SanctionDisciplinaire findByCodeSancDiscEn(String codeSancDiscEn);
+	
+	public SanctionDisciplinaire findByNiveauSeverite(int niveau);
 }

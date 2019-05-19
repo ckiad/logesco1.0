@@ -882,6 +882,7 @@ public class AdminController {
 			updateSanctionDiscForm.setCodeSancDiscEn(sancdiscConcerne.getCodeSancDiscEn());
 			updateSanctionDiscForm.setIntituleSancDisc(sancdiscConcerne.getIntituleSancDisc());
 			updateSanctionDiscForm.setIntituleSancDiscEn(sancdiscConcerne.getIntituleSancDiscEn());
+			updateSanctionDiscForm.setNiveauSeverite(""+sancdiscConcerne.getNiveauSeverite());
 			updateSanctionDiscForm.setIdSanctionDisc(sancdiscConcerne.getIdSancDisc());
 			
 			model.addAttribute("sancdiscConcerne", sancdiscConcerne);
@@ -2202,6 +2203,7 @@ public class AdminController {
 		sanctionDisc.setCodeSancDiscEn(updateSanctionDiscForm.getCodeSancDiscEn());
 		sanctionDisc.setIntituleSancDisc(updateSanctionDiscForm.getIntituleSancDisc());
 		sanctionDisc.setIntituleSancDiscEn(updateSanctionDiscForm.getIntituleSancDiscEn());
+		sanctionDisc.setNiveauSeverite(Integer.parseInt(updateSanctionDiscForm.getNiveauSeverite()));
 		sanctionDisc.setIdSancDisc(updateSanctionDiscForm.getIdSanctionDisc());
 		
 		System.err.println("Voici donc l'id  "+updateSanctionDiscForm.getIdSanctionDisc());

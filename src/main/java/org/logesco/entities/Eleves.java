@@ -570,11 +570,18 @@ public class Eleves implements Serializable {
 		return listofDecisionConseil;
 	}
 	
-	public DecisionConseil getDecisionConseilSeq(long idEleveConcerne, long idSequenceConcerne){
+	/*******************************************
+	 * Cette methode retourne la decision de conseil de classe attribuer à l'eleve courant
+	 * dans la periode donc l'identifiant est passe en parametre. 
+	 * @param idPeriodeConcerne
+	 * @return
+	 * 		Cette methode retourne null au cas ou aucune decision n'est encore donne dans la periode
+	 */
+	public DecisionConseil getDecisionConseilPeriode(long idPeriodeConcerne){
 		List<DecisionConseil> listofDecisionConseil = (List<DecisionConseil>) this.getListofDecisionConseil();
 		for(DecisionConseil dc: listofDecisionConseil){
-			if((dc.getPeriodeConcerne().getIdPeriodes().longValue() == idSequenceConcerne)
-					&& (dc.getEleveConcerne().getIdEleves().longValue() == idEleveConcerne))
+			if((dc.getPeriodeConcerne().getIdPeriodes().longValue() == idPeriodeConcerne)
+					&& (dc.getEleveConcerne().getIdEleves().longValue() == this.idEleves.longValue()))
 				return dc;
 		}
 		return null;
@@ -597,9 +604,13 @@ public class Eleves implements Serializable {
 			public int compare(RapportDisciplinaire arg0, RapportDisciplinaire arg1) {
 				// TODO Auto-generated method stub
 				int n = 0;
-				if(arg0.getDateenreg().compareTo(arg1.getDateenreg())<0) n=-1;
-				
-				if(arg0.getDateenreg().compareTo(arg1.getDateenreg())>0) n=1;
+				if(arg0.getSanctionDisc().getNiveauSeverite()<arg1.getSanctionDisc().getNiveauSeverite()) n=-1;
+				if(arg0.getSanctionDisc().getNiveauSeverite()>arg1.getSanctionDisc().getNiveauSeverite()) n=1;
+				if(arg0.getSanctionDisc().getNiveauSeverite()==arg1.getSanctionDisc().getNiveauSeverite()){
+					if(arg0.getDateenreg().compareTo(arg1.getDateenreg())<0) n=-1;
+					
+					if(arg0.getDateenreg().compareTo(arg1.getDateenreg())>0) n=1;
+				}
 				
 				return n;
 			}
@@ -609,6 +620,7 @@ public class Eleves implements Serializable {
 		return listofRDisc;
 	}
 	
+	
 	public Collection<RapportDisciplinaire> getListofRDisc_DESC() {
 		Comparator<RapportDisciplinaire> monComparator = new Comparator<RapportDisciplinaire>() {
 
@@ -616,10 +628,13 @@ public class Eleves implements Serializable {
 			public int compare(RapportDisciplinaire arg0, RapportDisciplinaire arg1) {
 				// TODO Auto-generated method stub
 				int n = 0;
-				if(arg0.getDateenreg().compareTo(arg1.getDateenreg())<0) n=1;
-				
-				if(arg0.getDateenreg().compareTo(arg1.getDateenreg())>0) n=-1;
-				
+				if(arg0.getSanctionDisc().getNiveauSeverite()<arg1.getSanctionDisc().getNiveauSeverite()) n=1;
+				if(arg0.getSanctionDisc().getNiveauSeverite()>arg1.getSanctionDisc().getNiveauSeverite()) n=-1;
+				if(arg0.getSanctionDisc().getNiveauSeverite()==arg1.getSanctionDisc().getNiveauSeverite()){
+					if(arg0.getDateenreg().compareTo(arg1.getDateenreg())<0) n=1;
+					
+					if(arg0.getDateenreg().compareTo(arg1.getDateenreg())>0) n=-1;
+				}
 				return n;
 			}
 			
@@ -627,6 +642,8 @@ public class Eleves implements Serializable {
 		Collections.sort((List<RapportDisciplinaire>)this.listofRDisc, monComparator);
 		return listofRDisc;
 	}
+	
+	
 
 	/**
 	 * @param listofRDisc the listofRDisc to set
@@ -687,7 +704,7 @@ public class Eleves implements Serializable {
 		return som;
 	}
 	
-	public int getNbreHeureAbsenceNonJustifie(Trimestres trim){
+	public int getNbreHeureAbsenceNonJustifieTrim(Trimestres trim){
 		int som = 0;
 		for(Sequences seq: trim.getListofsequence()){
 			som+=this.getNbreHeureAbscenceNonJustifie(seq.getIdPeriodes());
@@ -695,7 +712,7 @@ public class Eleves implements Serializable {
 		return som;
 	}
 	
-	public int getNbreHeureAbsenceJustifie(Trimestres trim){
+	public int getNbreHeureAbsenceJustifieTrim(Trimestres trim){
 		int som = 0;
 		for(Sequences seq: trim.getListofsequence()){
 			som+=this.getNbreHeureAbscenceJustifie(seq.getIdPeriodes());
@@ -703,18 +720,18 @@ public class Eleves implements Serializable {
 		return som;
 	}
 	
-	public int getNbreHeureAbsenceNonJustifie(Annee an){
+	public int getNbreHeureAbsenceNonJustifieAnnee(Annee an){
 		int som = 0;
 		for(Trimestres trim: an.getListoftrimestre()){
-			som+=this.getNbreHeureAbsenceNonJustifie(trim);
+			som+=this.getNbreHeureAbsenceNonJustifieTrim(trim);
 		}
 		return som;
 	}
 	
-	public int getNbreHeureAbsenceJustifie(Annee an){
+	public int getNbreHeureAbsenceJustifieAnnee(Annee an){
 		int som = 0;
 		for(Trimestres trim: an.getListoftrimestre()){
-			som+=this.getNbreHeureAbsenceJustifie(trim);
+			som+=this.getNbreHeureAbsenceJustifieTrim(trim);
 		}
 		return som;
 	}

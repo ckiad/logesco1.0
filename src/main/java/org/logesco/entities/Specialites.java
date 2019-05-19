@@ -34,7 +34,6 @@ public class Specialites implements Serializable {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long idSpecialite;
 	@NotNull
-	@NotEmpty
 	@Column(unique=true)
 	private String codeSpecialite;
 	@NotNull

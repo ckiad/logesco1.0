@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+
 /**
  * @author cedrickiadjeu
  *
@@ -43,6 +44,10 @@ public class SanctionDisciplinaire implements Serializable {
 	@Column(unique=true)
 	private String codeSancDiscEn;
 	
+	
+	@NotNull
+	@Column(unique=true)
+	private int niveauSeverite;
 	
 	/******************************************
 	 * Mapping des associations avec les autres tables
@@ -179,6 +184,20 @@ public class SanctionDisciplinaire implements Serializable {
 			
 			return ch;
 		}
+	}
+
+	/**
+	 * @return the niveauSeverite
+	 */
+	public int getNiveauSeverite() {
+		return niveauSeverite;
+	}
+
+	/**
+	 * @param niveauSeverite the niveauSeverite to set
+	 */
+	public void setNiveauSeverite(int niveauSeverite) {
+		this.niveauSeverite = niveauSeverite;
 	}
 	
 	

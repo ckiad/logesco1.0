@@ -34,7 +34,9 @@
 				</div>
 				
 				<div th:if="${param.updatesanctionDiscerrorCode}">
-					<h4 align="justify" class="alert alert-danger">Un des codes saisies doit être déjà utilisé par une autre sanction disciplinaire</h4>
+					<h4 align="justify" class="alert alert-danger">
+						Le code et le niveau de sévérité des sanctions doivent être des valeurs uniques.
+					</h4>
 				</div>
 				
 				<div th:if="${param.supprimsanctionDiscerrorRD}">
@@ -60,6 +62,7 @@
 							<th class="text-center" scope="col">CODE 2<sup>nd</sup> LANGUE</th>
 							<th class="text-center" scope="col">INTITULE</th>
 							<th class="text-center" scope="col">INTITULE 2<sup>nd</sup> LANGUE</th>
+							<th class="text-center" scope="col">SEVERITE</th>
 						    <th class="text-center" scope="col">ACTION</th>
 						</tr>
 					</thead>
@@ -103,6 +106,19 @@
 								
 							</td>
 							<td>
+								<div class="form-group">
+									<select class="form-control" name="niveauSeverite"
+										 id="niveauSeverite" th:value="*{niveauSeverite}">
+										 <option value="0">0</option>
+										<option value="1">1</option><option value="2">2</option>
+										<option value="3">3</option><option value="4">4</option>
+										<option value="5">5</option><option value="6">6</option>
+										<option value="7">7</option><option value="8">8</option>
+										<option value="9">9</option><option value="10">10</option>
+									</select>
+								</div>
+							</td>
+							<td>
 								<button type="submit" class="btn btn-primary  pull-right">
 											<span class="glyphicon glyphicon-save"></span> Envoyer
 								</button>
@@ -116,8 +132,8 @@
 						<!-- LISTE DES DIFFERENTES SANCTIONS DISCIPLINAIRES ENREGISTREES AU CAS OU CETTE 
 						LISTE EST DEJA DANS LE MODELE -->
 						<tr th:each="sancDisc:${listofSanctionDisc}" th:if="${listofSanctionDisc}">
-							<td th:inline="text">[[${sancDisc.codeSancDisc}]] </td>
-							<td th:inline="text">[[${sancDisc.codeSancDiscEn}]] </td>
+							<td th:inline="text">[[${sancDisc.codeSancDisc}]] (Sévérité=[[${sancDisc.niveauSeverite}]]) </td>
+							<td th:inline="text">[[${sancDisc.codeSancDiscEn}]]  (Sévérité=[[${sancDisc.niveauSeverite}]])</td>
 							<td th:inline="text">[[${sancDisc.intituleSancDisc}]] </td>
 							<td th:inline="text">[[${sancDisc.intituleSancDiscEn}]] </td>
 							<td>

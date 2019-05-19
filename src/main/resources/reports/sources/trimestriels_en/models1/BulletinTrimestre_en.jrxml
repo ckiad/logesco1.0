@@ -641,7 +641,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA["SUMMARY OF "+$F{nom_g1}+ " SUBJECTS  "]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Opaque" x="215" y="0" width="54" height="11" forecolor="#FFFFFF" backcolor="#5E96D3" uuid="8efc051b-6b5e-4cad-a6ad-99640d0b7f11"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -655,7 +655,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total_g1}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="269" y="0" width="50" height="11" uuid="a35539b3-9a56-4558-860f-98866f89770c"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -683,7 +683,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total_rang_g1}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="344" y="0" width="40" height="11" uuid="0b4201bc-aea4-4029-904b-b7c1b2300994">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -699,7 +699,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{mg_classe_g1}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="384" y="0" width="43" height="11" uuid="fb21a119-4b60-4445-92e7-6cc975fa20c8"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -729,7 +729,7 @@
 				</textElement>
 				<text><![CDATA[AVE. :]]></text>
 			</staticText>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Opaque" x="472" y="0" width="45" height="11" forecolor="#FFFFFF" backcolor="#2E6DAD" uuid="3474fa86-9ee6-447d-bc34-d7d32b1b20f9"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="4">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -794,7 +794,7 @@
 				</textElement>
 				<text><![CDATA[/   20]]></text>
 			</staticText>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="384" y="0" width="43" height="11" uuid="1bbb80a0-ee69-42e1-8c24-96c0bffea699"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -852,7 +852,7 @@
 				</textElement>
 				<text><![CDATA[AVE. :]]></text>
 			</staticText>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Opaque" x="215" y="0" width="54" height="11" forecolor="#FFFFFF" backcolor="#5E96D3" uuid="f5c1cb1d-fab6-4479-b04a-751334f868cb"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -880,7 +880,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total_rang_g2}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="269" y="0" width="50" height="11" uuid="0b4bb391-e135-46f6-8a19-cfe6a3752f2a"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -894,7 +894,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total_extreme_g2}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Opaque" x="472" y="0" width="45" height="11" forecolor="#FFFFFF" backcolor="#2E6DAD" uuid="beec9ea0-8120-4266-adb1-1914568719f1"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="4">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -908,7 +908,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{moyenne_g2}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="344" y="0" width="40" height="11" uuid="0dbfa6c1-c272-4e10-994f-29dbd5779cf8">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -961,7 +961,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total_coef_g3}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Opaque" x="215" y="0" width="54" height="11" forecolor="#FFFFFF" backcolor="#5E96D3" uuid="897aa52a-77f7-4205-9030-5463fdc20c75"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -975,7 +975,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total_g3}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="269" y="0" width="50" height="11" uuid="1726e7f0-9792-4290-9220-0cca39784cba"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -1003,7 +1003,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total_rang_g3}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="344" y="0" width="40" height="11" uuid="4467af72-b05d-4792-8a23-1bce42b3b50c">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -1019,7 +1019,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{mg_classe_g3}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="384" y="0" width="43" height="11" uuid="aae8ea16-7d6c-4f83-bc1c-01a2bc161ecc"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -1049,7 +1049,7 @@
 				</textElement>
 				<text><![CDATA[AVE. :]]></text>
 			</staticText>
-			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Opaque" x="472" y="0" width="45" height="11" forecolor="#FFFFFF" backcolor="#2E6DAD" uuid="6db18dd1-8d42-4e57-bd5e-3d141daacd5c"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="4">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -1118,7 +1118,7 @@
 				</textElement>
 				<text><![CDATA[TERM. AVE.:]]></text>
 			</staticText>
-			<textField pattern="###0.00;-###0.00">
+			<textField pattern="0.000;-0.000">
 				<reportElement mode="Opaque" x="476" y="0" width="41" height="14" forecolor="#FFFFFF" backcolor="#2E6DAD" uuid="a200166e-d294-4f8f-bacc-7aacdd87078f">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -1249,7 +1249,7 @@
 				</textElement>
 				<text><![CDATA[Term average :]]></text>
 			</staticText>
-			<textField pattern="###0.00;-###0.00">
+			<textField pattern="0.000;-0.000">
 				<reportElement x="92" y="26" width="39" height="11" forecolor="#2E6DAD" backcolor="#FFFFFF" uuid="9be51858-e4b9-4b38-b281-03da99d57f7a"/>
 				<textElement markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
@@ -1263,7 +1263,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$V{result_tt_coef}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00">
+			<textField pattern="0.000;-0.000">
 				<reportElement x="92" y="46" width="39" height="11" forecolor="#FF580A" backcolor="#FFFFFF" uuid="f5022f79-34c1-4080-a243-afa81be0c29a"/>
 				<textElement markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
@@ -1284,7 +1284,7 @@
 				</textElement>
 				<text><![CDATA[First average :]]></text>
 			</staticText>
-			<textField pattern="###0.00;-###0.00">
+			<textField pattern="0.000;-0.000">
 				<reportElement x="220" y="26" width="46" height="11" forecolor="#2E6DAD" backcolor="#FFFFFF" uuid="6ffc86ed-5482-4b22-ab62-e9813f2d8379"/>
 				<textElement markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
@@ -1319,7 +1319,7 @@
 				</textElement>
 				<text><![CDATA[Total average :]]></text>
 			</staticText>
-			<textField pattern="###0.00;-###0.00">
+			<textField pattern="0.000;-0.000">
 				<reportElement x="220" y="36" width="46" height="11" forecolor="#2E6DAD" backcolor="#FFFFFF" uuid="432036a1-a726-4929-a8f9-6cd2140facf1"/>
 				<textElement markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
@@ -1439,7 +1439,7 @@
 					<pen lineWidth="0.25" lineStyle="Solid" lineColor="#2E6DAD"/>
 				</graphicElement>
 			</rectangle>
-			<textField pattern="###0.00;-###0.00">
+			<textField pattern="0.000;-0.000">
 				<reportElement x="475" y="37" width="44" height="11" forecolor="#FF580A" backcolor="#FFFFFF" uuid="46e9416f-15cf-4847-95b5-c806c5f4b697"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
@@ -1502,14 +1502,14 @@
 				</textElement>
 				<text><![CDATA[General class average :]]></text>
 			</staticText>
-			<textField pattern="###0.00;-###0.00">
+			<textField pattern="0.000;-0.000">
 				<reportElement x="220" y="56" width="46" height="11" forecolor="#2E6DAD" backcolor="#FFFFFF" uuid="58d0b005-9e76-4d57-ae7f-809ca3321102"/>
 				<textElement markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{taux_reussite}+" %"]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00">
+			<textField pattern="0.000;-0.000">
 				<reportElement x="220" y="66" width="46" height="11" forecolor="#FF580A" backcolor="#FFFFFF" uuid="20337833-4a83-4bf9-a38a-e55ec3936b8b"/>
 				<textElement markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
@@ -1684,7 +1684,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total_coef}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00">
+			<textField pattern="0.000;-0.000">
 				<reportElement mode="Opaque" x="215" y="0" width="54" height="14" forecolor="#FFFFFF" backcolor="#2E6DAD" uuid="a70e0508-6767-4651-917f-1ddc6fc1cd91"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#2E6DAD"/>
@@ -1712,7 +1712,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rappel_2}]]></textFieldExpression>
 			</textField>
-			<textField pattern="###0.00;-###0.00">
+			<textField pattern="0.000;-0.000">
 				<reportElement x="475" y="47" width="44" height="11" forecolor="#FF580A" backcolor="#FFFFFF" uuid="df0890bd-0a05-4f1e-bc6e-99df9a8dff44"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>

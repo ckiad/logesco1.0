@@ -23,4 +23,12 @@ public interface AnneeRepository extends JpaRepository<Annee, Long> {
 	
 	@Query("SELECT a FROM Annee a WHERE a.etatPeriodes=:x")
 	public Annee findAnneeActive(@Param("x")boolean active);
+	
+	/**
+	 * Retourne l'annee donc l'identifiant est passé en paramètre
+	 * @param idPeriodes
+	 * @return
+	 */
+	public Annee findByIdPeriodes(Long idPeriodes);
+	
 }

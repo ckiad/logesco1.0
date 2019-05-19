@@ -2168,6 +2168,11 @@ public class UsersServiceImplementation implements IUsersService {
 
 		return trimestreRepository.findByIdPeriodes(idPeriodes);
 	}
+	
+	@Override
+	public Annee findAnnee(Long idPeriodes){
+		return anneeRepository.findByIdPeriodes(idPeriodes);
+	}
 
 	@Override
 	public Evaluations findEvaluations(Long idCours, Long idSequence, String typeEval){
@@ -2979,15 +2984,15 @@ public class UsersServiceImplementation implements IUsersService {
 			double tauxReussite = 0.0;
 			double moyenne_general = 0.0;
 			
-				moyenne_premier_classe = rapportSequentielClasse.getValeurMoyennePremierDansSeq();
+			moyenne_premier_classe = rapportSequentielClasse.getValeurMoyennePremierDansSeq();
 				
-				moyenne_dernier_classe = rapportSequentielClasse.getValeurMoyenneDernierDansSeq();
+			moyenne_dernier_classe = rapportSequentielClasse.getValeurMoyenneDernierDansSeq();
 				
-				nbre_moyenne_classeSeq = rapportSequentielClasse.getNbreMoyennePourSeq();
+			nbre_moyenne_classeSeq = rapportSequentielClasse.getNbreMoyennePourSeq();
 				
-				tauxReussite = rapportSequentielClasse.getTauxReussiteSequentiel();
+			tauxReussite = rapportSequentielClasse.getTauxReussiteSequentiel();
 				
-				moyenne_general = rapportSequentielClasse.getMoyenneGeneralSequence();
+			moyenne_general = rapportSequentielClasse.getMoyenneGeneralSequence();
 			
 			
 			
@@ -3151,22 +3156,51 @@ public class UsersServiceImplementation implements IUsersService {
 				bulletinSeq.setAbsence_J(eleve.getNbreHeureAbscenceJustifie(idSequence));
 				bulletinSeq.setAbsence_NJ(eleve.getNbreHeureAbscenceNonJustifie(idSequence));
 				
-				/*if(rabs!=null){
-					bulletinSeq.setAbsence_NJ(rabs.getNbreheureNJustifie());
-					bulletinSeq.setAbsence_J(rabs.getNbreheureJustifie());
-					bulletinSeq.setConsigne("");
-					bulletinSeq.setExclusion("");
-					bulletinSeq.setAvertissement("");
-					bulletinSeq.setBlame_conduite("");
+				/*
+				 * On doit prendre si elle existe les 03 sanctions ayant le niveau de sévérité
+				 * le plus élevée parmi toutes les sanctions obtenus par l'élève pendant la période.
+				 * 			 */
+				bulletinSeq.setRapport_disc1("");
+				bulletinSeq.setRapport_disc2("");
+				bulletinSeq.setRapport_disc3("");
+				List<RapportDisciplinaire> listofRDiscEleve = eleve.getListRapportDisciplinaireSeq_DESC(idSequence);
+				
+				if(listofRDiscEleve != null){
+					if(listofRDiscEleve.size()>0) {
+						RapportDisciplinaire rdisc = listofRDiscEleve.get(0);
+						String rdisc_chaine = "";
+						rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+						//On peut donc fixer rapport_disc1
+						bulletinSeq.setRapport_disc1(rdisc_chaine);
+					}
+					
+					/*
+					 * On ne fait pas de else car il faut encore reprendre le test et au cas ou ca marche 
+					 * on va set rapport_disc2
+					 */
+					if(listofRDiscEleve.size()>1) {
+
+						RapportDisciplinaire rdisc = listofRDiscEleve.get(1);
+						String rdisc_chaine = "";
+						rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+						//On peut donc fixer rapport_disc1
+						bulletinSeq.setRapport_disc2(rdisc_chaine);
+					
+					}
+					
+					if(listofRDiscEleve.size()>2) {
+
+						RapportDisciplinaire rdisc = listofRDiscEleve.get(2);
+						String rdisc_chaine = "";
+						rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+						
+						//On peut donc fixer rapport_disc1
+						bulletinSeq.setRapport_disc3(rdisc_chaine);
+										
+					}
+					
 				}
-				else{
-					bulletinSeq.setAbsence_NJ(0);
-					bulletinSeq.setAbsence_J(0);
-					bulletinSeq.setConsigne("");
-					bulletinSeq.setExclusion("");
-					bulletinSeq.setAvertissement("");
-					bulletinSeq.setBlame_conduite("");
-				}*/
+				
 				/**************************
 				 * Informations sur le rappel de la moyenne et du rang sequentiel
 				 */
@@ -3202,28 +3236,35 @@ public class UsersServiceImplementation implements IUsersService {
 				bulletinSeq.setTableau_fel("");
 				String appreciation = ub.calculAppreciation(moy_seq,lang);
 				bulletinSeq.setAppreciation(appreciation);
-				String distinction = ub.calculDistinction(moy_seq);
-				if(distinction.equals("TH")==true){
-					bulletinSeq.setTableau_hon("OUI");
-					bulletinSeq.setTableau_enc("");
-					bulletinSeq.setTableau_fel("");
-				}
-				else if(distinction.equals("THE")==true){
-					bulletinSeq.setTableau_hon("OUI");
-					bulletinSeq.setTableau_enc("OUI");
-					bulletinSeq.setTableau_fel("");
-				}
-				else if(distinction.equals("THF")==true){
-					bulletinSeq.setTableau_hon("OUI");
-					bulletinSeq.setTableau_enc("");
-					bulletinSeq.setTableau_fel("OUI");
-				}
 				
-				
-				/*******************************
-				 * Informations sur les decision du conseil de classe dans la séquence
+				/*
+				 * On doit chercher la decision de conseil dans la periode sachant qu'on a une seule decision de 
+				 * conseil dans une période donnée (que ce soit séquence, trimestre ou année)
 				 */
+				DecisionConseil decConseil = eleve.getDecisionConseilPeriode(sequenceConcerne.getIdPeriodes());
+				bulletinSeq.setDistinction("");
 				bulletinSeq.setDecision_conseil("");
+				if(decConseil !=null){
+					/*******************************
+					 * Informations sur les distinctions octroyées  dans la séquence
+					 */
+					String distinction="";
+					distinction = decConseil.getSanctionTravDecisionConseilStringIntitule(lang);
+					bulletinSeq.setDistinction(distinction);
+					
+					/*******************************
+					 * Informations sur les decision du conseil de classe dans la séquence
+					 * en fait il s'agit de préciser les sanctions disciplinaire infligées à un élève lors du conseil
+					 * de classe.
+					 */
+					String decision="";
+					decision += decConseil.getSanctionDiscDecisionConseilString(lang);
+					/*distinction = decConseil.getSanctionTravDecisionConseilString(lang);
+					decision+=distinction;*/
+					bulletinSeq.setDecision_conseil(decision);
+				}
+				
+				
 				
 				List<Cours> listofCoursEffortAFournir = ub.getListofCoursDansOrdreEffortAFournir(eleve, listofCoursEvalue, 
 						sequenceConcerne);
@@ -3898,8 +3939,9 @@ public class UsersServiceImplementation implements IUsersService {
 		catch(Exception e){
 			
 		}*/
-		tauxReussite = this.ub.tronqueDouble(tauxReussite, 2);
-		moyenne_general = this.ub.tronqueDouble(moyenne_general, 2);
+		int nb_decimale = 3;
+		tauxReussite = this.ub.tronqueDouble(tauxReussite, nb_decimale);
+		moyenne_general = this.ub.tronqueDouble(moyenne_general, nb_decimale);
 		ficheCC.setT_pourcentage(tauxReussite);
 		ficheCC.setMg_classe(moyenne_general);
 		
@@ -4245,17 +4287,17 @@ public class UsersServiceImplementation implements IUsersService {
 			RapportTrimestrielClasse rapportTrimestrielClasse = ub.getRapportTrimestrielClasse(classeConcerne, 
 					listofEleveRegulier, trimestreConcerne);
 			
-			double moyenne_premier_classe=0.0;
-			double moyenne_dernier_classe =0.0;
-			double tauxReussite=0.0;
-			double moyenne_general = 0.0;
+			double moyenne_premier_classe=0;
+			double moyenne_dernier_classe =0;
+			double tauxReussite=0;
+			double moyenne_general = 0;
 			int nbre_moyenne_classeSeq = 0;
 		
-				moyenne_premier_classe = rapportTrimestrielClasse.getValeurMoyennePremierDansTrim();
-				moyenne_dernier_classe = rapportTrimestrielClasse.getValeurMoyenneDernierDansTrim();
-				nbre_moyenne_classeSeq = rapportTrimestrielClasse.getNbreMoyennePourTrim();
-				tauxReussite = rapportTrimestrielClasse.getTauxReussiteTrimestriel();
-				moyenne_general = rapportTrimestrielClasse.getMoyenneGeneralTrimestre();
+			moyenne_premier_classe = rapportTrimestrielClasse.getValeurMoyennePremierDansTrim();
+			moyenne_dernier_classe = rapportTrimestrielClasse.getValeurMoyenneDernierDansTrim();
+			nbre_moyenne_classeSeq = rapportTrimestrielClasse.getNbreMoyennePourTrim();
+			tauxReussite = rapportTrimestrielClasse.getTauxReussiteTrimestriel();
+			moyenne_general = rapportTrimestrielClasse.getMoyenneGeneralTrimestre();
 			
 			String classeString = classeConcerne.getCodeClasses()+
 					classeConcerne.getSpecialite().getCodeSpecialite()+classeConcerne.getNumeroClasses();
@@ -4450,8 +4492,8 @@ public class UsersServiceImplementation implements IUsersService {
 					}
 				}*/
 				
-				nhanj = eleve.getNbreHeureAbsenceNonJustifie(trimestreConcerne);
-				nhaj = eleve.getNbreHeureAbsenceJustifie(trimestreConcerne);
+				nhanj = eleve.getNbreHeureAbsenceNonJustifieTrim(trimestreConcerne);
+				nhaj = eleve.getNbreHeureAbsenceJustifieTrim(trimestreConcerne);
 				
 				bulletinTrim.setAbsence_NJ(nhanj);
 				bulletinTrim.setAbsence_J(nhaj);
@@ -4460,6 +4502,55 @@ public class UsersServiceImplementation implements IUsersService {
 				bulletinTrim.setAvertissement("");
 				bulletinTrim.setBlame_conduite("");
 				
+				/************************
+				 * On doit rechercher les sanctions disciplinaire obtenu dans la periode(trimestre)
+				 * dans leur ordre decroissant de sévérité et dans l'ordre décroissant des dates ou elles ont 
+				 * ete infligées. On va commencer de la séquence paire vers la séquence impair à chercher
+				 * Il est important de noter qu'il s'agit des sanctions déjà exécutées pendant la période. 
+				 */
+				bulletinTrim.setRapport_disc1("");
+				bulletinTrim.setRapport_disc2("");
+				bulletinTrim.setRapport_disc3("");
+				for(Sequences seq : trimestreConcerne.getListofsequence_DESC()){
+					List<RapportDisciplinaire> listofRDiscEleveSeq = eleve.getListRapportDisciplinaireSeq_DESC(seq.getIdPeriodes());
+					
+					if(listofRDiscEleveSeq != null){
+						if(listofRDiscEleveSeq.size()>0) {
+							RapportDisciplinaire rdisc = listofRDiscEleveSeq.get(0);
+							String rdisc_chaine = "";
+							rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+							//On peut donc fixer rapport_disc1
+							bulletinTrim.setRapport_disc1(rdisc_chaine);
+						}
+						
+						/*
+						 * On ne fait pas de else car il faut encore reprendre le test et au cas ou ca marche 
+						 * on va set rapport_disc2
+						 */
+						if(listofRDiscEleveSeq.size()>1) {
+
+							RapportDisciplinaire rdisc = listofRDiscEleveSeq.get(1);
+							String rdisc_chaine = "";
+							rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+							//On peut donc fixer rapport_disc1
+							bulletinTrim.setRapport_disc2(rdisc_chaine);
+						
+						}
+						
+						if(listofRDiscEleveSeq.size()>2) {
+
+							RapportDisciplinaire rdisc = listofRDiscEleveSeq.get(2);
+							String rdisc_chaine = "";
+							rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+							
+							//On peut donc fixer rapport_disc1
+							bulletinTrim.setRapport_disc3(rdisc_chaine);
+											
+						}
+						
+					}
+					
+				}
 				
 				/**************************
 				 * Informations sur le rappel de la moyenne et du rang trimestriel
@@ -4533,28 +4624,36 @@ public class UsersServiceImplementation implements IUsersService {
 				bulletinTrim.setTableau_fel("");
 				String appreciation = ub.calculAppreciation(moy_trim,lang);
 				bulletinTrim.setAppreciation(appreciation);
-				String distinction = ub.calculDistinction(moy_trim);
-				if(distinction.equals("TH")==true){
-					bulletinTrim.setTableau_hon("OUI");
-					bulletinTrim.setTableau_enc("");
-					bulletinTrim.setTableau_fel("");
-				}
-				else if(distinction.equals("THE")==true){
-					bulletinTrim.setTableau_hon("OUI");
-					bulletinTrim.setTableau_enc("OUI");
-					bulletinTrim.setTableau_fel("");
-				}
-				else if(distinction.equals("THF")==true){
-					bulletinTrim.setTableau_hon("OUI");
-					bulletinTrim.setTableau_enc("");
-					bulletinTrim.setTableau_fel("OUI");
-				}
+
 				
-				
-				/*******************************
-				 * Informations sur les decision du conseil de classe
+				/*
+				 * On doit chercher la decision de conseil dans la periode sachant qu'on a une seule decision de 
+				 * conseil dans une période donnée (que ce soit séquence, trimestre ou année)
 				 */
+				DecisionConseil decConseil = eleve.getDecisionConseilPeriode(trimestreConcerne.getIdPeriodes());
+				bulletinTrim.setDistinction("");
 				bulletinTrim.setDecision_conseil("");
+				if(decConseil !=null){
+					/*******************************
+					 * Informations sur les distinctions octroyées  dans la séquence
+					 */
+					String distinction="";
+					distinction = decConseil.getSanctionTravDecisionConseilStringIntitule(lang);
+					bulletinTrim.setDistinction(distinction);
+					
+					/*******************************
+					 * Informations sur les decision du conseil de classe dans la séquence
+					 * en fait il s'agit de préciser les sanctions disciplinaire infligées à un élève lors du conseil
+					 * de classe.
+					 */
+					String decision="";
+					decision += decConseil.getSanctionDiscDecisionConseilString(lang);
+					/*distinction = decConseil.getSanctionTravDecisionConseilString(lang);
+					decision+=distinction;*/
+					bulletinTrim.setDecision_conseil(decision);
+				}
+				
+				
 				
 				List<Cours> listofCoursEffortAFournir = 
 						ub.getListofCoursDansOrdreEffortAFournirTrimestre(eleve, listofCoursEvalueTrim, 
@@ -4857,6 +4956,7 @@ public class UsersServiceImplementation implements IUsersService {
 						mGrp1TrimBean.setNote_trim_g1(noteCoursTrim);
 						double total_trim_g1 = noteCoursTrim*cours.getCoefCours();
 						mGrp1TrimBean.setTotal_trim_g1(total_trim_g1);
+						//System.out.println("Calculss "+noteCoursTrim+" * "+cours.getCoefCours()+" = "+total_trim_g1);
 					}
 					
 					mGrp1TrimBean.setCoef_g1(cours.getCoefCours());
@@ -4942,6 +5042,8 @@ public class UsersServiceImplementation implements IUsersService {
 							if(note_seq_g1>0){
 								mGrp2TrimBean.setNote_1_g2(note_seq_g1);
 								soenoteTrim = soenoteTrim + note_seq_g1;
+								/*System.out.println(cours.getCodeCours()+" seq "+seq.getNumeroSeq()+" "+"note_seq_g1 = "+note_seq_g1+" "
+										+ "et somme = "+soenoteTrim);*/
 								nbreNoteDansTrimPourCours +=1; 
 							}
 						}
@@ -4950,7 +5052,10 @@ public class UsersServiceImplementation implements IUsersService {
 							
 							if(note_seq_g2>0){
 								mGrp2TrimBean.setNote_2_g2(note_seq_g2);
+								
 								soenoteTrim = soenoteTrim + note_seq_g2;
+								/*System.out.println(cours.getCodeCours()+" seq "+seq.getNumeroSeq()+" note_seq_g2 = "+note_seq_g2+" "
+										+ "et somme = "+soenoteTrim);*/
 								nbreNoteDansTrimPourCours +=1; 
 							}
 						}
@@ -4963,6 +5068,7 @@ public class UsersServiceImplementation implements IUsersService {
 						mGrp2TrimBean.setNote_trim_g2(noteCoursTrim);
 						double total_trim_g2 = noteCoursTrim*cours.getCoefCours();
 						mGrp2TrimBean.setTotal_trim_g2(total_trim_g2);
+						//System.out.println("Calculss "+cours.getCodeCours()+" "+noteCoursTrim+" * "+cours.getCoefCours()+" = "+total_trim_g2);
 					}
 					
 					mGrp2TrimBean.setCoef_g2(cours.getCoefCours());
@@ -5075,6 +5181,7 @@ public class UsersServiceImplementation implements IUsersService {
 					mGrp3TrimBean.setNote_trim_g3(noteCoursTrim);
 					double total_trim_g3 = noteCoursTrim*cours.getCoefCours();
 					mGrp3TrimBean.setTotal_trim_g3(total_trim_g3);
+					//System.out.println("Calculss "+noteCoursTrim+" * "+cours.getCoefCours()+" = "+total_trim_g3);
 				}
 				
 				mGrp3TrimBean.setCoef_g3(cours.getCoefCours());
@@ -5633,18 +5740,10 @@ public class UsersServiceImplementation implements IUsersService {
 				int nhc = 0;
 				int nje = 0;
 				
-				/*for(Sequences seq : trimestreConcerne.getListofsequence()){
-					RapportDAbsence rabs = eleve.getRapportDAbsenceSeq(seq.getIdPeriodes());
-					if(rabs!=null){
-						nhaj = nhaj + rabs.getNbreheureJustifie();
-						nhanj = nhanj + rabs.getNbreheureNJustifie();
-						nhc = nhc + rabs.getConsigne();
-						nje = nje + rabs.getJourExclusion();
-					}
-				}*/
+			
 				
-				nhanj = eleve.getNbreHeureAbsenceNonJustifie(trimestreConcerne);
-				nhaj = eleve.getNbreHeureAbsenceJustifie(trimestreConcerne);
+				nhanj = eleve.getNbreHeureAbsenceNonJustifieTrim(trimestreConcerne);
+				nhaj = eleve.getNbreHeureAbsenceJustifieTrim(trimestreConcerne);
 				
 				bulletinTrimAn.setAbsence_NJ(nhanj);
 				bulletinTrimAn.setAbsence_J(nhaj);
@@ -5652,6 +5751,57 @@ public class UsersServiceImplementation implements IUsersService {
 				bulletinTrimAn.setExclusion(nje+" J");
 				bulletinTrimAn.setAvertissement("");
 				bulletinTrimAn.setBlame_conduite("");
+				
+				/************************
+				 * On doit rechercher les sanctions disciplinaire obtenu dans la periode(annee)
+				 * dans leur ordre decroissant de sévérité et dans l'ordre décroissant des dates ou elles ont 
+				 * ete infligées. On va commencer du trimestre de plus grand numero vers celui de plus petit et
+				 *  de la séquence paire vers la séquence impair de chaque trimestre à chercher
+				 */
+				bulletinTrimAn.setRapport_disc1("");
+				bulletinTrimAn.setRapport_disc2("");
+				bulletinTrimAn.setRapport_disc3("");
+				for(Trimestres trim : anneeScolaire.getListoftrimestre_DESC()){
+						for(Sequences seq : trim.getListofsequence_DESC()){
+							List<RapportDisciplinaire> listofRDiscEleveSeq = eleve.getListRapportDisciplinaireSeq_DESC(seq.getIdPeriodes());
+							
+							if(listofRDiscEleveSeq != null){
+								if(listofRDiscEleveSeq.size()>0) {
+									RapportDisciplinaire rdisc = listofRDiscEleveSeq.get(0);
+									String rdisc_chaine = "";
+									rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+									//On peut donc fixer rapport_disc1
+									bulletinTrimAn.setRapport_disc1(rdisc_chaine);
+								}
+								
+								/*
+								 * On ne fait pas de else car il faut encore reprendre le test et au cas ou ca marche 
+								 * on va set rapport_disc2
+								 */
+								if(listofRDiscEleveSeq.size()>1) {
+		
+									RapportDisciplinaire rdisc = listofRDiscEleveSeq.get(1);
+									String rdisc_chaine = "";
+									rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+									//On peut donc fixer rapport_disc1
+									bulletinTrimAn.setRapport_disc2(rdisc_chaine);
+								
+								}
+								
+								if(listofRDiscEleveSeq.size()>2) {
+		
+									RapportDisciplinaire rdisc = listofRDiscEleveSeq.get(2);
+									String rdisc_chaine = "";
+									rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+									
+									//On peut donc fixer rapport_disc1
+									bulletinTrimAn.setRapport_disc3(rdisc_chaine);
+													
+								}
+								
+						}
+					}
+				}
 				
 				
 				/**************************
@@ -5718,28 +5868,34 @@ public class UsersServiceImplementation implements IUsersService {
 				bulletinTrimAn.setTableau_fel("");
 				String appreciation = ub.calculAppreciation(moy_trim,lang);
 				bulletinTrimAn.setAppreciation(appreciation);
-				String distinction = ub.calculDistinction(moy_trim);
-				if(distinction.equals("TH")==true){
-					bulletinTrimAn.setTableau_hon("OUI");
-					bulletinTrimAn.setTableau_enc("");
-					bulletinTrimAn.setTableau_fel("");
-				}
-				else if(distinction.equals("THE")==true){
-					bulletinTrimAn.setTableau_hon("OUI");
-					bulletinTrimAn.setTableau_enc("OUI");
-					bulletinTrimAn.setTableau_fel("");
-				}
-				else if(distinction.equals("THF")==true){
-					bulletinTrimAn.setTableau_hon("OUI");
-					bulletinTrimAn.setTableau_enc("");
-					bulletinTrimAn.setTableau_fel("OUI");
-				}
-				
-				
-				/*******************************
-				 * Informations sur les decision du conseil de classe
+				/*
+				 * On doit chercher la decision de conseil dans la periode sachant qu'on a une seule decision de 
+				 * conseil dans une période donnée (que ce soit séquence, trimestre ou année)
 				 */
+				DecisionConseil decConseil = eleve.getDecisionConseilPeriode(anneeScolaire.getIdPeriodes());
+				bulletinTrimAn.setDistinction("");
 				bulletinTrimAn.setDecision_conseil("");
+				if(decConseil !=null){
+					/*******************************
+					 * Informations sur les distinctions octroyées  dans la séquence
+					 */
+					String distinction="";
+					distinction = decConseil.getSanctionTravDecisionConseilStringIntitule(lang);
+					bulletinTrimAn.setDistinction(distinction);
+					
+					/*******************************
+					 * Informations sur les decision du conseil de classe dans la séquence
+					 * en fait il s'agit de préciser les sanctions disciplinaire infligées à un élève lors du conseil
+					 * de classe. Et ici c'est le conseil de classe annuel donc la decision finale
+					 */
+					String decision="";
+					decision += decConseil.getDecisionDecisionConseilString(lang);
+					/*distinction = decConseil.getSanctionTravDecisionConseilString(lang);
+					decision+=distinction;*/
+					bulletinTrimAn.setDecision_conseil(decision);
+				}
+				
+				
 				
 				List<Cours> listofCoursEffortAFournir = 
 						ub.getListofCoursDansOrdreEffortAFournirTrimestre(eleve, listofCoursEvalueTrim, 
@@ -6482,8 +6638,9 @@ public class UsersServiceImplementation implements IUsersService {
 				catch(Exception e){
 					
 				}*/
-				tauxReussite =  this.ub.tronqueDouble(tauxReussite, 2);
-				moyenne_general = this.ub.tronqueDouble(moyenne_general, 2);
+				int nb_decimale = 3;
+				tauxReussite =  this.ub.tronqueDouble(tauxReussite, nb_decimale);
+				moyenne_general = this.ub.tronqueDouble(moyenne_general, nb_decimale);
 				ficheCC.setT_pourcentage(tauxReussite);
 				ficheCC.setMg_classe(moyenne_general);
 
@@ -7026,20 +7183,9 @@ public class UsersServiceImplementation implements IUsersService {
 				int nhc = 0;
 				int nje = 0;
 				
-				/*for(Trimestres trim : anneeScolaire.getListoftrimestre()){
-					for(Sequences seq : trim.getListofsequence()){
-						RapportDAbsence rabs = eleve.getRapportDAbsenceSeq(seq.getIdPeriodes());
-						if(rabs!=null){
-							nhaj = nhaj + rabs.getNbreheureJustifie();
-							nhanj = nhanj + rabs.getNbreheureNJustifie();
-							nhc = nhc + rabs.getConsigne();
-							nje = nje + rabs.getJourExclusion();
-						}
-					}
-				}*/
 				
-				nhanj = eleve.getNbreHeureAbsenceNonJustifie(anneeScolaire);
-				nhaj = eleve.getNbreHeureAbsenceJustifie(anneeScolaire);
+				nhanj = eleve.getNbreHeureAbsenceNonJustifieAnnee(anneeScolaire);
+				nhaj = eleve.getNbreHeureAbsenceJustifieAnnee(anneeScolaire);
 				
 				bulletinAn.setAbsence_NJ(nhanj);
 				bulletinAn.setAbsence_J(nhaj);
@@ -7047,6 +7193,58 @@ public class UsersServiceImplementation implements IUsersService {
 				bulletinAn.setExclusion(nje+" J");
 				bulletinAn.setAvertissement("");
 				bulletinAn.setBlame_conduite("");
+				
+				/************************
+				 * On doit rechercher les sanctions disciplinaire obtenu dans la periode(annee)
+				 * dans leur ordre decroissant de sévérité et dans l'ordre décroissant des dates ou elles ont 
+				 * ete infligées. On va commencer du trimestre de plus grand numero vers celui de plus petit et
+				 *  de la séquence paire vers la séquence impair de chaque trimestre à chercher
+				 */
+				bulletinAn.setRapport_disc1("");
+				bulletinAn.setRapport_disc2("");
+				bulletinAn.setRapport_disc3("");
+				for(Trimestres trim : anneeScolaire.getListoftrimestre_DESC()){
+						for(Sequences seq : trim.getListofsequence_DESC()){
+							List<RapportDisciplinaire> listofRDiscEleveSeq = eleve.getListRapportDisciplinaireSeq_DESC(seq.getIdPeriodes());
+							
+							if(listofRDiscEleveSeq != null){
+								if(listofRDiscEleveSeq.size()>0) {
+									RapportDisciplinaire rdisc = listofRDiscEleveSeq.get(0);
+									String rdisc_chaine = "";
+									rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+									//On peut donc fixer rapport_disc1
+									bulletinAn.setRapport_disc1(rdisc_chaine);
+								}
+								
+								/*
+								 * On ne fait pas de else car il faut encore reprendre le test et au cas ou ca marche 
+								 * on va set rapport_disc2
+								 */
+								if(listofRDiscEleveSeq.size()>1) {
+		
+									RapportDisciplinaire rdisc = listofRDiscEleveSeq.get(1);
+									String rdisc_chaine = "";
+									rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+									//On peut donc fixer rapport_disc1
+									bulletinAn.setRapport_disc2(rdisc_chaine);
+								
+								}
+								
+								if(listofRDiscEleveSeq.size()>2) {
+		
+									RapportDisciplinaire rdisc = listofRDiscEleveSeq.get(2);
+									String rdisc_chaine = "";
+									rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+									
+									//On peut donc fixer rapport_disc1
+									bulletinAn.setRapport_disc3(rdisc_chaine);
+													
+								}
+								
+						}
+					}
+				}
+				
 				
 				/**************************
 				 * Informations sur le rappel de la moyenne et du rang des autres trimestres
@@ -7136,28 +7334,36 @@ public class UsersServiceImplementation implements IUsersService {
 				bulletinAn.setTableau_fel("");
 				String appreciation = ub.calculAppreciation(moy_an,lang);
 				bulletinAn.setAppreciation(appreciation);
-				String distinction = ub.calculDistinction(moy_an);
-				if(distinction.equals("TH")==true){
-					bulletinAn.setTableau_hon("OUI");
-					bulletinAn.setTableau_enc("");
-					bulletinAn.setTableau_fel("");
-				}
-				else if(distinction.equals("THE")==true){
-					bulletinAn.setTableau_hon("OUI");
-					bulletinAn.setTableau_enc("OUI");
-					bulletinAn.setTableau_fel("");
-				}
-				else if(distinction.equals("THF")==true){
-					bulletinAn.setTableau_hon("OUI");
-					bulletinAn.setTableau_enc("");
-					bulletinAn.setTableau_fel("OUI");
-				}
-
-
-				/*******************************
-				 * Informations sur les decision du conseil de classe
+				
+				/*
+				 * On doit chercher la decision de conseil dans la periode sachant qu'on a une seule decision de 
+				 * conseil dans une période donnée (que ce soit séquence, trimestre ou année)
 				 */
+				DecisionConseil decConseil = eleve.getDecisionConseilPeriode(anneeScolaire.getIdPeriodes());
+				bulletinAn.setDistinction("");
 				bulletinAn.setDecision_conseil("");
+				if(decConseil !=null){
+					/*******************************
+					 * Informations sur les distinctions octroyées  dans la séquence
+					 */
+					String distinction="";
+					distinction = decConseil.getSanctionTravDecisionConseilStringIntitule(lang);
+					bulletinAn.setDistinction(distinction);
+					
+					/*******************************
+					 * Informations sur les decision du conseil de classe dans la séquence
+					 * en fait il s'agit de préciser les sanctions disciplinaire infligées à un élève lors du conseil
+					 * de classe. Et ici c'est le conseil de classe annuel donc la decision finale
+					 */
+					String decision="";
+					decision += decConseil.getDecisionDecisionConseilString(lang);
+					/*distinction = decConseil.getSanctionTravDecisionConseilString(lang);
+					decision+=distinction;*/
+					bulletinAn.setDecision_conseil(decision);
+				}
+				
+				
+				
 				
 				List<Cours> listofCoursEffortAFournir = 
 						ub.getListofCoursDansOrdreEffortAFournirAnnee(eleve, listofCoursEvalueAn, 
@@ -7918,8 +8124,9 @@ public class UsersServiceImplementation implements IUsersService {
 		catch(Exception e){
 			
 		}*/
-		tauxReussite = this.ub.tronqueDouble(tauxReussite, 2);
-		moyenne_general = this.ub.tronqueDouble(moyenne_general, 2);
+		int nb_decimale = 3;
+		tauxReussite = this.ub.tronqueDouble(tauxReussite, nb_decimale);
+		moyenne_general = this.ub.tronqueDouble(moyenne_general, nb_decimale);
 		ficheCC.setT_pourcentage(tauxReussite);
 		ficheCC.setMg_classe(moyenne_general);
 		
@@ -9545,7 +9752,7 @@ public class UsersServiceImplementation implements IUsersService {
 	@Override
 	public List<SanctionDisciplinaire> findListAllSanctionDisciplinaire() {
 		// TODO Auto-generated method stub
-		return sanctionDiscRepository.findAllByOrderByCodeSancDiscAscIntituleSancDiscAsc();
+		return sanctionDiscRepository.findAllByOrderByNiveauSeveriteAscCodeSancDiscAscIntituleSancDiscAsc();
 	}
 
 
@@ -9618,11 +9825,57 @@ public class UsersServiceImplementation implements IUsersService {
 			decConseil.setSanctionDiscAssocie(sanctionDisc);
 			decConseil.setSanctionTravAssocie(sanctionTrav);
 			decConseil.setUnite(unite);
+			
+			decisionConseilRepository.save(decConseil);
 		}
 		
 		return 1;
 	}
-
+	
+	
+	@Override
+	public int saveDecisionConseilTrim(Long idEleves, Long idTrimestre, Long idSanctionDisc, int nbreperiode,
+			String unite, Long idSanctionTravAssocie) {
+		// TODO Auto-generated method stub
+		Eleves eleve = this.findEleves(idEleves);
+		Trimestres trimestre = this.findTrimestres(idTrimestre);
+		SanctionDisciplinaire sanctionDisc = this.findSanctionDisciplinaire(idSanctionDisc);
+		SanctionTravail sanctionTrav = this.findSanctionTravail(idSanctionTravAssocie);
+		
+		if(sanctionTrav == null || sanctionDisc == null || eleve == null || trimestre == null) return -1;
+		
+		if(nbreperiode<0) return 0;
+		if(nbreperiode>0 && unite.equalsIgnoreCase("RAS")==true) return 0;
+		
+		DecisionConseil decConseil = this.findDecisionConseilPeriode(idEleves, idTrimestre);
+		
+		if(decConseil == null){
+			DecisionConseil dc = new DecisionConseil();
+			dc.setDecisionAssocie(null);
+			dc.setEleveConcerne(eleve);
+			dc.setNbreperiode(nbreperiode);
+			dc.setPeriodeConcerne(trimestre);
+			dc.setSanctionDiscAssocie(sanctionDisc);
+			dc.setSanctionTravAssocie(sanctionTrav);
+			dc.setUnite(unite);
+			
+			decisionConseilRepository.save(dc);
+		}
+		else{
+			decConseil.setDecisionAssocie(null);
+			decConseil.setNbreperiode(nbreperiode);
+			decConseil.setSanctionDiscAssocie(sanctionDisc);
+			decConseil.setSanctionTravAssocie(sanctionTrav);
+			decConseil.setUnite(unite);
+			
+			decisionConseilRepository.save(decConseil);
+		}
+		
+		return 1;
+	}
+	
+	
+	
 
 	@Override
 	public UtilitairesBulletins getUtilitairesBulletins() {

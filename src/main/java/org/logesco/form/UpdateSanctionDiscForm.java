@@ -25,6 +25,9 @@ public class UpdateSanctionDiscForm  {
 	@NotNull
 	@NotEmpty
 	private String codeSancDiscEn;
+	@NotNull
+	@NotEmpty
+	private String niveauSeverite;
 	
 	private Long idSanctionDisc;
 	
@@ -109,6 +112,21 @@ public class UpdateSanctionDiscForm  {
 	public void setCodeSancDisc(String codeSancDisc) {
 		this.codeSancDisc = codeSancDisc;
 	}
+
+	/**
+	 * @return the niveauSeverite
+	 */
+	public String getNiveauSeverite() {
+		return niveauSeverite;
+	}
+
+	/**
+	 * @param niveauSeverite the niveauSeverite to set
+	 */
+	public void setNiveauSeverite(String niveauSeverite) {
+		this.niveauSeverite = niveauSeverite;
+	}
+	
 	
 	
 
