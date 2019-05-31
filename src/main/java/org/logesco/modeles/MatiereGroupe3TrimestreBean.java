@@ -21,15 +21,15 @@ public class MatiereGroupe3TrimestreBean implements Serializable {
     private String prof_g3;
 
     // Informations sur une ligne de matière
-    private double note_1_g3;
-    private double note_2_g3;
-    private double note_trim_g3;
-    private double total_trim_g3;
-    private double coef_g3;
+    private Double note_1_g3;
+    private Double note_2_g3;
+    private Double note_trim_g3;
+    private Double total_trim_g3;
+    private Double coef_g3;
     private String extreme_g3;
     private String rang_g3;
-    private double moy_classe_g3;
-    private double pourcentage_g3;
+    private Double moy_classe_g3;
+    private String pourcentage_g3;
     private String appreciation_g3;
 	
 
@@ -76,7 +76,7 @@ public class MatiereGroupe3TrimestreBean implements Serializable {
 	/**
 	 * @return the note_1_g3
 	 */
-	public double getNote_1_g3() {
+	public Double getNote_1_g3() {
 		return note_1_g3;
 	}
 
@@ -84,15 +84,20 @@ public class MatiereGroupe3TrimestreBean implements Serializable {
 	/**
 	 * @param note_1_g3 the note_1_g3 to set
 	 */
-	public void setNote_1_g3(double note_1_g3) {
-		this.note_1_g3 = note_1_g3;
+	public void setNote_1_g3(Double note_1_g3) {
+		if(note_1_g3>=0){
+        	this.note_1_g3 = note_1_g3;
+	     }
+	     else{
+	        	this.note_1_g3 = null;
+	      }
 	}
 
 
 	/**
 	 * @return the note_2_g3
 	 */
-	public double getNote_2_g3() {
+	public Double getNote_2_g3() {
 		return note_2_g3;
 	}
 
@@ -100,15 +105,20 @@ public class MatiereGroupe3TrimestreBean implements Serializable {
 	/**
 	 * @param note_2_g3 the note_2_g3 to set
 	 */
-	public void setNote_2_g3(double note_2_g3) {
-		this.note_2_g3 = note_2_g3;
+	public void setNote_2_g3(Double note_2_g3) {
+		if(note_2_g3>=0){
+        	this.note_2_g3 = note_2_g3;
+	     }
+	     else{
+	        	this.note_2_g3 = null;
+	      }
 	}
 
 
 	/**
 	 * @return the note_trim_g3
 	 */
-	public double getNote_trim_g3() {
+	public Double getNote_trim_g3() {
 		return note_trim_g3;
 	}
 
@@ -116,31 +126,43 @@ public class MatiereGroupe3TrimestreBean implements Serializable {
 	/**
 	 * @param note_trim_g3 the note_trim_g3 to set
 	 */
-	public void setNote_trim_g3(double note_trim_g3) {
-		this.note_trim_g3 = note_trim_g3;
+	public void setNote_trim_g3(Double note_trim_g3) {
+		if(note_trim_g3>=0){
+        	this.note_trim_g3 = note_trim_g3;
+	     }
+	     else{
+	        	this.note_trim_g3 = null;
+	      }
 	}
 
 
 	/**
 	 * @return the total_trim_g3
 	 */
-	public double getTotal_trim_g3() {
-		return total_trim_g3;
+	public Double getTotal_trim_g3() {
+		if(this.getNote_trim_g3() == null) return null;
+    	if(this.getNote_trim_g3()>=0) total_trim_g3 = getNote_trim_g3()*getCoef_g3();
+		return  total_trim_g3;
 	}
 
 
 	/**
 	 * @param total_trim_g3 the total_trim_g3 to set
 	 */
-	public void setTotal_trim_g3(double total_trim_g3) {
-		this.total_trim_g3 = total_trim_g3;
+	public void setTotal_trim_g3(Double total_trim_g3) {
+		if(total_trim_g3>=0){
+        	this.total_trim_g3 = total_trim_g3;
+        }
+        else{
+        	this.total_trim_g3 = null;
+        }
 	}
 
 
 	/**
 	 * @return the coef_g3
 	 */
-	public double getCoef_g3() {
+	public Double getCoef_g3() {
 		return coef_g3;
 	}
 
@@ -148,8 +170,13 @@ public class MatiereGroupe3TrimestreBean implements Serializable {
 	/**
 	 * @param coef_g3 the coef_g3 to set
 	 */
-	public void setCoef_g3(double coef_g3) {
-		this.coef_g3 = coef_g3;
+	public void setCoef_g3(Double coef_g3) {
+		if(coef_g3>0) {
+    		this.coef_g3 = coef_g3;
+    	}
+    	else{
+    		this.coef_g3 = null;
+    	}
 	}
 
 
@@ -188,7 +215,7 @@ public class MatiereGroupe3TrimestreBean implements Serializable {
 	/**
 	 * @return the moy_classe_g3
 	 */
-	public double getMoy_classe_g3() {
+	public Double getMoy_classe_g3() {
 		return moy_classe_g3;
 	}
 
@@ -196,15 +223,20 @@ public class MatiereGroupe3TrimestreBean implements Serializable {
 	/**
 	 * @param moy_classe_g3 the moy_classe_g3 to set
 	 */
-	public void setMoy_classe_g3(double moy_classe_g3) {
-		this.moy_classe_g3 = moy_classe_g3;
+	public void setMoy_classe_g3(Double moy_classe_g3) {
+		if(moy_classe_g3>0){
+        	this.moy_classe_g3 = moy_classe_g3;
+        }
+        else{
+        	this.moy_classe_g3 = null;
+        }
 	}
 
 
 	/**
 	 * @return the pourcentage_g3
 	 */
-	public double getPourcentage_g3() {
+	public String getPourcentage_g3() {
 		return pourcentage_g3;
 	}
 
@@ -213,7 +245,12 @@ public class MatiereGroupe3TrimestreBean implements Serializable {
 	 * @param pourcentage_g3 the pourcentage_g3 to set
 	 */
 	public void setPourcentage_g3(double pourcentage_g3) {
-		this.pourcentage_g3 = pourcentage_g3;
+		if(pourcentage_g3>=0){
+        	this.pourcentage_g3 = pourcentage_g3+" %";
+        }
+        else{
+        	this.pourcentage_g3 = null;
+        }
 	}
 
 

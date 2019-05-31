@@ -4,22 +4,100 @@
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
 <meta charset="UTF-8"/>
-<title>Erreur d'authentification</title>
+<title th:text="#{erreur403.titre}">erreur 403</title><!--  -->
 
 <link rel="stylesheet"  type="text/css"  href="webjars/bootstrap/3.3.7/css/bootstrap.min.css"  
- 	th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}" /><!-- -->
+ 	th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
 <link rel="stylesheet"  type="text/css"  href="../static/css/myStyle.css"  
  	th:href="@{/css/myStyle.css}"/>
 
 </head>
-<body>
-Vous ne disposez pas du role necessaire pour se connecter à la page demandée
+<body onload="donneFocus()" >
+<!-- debut de la partie entete de la page d'index class="jumbotron" -->
+<header> 
+ <div class=" col-md-12 ">
+	<div class="col-md-4 redcolor">
+		
+	</div>
+	<div class="col-md-4">
+		<div class="col-md-2">
+		
+		</div>
+		<div class="col-md-4 reculelogoverticalement">
+			<img alt="Ici le logo de l'erreur"  src="../static/images/403.jpg"  
+			th:src="@{/images/403.jpg}" class="card-img-top img-rounded" width="250" height="120"/>
+		</div>
+		<div class="col-md-4 ">
+		
+		</div>
+		
+	</div>
+	<div class="col-md-4">
+		
+	</div>
+		
+</div> 
+</header>
+<!-- fin de la partie entete de la page d'index -->
 
-<div class="starter-template">
-        <h1>403 - Access is denied</h1>
-        <div th:inline="text">Hello '[[${#httpServletRequest.remoteUser}]]', you do not have permission to access this page.</div>
-    </div>
-    <p>Click <a th:href="@{/logesco/index}">here</a> to  reconnect.</p><br/>
-     <p>Or <a th:href="@{/logesco/index}">here</a> to  recomence.</p><br/>
+
+<!-- debut de la partie contenu de la page d'index -->
+	<section> 
+		
+	<div class="col-md-6  col-md-offset-3 reculeverticalement" >
+		<div class=" panel  panel-danger" >
+			<div class="panel-heading">
+				<p align="center" th:inline="text"> 
+					<!-- Bienvennue sur LOGESCO: Logiciel de Gestion Scolaire -->
+					&nbsp;&nbsp;&nbsp;
+					<kbd>[[${#httpServletRequest.remoteUser}]] &nbsp;&nbsp; [[#{erreur403.codeerreur}]]</kbd>
+					
+				</p>
+				
+			</div>
+			<div class="panel-body" id="fenetre">
+				<h4 th:inline="text" class="alert alert-danger" align="center">
+					[[#{erreur403.labelerreur}]]
+				</h4>
+				<br/>
+				<p align="center">
+					<a th:href="@{/logesco/index}" 
+						class="btn btn-danger btn-lg" role="button" id="ouvrirlapplication" 
+						th:inline="text">
+						[[#{button.open}]] <span class="glyphicon glyphicon-hand-right"></span>
+					</a>
+				</p> 
+				<br/><br/>
+			</div>
+			<div class="panel-footer">
+				<p>&copy;<small th:text="#{label.confiance}"> 
+					 kiadjeu 2019 (678470262 / 695093228) merci de la confiance en nous accordée
+				</small>
+				</p>
+			</div>
+		</div>
+		</div>
+		
+	</section>
+<!-- fin de la partie contenu de la page d'index -->
+	
+<!-- debut de la partie pied de la page d'index -->	
+	<footer>
+		<div class="navbar-fixed-bottom">
+			<small class="text-center">&nbsp; &copy; KiadjMind 2019 (678470262 / 695093228) kiadjeuc@gmail.com</small>
+		</div>
+	</footer>
+<!-- fin de la partie pied de la page d'index -->
+
+
+ <script src="webjars/jquery/1.11.1/jquery.min.js"></script>
+ <script src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+//alert("dd");
+	function donneFocus(){
+		//alert("donne focus");
+		document.getElementById('ouvrirlapplication').focus();
+	}
+</script>
 </body>
 </html>

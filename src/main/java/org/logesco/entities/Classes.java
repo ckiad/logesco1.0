@@ -200,7 +200,116 @@ public class Classes implements Serializable{
 
 		return listofEleves;
 	}
+	
+	public Eleves getElevePlusAbsentDansListeSeq(List<Eleves> listofEleve, Sequences sequence){
+		int nhanj = 0;
+		Eleves elvplusabsent = null;
+		
+		if(listofEleve!= null){
+			if(listofEleve.size()>0){
+				elvplusabsent = listofEleve.get(0);
+				nhanj = elvplusabsent.getNbreHeureAbsenceNonJustifie(sequence.getIdPeriodes());
+				for(Eleves elv : listofEleve){
+					if(elv.getNbreHeureAbsenceNonJustifie(sequence.getIdPeriodes())>nhanj){
+						elvplusabsent = elv;
+						nhanj = elvplusabsent.getNbreHeureAbsenceNonJustifie(sequence.getIdPeriodes());
+					}
+				}
+			}
+		}
+		
+		return elvplusabsent;
+	}
+	
+	public Eleves getElevePlusAbsentDansListeTrim(List<Eleves> listofEleve, Trimestres trimestre){
+		int nhanj = 0;
+		Eleves elvplusabsent = null;
+		
+		if(listofEleve!= null){
+			if(listofEleve.size()>0){
+				elvplusabsent = listofEleve.get(0);
+				nhanj = elvplusabsent.getNbreHeureAbsenceNonJustifieTrim(trimestre);
+				for(Eleves elv : listofEleve){
+					if(elv.getNbreHeureAbsenceNonJustifieTrim(trimestre)>nhanj){
+						elvplusabsent = elv;
+						nhanj = elvplusabsent.getNbreHeureAbsenceNonJustifieTrim(trimestre);
+					}
+				}
+			}
+		}
+		
+		return elvplusabsent;
+	}
+	
+	public Eleves getElevePlusAbsentDansListeAnnee(List<Eleves> listofEleve, Annee an){
+		int nhanj = 0;
+		Eleves elvplusabsent = null;
+		
+		if(listofEleve!= null){
+			if(listofEleve.size()>0){
+				elvplusabsent = listofEleve.get(0);
+				nhanj = elvplusabsent.getNbreHeureAbsenceNonJustifieAnnee(an);
+				for(Eleves elv : listofEleve){
+					if(elv.getNbreHeureAbsenceNonJustifieAnnee(an)>nhanj){
+						elvplusabsent = elv;
+						nhanj = elvplusabsent.getNbreHeureAbsenceNonJustifieAnnee(an);
+					}
+				}
+			}
+		}
+		
+		return elvplusabsent;
+	}
+	
+	/*****************
+	 * Retourne les n eleves les plus absent dans la séquence
+	 */
+	public List<Eleves> getListofEleveslesPlusAbsentDansClasseSeq(Sequences sequence, int n){
+		List<Eleves> listofElevesPlusAbsent = new ArrayList<Eleves>();
+		List<Eleves> listofEleve = (List<Eleves>) this.getListofEleves();
+		for(int i = 0; i<n; i++){
+			Eleves elvPlusAbsent = this.getElevePlusAbsentDansListeSeq(listofEleve, sequence);
+			if(elvPlusAbsent!=null){
+				listofElevesPlusAbsent.add(elvPlusAbsent);
+				listofEleve.remove(elvPlusAbsent);
+			}
+		}
+		return listofElevesPlusAbsent;
+	}
+	
+	/*****************
+	 * Retourne les n eleves les plus absent dans le trimestre
+	 */
+	public List<Eleves> getListofEleveslesPlusAbsentDansClasseTrim(Trimestres trimestre, int n){
+		List<Eleves> listofElevesPlusAbsent = new ArrayList<Eleves>();
+		List<Eleves> listofEleve = (List<Eleves>) this.getListofEleves();
+		for(int i = 0; i<n; i++){
+			Eleves elvPlusAbsent = this.getElevePlusAbsentDansListeTrim(listofEleve, trimestre);
+			if(elvPlusAbsent!=null){
+				listofElevesPlusAbsent.add(elvPlusAbsent);
+				listofEleve.remove(elvPlusAbsent);
+			}
+		}
+		return listofElevesPlusAbsent;
+	}
+	
+	/*****************
+	 * Retourne les n eleves les plus absent dans l'annee
+	 */
+	public List<Eleves> getListofEleveslesPlusAbsentDansClasseAnnee(Annee an, int n){
+		List<Eleves> listofElevesPlusAbsent = new ArrayList<Eleves>();
+		List<Eleves> listofEleve = (List<Eleves>) this.getListofEleves();
+		for(int i = 0; i<n; i++){
+			Eleves elvPlusAbsent = this.getElevePlusAbsentDansListeAnnee(listofEleve, an);
+			if(elvPlusAbsent!=null){
+				listofElevesPlusAbsent.add(elvPlusAbsent);
+				listofEleve.remove(elvPlusAbsent);
+			}
+		}
+		return listofElevesPlusAbsent;
+	}
 
+	
 	/*******************************
 	 * Cette méthode retourne la liste des élève dans l'ordre décroissant des notes finale sequentiel obtenu dans 
 	 * un cours.
@@ -267,10 +376,10 @@ public class Classes implements Serializable{
 			public int compare(Eleves arg0, Eleves arg1) {
 				int n = 0;
 				if(arg0.getMoyenneSeqElevePourGroupeCours(listofIdCours, idSequence) > 
-						arg1.getMoyenneSeqElevePourGroupeCours(listofIdCours, idSequence)) n=-1;
+						arg1.getMoyenneSeqElevePourGroupeCours(listofIdCours, idSequence)) n=1;
 				
 				if(arg0.getMoyenneSeqElevePourGroupeCours(listofIdCours, idSequence) < 
-						arg1.getMoyenneSeqElevePourGroupeCours(listofIdCours, idSequence)) n=1;
+						arg1.getMoyenneSeqElevePourGroupeCours(listofIdCours, idSequence)) n=-1;
 				return n;
 			}
 

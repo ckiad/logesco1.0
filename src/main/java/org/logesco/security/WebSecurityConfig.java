@@ -50,6 +50,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/css").permitAll()
                 .antMatchers("/images").permitAll()
                 .antMatchers("/logesco/login").permitAll()
+                .antMatchers("/logesco/users/errors/*").permitAll()
+                .antMatchers("/logesco/admin/errors/*").permitAll()
                 .antMatchers("/hello").hasAnyRole("ADMIN","PROVISEUR", "CENSEUR", "SG", "INTENDANT", "ENSEIGNANT","SUPERADMIN")
                 .antMatchers("/home").hasAnyRole("ADMIN","PROVISEUR", "CENSEUR", "SG", "INTENDANT", "ENSEIGNANT","SUPERADMIN")
                 .antMatchers("/logesco/users/*").hasAnyRole("PROVISEUR", "CENSEUR", "SG", "INTENDANT", "ENSEIGNANT","SUPERADMIN")

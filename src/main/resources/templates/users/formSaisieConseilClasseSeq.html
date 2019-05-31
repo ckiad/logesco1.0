@@ -64,6 +64,8 @@
 						[[${eleve.getNumero(listofAllEleve)}]]) [[${#strings.toUpperCase(eleve.nomsEleves)}]] 
 						[[${eleve.prenomsEleves}]] <br/>
 						Né le <span class="bluecolor">[[${#dates.format(eleve.datenaissEleves,"dd-MM-yyyy")}]]</span> à [[${eleve.lieunaissEleves}]]
+						<br/>
+						Redoublant: <span class="redcolor">[[${eleve.redoublant}]]</span>
 						</b>
 					</span>
 				</td>
@@ -94,9 +96,9 @@
 				<td>
 					<span th:inline="text" class="redcolor">
 					<b>
-						[[${eleve.getNbreHeureAbscenceNonJustifie(idSequenceConcerne)}]]/
-						[[${eleve.getNbreHeureAbscenceNonJustifie(idSequenceConcerne)}+
-						${eleve.getNbreHeureAbscenceJustifie(idSequenceConcerne)}]]
+						[[${eleve.getNbreHeureAbsenceNonJustifie(idSequenceConcerne)}]]/
+						[[${eleve.getNbreHeureAbsenceNonJustifie(idSequenceConcerne)}+
+						${eleve.getNbreHeureAbsenceJustifie(idSequenceConcerne)}]]
 					</b>
 					</span>
 				</td>
@@ -215,6 +217,8 @@
 												<input type="hidden" name="idElevesConcerne" id="idElevesConcerne" 
 														class="form-control" 
 														th:value="${eleve.idEleves}" />
+												
+												
 												
 												<input type="hidden" name="idSequenceConcerne" id="idSequenceConcerne" 
 														class="form-control" 

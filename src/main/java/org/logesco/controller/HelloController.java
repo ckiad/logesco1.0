@@ -125,7 +125,7 @@ public class HelloController {
         return "hello";
     }
     
-    @GetMapping("/logesco/403")
+  @GetMapping("/errors/403")
     public String error403() {
         return "/errors/403";
     }

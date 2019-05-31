@@ -100,6 +100,33 @@ public class FicheConseilClasseBean implements Serializable {
 	    private int nbre_moy14;
 	    private int nbre_moy15;
 	    
+	    //Parametre concernant les eleves les plus indisciplines
+	    private String indiscnom1;
+	    private String indiscnom2;
+	    private String indiscnom3;
+	    private String indiscnom4;
+	    private String indiscnom5;
+	    private String indiscnom6;
+	    private String indiscnom7;
+	    private String indiscnom8;
+	    private String indiscnom9;
+	    private String indiscnom10;
+	    
+	    private String sanction1;
+	    private String sanction2;
+	    private String sanction3;
+	    private String sanction4;
+	    private String sanction5;
+	    private String sanction6;
+	    private String sanction7;
+	    private String sanction8;
+	    private String sanction9;
+	    private String sanction10;
+	    
+	    private int totalAbsF;
+	    private int totalAbsM;
+	    private int totalAbs;
+	    
 	    //Taux de reussite par discipline
 	    private List<SousRapport2ConseilBean> sous_rapport2_conseil;
 	    private List<SousRapport3ConseilBean> sous_rapport3_conseil;
@@ -1136,6 +1163,328 @@ public class FicheConseilClasseBean implements Serializable {
 	 */
 	public void setNbre_moy9(int nbre_moy9) {
 		this.nbre_moy9 = nbre_moy9;
+	}
+
+	/**
+	 * @return the indiscnom1
+	 */
+	public String getIndiscnom1() {
+		return indiscnom1;
+	}
+
+	/**
+	 * @param indiscnom1 the indiscnom1 to set
+	 */
+	public void setIndiscnom1(String indiscnom1) {
+		this.indiscnom1 = indiscnom1;
+	}
+
+	/**
+	 * @return the indiscnom2
+	 */
+	public String getIndiscnom2() {
+		return indiscnom2;
+	}
+
+	/**
+	 * @param indiscnom2 the indiscnom2 to set
+	 */
+	public void setIndiscnom2(String indiscnom2) {
+		this.indiscnom2 = indiscnom2;
+	}
+
+	/**
+	 * @return the indiscnom3
+	 */
+	public String getIndiscnom3() {
+		return indiscnom3;
+	}
+
+	/**
+	 * @param indiscnom3 the indiscnom3 to set
+	 */
+	public void setIndiscnom3(String indiscnom3) {
+		this.indiscnom3 = indiscnom3;
+	}
+
+	/**
+	 * @return the indiscnom4
+	 */
+	public String getIndiscnom4() {
+		return indiscnom4;
+	}
+
+	/**
+	 * @param indiscnom4 the indiscnom4 to set
+	 */
+	public void setIndiscnom4(String indiscnom4) {
+		this.indiscnom4 = indiscnom4;
+	}
+
+	/**
+	 * @return the indiscnom5
+	 */
+	public String getIndiscnom5() {
+		return indiscnom5;
+	}
+
+	/**
+	 * @param indiscnom5 the indiscnom5 to set
+	 */
+	public void setIndiscnom5(String indiscnom5) {
+		this.indiscnom5 = indiscnom5;
+	}
+
+	/**
+	 * @return the indiscnom6
+	 */
+	public String getIndiscnom6() {
+		return indiscnom6;
+	}
+
+	/**
+	 * @param indiscnom6 the indiscnom6 to set
+	 */
+	public void setIndiscnom6(String indiscnom6) {
+		this.indiscnom6 = indiscnom6;
+	}
+
+	/**
+	 * @return the indiscnom7
+	 */
+	public String getIndiscnom7() {
+		return indiscnom7;
+	}
+
+	/**
+	 * @param indiscnom7 the indiscnom7 to set
+	 */
+	public void setIndiscnom7(String indiscnom7) {
+		this.indiscnom7 = indiscnom7;
+	}
+
+	/**
+	 * @return the indiscnom8
+	 */
+	public String getIndiscnom8() {
+		return indiscnom8;
+	}
+
+	/**
+	 * @param indiscnom8 the indiscnom8 to set
+	 */
+	public void setIndiscnom8(String indiscnom8) {
+		this.indiscnom8 = indiscnom8;
+	}
+
+	/**
+	 * @return the indiscnom9
+	 */
+	public String getIndiscnom9() {
+		return indiscnom9;
+	}
+
+	/**
+	 * @param indiscnom9 the indiscnom9 to set
+	 */
+	public void setIndiscnom9(String indiscnom9) {
+		this.indiscnom9 = indiscnom9;
+	}
+
+	/**
+	 * @return the indiscnom10
+	 */
+	public String getIndiscnom10() {
+		return indiscnom10;
+	}
+
+	/**
+	 * @param indiscnom10 the indiscnom10 to set
+	 */
+	public void setIndiscnom10(String indiscnom10) {
+		this.indiscnom10 = indiscnom10;
+	}
+
+	/**
+	 * @return the sanction1
+	 */
+	public String getSanction1() {
+		return sanction1;
+	}
+
+	/**
+	 * @param sanction1 the sanction1 to set
+	 */
+	public void setSanction1(String sanction1) {
+		this.sanction1 = sanction1;
+	}
+
+	/**
+	 * @return the sanction2
+	 */
+	public String getSanction2() {
+		return sanction2;
+	}
+
+	/**
+	 * @param sanction2 the sanction2 to set
+	 */
+	public void setSanction2(String sanction2) {
+		this.sanction2 = sanction2;
+	}
+
+	/**
+	 * @return the sanction3
+	 */
+	public String getSanction3() {
+		return sanction3;
+	}
+
+	/**
+	 * @param sanction3 the sanction3 to set
+	 */
+	public void setSanction3(String sanction3) {
+		this.sanction3 = sanction3;
+	}
+
+	/**
+	 * @return the sanction4
+	 */
+	public String getSanction4() {
+		return sanction4;
+	}
+
+	/**
+	 * @param sanction4 the sanction4 to set
+	 */
+	public void setSanction4(String sanction4) {
+		this.sanction4 = sanction4;
+	}
+
+	/**
+	 * @return the sanction5
+	 */
+	public String getSanction5() {
+		return sanction5;
+	}
+
+	/**
+	 * @param sanction5 the sanction5 to set
+	 */
+	public void setSanction5(String sanction5) {
+		this.sanction5 = sanction5;
+	}
+
+	/**
+	 * @return the sanction6
+	 */
+	public String getSanction6() {
+		return sanction6;
+	}
+
+	/**
+	 * @param sanction6 the sanction6 to set
+	 */
+	public void setSanction6(String sanction6) {
+		this.sanction6 = sanction6;
+	}
+
+	/**
+	 * @return the sanction7
+	 */
+	public String getSanction7() {
+		return sanction7;
+	}
+
+	/**
+	 * @param sanction7 the sanction7 to set
+	 */
+	public void setSanction7(String sanction7) {
+		this.sanction7 = sanction7;
+	}
+
+	/**
+	 * @return the sanction8
+	 */
+	public String getSanction8() {
+		return sanction8;
+	}
+
+	/**
+	 * @param sanction8 the sanction8 to set
+	 */
+	public void setSanction8(String sanction8) {
+		this.sanction8 = sanction8;
+	}
+
+	/**
+	 * @return the sanction9
+	 */
+	public String getSanction9() {
+		return sanction9;
+	}
+
+	/**
+	 * @param sanction9 the sanction9 to set
+	 */
+	public void setSanction9(String sanction9) {
+		this.sanction9 = sanction9;
+	}
+
+	/**
+	 * @return the sanction10
+	 */
+	public String getSanction10() {
+		return sanction10;
+	}
+
+	/**
+	 * @param sanction10 the sanction10 to set
+	 */
+	public void setSanction10(String sanction10) {
+		this.sanction10 = sanction10;
+	}
+
+	/**
+	 * @return the totalAbsF
+	 */
+	public int getTotalAbsF() {
+		return totalAbsF;
+	}
+
+	/**
+	 * @param totalAbsF the totalAbsF to set
+	 */
+	public void setTotalAbsF(int totalAbsF) {
+		this.totalAbsF = totalAbsF;
+	}
+
+	/**
+	 * @return the totalAbsM
+	 */
+	public int getTotalAbsM() {
+		return totalAbsM;
+	}
+
+	/**
+	 * @param totalAbsM the totalAbsM to set
+	 */
+	public void setTotalAbsM(int totalAbsM) {
+		this.totalAbsM = totalAbsM;
+	}
+
+	/**
+	 * @return the totalAbs
+	 */
+	public int getTotalAbs() {
+		return totalAbs;
+	}
+
+	/**
+	 * @param totalAbs the totalAbs to set
+	 */
+	public void setTotalAbs(int totalAbs) {
+		this.totalAbs = totalAbs;
 	}
 	
 	

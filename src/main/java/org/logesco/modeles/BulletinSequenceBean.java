@@ -55,7 +55,7 @@ public class BulletinSequenceBean {
     private String total_extreme_g1;
     private String total_rang_g1;
     private double mg_classe_g1;
-    private double total_pourcentage_g1;
+    private String total_pourcentage_g1;
     private double moyenne_g1;
 
     // Deuxième groupe de matière
@@ -66,7 +66,7 @@ public class BulletinSequenceBean {
     private String total_extreme_g2;
     private String total_rang_g2;
     private double mg_classe_g2;
-    private double total_pourcentage_g2;
+    private String total_pourcentage_g2;
     private double moyenne_g2;
     
     // Troisième groupe de matière
@@ -77,7 +77,7 @@ public class BulletinSequenceBean {
     private String total_extreme_g3;
     private String total_rang_g3;
     private double mg_classe_g3;
-    private double total_pourcentage_g3;
+    private String total_pourcentage_g3;
     private double moyenne_g3;
     
     // Informations sur les totaux
@@ -626,12 +626,12 @@ public class BulletinSequenceBean {
         this.mg_classe_g1 = mg_classe_g1;
     }
 
-    public double getTotal_pourcentage_g1() {
+    public String getTotal_pourcentage_g1() {
         return total_pourcentage_g1;
     }
 
     public void setTotal_pourcentage_g1(double total_pourcentage_g1) {
-        this.total_pourcentage_g1 = total_pourcentage_g1;
+        this.total_pourcentage_g1 = total_pourcentage_g1+" %";
     }
 
 
@@ -683,12 +683,12 @@ public class BulletinSequenceBean {
         this.mg_classe_g2 = mg_classe_g2;
     }
 
-    public double getTotal_pourcentage_g2() {
+    public String getTotal_pourcentage_g2() {
         return total_pourcentage_g2;
     }
 
     public void setTotal_pourcentage_g2(double total_pourcentage_g2) {
-        this.total_pourcentage_g2 = total_pourcentage_g2;
+        this.total_pourcentage_g2 = total_pourcentage_g2+" %";
     }
 
     public String getNom_g3() {
@@ -739,12 +739,12 @@ public class BulletinSequenceBean {
         this.mg_classe_g3 = mg_classe_g3;
     }
 
-    public double getTotal_pourcentage_g3() {
+    public String getTotal_pourcentage_g3() {
         return total_pourcentage_g3;
     }
 
     public void setTotal_pourcentage_g3(double total_pourcentage_g3) {
-        this.total_pourcentage_g3 = total_pourcentage_g3;
+        this.total_pourcentage_g3 = total_pourcentage_g3+" %";
     }
     
     // Accesseurs et modificateur des moyennes par groupe de matières

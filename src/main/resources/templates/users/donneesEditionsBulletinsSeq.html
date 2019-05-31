@@ -19,10 +19,12 @@
 	
 	<div class="col-md-9">
 		<span class="col-md-12 alert alert-warning">
+		<label>
 			Sélectionner la classe et la séquence puis cliquer sur le bouton envoyer pour que les bullletins
 			séquentiels soient édités. Une fois cela fait, le fichier les contenant vous sera proposé en téléchargement.
-			<br/><u>NB:</u> Une fois les bulletins générés appuyer du F5 ou actualiser la page pour générer
+			<br/><u>NB:</u> Une fois les bulletins générés appuyer sur la touche F5 ou actualiser la page pour générer
 			le rapport de conseil de classe.
+		</label>
 		</span>
 			<form action="#"
 						th:action="@{/logesco/users/bulletins/lancerEditionsBulletinsSeq}" method="get"
@@ -80,10 +82,13 @@
 				<form action="#"
 						th:action="@{/logesco/users/bulletins/lancerEditionsRapportConseilSeq}" method="get"
 						class="form-inline"  th:if="${session.getrapportseq}"  target="_blank">
-					<label>
-						Actualiser la page pour générer automatiquement le rapport de conseil de classe une 
-						fois que les bulletins sont générés.
-					</label>	
+					
+					<span class="col-md-12 alert alert-warning">
+						<label>
+							Cliquer sur le bouton ci-dessous pour générer le rapport de conseil. NB: Actualiser la page ou 
+							appuyer sur F5 si ce bouton n'est pas disponible après la génération des bulletins.
+						</label>	
+					</span>
 					<br/>
 					<fieldset class="col-md-12" th:if="${session.getrapportseq}">
 						<legend class="text-primary">Bouton de génération du rapport de conseil</legend>
@@ -99,5 +104,14 @@
 	</div>
 	<!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
 </div>
+
+<script type="text/javascript">
+
+function refresh(){
+	alert("je vais recharger la page");
+	window.location.reload(true);
+}
+
+</script>
 </body>
 </html>

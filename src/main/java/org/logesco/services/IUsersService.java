@@ -13,6 +13,7 @@ import org.logesco.modeles.EleveBean;
 import org.logesco.modeles.EleveBean2;
 import org.logesco.modeles.EleveInsolvableBean;
 import org.logesco.modeles.FicheConseilClasseBean;
+import org.logesco.modeles.FicheRecapAbsenceCycleBean;
 import org.logesco.modeles.OperationBean;
 import org.logesco.modeles.PV_NoteBean;
 import org.logesco.modeles.PV_SequenceBean;
@@ -831,6 +832,17 @@ public interface IUsersService {
 	 * Elle retourne une liste null si aucune classe n'est enregistré en bd
 	 ************************************************************/
 	public List<Classes> findAllClasse();
+	
+	/************************************************************
+	 * Retourne la liste de tous les cycles ENRGISTREES
+	 * Elle retourne une liste null si aucun cycle n'est enregistré en bd
+	 ************************************************************/
+	public List<Cycles> findAllCycle();
+	
+	/****************************************************************
+	 * Retourne le cycle dont l'identifiant est passé en parametre
+	 ****************************************************************/
+	public Cycles findCycle(Long idCycle);
 
 	/*******************************************************************
 	 * Methode qui retourne le cours dont l'identifiant est passe en parametre
@@ -1303,6 +1315,117 @@ public interface IUsersService {
 	//public Collection<BulletinSequenceBean> generateCollectionofBulletinSequence_opt(Long idClasse, Long idSequence);
 	public Map<String, Object> generateCollectionofBulletinSequence_opt(Long idClasse, Long idSequence);
 	
+	/*********************************************************************************************************
+	 * Cette methode retourne un dictionnaire qui aura n+1 clé où les n premières cles est associe chacune 
+	 * à la liste des élèves ayant eu la sanction i. En effet, si on a 5 niveau de severite dans les sanctions alors
+	 * sanction_i est associe a la liste des eleves ayant eu la sanction de niveau de severite i aucours de la 
+	 * sequence. 
+	 * la dernière cles (absence) sera associe à la liste des élèves rangés dans l'ordre décroissant des nombres
+	 * d'heure d'absence non justifié. En effet, au cas où les précédentes listes sont vide, les plus indiscipline
+	 * correspondront a ceux qui ont le plus grand nombre d'heure d'absence non justifié. 
+	 * @param classe
+	 * @param sequence
+	 * @return
+	 */
+	public Map<String, Object> getListeEleveParSanctionDiscSeq(Classes classe, Sequences sequence);
+	
+	
+	/*********************************************************************************************************
+	 * Cette methode retourne un dictionnaire qui aura n+1 clé où les n premières cles est associe chacune 
+	 * à la liste des élèves ayant eu la sanction i. En effet, si on a 5 niveau de severite dans les sanctions alors
+	 * sanction_i est associe a la liste des eleves ayant eu la sanction de niveau de severite i aucours du 
+	 * trimestre. 
+	 * la dernière cles (absence) sera associe à la liste des élèves rangés dans l'ordre décroissant des nombres
+	 * d'heure d'absence non justifié. En effet, au cas où les précédentes listes sont vide, les plus indiscipline
+	 * correspondront a ceux qui ont le plus grand nombre d'heure d'absence non justifié. 
+	 * @param classe
+	 * @param trimestre
+	 * @return
+	 */
+	public Map<String, Object> getListeEleveParSanctionDiscTrim(Classes classe, Trimestres trimestre);
+	
+	/*********************************************************************************************************
+	 * Cette methode retourne un dictionnaire qui aura n+1 clé où les n premières cles est associe chacune 
+	 * à la liste des élèves ayant eu la sanction i. En effet, si on a 5 niveau de severite dans les sanctions alors
+	 * sanction_i est associe a la liste des eleves ayant eu la sanction de niveau de severite i aucours de 
+	 * l'annee. 
+	 * la dernière cles (absence) sera associe à la liste des élèves rangés dans l'ordre décroissant des nombres
+	 * d'heure d'absence non justifié. En effet, au cas où les précédentes listes sont vide, les plus indiscipline
+	 * correspondront a ceux qui ont le plus grand nombre d'heure d'absence non justifié. 
+	 * @param classe
+	 * @param trimestre
+	 * @return
+	 */
+	public Map<String, Object> getListeEleveParSanctionDiscAnnee(Classes classe, Annee an);
+	
+	
+	/***********************************************************************************************************
+	 * Cette methode se charge d'appeler la fonction getListeEleveParSanctionDiscSeq qui retourne une map
+	 * avec autant de cle que de sanction pour fabriquer une liste de n personnes les plus indiscipline d'une
+	 * classe Pendant une séquence
+	 * @param classe
+	 * @param sequence
+	 * @return
+	 */
+	public List<Eleves> getListeElevePlusIndisciplineSeq(Classes classe, Sequences sequence, int n);
+	
+	/***********************************************************************************************************
+	 * Cette methode se charge d'appeler la fonction getListeEleveParSanctionDiscSeq qui retourne une map
+	 * avec autant de cle que de sanction pour fabriquer une liste de n personnes les plus indiscipline d'une
+	 * classe pendant un trimestre
+	 * @param classe
+	 * @param sequence
+	 * @return
+	 */
+	public List<Eleves> getListeElevePlusIndisciplineTrim(Classes classe, Trimestres trimestre, int n);
+	
+	/***********************************************************************************************************
+	 * Cette methode se charge d'appeler la fonction getListeEleveParSanctionDiscSeq qui retourne une map
+	 * avec autant de cle que de sanction pour fabriquer une liste de n personnes les plus indiscipline d'une
+	 * classe pendant une annee
+	 * @param classe
+	 * @param sequence
+	 * @return
+	 */
+	public List<Eleves> getListeElevePlusIndisciplineAnnee(Classes classe, Annee an, int n);
+	
+	
+	/*********************************************************************************************************
+	 * Cette methode retourne la liste des eleves d'une classe ayant eu la sanction disciplinaire passe en
+	 * parametre pendant une séquence. Cette liste est dans l'ordre alphabetique des noms puis des prenoms
+	 * des eleves de la dite classe.
+	 * @param classe
+	 * @param sanctionDisc
+	 * @param sequence
+	 * @return
+	 */
+	public List<Eleves> getListEleveSanctionDiscSeq(Classes classe, SanctionDisciplinaire sanctionDisc, 
+			Sequences sequence);
+	
+	/*********************************************************************************************************
+	 * Cette methode retourne la liste des eleves d'une classe ayant eu la sanction disciplinaire passe en
+	 * parametre pendant un trimestre. Cette liste est dans l'ordre alphabetique des noms puis des prenoms
+	 * des eleves de la dite classe.
+	 * @param classe
+	 * @param sanctionDisc
+	 * @param trimestre
+	 * @return
+	 */
+	public List<Eleves> getListEleveSanctionDiscTrim(Classes classe, SanctionDisciplinaire sanctionDisc, 
+			Trimestres trimestre);
+	
+	/*********************************************************************************************************
+	 * Cette methode retourne la liste des eleves d'une classe ayant eu la sanction disciplinaire passe en
+	 * parametre pendant une annee. Cette liste est dans l'ordre alphabetique des noms puis des prenoms
+	 * des eleves de la dite classe.
+	 * @param classe
+	 * @param sanctionDisc
+	 * @param an
+	 * @return
+	 */
+	public List<Eleves> getListEleveSanctionDiscAnnee(Classes classe, SanctionDisciplinaire sanctionDisc, 
+			Annee an);
+	
 	
 	/***************************************************************************************
 	 * Calcule et génère la fiche simplifier de conseil de classe séquentiel. Cette fiche est généré 
@@ -1576,10 +1699,18 @@ public interface IUsersService {
 	public Collection<OperationBean> generateListOperationEleve(Long idEleve);
 	
 	/**************************************************
-	 * Cette methode retourne la liste des sanctions disciplinaire existant dans le système
+	 * Cette methode retourne la liste des sanctions disciplinaire existant dans le système dans l'ordre
+	 * croissant des niveau de severite
 	 * @return
 	 */
 	public List<SanctionDisciplinaire> findListAllSanctionDisciplinaire();
+	
+	/**************************************************
+	 * Cette methode retourne la liste des sanctions disciplinaire existant dans le système dans l'ordre
+	 * decroissant des niveau de severite
+	 * @return
+	 */
+	public List<SanctionDisciplinaire> findListAllSanctionDisciplinaire_DESC();
 	
 	public SanctionDisciplinaire findSanctionDisciplinaire(Long idSanctionDisc);
 	
@@ -1658,6 +1789,7 @@ public interface IUsersService {
 	/***********************************************************************************************************
 	 * Cette methode enregistre en BD la décision prise pendant le conseil de classe annuel pour un élève
 	 * 
+	 * 
 	 * @param idElevesConcerne
 	 * @param idAnneeActive
 	 * @param idsanctionTravAssocie
@@ -1670,6 +1802,221 @@ public interface IUsersService {
 	 */
 	public int saveDecisionConseilAn(Long idElevesConcerne, Long idAnneeActive, 
 			Long idsanctionTravAssocie, Long idDecisionAssocie);
+	
+	/********************************************************************************************
+	 * Retourne le nombre d'heure d'absence justifie dans une classe entre deux dates pour un 
+	 * sexe donnee. 1 signifie masculin et 0 féminin
+	 * 
+	 * Si la classe est null alors il s'agit de toutes les classes qui sont dans la base de donnée
+	 * @param classe
+	 * @param datemin
+	 * @param datemax
+	 *  @param sexe
+	 * @return
+	 */
+	public int getNbreAbsJSexeClasse(Classes classe, Date datemin, Date datemax, int sexe);
+	
+	/********************************************************************************************
+	 * Retourne le nombre d'heure d'absence justifie dans une classe dans une periodes pour un 
+	 * sexe donnee. 1 signifie masculin et 0 féminin
+	 * 
+	 * Si la classe est null alors il s'agit de toutes les classes qui sont dans la base de donnée
+	 * @param classe
+	 * @param periode
+	 *  @param sexe
+	 * @return
+	 */
+	public int getNbreAbsJSexeClasseSeq(Classes classe, Sequences periode, int sexe);
+	public int getNbreAbsJSexeClasseTrim(Classes classe, Trimestres periode, int sexe);
+	public int getNbreAbsJSexeClasseAn(Classes classe, Annee periode, int sexe);
+	
+	
+	/********************************************************************************************
+	 * Retourne le nombre d'heure d'absence non justifie dans une classe entre deux dates pour un 
+	 * sexe donnee. 1 signifie masculin et 0 féminin
+	 * 
+	 *  Si la classe est null alors il s'agit de toutes les classes qui sont dans la base de donnée
+	 * @param classe
+	 * @param datemin
+	 * @param datemax
+	 *  @param sexe
+	 * @return
+	 */
+	public int getNbreAbsNJSexeClasse(Classes classe, Date datemin, Date datemax, int sexe);
+	
+	/********************************************************************************************
+	 * Retourne le nombre d'heure d'absence non justifie dans une classe dans une periode pour un 
+	 * sexe donnee. 1 signifie masculin et 0 féminin
+	 * 
+	 *  Si la classe est null alors il s'agit de toutes les classes qui sont dans la base de donnée
+	 * @param classe
+	 * @param periode
+	 *  @param sexe
+	 * @return
+	 */
+	public int getNbreAbsNJSexeClasseSeq(Classes classe, Sequences periode, int sexe);
+	public int getNbreAbsNJSexeClasseTrim(Classes classe, Trimestres periode, int sexe);
+	public int getNbreAbsNJSexeClasseAn(Classes classe, Annee periode, int sexe);
+	
+	
+	
+	/********************************************************************************************
+	 * Retourne le nombre d'heure d'absence justifie dans un niveau entre deux dates pour un 
+	 * sexe donnee. 1 signifie masculin et 0 féminin
+	 * 
+	 * Si le niveau est null alors il s'agit de tous les niveaux qui sont dans la base de donnée
+	 * @param niveau
+	 * @param datemin
+	 * @param datemax
+	 *  @param sexe
+	 * @return
+	 */
+	public int getNbreAbsJSexeNiveau(Niveaux niveau, Date datemin, Date datemax, int sexe);
+	
+	
+	
+	/********************************************************************************************
+	 * Retourne le nombre d'heure d'absence justifie dans un niveau dans une periode pour un 
+	 * sexe donnee. 1 signifie masculin et 0 féminin
+	 * 
+	 * Si le niveau est null alors il s'agit de tous les niveaux qui sont dans la base de donnée
+	 * @param niveau
+	 * @param periode
+	 *  @param sexe
+	 * @return
+	 */
+	public int getNbreAbsJSexeNiveauSeq(Niveaux niveau, Sequences periode, int sexe);
+	public int getNbreAbsJSexeNiveauTrim(Niveaux niveau, Trimestres periode, int sexe);
+	public int getNbreAbsJSexeNiveauAn(Niveaux niveau, Annee periode, int sexe);
+	
+	/********************************************************************************************
+	 * Retourne le nombre d'heure d'absence non justifie dans un niveau entre deux dates pour un 
+	 * sexe donnee. 1 signifie masculin et 0 féminin
+	 * 
+	 *  Si le niveau est null alors il s'agit de tous les niveaux qui sont dans la base de donnée
+	 * @param niveau
+	 * @param datemin
+	 * @param datemax
+	 *  @param sexe
+	 * @return
+	 */
+	public int getNbreAbsNJSexeNiveau(Niveaux niveau, Date datemin, Date datemax, int sexe);
+	
+	
+	/********************************************************************************************
+	 * Retourne le nombre d'heure d'absence non justifie dans un niveau dans une periode pour un 
+	 * sexe donnee. 1 signifie masculin et 0 féminin
+	 * 
+	 *  Si le niveau est null alors il s'agit de tous les niveaux qui sont dans la base de donnée
+	 * @param niveau
+	 * @param periode
+	 *  @param sexe
+	 * @return
+	 */
+	public int getNbreAbsNJSexeNiveauSeq(Niveaux niveau, Sequences periode, int sexe);
+	public int getNbreAbsNJSexeNiveauTrim(Niveaux niveau, Trimestres periode, int sexe);
+	public int getNbreAbsNJSexeNiveauAn(Niveaux niveau, Annee periode, int sexe);
+	
+	/********************************************************************************************
+	 * Retourne le nombre d'heure d'absence justifie dans un cycle entre deux dates pour un 
+	 * sexe donnee. 1 signifie masculin et 0 féminin
+	 * 
+	 * Si le cycle est null alors il s'agit de tous les cycles qui sont dans la base de donnée
+	 * @param cycle
+	 * @param datemin
+	 * @param datemax
+	 *  @param sexe
+	 * @return
+	 */
+	public int getNbreAbsJSexeCycle(Cycles cycle, Date datemin, Date datemax, int sexe);
+	
+	/********************************************************************************************
+	 * Retourne le nombre d'heure d'absence justifie dans un cycle dans une periode  pour un 
+	 * sexe donnee. 1 signifie masculin et 0 féminin
+	 * 
+	 * Si le cycle est null alors il s'agit de tous les cycles qui sont dans la base de donnée
+	 * @param cycle
+	 * @param periode
+	 *  @param sexe
+	 * @return
+	 */
+	public int getNbreAbsJSexeCycleSeq(Cycles cycle, Sequences periode, int sexe);
+	public int getNbreAbsJSexeCycleTrim(Cycles cycle, Trimestres periode, int sexe);
+	public int getNbreAbsJSexeCycleAn(Cycles cycle, Annee periode, int sexe);
+	
+	/********************************************************************************************
+	 * Retourne le nombre d'heure d'absence non justifie dans un cycle entre deux dates pour un 
+	 * sexe donnee. 1 signifie masculin et 0 féminin
+	 * 
+	 *  Si le cycle est null alors il s'agit de tous les cycles qui sont dans la base de donnée
+	 * @param cycle
+	 * @param datemin
+	 * @param datemax
+	 *  @param sexe
+	 * @return
+	 */
+	public int getNbreAbsNJSexeCycle(Cycles cycle, Date datemin, Date datemax, int sexe);
+	
+	/********************************************************************************************
+	 * Retourne le nombre d'heure d'absence non justifie dans un cycle dans une periode pour un 
+	 * sexe donnee. 1 signifie masculin et 0 féminin
+	 * 
+	 *  Si le cycle est null alors il s'agit de tous les cycles qui sont dans la base de donnée
+	 * @param cycle
+	 * @param periode
+	 *  @param sexe
+	 * @return
+	 */
+	public int getNbreAbsNJSexeCycleSeq(Cycles cycle, Sequences periode, int sexe);
+	public int getNbreAbsNJSexeCycleTrim(Cycles cycle, Trimestres periode, int sexe);
+	public int getNbreAbsNJSexeCycleAn(Cycles cycle, Annee periode, int sexe);
+	
+	
+	/*********************************************************************************************************
+	 * cette methode retourne le rapport des absences par sexe et le total pour un cycle passe en paramètre.
+	 * Si le cylce est null alors on va retourner celui de tous les cycles enregistre en BD. 
+	 * 
+	 * Par rapport des absences, on entend le nombre d'heure d'absence Non justfié / Total des heures d'absence
+	 * Pour les eleve de sexe masculin d'un cycle et ceux du sexe féminn du meme cycle. 
+	 * 
+	 * Donc pour chaque élève du cycle, on va rechercher tous les rapports d'absence enregistré dans l'intervalle
+	 * de date précisé
+	 * 
+	 * Et pour avoir tous les élèves du cycle, il faut d'abord récuperer tous les niveaux du cycle puis 
+	 * pour chaque niveau toutes les classes et enfin pour chaque classe tous les élèves.
+	 * 
+	 * @param cycle
+	 * @param datemin
+	 * @param datemax
+	 * @return
+	 */
+	public Collection<FicheRecapAbsenceCycleBean> generateListFicheRecapAbsenceCycleBean(Cycles cycle, 
+			Date datemin, Date datemax);
+	
+	/*********************************************************************************************************
+	 * cette methode retourne le rapport des absences par sexe et le total pour un cycle passe en paramètre.
+	 * Si le cylce est null alors on va retourner celui de tous les cycles enregistre en BD. 
+	 * 
+	 * Par rapport des absences, on entend le nombre d'heure d'absence Non justfié / Total des heures d'absence
+	 * Pour les eleve de sexe masculin d'un cycle et ceux du sexe féminn du meme cycle. 
+	 * 
+	 * Donc pour chaque élève du cycle, on va rechercher tous les rapports d'absence enregistré dans la 
+	 * periode specifie en paramètre
+	 * 
+	 * Et pour avoir tous les élèves du cycle, il faut d'abord récuperer tous les niveaux du cycle puis 
+	 * pour chaque niveau toutes les classes et enfin pour chaque classe tous les élèves.
+	 * 
+	 * @param cycle
+	 * @param sequence
+	 * @return
+	 */
+	public Collection<FicheRecapAbsenceCycleBean> generateListFicheRecapAbsenceCycleSeqBean(Cycles cycle, 
+			Sequences periode);
+	public Collection<FicheRecapAbsenceCycleBean> generateListFicheRecapAbsenceCycleTrimBean(Cycles cycle, 
+			Trimestres periode);
+	public Collection<FicheRecapAbsenceCycleBean> generateListFicheRecapAbsenceCycleAnBean(Cycles cycle, 
+			Annee periode);
+	
 	
 	/******************************************************
 	 * Cette methode retourne la classe utilitaire qui a permis

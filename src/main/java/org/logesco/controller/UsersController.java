@@ -28,6 +28,7 @@ import org.logesco.form.*;
 import org.logesco.modeles.EleveBean;
 import org.logesco.modeles.EleveBean2;
 import org.logesco.modeles.EleveInsolvableBean;
+import org.logesco.modeles.FicheRecapAbsenceCycleBean;
 import org.logesco.modeles.OperationBean;
 import org.logesco.modeles.PV_NoteBean;
 import org.logesco.modeles.PV_SequenceBean;
@@ -2428,9 +2429,9 @@ public class UsersController {
 			
 		}
 		catch(Exception e){
-			System.out.println("erreur de conversion de pendant le dressage de la liste des operations"
+			System.out.println("erreur de conversion de date pendant le dressage de la liste des operations"
 					+ " "+datemin+" "+e.getMessage());
-			System.out.println("erreur de conversion de pendant le dressage de la liste des operations"
+			System.out.println("erreur de conversion de date pendant le dressage de la liste des operations"
 					+ " "+datemax+" "+e.getMessage());
 			
 		}
@@ -2935,7 +2936,6 @@ public class UsersController {
 		return "users/donneesConseilAnnuel";
 	}
 	
-	
 	public void constructModelgetformSaisieConseilClasseAn(Model model,	HttpServletRequest request,
 			Long idAnneeActive,	Long idClasseConcerne, int numPageEleves, int taillePage){
 		
@@ -2985,8 +2985,6 @@ public class UsersController {
 		
 	}
 	
-	
-	
 	@GetMapping(path="/getformSaisieConseilClasseAn")
 	public String getformSaisieConseilClasseAn(Model model, HttpServletRequest request,
 			@RequestParam(name="idAnneeActive", defaultValue="-1") Long idAnneeActive,
@@ -3031,6 +3029,233 @@ public class UsersController {
 				+ "&&taillePage="+taillePage;
 		
 	}
+	
+	public void constructModelgetdonneesRAbsCycle(Model model,	HttpServletRequest request){
+		
+		List<Cycles> listofCycles = usersService.findAllCycle();
+		if(listofCycles.size()>0){
+			model.addAttribute("affichechoixcycle", "oui");
+			model.addAttribute("listofCycles", listofCycles);
+		}
+		else{
+			model.addAttribute("affichechoixcycle", "non");
+		}
+		
+		
+		Annee anneeActive = usersService.findAnneeActive();
+		
+		if(anneeActive != null) {
+			model.addAttribute("anneeActive", anneeActive);
+			
+		}
+		
+		List<Trimestres> listofTrimestreActif = usersService.findAllActiveTrimestre(anneeActive.getIdPeriodes());
+		model.addAttribute("listofTrimestreActif", listofTrimestreActif);
+		
+		List<Sequences> listofSequenceActif = usersService.findAllSequenceActive(anneeActive.getIdPeriodes());
+		model.addAttribute("listofSequenceActif", listofSequenceActif);
+		
+	}
+	
+	
+	@GetMapping(path="/getdonneesRAbsCycle")
+	public String getdonneesRAbsCycle(Model model, HttpServletRequest request){
+		
+		this.constructModelgetdonneesRAbsCycle(model,	request);
+		
+		return "users/donneesRAbsCycle";
+	}
+	
+	@GetMapping(path="/exportRAbsencesCycle")
+	public ModelAndView exportRAbsencesCycle(Model model, HttpServletRequest request,
+			@RequestParam(name="idCycleConcerne", defaultValue="0") Long idCycleConcerne,
+			@RequestParam(name="idPeriode", defaultValue="0") Long idPeriode,
+			@RequestParam(name="datedebut", defaultValue="2019-01-01") String datedebut,
+			@RequestParam(name="datefin", defaultValue="2035-01-01") String datefin){
+		
+		HttpSession session = request.getSession();
+		/*
+		 * Il faut chercher le cycle et retourner une erreur s'il n'existe pas
+		 */
+		
+		Etablissement etablissementConcerne = usersService.getEtablissement();
+		Annee anneeScolaire = usersService.findAnneeActive();
+		if(etablissementConcerne == null ||  anneeScolaire == null){
+			return null;
+		}
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		parameters.put("delegation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
+		parameters.put("delegation_en", etablissementConcerne.getDeleguationdeptuteleanglaisEtab().toUpperCase());
+		parameters.put("etablissement_fr", etablissementConcerne.getNomsEtab().toUpperCase());
+		parameters.put("etablissement_en", etablissementConcerne.getNomsanglaisEtab().toUpperCase());
+		String adresse = "BP "+etablissementConcerne.getBpEtab()+
+				"  TEL: "+etablissementConcerne.getNumtel1Etab();
+		parameters.put("adresse", adresse);
+		parameters.put("annee_scolaire_fr", "Année Académique "+anneeScolaire.getIntituleAnnee());
+		parameters.put("annee_scolaire_en", "Academic year "+anneeScolaire.getIntituleAnnee());
+		parameters.put("ministere_fr", etablissementConcerne.getMinisteretuteleEtab());
+		parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
+		parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
+		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
+		parameters.put("ville", etablissementConcerne.getVilleEtab());
+
+		File f=new File(logoetabDir+etablissementConcerne.getLogoEtab());
+
+		if(f.exists()==true){
+			parameters.put("LOGO", logoetabDir+etablissementConcerne.getLogoEtab());
+		}
+		else{
+			parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
+		}
+
+		
+		
+		/*
+		 * On fixe les autres paramètres du PDF et on va aussi aller chercher les rapports par cycle
+		 * Donc il faut le cycle et si le cycle rechercher est null alors on veut pour tous les cycles
+		 */
+		Cycles cycleConcerne = usersService.findCycle(idCycleConcerne);
+		if(idPeriode.longValue()==0){
+			SimpleDateFormat spd = new SimpleDateFormat("yyyy-MM-dd");
+			try{
+				Date date_min = spd.parse(datedebut);
+				Date date_max = spd.parse(datefin);
+				parameters.put("date1", datedebut);
+				parameters.put("date2", datefin);
+				parameters.put("periode", "");
+				
+				Collection<FicheRecapAbsenceCycleBean> listofFicheRecapAbsenceCycleBean = 
+						usersService.generateListFicheRecapAbsenceCycleBean(cycleConcerne, date_min, date_max);
+				
+				//System.out.println("taille de la liste des fiches = "+listofFicheRecapAbsenceCycleBean.size());
+				
+				
+				parameters.put("datasource", listofFicheRecapAbsenceCycleBean);
+				JasperReportsPdfView view = new JasperReportsPdfView();
+				view.setUrl("classpath:/reports/compiled/fiches/FicheRecapAbsenceCycle.jasper");
+				view.setApplicationContext(applicationContext);
+				
+				return new ModelAndView(view, parameters);
+				
+			}
+			catch(Exception e){
+				System.out.println("Erreur de conversion des dates "+datedebut+" et "+datefin+" et on doit "
+						+ " lancer un pdf d'erreur "+e.getMessage());
+				e.printStackTrace();
+			}
+		}
+		else{
+			/*
+			 * A ce niveau cela signifie qu'il n'a pas choisi un intervalle de date mais juste une période bien 
+			 * déterminer et enregistrer dans le système comme une séquence, un trimestre ou une 
+			 * annéescolaire
+			 */
+			String periode = "";
+			String lang = (String)session.getAttribute("lang");
+			Sequences periodSequence = usersService.findSequences(idPeriode);
+			Trimestres periodTrimestre = usersService.findTrimestres(idPeriode);
+			Annee periodAnnee = usersService.findAnnee(idPeriode);
+			
+			if(periodSequence == null || periodTrimestre == null || periodAnnee == null) return null;
+			
+			Collection<FicheRecapAbsenceCycleBean> listofFicheRecapAbsenceCycleBean = null;
+			
+			if(periodSequence !=null) {
+				periode = lang.equalsIgnoreCase("fr")==true?"Séquence "+periodSequence.getNumeroSeq(): 
+					"Sequence "+periodSequence.getNumeroSeq();
+
+				listofFicheRecapAbsenceCycleBean = 
+						usersService.generateListFicheRecapAbsenceCycleSeqBean(cycleConcerne, periodSequence);
+				
+			}
+			
+			if(periodTrimestre !=null) {
+				periode = lang.equalsIgnoreCase("fr")==true?"Trimestre "+periodTrimestre.getNumeroTrim(): 
+					"Term "+periodTrimestre.getNumeroTrim();
+				
+				listofFicheRecapAbsenceCycleBean = 
+						usersService.generateListFicheRecapAbsenceCycleTrimBean(cycleConcerne, periodTrimestre);
+				
+			}
+			
+			if(periodAnnee !=null) {
+				periode = lang.equalsIgnoreCase("fr")==true?" "+periodAnnee.getIntituleAnnee(): 
+					" "+periodAnnee.getIntituleAnnee();
+				
+				listofFicheRecapAbsenceCycleBean = 
+						usersService.generateListFicheRecapAbsenceCycleAnBean(cycleConcerne, periodAnnee);
+				
+			}
+			
+			parameters.put("date1", "");
+			parameters.put("date2", "");
+			parameters.put("periode", periode);
+			
+			parameters.put("datasource", listofFicheRecapAbsenceCycleBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/fiches/FicheRecapAbsenceCycle.jasper");
+			view.setApplicationContext(applicationContext);
+			
+			return new ModelAndView(view, parameters);
+			
+			
+			
+		}
+		
+		return null;
+	}
+	
+	
+	
+	public void constructModelgetdonneesRabsNiveau(Model model,	HttpServletRequest request){
+		
+		List<Niveaux> listofNiveaux = usersService.findAllNiveaux();
+		if(listofNiveaux.size()>0){
+			model.addAttribute("affichechoixcycle", "oui");
+			model.addAttribute("listofNiveaux", listofNiveaux);
+		}
+		else{
+			model.addAttribute("affichechoixcycle", "non");
+		}
+		
+		
+		Annee anneeActive = usersService.findAnneeActive();
+		
+		if(anneeActive != null) {
+			model.addAttribute("anneeActive", anneeActive);
+			
+		}
+		
+		List<Trimestres> listofTrimestreActif = usersService.findAllActiveTrimestre(anneeActive.getIdPeriodes());
+		model.addAttribute("listofTrimestreActif", listofTrimestreActif);
+		
+		List<Sequences> listofSequenceActif = usersService.findAllSequenceActive(anneeActive.getIdPeriodes());
+		model.addAttribute("listofSequenceActif", listofSequenceActif);
+		
+	}
+	
+	@GetMapping(path="/getdonneesRabsNiveau")
+	public String getdonneesRabsNiveau(Model model, HttpServletRequest request){
+		
+		this.constructModelgetdonneesRabsNiveau(model,	request);
+		
+		return "users/donneesRabsNiveaux";
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 /////////////////////////// FIN DES REQUETES DE TYPES GET ///////////////////////////

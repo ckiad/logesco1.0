@@ -2325,6 +2325,7 @@ public class AdminController {
 		decision.setCodeDecisionEn(updateDecisionForm.getCodeDecisionEn());
 		decision.setIntituleDecision(updateDecisionForm.getIntituleDecision());
 		decision.setIntituleDecisionEn(updateDecisionForm.getIntituleDecisionEn());
+		decision.setDirectionDecision(updateDecisionForm.getDirectionDecision());
 		decision.setIdDecision(updateDecisionForm.getIdDecision());
 		
 		System.err.println("Voici donc l'id  "+updateDecisionForm.getIdDecision());

@@ -182,7 +182,7 @@ public class LogescoApplication implements CommandLineRunner{
 		 * que  les utilisateurs n'ont pas pu réaliser (superadmin)
 		 * 3) Enregistrer les UtilisateurRoles qui permettra effectivement de donner les roles crées aux 
 		 * utilisateurs crées
-		 * 4) Créer les différents répertoires permettant d'upload
+		 * 4) Créer les différents répertoires permettant d'upload (ceci etant realise par le code précédent)
 		 * 		a) documentsUpload: pour stocker les documents uploader
 		 * 		b) emblemes/baniere et emblemes/logo: pour stocker les emblemes de l'etablissement gérer
 		 * 		c)	imagesUpload/eleves et imagesUpload/personnels pour stocker les photos de profil des 
@@ -297,7 +297,7 @@ public class LogescoApplication implements CommandLineRunner{
 		 * base. la configuration est telle qu'on aura toujours un seul établissement 
 		 * dans la base de donnée. Car le logiciel doit gérer un établissement à la fois
 		 */
-		try{
+		
 			List<Etablissement> listofEtab = etabRepository.findAll();
 			if(listofEtab != null){
 				if(listofEtab.size()>0){
@@ -338,8 +338,13 @@ public class LogescoApplication implements CommandLineRunner{
 					etab.setNumtel1Etab("600000000");
 					etab.setNumtel2Etab("");
 					etab.setVilleEtab("Ville ");
-					
+					try{
 					etabRepository.save(etab);
+					}
+					catch(Exception e){
+						logger.error("ERREUR LORS D'ENREGISTREMENT DE L'ETABLISSEMENT . Exception : "+e.getMessage());
+						
+					}
 					
 				}
 			}
@@ -348,13 +353,7 @@ public class LogescoApplication implements CommandLineRunner{
 						+ " RECUPERATION ");*/
 				logger.error("LA LISTE DES ETABLISSEMENTS EST NULL DONC MAUVAISE RECUPERATION");
 			}
-		}
-		catch(Exception e){
-			/*log.log(Level.WARN, "==== ERREUR LORS DE LA RECHERCHE DE L'ETABLISSEMENT ENREGISTRER OU "
-					+ " LORS DE SON ENREGISTREMENT. Exception : "+e.getMessage());*/
-			logger.error("ERREUR LORS DE LA RECHERCHE DE L'ETABLISSEMENT ENREGISTRER OU LORS DE SON ENREGISTREMENT. Exception : "+e.getMessage());
-			
-		}
+		
 		
 		
 		/*

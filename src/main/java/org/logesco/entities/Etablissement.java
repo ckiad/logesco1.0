@@ -69,10 +69,6 @@ public class Etablissement implements Serializable {
 	@NotEmpty
 	@Size(min = 5)
 	private String deviseEtab;
-	
-	/***
-	 * Debut des ajouts du 19-08-2018
-	 */
 	@NotNull
 	@NotEmpty
 	@Size(min= 4)
@@ -97,18 +93,18 @@ public class Etablissement implements Serializable {
 	private String aliasministeretuteleanglaisEtab;
 	@NotNull
 	@NotEmpty
-	@Size(min = 5)
+	@Size(min = 2)
 	private String deviseanglaisEtab;
-	@Size(min = 5)
+	@Size(min = 2)
 	private String deleguationregtuteleEtab;
-	@Size(min = 5)
+	@Size(min = 2)
 	private String deleguationregtuteleanglaisEtab;
-	@Size(min = 5)
+	@Size(min = 2)
 	private String deleguationdeptuteleEtab;
-	@Size(min = 5)
+	@Size(min = 2)
 	private String deleguationdeptuteleanglaisEtab;
 	private String villeEtab;
-	@Size(min = 2, max=3)
+	@Size(min = 2, max=10)
 	private String codeMatriculeEtab;
 	/***
 	 * Fin des ajouts du 19-08-2018

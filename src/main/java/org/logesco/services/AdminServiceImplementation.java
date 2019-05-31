@@ -1648,6 +1648,7 @@ public class AdminServiceImplementation implements IAdminService {
 			newdecision.setCodeDecisionEn(decision.getCodeDecisionEn());
 			newdecision.setIntituleDecision(decision.getIntituleDecision());
 			newdecision.setIntituleDecisionEn(decision.getIntituleDecisionEn());
+			newdecision.setDirectionDecision(decision.getDirectionDecision());
 			
 			decisionRepository.save(newdecision);
 			return 1;
@@ -1676,6 +1677,7 @@ public class AdminServiceImplementation implements IAdminService {
 			decisionAModif.setCodeDecisionEn(decision.getCodeDecisionEn());
 			decisionAModif.setIntituleDecision(decision.getIntituleDecision());
 			decisionAModif.setIntituleDecisionEn(decision.getIntituleDecisionEn());
+			decisionAModif.setDirectionDecision(decision.getDirectionDecision());
 			
 			decisionRepository.save(decisionAModif);
 			return 2;
@@ -1688,6 +1690,7 @@ public class AdminServiceImplementation implements IAdminService {
 		 */
 		decisionAModif.setIntituleDecision(decision.getIntituleDecision());
 		decisionAModif.setIntituleDecisionEn(decision.getIntituleDecisionEn());
+		decisionAModif.setDirectionDecision(decision.getDirectionDecision());
 		
 		decisionRepository.save(decisionAModif);
 		return 2;

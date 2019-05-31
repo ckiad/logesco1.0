@@ -5,15 +5,16 @@ public class MatiereGroupe1SequenceBean {
     // Informations sur le groupe de matieres
     private String matiere_g1;
     private String prof_g1;
-
+ 
     // Informations sur une ligne de matière
-    private double note_seq_g1;
-    private double total_seq_g1;
-    private double coef_g1;
+    private Double note_seq_g1;
+    private Double total_seq_g1;
+    private Double coef_g1;
     private String extreme_g1;
     private String rang_g1;
-    private double moy_classe_g1;
-    private double pourcentage_g1;
+    private Double moy_classe_g1;
+    private String pourcentage_g1;
+    //private Double pourcentage_g1;
     private String appreciation_g1;
     
 
@@ -38,12 +39,17 @@ public class MatiereGroupe1SequenceBean {
     }
     
    
-    public double getCoef_g1() {
+    public Double getCoef_g1() {
         return coef_g1;
     }
 
-    public void setCoef_g1(double coef_g1) {
-        this.coef_g1 = coef_g1;
+    public void setCoef_g1(Double coef_g1) {
+    	if(coef_g1>0) {
+    		this.coef_g1 = coef_g1;
+    	}
+    	else{
+    		this.coef_g1 = null;
+    	}
     }
 
     public String getExtreme_g1() {
@@ -62,20 +68,32 @@ public class MatiereGroupe1SequenceBean {
         this.rang_g1 = rang_g1;
     }
 
-    public double getMoy_classe_g1() {
+    public Double getMoy_classe_g1() {
         return moy_classe_g1;
     }
 
-    public void setMoy_classe_g1(double moy_classe_g1) {
-        this.moy_classe_g1 = moy_classe_g1;
+    public void setMoy_classe_g1(Double moy_classe_g1) {
+        
+        if(moy_classe_g1>0){
+        	this.moy_classe_g1 = moy_classe_g1;
+        }
+        else{
+        	this.moy_classe_g1 = null;
+        }
     }
 
-    public double getPourcentage_g1() {
+    public String getPourcentage_g1() {
         return pourcentage_g1;
     }
 
-    public void setPourcentage_g1(double pourcentage_g1) {
-        this.pourcentage_g1 = pourcentage_g1;
+    public void setPourcentage_g1(Double pourcentage_g1) {
+        
+        if(pourcentage_g1>=0){
+        	this.pourcentage_g1 = pourcentage_g1+" %";
+        }
+        else{
+        	this.pourcentage_g1 = null;
+        }
     }
 
     public String getAppreciation_g1() {
@@ -86,21 +104,34 @@ public class MatiereGroupe1SequenceBean {
         this.appreciation_g1 = appreciation_g1;
     }
 
-    public double getNote_seq_g1() {
+    public Double getNote_seq_g1() {
         return note_seq_g1;
     }
 
-    public void setNote_seq_g1(double note_seq_g1) {
-        this.note_seq_g1 = note_seq_g1;
+    public void setNote_seq_g1(Double note_seq_g1) {
+        
+        if(note_seq_g1>=0){
+        	this.note_seq_g1 = note_seq_g1;
+        }
+        else{
+        	this.note_seq_g1 = null;
+        }
     }
 
-    public double getTotal_seq_g1() {
-    	if(getNote_seq_g1()>=0) total_seq_g1 = getNote_seq_g1()*getCoef_g1();
+    public Double getTotal_seq_g1() {
+    	if(this.getNote_seq_g1() == null) return null;
+    	if(this.getNote_seq_g1()>=0) total_seq_g1 = getNote_seq_g1()*getCoef_g1();
 		return  total_seq_g1;
     }
 
-    public void setTotal_seq_g1(double total_seq_g1) {
-        this.total_seq_g1 = total_seq_g1;
+    public void setTotal_seq_g1(Double total_seq_g1) {
+        
+        if(total_seq_g1>=0){
+        	this.total_seq_g1 = total_seq_g1;
+        }
+        else{
+        	this.total_seq_g1 = null;
+        }
     }
 
    

@@ -74,6 +74,33 @@
 						<li><a href="#" th:href="@{/logesco/admin/getupdateUsername}">Modifier un nom d'utilisateur</a></li>
 						<li class="divider"></li>
 						<li><a href="#" th:href="@{/logesco/admin/getresetPassword}">Reinitialiser un mot de passe</a></li>
+						<li class="divider"></li>
+						<li><a href="#" th:href="@{/logesco/admin/lancerMigrations}">Lancer les migrations</a></li>
+						<!-- 
+						
+							Avant cette opération il faut demander à l'administrateur et surtout l'inviter à sauvegarder la base
+						 de données en l'exportant au moins deux fois. Les sauvegardes doivent etre garder sur des CDROM et 
+						 dans les cles USB. Donc au clic sur ce lien, il faut afficher un message de confirmation invitant à 
+						 effectuer ses sauvegardes.
+						
+							Lorsqu'on lance les migrations:
+						*) Chaque élève présent dans le système est scruter, son conseil de classe annuel de l'année en cours
+						est étudie afin de mettre à jour son champ statut (ancien si signification decision =0 ie redouble
+						 nouveau si signification decision = 1 ie admis et exclu si signification decision = -1 ie exclu)
+						 Mettre à jour son champ EtatInscription = non inscrit, Mettre à jour son champ redouble en
+						 fonction de la signifiication de la décision du conseil. 
+						
+							Une fois ceci fait l'annee scolaire doit être modifier en y mettant les données de la nouvelle année. 
+						Il va falloir préciser après que les periodes (séquence puis trimestre) doivent être modifié
+						
+						Il faut détruire toutes les notes qui sont dans le système, puis tous les rapports des absences, les 
+						rapport disciplinaire, les conseil de classe, et enfin les sequences puis les trimestres. 
+						
+						A la fin de cette opération, lorsque le système va afficher une confirmation, l'administrateur doit 
+						poursuivre son action en vérifiant que les cours ne changeront pas, d'ajouter les nouvelles classes 
+						s'il y en a, enregistrer les nouvelles périodes avec leurs dates
+						
+						 -->
 					</ul>
 				</div>
 				<div class="btn-group" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_SUPERADMIN')">
@@ -149,24 +176,7 @@
 						<li>
 							<a href="#" >Exporter la configuration des cours d'une classe</a>
 						</li>
-						<li class="divider"></li>
-						<li>
-							<a href="#">
-								Configurer un conseil de classe séquentiel
-							</a>
-						</li>
-						<li class="divider"></li>
-						<li>
-							<a href="#">
-								Configurer un conseil de classe trimestriel
-							</a>
-						</li>
-						<li class="divider"></li>
-						<li>
-							<a href="#">
-								Configurer un conseil de classe annuel
-							</a>
-						</li>
+						
 					</ul>
 				</div>
 				

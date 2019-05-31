@@ -84,3 +84,18 @@
 	margin-top: -20px;
 	font-size: 15px;
 }
+
+
+/*Gestion du background des pages d'erreur*/
+.panel-heading{
+	background-color: green;
+}
+
+/*#fenetre{
+	background-image: url("../images/403.jpg");//
+	background-position: center;//[pourcentage | longueur] {1,2} |[top | center | bottom] || [left | center | right]
+	background-attachment: fixed; //fixed | scroll
+	background-repeat: no-repeat;// | repeat | repeat-x | repeat-y
+	background-size: auto;
+	background-position-x: center;
+}*/

@@ -128,7 +128,9 @@ public class MatiereGroupe1Sequence1Bean implements Serializable {
 	 */
 	public void setTotal_seq_g1(Double total_seq_g1) {
 		if(total_seq_g1!=null){
-			if(total_seq_g1>=0) this.total_seq_g1 = total_seq_g1;
+			if(total_seq_g1>=0) {
+				this.total_seq_g1 = total_seq_g1;
+			}
 		}
 	}
 

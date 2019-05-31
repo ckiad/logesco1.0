@@ -75,6 +75,9 @@ public class UsersServiceImplementation implements IUsersService {
 	
 	@Autowired
 	private ClassesRepository classesRepository;
+	
+	@Autowired
+	private CyclesRepository cycleRepository;
 
 	@Autowired
 	private ElevesRepository elevesRepository;
@@ -1413,6 +1416,7 @@ public class UsersServiceImplementation implements IUsersService {
 		/*
 		 * Est ce que le matricule sera unique apres enregistrement
 		 */
+		
 		if(!(eleveModif.getMatriculeEleves().equals(eleveAModif.getMatriculeEleves()))){
 			Eleves elevesExistMatricule=this.findEleves(eleveModif.getMatriculeEleves());
 			if(elevesExistMatricule!=null) return new Long(-1);
@@ -1647,11 +1651,20 @@ public class UsersServiceImplementation implements IUsersService {
 		return classesRepository.findAll();
 	}
 
+	@Override
+	public List<Cycles> findAllCycle(){
+		return cycleRepository.findAllByOrderByNumeroOrdreCyclesAsc();
+	}
 
 	@Override
 	public Cours findCours(Long idCours) {
 
 		return coursRepository.findOne(idCours);
+	}
+	
+	@Override
+	public Cycles findCycle(Long idCycle){
+		return cycleRepository.findOne(idCycle);
 	}
 
 
@@ -2912,10 +2925,7 @@ public class UsersServiceImplementation implements IUsersService {
 			Long idSequence) {*/
 	public Map<String, Object> generateCollectionofBulletinSequence_opt(Long idClasse, 
 			Long idSequence) {
-		/*log.log(Level.DEBUG, "Lancement de la methode generateCollectionofBulletinSequence_opt "
-				+ "avec idClasse="+idClasse+" idSequence "+idSequence);*/
-		System.out.println("Lancement de la methode generateCollectionofBulletinSequence_opt "
-				+ "avec idClasse="+idClasse+" idSequence "+idSequence);
+		
 		
 		Map<String, Object> donnee = new HashMap<String, Object>();
 		
@@ -3153,8 +3163,8 @@ public class UsersServiceImplementation implements IUsersService {
 				 */
 				//List<RapportDAbsence> listofRabs = eleve.getListRapportDAbsenceSeq(idSequence);
 				
-				bulletinSeq.setAbsence_J(eleve.getNbreHeureAbscenceJustifie(idSequence));
-				bulletinSeq.setAbsence_NJ(eleve.getNbreHeureAbscenceNonJustifie(idSequence));
+				bulletinSeq.setAbsence_J(eleve.getNbreHeureAbsenceJustifie(idSequence));
+				bulletinSeq.setAbsence_NJ(eleve.getNbreHeureAbsenceNonJustifie(idSequence));
 				
 				/*
 				 * On doit prendre si elle existe les 03 sanctions ayant le niveau de sévérité
@@ -3356,7 +3366,7 @@ public class UsersServiceImplementation implements IUsersService {
 				double total_pourcentage_g1 = ub.getTauxReussitePourGroupeCours(classeConcerne, 
 						listofCoursScientifique, sequenceConcerne);
 				
-				if(total_pourcentage_g1>0){
+				if(total_pourcentage_g1>=0){
 					bulletinSeq.setTotal_pourcentage_g1(total_pourcentage_g1);
 				}
 				
@@ -3380,7 +3390,7 @@ public class UsersServiceImplementation implements IUsersService {
 					bulletinSeq.setNom_g2("Litteraire");
 				}
 				else{
-					bulletinSeq.setNom_g2("Literary");
+					bulletinSeq.setNom_g2("Arts");
 				}
 				
 				double total_coef_g2 = ligneSequentielGroupeCoursLitteraire.getTotalCoefElevePourGroupeCours();
@@ -3427,7 +3437,7 @@ public class UsersServiceImplementation implements IUsersService {
 				
 				
 				
-				if(total_pourcentage_g2>0){
+				if(total_pourcentage_g2>=0){
 					bulletinSeq.setTotal_pourcentage_g2(total_pourcentage_g2);
 				}
 				
@@ -3497,7 +3507,7 @@ public class UsersServiceImplementation implements IUsersService {
 				double total_pourcentage_g3 = ub.getTauxReussitePourGroupeCours(classeConcerne, 
 						listofCoursDivers, sequenceConcerne);
 				
-				if(total_pourcentage_g3>0){
+				if(total_pourcentage_g3>=0){
 					bulletinSeq.setTotal_pourcentage_g3(total_pourcentage_g3);
 				}
 				
@@ -3573,7 +3583,7 @@ public class UsersServiceImplementation implements IUsersService {
 					
 					double pourcentage_g1 = ub.getTauxReussiteCoursSeq(classeConcerne, cours, sequenceConcerne);
 					
-					if(pourcentage_g1>0){
+					if(pourcentage_g1>=0){
 						mGrp1SeqBean.setPourcentage_g1(pourcentage_g1);
 					}
 					
@@ -3654,7 +3664,7 @@ public class UsersServiceImplementation implements IUsersService {
 					
 					double pourcentage_g2 = ub.getTauxReussiteCoursSeq(classeConcerne, cours, sequenceConcerne);
 					
-					if(pourcentage_g2>0){
+					if(pourcentage_g2>=0){
 						mGrp2SeqBean.setPourcentage_g2(pourcentage_g2);
 					}
 		
@@ -3732,7 +3742,7 @@ public class UsersServiceImplementation implements IUsersService {
 					
 					double pourcentage_g3 = ub.getTauxReussiteCoursSeq(classeConcerne, cours, sequenceConcerne);
 					
-					if(pourcentage_g3>0){
+					if(pourcentage_g3>=0){
 						mGrp3SeqBean.setPourcentage_g3(pourcentage_g3);
 					}
 		
@@ -3782,6 +3792,81 @@ public class UsersServiceImplementation implements IUsersService {
 		//return collectionofBulletionSequence_opt;
 		return donnee;
 	
+	}
+	
+	@Override
+	public List<Eleves> getListEleveSanctionDiscSeq(Classes classe, SanctionDisciplinaire sanctionDisc, 
+			Sequences sequence){
+		List<Eleves> listofEleveSanctionDisc = new ArrayList<Eleves>();
+		
+		for(Eleves elv : classe.getListofEleves()){
+			List<RapportDisciplinaire> listofRapportDisciplinaireDeSeq = 
+					elv.getListRapportDisciplinaireSeq_DESC(sequence.getIdPeriodes());
+			
+			if(listofRapportDisciplinaireDeSeq!=null){
+				for(RapportDisciplinaire rappDisc : listofRapportDisciplinaireDeSeq){
+					if(rappDisc.getSanctionDisc().getIdSancDisc().longValue() == sanctionDisc.getIdSancDisc().longValue()){
+						listofEleveSanctionDisc.add(elv);
+						break;
+					}
+				}
+			}
+		}
+		
+		return listofEleveSanctionDisc;
+	}
+	
+	@Override
+	public Map<String, Object> getListeEleveParSanctionDiscSeq(Classes classe, Sequences sequence){
+		Map<String, Object> donnee = new HashMap<String, Object>();
+		List<SanctionDisciplinaire> listofSanctionDisc = this.findListAllSanctionDisciplinaire_DESC();
+		for(SanctionDisciplinaire sanctDisc : listofSanctionDisc){
+			List<Eleves> listofEleveAyantEuSanctionDansSeq = 
+					this.getListEleveSanctionDiscSeq(classe, sanctDisc, sequence);
+			String label_cle="sanction"+sanctDisc.getNiveauSeverite();
+			donnee.put(label_cle, listofEleveAyantEuSanctionDansSeq);
+		}
+		/*
+		 * On doit placer la dernière cle qui doit concerner les absences
+		 */
+		List<Eleves> listofEleveslesPlusAbsentDansClasseSeq = classe.getListofEleveslesPlusAbsentDansClasseSeq(sequence,10);
+		
+		donnee.put("absence", listofEleveslesPlusAbsentDansClasseSeq);
+		return donnee;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Eleves> getListeElevePlusIndisciplineSeq(Classes classe, Sequences sequence, int n){
+		List<Eleves> listofElevePlusIndiscSeq = new ArrayList<Eleves>();
+		Map<String, Object> donnee = this.getListeEleveParSanctionDiscSeq(classe, sequence);
+		
+		List<SanctionDisciplinaire> listofSanctionDisc = this.findListAllSanctionDisciplinaire_DESC();
+		for (SanctionDisciplinaire sanctDisc : listofSanctionDisc) {
+			String label_cle="sanction"+sanctDisc.getNiveauSeverite();
+			//System.err.println(label_cle);
+			List<Eleves> listofEleveDeSanctionLabel_cle = (List<Eleves>) donnee.get(label_cle);
+			if(listofEleveDeSanctionLabel_cle!=null){
+				for(Eleves elv : listofEleveDeSanctionLabel_cle){
+					listofElevePlusIndiscSeq.add(elv);
+				}
+			}
+			if(listofElevePlusIndiscSeq.size()==n) break;
+		}
+		
+		if(listofElevePlusIndiscSeq.size()<n){
+			List<Eleves> listofEleveDeSanctionAbsence = (List<Eleves>) donnee.get("absence");
+			for(Eleves elv : listofEleveDeSanctionAbsence){
+				
+				if(elv.getNbreHeureAbsenceNonJustifie(sequence.getIdPeriodes())>0){
+					listofElevePlusIndiscSeq.add(elv);
+					//System.err.println("elv pour absence "+elv.getNomsEleves());
+				}
+				if(listofElevePlusIndiscSeq.size()==n) break;
+			}
+		}
+		
+		return listofElevePlusIndiscSeq;
 	}
 	
 	@Override
@@ -4212,6 +4297,364 @@ public class UsersServiceImplementation implements IUsersService {
 		
 		ficheCC.setSous_rapport2_conseil(sous_rapport2_conseil);
 		ficheCC.setSous_rapport3_conseil(sous_rapport3_conseil);
+		
+		/*
+		 * Il faut placer dans ce bean le total des absences par sexe pour le total entier
+		 */
+		int totalAbsF = this.getNbreAbsNJSexeClasseSeq(classe, sequence, 0);
+		int totalAbsM = this.getNbreAbsNJSexeClasseSeq(classe, sequence, 1);
+		int totalAbs = totalAbsF+totalAbsM;
+		
+		ficheCC.setTotalAbs(totalAbs);
+		ficheCC.setTotalAbsF(totalAbsF);
+		ficheCC.setTotalAbsM(totalAbsM);
+		
+		/*
+		 * Il faut faire la liste des 10 élèves les plus indiscipline de la classe
+		 */
+		int n=10;
+		List<Eleves> listofEleveLesPlusIndisciDansClasseSeq = this.getListeElevePlusIndisciplineSeq(classe, sequence, n);
+		
+		//premier eleve le plus indiscipline
+		if(listofEleveLesPlusIndisciDansClasseSeq.size()>0){
+			String indiscnom1 = listofEleveLesPlusIndisciDansClasseSeq.get(0).getNomsEleves();
+			indiscnom1+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(0).getPrenomsEleves();
+			String sanction1 = "aucune";
+			List<RapportDisciplinaire> listofRappDiscEleve = 
+					(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(0).getListofRDisc_DESC();
+			
+			if(listofRappDiscEleve!=null){
+				if(listofRappDiscEleve.size()>0){
+					if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+						sanction1 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+					}
+					else{
+						sanction1 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+					}
+				}
+				else{
+					//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+					int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(0).getNbreHeureAbsenceNonJustifie(sequence.getIdPeriodes());
+					if(nbreHANJ>0){
+						sanction1=nbreHANJ+" H";
+					}
+				}
+			}
+			
+			
+			if(sanction1.equalsIgnoreCase("aucune")==false){
+				ficheCC.setIndiscnom1(indiscnom1);
+				ficheCC.setSanction1(sanction1);
+			}
+			
+		}
+		
+		//deuxieme eleve le plus indiscipline
+		if(listofEleveLesPlusIndisciDansClasseSeq.size()>1){
+			String indiscnom2 = listofEleveLesPlusIndisciDansClasseSeq.get(1).getNomsEleves();
+			indiscnom2+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(1).getPrenomsEleves();
+			String sanction2 = "aucune";
+			List<RapportDisciplinaire> listofRappDiscEleve = 
+					(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(1).getListofRDisc_DESC();
+			
+			if(listofRappDiscEleve!=null){
+				if(listofRappDiscEleve.size()>0){
+					if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+						sanction2 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+					}
+					else{
+						sanction2 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+					}
+				}
+				else{
+					//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+					int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(1).getNbreHeureAbsenceNonJustifie(sequence.getIdPeriodes());
+					if(nbreHANJ>0){
+						sanction2=nbreHANJ+" H";
+					}
+				}
+			}
+			
+			
+			if(sanction2.equalsIgnoreCase("aucune")==false){
+				ficheCC.setIndiscnom2(indiscnom2);
+				ficheCC.setSanction2(sanction2);
+			}
+			
+		}
+		
+		//3eme eleve le plus indiscipline
+				if(listofEleveLesPlusIndisciDansClasseSeq.size()>2){
+					String indiscnom3 = listofEleveLesPlusIndisciDansClasseSeq.get(2).getNomsEleves();
+					indiscnom3+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(2).getPrenomsEleves();
+					String sanction3 = "aucune";
+					List<RapportDisciplinaire> listofRappDiscEleve = 
+							(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(2).getListofRDisc_DESC();
+					
+					if(listofRappDiscEleve!=null){
+						if(listofRappDiscEleve.size()>0){
+							if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+								sanction3 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+							}
+							else{
+								sanction3 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+							}
+						}
+						else{
+							//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+							int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(2).getNbreHeureAbsenceNonJustifie(sequence.getIdPeriodes());
+							if(nbreHANJ>0){
+								sanction3=nbreHANJ+" H";
+							}
+						}
+					}
+					
+					
+					if(sanction3.equalsIgnoreCase("aucune")==false){
+						ficheCC.setIndiscnom3(indiscnom3);
+						ficheCC.setSanction3(sanction3);
+					}
+					
+				}
+		
+				//4eme eleve le plus indiscipline
+				if(listofEleveLesPlusIndisciDansClasseSeq.size()>3){
+					String indiscnom4 = listofEleveLesPlusIndisciDansClasseSeq.get(3).getNomsEleves();
+					indiscnom4+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(3).getPrenomsEleves();
+					String sanction4 = "aucune";
+					List<RapportDisciplinaire> listofRappDiscEleve = 
+							(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(3).getListofRDisc_DESC();
+					
+					if(listofRappDiscEleve!=null){
+						if(listofRappDiscEleve.size()>0){
+							if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+								sanction4 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+							}
+							else{
+								sanction4 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+							}
+						}
+						else{
+							//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+							int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(3).getNbreHeureAbsenceNonJustifie(sequence.getIdPeriodes());
+							if(nbreHANJ>0){
+								sanction4=nbreHANJ+" H";
+							}
+						}
+					}
+					
+					
+					if(sanction4.equalsIgnoreCase("aucune")==false){
+						ficheCC.setIndiscnom4(indiscnom4);
+						ficheCC.setSanction4(sanction4);
+					}
+					
+				}
+				
+				//5eme eleve le plus indiscipline
+				if(listofEleveLesPlusIndisciDansClasseSeq.size()>4){
+					String indiscnom5 = listofEleveLesPlusIndisciDansClasseSeq.get(4).getNomsEleves();
+					indiscnom5+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(4).getPrenomsEleves();
+					String sanction5 = "aucune";
+					List<RapportDisciplinaire> listofRappDiscEleve = 
+							(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(4).getListofRDisc_DESC();
+					
+					if(listofRappDiscEleve!=null){
+						if(listofRappDiscEleve.size()>0){
+							if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+								sanction5 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+							}
+							else{
+								sanction5 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+							}
+						}
+						else{
+							//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+							int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(4).getNbreHeureAbsenceNonJustifie(sequence.getIdPeriodes());
+							if(nbreHANJ>0){
+								sanction5=nbreHANJ+" H";
+							}
+						}
+					}
+					
+					
+					if(sanction5.equalsIgnoreCase("aucune")==false){
+						ficheCC.setIndiscnom5(indiscnom5);
+						ficheCC.setSanction5(sanction5);
+					}
+					
+				}
+				
+				//6eme eleve le plus indiscipline
+				if(listofEleveLesPlusIndisciDansClasseSeq.size()>5){
+					String indiscnom6 = listofEleveLesPlusIndisciDansClasseSeq.get(5).getNomsEleves();
+					indiscnom6+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(5).getPrenomsEleves();
+					String sanction6 = "aucune";
+					List<RapportDisciplinaire> listofRappDiscEleve = 
+							(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(5).getListofRDisc_DESC();
+					
+					if(listofRappDiscEleve!=null){
+						if(listofRappDiscEleve.size()>0){
+							if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+								sanction6 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+							}
+							else{
+								sanction6 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+							}
+						}
+						else{
+							//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+							int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(5).getNbreHeureAbsenceNonJustifie(sequence.getIdPeriodes());
+							if(nbreHANJ>0){
+								sanction6=nbreHANJ+" H";
+							}
+						}
+					}
+					
+					
+					if(sanction6.equalsIgnoreCase("aucune")==false){
+						ficheCC.setIndiscnom6(indiscnom6);
+						ficheCC.setSanction6(sanction6);
+					}
+					
+				}
+				
+				//7eme eleve le plus indiscipline
+				if(listofEleveLesPlusIndisciDansClasseSeq.size()>6){
+					String indiscnom7 = listofEleveLesPlusIndisciDansClasseSeq.get(6).getNomsEleves();
+					indiscnom7+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(6).getPrenomsEleves();
+					String sanction7 = "aucune";
+					List<RapportDisciplinaire> listofRappDiscEleve = 
+							(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(6).getListofRDisc_DESC();
+					
+					if(listofRappDiscEleve!=null){
+						if(listofRappDiscEleve.size()>0){
+							if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+								sanction7 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+							}
+							else{
+								sanction7 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+							}
+						}
+						else{
+							//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+							int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(6).getNbreHeureAbsenceNonJustifie(sequence.getIdPeriodes());
+							if(nbreHANJ>0){
+								sanction7=nbreHANJ+" H";
+							}
+						}
+					}
+					
+					
+					if(sanction7.equalsIgnoreCase("aucune")==false){
+						ficheCC.setIndiscnom7(indiscnom7);
+						ficheCC.setSanction7(sanction7);
+					}
+					
+				}
+				
+				//8eme eleve le plus indiscipline
+				if(listofEleveLesPlusIndisciDansClasseSeq.size()>7){
+					String indiscnom8 = listofEleveLesPlusIndisciDansClasseSeq.get(7).getNomsEleves();
+					indiscnom8+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(7).getPrenomsEleves();
+					String sanction8 = "aucune";
+					List<RapportDisciplinaire> listofRappDiscEleve = 
+							(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(7).getListofRDisc_DESC();
+					
+					if(listofRappDiscEleve!=null){
+						if(listofRappDiscEleve.size()>0){
+							if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+								sanction8 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+							}
+							else{
+								sanction8 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+							}
+						}
+						else{
+							//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+							int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(7).getNbreHeureAbsenceNonJustifie(sequence.getIdPeriodes());
+							if(nbreHANJ>0){
+								sanction8=nbreHANJ+" H";
+							}
+						}
+					}
+					
+					
+					if(sanction8.equalsIgnoreCase("aucune")==false){
+						ficheCC.setIndiscnom8(indiscnom8);
+						ficheCC.setSanction8(sanction8);
+					}
+					
+				}
+				
+				//9eme eleve le plus indiscipline
+				if(listofEleveLesPlusIndisciDansClasseSeq.size()>8){
+					String indiscnom9 = listofEleveLesPlusIndisciDansClasseSeq.get(8).getNomsEleves();
+					indiscnom9+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(8).getPrenomsEleves();
+					String sanction9 = "aucune";
+					List<RapportDisciplinaire> listofRappDiscEleve = 
+							(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(8).getListofRDisc_DESC();
+					
+					if(listofRappDiscEleve!=null){
+						if(listofRappDiscEleve.size()>0){
+							if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+								sanction9 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+							}
+							else{
+								sanction9 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+							}
+						}
+						else{
+							//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+							int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(8).getNbreHeureAbsenceNonJustifie(sequence.getIdPeriodes());
+							if(nbreHANJ>0){
+								sanction9=nbreHANJ+" H";
+							}
+						}
+					}
+					
+					
+					if(sanction9.equalsIgnoreCase("aucune")==false){
+						ficheCC.setIndiscnom9(indiscnom9);
+						ficheCC.setSanction9(sanction9);
+					}
+					
+				}
+				
+				//10eme eleve le plus indiscipline
+				if(listofEleveLesPlusIndisciDansClasseSeq.size()>9){
+					String indiscnom10 = listofEleveLesPlusIndisciDansClasseSeq.get(9).getNomsEleves();
+					indiscnom10+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(9).getPrenomsEleves();
+					String sanction10 = "aucune";
+					List<RapportDisciplinaire> listofRappDiscEleve = 
+							(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(9).getListofRDisc_DESC();
+					
+					if(listofRappDiscEleve!=null){
+						if(listofRappDiscEleve.size()>0){
+							if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+								sanction10 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+							}
+							else{
+								sanction10 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+							}
+						}
+						else{
+							//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+							int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(9).getNbreHeureAbsenceNonJustifie(sequence.getIdPeriodes());
+							if(nbreHANJ>0){
+								sanction10=nbreHANJ+" H";
+							}
+						}
+					}
+					
+					
+					if(sanction10.equalsIgnoreCase("aucune")==false){
+						ficheCC.setIndiscnom10(indiscnom10);
+						ficheCC.setSanction10(sanction10);
+					}
+					
+				}
+		
 		
 		return ficheCC;
 	}
@@ -4743,9 +5186,11 @@ public class UsersServiceImplementation implements IUsersService {
 				double total_pourcentage_g1 = ub.getTauxReussitePourGroupeCoursTrim(classeConcerne, 
 						listofCoursScientifique, trimestreConcerne);
 				
-				if(total_pourcentage_g1>0){
+				if(total_pourcentage_g1>=0){
 					bulletinTrim.setTotal_pourcentage_g1(total_pourcentage_g1);
 				}
+				
+				System.out.println("total_pourcentage_g1total_pourcentage_g1 "+total_pourcentage_g1);
 				
 				double moyenne_g1 = ligneTrimestrielGroupeCoursScientifique.
 						getMoyenneTrimElevePourGroupeCours();
@@ -4769,7 +5214,7 @@ public class UsersServiceImplementation implements IUsersService {
 					bulletinTrim.setNom_g2("Litteraire");
 				}
 				else{
-					bulletinTrim.setNom_g2("Literary");
+					bulletinTrim.setNom_g2("Arts");
 				}
 				
 				double total_coef_g2 = ligneTrimestrielGroupeCoursLitteraire.getTotalCoefElevePourGroupeCours();
@@ -4814,7 +5259,7 @@ public class UsersServiceImplementation implements IUsersService {
 				double total_pourcentage_g2 = ub.getTauxReussitePourGroupeCoursTrim(classeConcerne, 
 						listofCoursLitteraire, trimestreConcerne);
 				
-				if(total_pourcentage_g2>0){
+				if(total_pourcentage_g2>=0){
 					bulletinTrim.setTotal_pourcentage_g2(total_pourcentage_g2);
 				}
 				
@@ -4884,9 +5329,11 @@ public class UsersServiceImplementation implements IUsersService {
 				
 				double total_pourcentage_g3 = ub.getTauxReussitePourGroupeCoursTrim(classeConcerne, 
 						listofCoursDivers, trimestreConcerne);
-				if(total_pourcentage_g3>0){
+				if(total_pourcentage_g3>=0){
 					bulletinTrim.setTotal_pourcentage_g3(total_pourcentage_g3);
 				}
+				
+				System.out.println("total_pourcentage_g3total_pourcentage_g3 "+total_pourcentage_g1);
 				
 				double moyenne_g3 = ligneTrimestrielGroupeCoursDivers.
 						getMoyenneTrimElevePourGroupeCours();
@@ -4990,7 +5437,7 @@ public class UsersServiceImplementation implements IUsersService {
 					
 					double pourcentage_g1 = ub.getTauxReussiteCoursTrim(classeConcerne, 
 							cours, trimestreConcerne);
-					if(pourcentage_g1>0){
+					if(pourcentage_g1>=0){
 						mGrp1TrimBean.setPourcentage_g1(pourcentage_g1);
 					}
 					
@@ -5103,7 +5550,7 @@ public class UsersServiceImplementation implements IUsersService {
 					double pourcentage_g2 = ub.getTauxReussiteCoursTrim(classeConcerne, 
 							cours, trimestreConcerne);
 					
-					if(pourcentage_g2>0){
+					if(pourcentage_g2>=0){
 						mGrp2TrimBean.setPourcentage_g2(pourcentage_g2);
 					}
 					
@@ -5216,7 +5663,7 @@ public class UsersServiceImplementation implements IUsersService {
 				double pourcentage_g3 = ub.getTauxReussiteCoursTrim(classeConcerne, 
 						cours, trimestreConcerne);
 				
-				if(pourcentage_g3>0){
+				if(pourcentage_g3>=0){
 					mGrp3TrimBean.setPourcentage_g3(pourcentage_g3);
 				}
 				
@@ -5981,7 +6428,7 @@ public class UsersServiceImplementation implements IUsersService {
 				
 				double total_pourcentage_g1 = ub.getTauxReussitePourGroupeCoursTrim(classeConcerne, 
 						listofCoursScientifique, trimestreConcerne);
-				if(total_pourcentage_g1>0){
+				if(total_pourcentage_g1>=0){
 					bulletinTrimAn.setTotal_pourcentage_g1(total_pourcentage_g1);
 				}
 				
@@ -6005,7 +6452,7 @@ public class UsersServiceImplementation implements IUsersService {
 					bulletinTrimAn.setNom_g2("Litteraire");
 				}
 				else{
-					bulletinTrimAn.setNom_g2("Literary");
+					bulletinTrimAn.setNom_g2("Arts");
 				}
 				
 				double total_coef_g2 = ligneTrimestrielGroupeCoursLitteraire.getTotalCoefElevePourGroupeCours();
@@ -6046,7 +6493,7 @@ public class UsersServiceImplementation implements IUsersService {
 				
 				double total_pourcentage_g2 = ub.getTauxReussitePourGroupeCoursTrim(classeConcerne, 
 						listofCoursLitteraire, trimestreConcerne);
-				if(total_pourcentage_g2>0){
+				if(total_pourcentage_g2>=0){
 					bulletinTrimAn.setTotal_pourcentage_g2(total_pourcentage_g2);
 				}
 				
@@ -6111,7 +6558,7 @@ public class UsersServiceImplementation implements IUsersService {
 				
 				double total_pourcentage_g3 = ub.getTauxReussitePourGroupeCoursTrim(classeConcerne, 
 						listofCoursDivers, trimestreConcerne);
-				if(total_pourcentage_g3>0){
+				if(total_pourcentage_g3>=0){
 					bulletinTrimAn.setTotal_pourcentage_g3(total_pourcentage_g3);
 				}
 				
@@ -6209,7 +6656,7 @@ public class UsersServiceImplementation implements IUsersService {
 					
 					double pourcentage_g1 = ub.getTauxReussiteCoursTrim(classeConcerne, 
 							cours, trimestreConcerne);
-					if(pourcentage_g1>0){
+					if(pourcentage_g1>=0){
 						mGrp1TrimBean.setPourcentage_g1(pourcentage_g1);
 					}
 					
@@ -6311,7 +6758,7 @@ public class UsersServiceImplementation implements IUsersService {
 					
 					double pourcentage_g2 = ub.getTauxReussiteCoursTrim(classeConcerne, 
 							cours, trimestreConcerne);
-					if(pourcentage_g2>0){
+					if(pourcentage_g2>=0){
 						mGrp2TrimBean.setPourcentage_g2(pourcentage_g2);
 					}
 					
@@ -6417,7 +6864,7 @@ public class UsersServiceImplementation implements IUsersService {
 				
 				double pourcentage_g3 = ub.getTauxReussiteCoursTrim(classeConcerne, 
 						cours, trimestreConcerne);
-				if(pourcentage_g3>0){
+				if(pourcentage_g3>=0){
 					mGrp3TrimBean.setPourcentage_g3(pourcentage_g3);
 				}
 				
@@ -6483,6 +6930,81 @@ public class UsersServiceImplementation implements IUsersService {
 	}
 
 
+	@Override
+	public List<Eleves> getListEleveSanctionDiscTrim(Classes classe, SanctionDisciplinaire sanctionDisc, 
+			Trimestres trimestre){
+		List<Eleves> listofEleveSanctionDisc = new ArrayList<Eleves>();
+		
+		for(Eleves elv : classe.getListofEleves()){
+			List<RapportDisciplinaire> listofRapportDisciplinaireDeSeq = 
+					elv.getListRapportDisciplinaireTrim_DESC(trimestre);
+			
+			if(listofRapportDisciplinaireDeSeq!=null){
+				for(RapportDisciplinaire rappDisc : listofRapportDisciplinaireDeSeq){
+					if(rappDisc.getSanctionDisc().getIdSancDisc().longValue() == sanctionDisc.getIdSancDisc().longValue()){
+						listofEleveSanctionDisc.add(elv);
+						break;
+					}
+				}
+			}
+		}
+		
+		return listofEleveSanctionDisc;
+	}
+	
+	@Override
+	public Map<String, Object> getListeEleveParSanctionDiscTrim(Classes classe, Trimestres trimestre){
+		Map<String, Object> donnee = new HashMap<String, Object>();
+		List<SanctionDisciplinaire> listofSanctionDisc = this.findListAllSanctionDisciplinaire_DESC();
+		for(SanctionDisciplinaire sanctDisc : listofSanctionDisc){
+			List<Eleves> listofEleveAyantEuSanctionDansSeq = 
+					this.getListEleveSanctionDiscTrim(classe, sanctDisc, trimestre);
+			String label_cle="sanction"+sanctDisc.getNiveauSeverite();
+			donnee.put(label_cle, listofEleveAyantEuSanctionDansSeq);
+		}
+		/*
+		 * On doit placer la dernière cle qui doit concerner les absences
+		 */
+		List<Eleves> listofEleveslesPlusAbsentDansClasseSeq = classe.getListofEleveslesPlusAbsentDansClasseTrim(trimestre,10);
+		
+		donnee.put("absence", listofEleveslesPlusAbsentDansClasseSeq);
+		return donnee;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Eleves> getListeElevePlusIndisciplineTrim(Classes classe, Trimestres trimestre, int n){
+		List<Eleves> listofElevePlusIndiscSeq = new ArrayList<Eleves>();
+		Map<String, Object> donnee = this.getListeEleveParSanctionDiscTrim(classe, trimestre);
+		
+		List<SanctionDisciplinaire> listofSanctionDisc = this.findListAllSanctionDisciplinaire_DESC();
+		for (SanctionDisciplinaire sanctDisc : listofSanctionDisc) {
+			String label_cle="sanction"+sanctDisc.getNiveauSeverite();
+			//System.err.println(label_cle);
+			List<Eleves> listofEleveDeSanctionLabel_cle = (List<Eleves>) donnee.get(label_cle);
+			if(listofEleveDeSanctionLabel_cle!=null){
+				for(Eleves elv : listofEleveDeSanctionLabel_cle){
+					listofElevePlusIndiscSeq.add(elv);
+				}
+			}
+			if(listofElevePlusIndiscSeq.size()==n) break;
+		}
+		
+		if(listofElevePlusIndiscSeq.size()<n){
+			List<Eleves> listofEleveDeSanctionAbsence = (List<Eleves>) donnee.get("absence");
+			for(Eleves elv : listofEleveDeSanctionAbsence){
+				
+				if(elv.getNbreHeureAbsenceNonJustifieTrim(trimestre)>0){
+					listofElevePlusIndiscSeq.add(elv);
+					//System.err.println("elv pour absence "+elv.getNomsEleves());
+				}
+				if(listofElevePlusIndiscSeq.size()==n) break;
+			}
+		}
+		
+		return listofElevePlusIndiscSeq;
+	}
+	
 	@Override
 	public FicheConseilClasseBean getRapportConseilClasseTrimestriel(Etablissement etab, 
 			Annee annee, Classes classe , double tauxReussite, double moyenne_general,	
@@ -6911,6 +7433,365 @@ public class UsersServiceImplementation implements IUsersService {
 				ficheCC.setSous_rapport3_conseil(sous_rapport3_conseil);
 				
 		
+				
+				
+				/*
+				 * Il faut placer dans ce bean le total des absences par sexe pour le total entier
+				 */
+				int totalAbsF = this.getNbreAbsNJSexeClasseTrim(classe, trimestre, 0);
+				int totalAbsM = this.getNbreAbsNJSexeClasseTrim(classe, trimestre, 1);
+				int totalAbs = totalAbsF+totalAbsM;
+				
+				ficheCC.setTotalAbs(totalAbs);
+				ficheCC.setTotalAbsF(totalAbsF);
+				ficheCC.setTotalAbsM(totalAbsM);
+				
+				/*
+				 * Il faut faire la liste des 10 élèves les plus indiscipline de la classe
+				 */
+				int n=10;
+				List<Eleves> listofEleveLesPlusIndisciDansClasseSeq = this.getListeElevePlusIndisciplineTrim(classe, trimestre, n);
+				
+				//premier eleve le plus indiscipline
+				if(listofEleveLesPlusIndisciDansClasseSeq.size()>0){
+					String indiscnom1 = listofEleveLesPlusIndisciDansClasseSeq.get(0).getNomsEleves();
+					indiscnom1+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(0).getPrenomsEleves();
+					String sanction1 = "aucune";
+					List<RapportDisciplinaire> listofRappDiscEleve = 
+							(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(0).getListofRDisc_DESC();
+					
+					if(listofRappDiscEleve!=null){
+						if(listofRappDiscEleve.size()>0){
+							if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+								sanction1 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+							}
+							else{
+								sanction1 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+							}
+						}
+						else{
+							//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+							int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(0).getNbreHeureAbsenceNonJustifieTrim(trimestre);
+							if(nbreHANJ>0){
+								sanction1=nbreHANJ+" H";
+							}
+						}
+					}
+					
+					
+					if(sanction1.equalsIgnoreCase("aucune")==false){
+						ficheCC.setIndiscnom1(indiscnom1);
+						ficheCC.setSanction1(sanction1);
+					}
+					
+				}
+				
+				//deuxieme eleve le plus indiscipline
+				if(listofEleveLesPlusIndisciDansClasseSeq.size()>1){
+					String indiscnom2 = listofEleveLesPlusIndisciDansClasseSeq.get(1).getNomsEleves();
+					indiscnom2+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(1).getPrenomsEleves();
+					String sanction2 = "aucune";
+					List<RapportDisciplinaire> listofRappDiscEleve = 
+							(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(1).getListofRDisc_DESC();
+					
+					if(listofRappDiscEleve!=null){
+						if(listofRappDiscEleve.size()>0){
+							if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+								sanction2 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+							}
+							else{
+								sanction2 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+							}
+						}
+						else{
+							//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+							int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(1).getNbreHeureAbsenceNonJustifieTrim(trimestre);
+							if(nbreHANJ>0){
+								sanction2=nbreHANJ+" H";
+							}
+						}
+					}
+					
+					
+					if(sanction2.equalsIgnoreCase("aucune")==false){
+						ficheCC.setIndiscnom2(indiscnom2);
+						ficheCC.setSanction2(sanction2);
+					}
+					
+				}
+				
+				//3eme eleve le plus indiscipline
+						if(listofEleveLesPlusIndisciDansClasseSeq.size()>2){
+							String indiscnom3 = listofEleveLesPlusIndisciDansClasseSeq.get(2).getNomsEleves();
+							indiscnom3+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(2).getPrenomsEleves();
+							String sanction3 = "aucune";
+							List<RapportDisciplinaire> listofRappDiscEleve = 
+									(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(2).getListofRDisc_DESC();
+							
+							if(listofRappDiscEleve!=null){
+								if(listofRappDiscEleve.size()>0){
+									if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+										sanction3 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+									}
+									else{
+										sanction3 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+									}
+								}
+								else{
+									//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+									int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(2).getNbreHeureAbsenceNonJustifieTrim(trimestre);
+									if(nbreHANJ>0){
+										sanction3=nbreHANJ+" H";
+									}
+								}
+							}
+							
+							
+							if(sanction3.equalsIgnoreCase("aucune")==false){
+								ficheCC.setIndiscnom3(indiscnom3);
+								ficheCC.setSanction3(sanction3);
+							}
+							
+						}
+				
+						//4eme eleve le plus indiscipline
+						if(listofEleveLesPlusIndisciDansClasseSeq.size()>3){
+							String indiscnom4 = listofEleveLesPlusIndisciDansClasseSeq.get(3).getNomsEleves();
+							indiscnom4+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(3).getPrenomsEleves();
+							String sanction4 = "aucune";
+							List<RapportDisciplinaire> listofRappDiscEleve = 
+									(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(3).getListofRDisc_DESC();
+							
+							if(listofRappDiscEleve!=null){
+								if(listofRappDiscEleve.size()>0){
+									if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+										sanction4 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+									}
+									else{
+										sanction4 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+									}
+								}
+								else{
+									//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+									int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(3).getNbreHeureAbsenceNonJustifieTrim(trimestre);
+									if(nbreHANJ>0){
+										sanction4=nbreHANJ+" H";
+									}
+								}
+							}
+							
+							
+							if(sanction4.equalsIgnoreCase("aucune")==false){
+								ficheCC.setIndiscnom4(indiscnom4);
+								ficheCC.setSanction4(sanction4);
+							}
+							
+						}
+						
+						//5eme eleve le plus indiscipline
+						if(listofEleveLesPlusIndisciDansClasseSeq.size()>4){
+							String indiscnom5 = listofEleveLesPlusIndisciDansClasseSeq.get(4).getNomsEleves();
+							indiscnom5+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(4).getPrenomsEleves();
+							String sanction5 = "aucune";
+							List<RapportDisciplinaire> listofRappDiscEleve = 
+									(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(4).getListofRDisc_DESC();
+							
+							if(listofRappDiscEleve!=null){
+								if(listofRappDiscEleve.size()>0){
+									if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+										sanction5 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+									}
+									else{
+										sanction5 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+									}
+								}
+								else{
+									//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+									int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(4).getNbreHeureAbsenceNonJustifieTrim(trimestre);
+									if(nbreHANJ>0){
+										sanction5=nbreHANJ+" H";
+									}
+								}
+							}
+							
+							
+							if(sanction5.equalsIgnoreCase("aucune")==false){
+								ficheCC.setIndiscnom5(indiscnom5);
+								ficheCC.setSanction5(sanction5);
+							}
+							
+						}
+						
+						//6eme eleve le plus indiscipline
+						if(listofEleveLesPlusIndisciDansClasseSeq.size()>5){
+							String indiscnom6 = listofEleveLesPlusIndisciDansClasseSeq.get(5).getNomsEleves();
+							indiscnom6+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(5).getPrenomsEleves();
+							String sanction6 = "aucune";
+							List<RapportDisciplinaire> listofRappDiscEleve = 
+									(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(5).getListofRDisc_DESC();
+							
+							if(listofRappDiscEleve!=null){
+								if(listofRappDiscEleve.size()>0){
+									if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+										sanction6 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+									}
+									else{
+										sanction6 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+									}
+								}
+								else{
+									//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+									int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(5).getNbreHeureAbsenceNonJustifieTrim(trimestre);
+									if(nbreHANJ>0){
+										sanction6=nbreHANJ+" H";
+									}
+								}
+							}
+							
+							
+							if(sanction6.equalsIgnoreCase("aucune")==false){
+								ficheCC.setIndiscnom6(indiscnom6);
+								ficheCC.setSanction6(sanction6);
+							}
+							
+						}
+						
+						//7eme eleve le plus indiscipline
+						if(listofEleveLesPlusIndisciDansClasseSeq.size()>6){
+							String indiscnom7 = listofEleveLesPlusIndisciDansClasseSeq.get(6).getNomsEleves();
+							indiscnom7+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(6).getPrenomsEleves();
+							String sanction7 = "aucune";
+							List<RapportDisciplinaire> listofRappDiscEleve = 
+									(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(6).getListofRDisc_DESC();
+							
+							if(listofRappDiscEleve!=null){
+								if(listofRappDiscEleve.size()>0){
+									if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+										sanction7 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+									}
+									else{
+										sanction7 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+									}
+								}
+								else{
+									//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+									int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(6).getNbreHeureAbsenceNonJustifieTrim(trimestre);
+									if(nbreHANJ>0){
+										sanction7=nbreHANJ+" H";
+									}
+								}
+							}
+							
+							
+							if(sanction7.equalsIgnoreCase("aucune")==false){
+								ficheCC.setIndiscnom7(indiscnom7);
+								ficheCC.setSanction7(sanction7);
+							}
+							
+						}
+						
+						//8eme eleve le plus indiscipline
+						if(listofEleveLesPlusIndisciDansClasseSeq.size()>7){
+							String indiscnom8 = listofEleveLesPlusIndisciDansClasseSeq.get(7).getNomsEleves();
+							indiscnom8+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(7).getPrenomsEleves();
+							String sanction8 = "aucune";
+							List<RapportDisciplinaire> listofRappDiscEleve = 
+									(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(7).getListofRDisc_DESC();
+							
+							if(listofRappDiscEleve!=null){
+								if(listofRappDiscEleve.size()>0){
+									if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+										sanction8 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+									}
+									else{
+										sanction8 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+									}
+								}
+								else{
+									//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+									int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(7).getNbreHeureAbsenceNonJustifieTrim(trimestre);
+									if(nbreHANJ>0){
+										sanction8=nbreHANJ+" H";
+									}
+								}
+							}
+							
+							
+							if(sanction8.equalsIgnoreCase("aucune")==false){
+								ficheCC.setIndiscnom8(indiscnom8);
+								ficheCC.setSanction8(sanction8);
+							}
+							
+						}
+						
+						//9eme eleve le plus indiscipline
+						if(listofEleveLesPlusIndisciDansClasseSeq.size()>8){
+							String indiscnom9 = listofEleveLesPlusIndisciDansClasseSeq.get(8).getNomsEleves();
+							indiscnom9+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(8).getPrenomsEleves();
+							String sanction9 = "aucune";
+							List<RapportDisciplinaire> listofRappDiscEleve = 
+									(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(8).getListofRDisc_DESC();
+							
+							if(listofRappDiscEleve!=null){
+								if(listofRappDiscEleve.size()>0){
+									if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+										sanction9 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+									}
+									else{
+										sanction9 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+									}
+								}
+								else{
+									//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+									int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(8).getNbreHeureAbsenceNonJustifieTrim(trimestre);
+									if(nbreHANJ>0){
+										sanction9=nbreHANJ+" H";
+									}
+								}
+							}
+							
+							
+							if(sanction9.equalsIgnoreCase("aucune")==false){
+								ficheCC.setIndiscnom9(indiscnom9);
+								ficheCC.setSanction9(sanction9);
+							}
+							
+						}
+						
+						//10eme eleve le plus indiscipline
+						if(listofEleveLesPlusIndisciDansClasseSeq.size()>9){
+							String indiscnom10 = listofEleveLesPlusIndisciDansClasseSeq.get(9).getNomsEleves();
+							indiscnom10+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(9).getPrenomsEleves();
+							String sanction10 = "aucune";
+							List<RapportDisciplinaire> listofRappDiscEleve = 
+									(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(9).getListofRDisc_DESC();
+							
+							if(listofRappDiscEleve!=null){
+								if(listofRappDiscEleve.size()>0){
+									if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+										sanction10 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+									}
+									else{
+										sanction10 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+									}
+								}
+								else{
+									//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+									int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(9).getNbreHeureAbsenceNonJustifieTrim(trimestre);
+									if(nbreHANJ>0){
+										sanction10=nbreHANJ+" H";
+									}
+								}
+							}
+							
+							
+							if(sanction10.equalsIgnoreCase("aucune")==false){
+								ficheCC.setIndiscnom10(indiscnom10);
+								ficheCC.setSanction10(sanction10);
+							}
+							
+						}
+			
 		
 		
 		
@@ -7452,7 +8333,7 @@ public class UsersServiceImplementation implements IUsersService {
 				
 				double total_pourcentage_g1 = ub.getTauxReussitePourGroupeCoursAn(classeConcerne, 
 						listofCoursScientifique, anneeScolaire);
-				if(total_pourcentage_g1>0){
+				if(total_pourcentage_g1>=0){
 					bulletinAn.setTotal_pourcentage_g1(total_pourcentage_g1);
 				}
 				
@@ -7476,7 +8357,7 @@ public class UsersServiceImplementation implements IUsersService {
 					bulletinAn.setNom_g2("Litteraire");
 				}
 				else{
-					bulletinAn.setNom_g2("Literary");
+					bulletinAn.setNom_g2("Arts");
 				}
 				
 				double total_coef_g2 = ligneAnnuelGroupeCoursLitteraire.getTotalCoefElevePourGroupeCours();
@@ -7520,7 +8401,7 @@ public class UsersServiceImplementation implements IUsersService {
 				
 				double total_pourcentage_g2 = ub.getTauxReussitePourGroupeCoursAn(classeConcerne, 
 						listofCoursLitteraire, anneeScolaire);
-				if(total_pourcentage_g2>0){
+				if(total_pourcentage_g2>=0){
 					bulletinAn.setTotal_pourcentage_g2(total_pourcentage_g2);
 				}
 				
@@ -7589,7 +8470,7 @@ public class UsersServiceImplementation implements IUsersService {
 				
 				double total_pourcentage_g3 = ub.getTauxReussitePourGroupeCoursAn(classeConcerne, 
 						listofCoursDivers, anneeScolaire);
-				if(total_pourcentage_g3>0){
+				if(total_pourcentage_g3>=0){
 					bulletinAn.setTotal_pourcentage_g3(total_pourcentage_g3);
 				}
 				
@@ -7697,7 +8578,7 @@ public class UsersServiceImplementation implements IUsersService {
 					
 					double pourcentage_g1 = ub.getTauxReussiteCoursAn(classeConcerne, 
 							cours, anneeScolaire);
-					if(pourcentage_g1>0){
+					if(pourcentage_g1>=0){
 						mGrp1AnBean.setPourcentage_g1(pourcentage_g1);
 					}
 					
@@ -7809,7 +8690,7 @@ public class UsersServiceImplementation implements IUsersService {
 					
 					double pourcentage_g2 = ub.getTauxReussiteCoursAn(classeConcerne, 
 							cours, anneeScolaire);
-					if(pourcentage_g2>0){
+					if(pourcentage_g2>=0){
 						mGrp2AnBean.setPourcentage_g2(pourcentage_g2);
 					}
 					
@@ -7921,7 +8802,7 @@ public class UsersServiceImplementation implements IUsersService {
 					
 					double pourcentage_g3 = ub.getTauxReussiteCoursAn(classeConcerne, 
 							cours, anneeScolaire);
-					if(pourcentage_g3>0){
+					if(pourcentage_g3>=0){
 						mGrp3AnBean.setPourcentage_g3(pourcentage_g3);
 					}
 					
@@ -7968,7 +8849,81 @@ public class UsersServiceImplementation implements IUsersService {
 		//return collectionofBulletionAnnuel;
 	}
 	
+	@Override
+	public List<Eleves> getListEleveSanctionDiscAnnee(Classes classe, SanctionDisciplinaire sanctionDisc, 
+			Annee an){
+		List<Eleves> listofEleveSanctionDisc = new ArrayList<Eleves>();
+		
+		for(Eleves elv : classe.getListofEleves()){
+			List<RapportDisciplinaire> listofRapportDisciplinaireDeSeq = 
+					elv.getListRapportDisciplinaireAnnee_DESC(an);
+			
+			if(listofRapportDisciplinaireDeSeq!=null){
+				for(RapportDisciplinaire rappDisc : listofRapportDisciplinaireDeSeq){
+					if(rappDisc.getSanctionDisc().getIdSancDisc().longValue() == sanctionDisc.getIdSancDisc().longValue()){
+						listofEleveSanctionDisc.add(elv);
+						break;
+					}
+				}
+			}
+		}
+		
+		return listofEleveSanctionDisc;
+	}
 
+	@Override
+	public Map<String, Object> getListeEleveParSanctionDiscAnnee(Classes classe, Annee an){
+		Map<String, Object> donnee = new HashMap<String, Object>();
+		List<SanctionDisciplinaire> listofSanctionDisc = this.findListAllSanctionDisciplinaire_DESC();
+		for(SanctionDisciplinaire sanctDisc : listofSanctionDisc){
+			List<Eleves> listofEleveAyantEuSanctionDansSeq = 
+					this.getListEleveSanctionDiscAnnee(classe, sanctDisc, an);
+			String label_cle="sanction"+sanctDisc.getNiveauSeverite();
+			donnee.put(label_cle, listofEleveAyantEuSanctionDansSeq);
+		}
+		/*
+		 * On doit placer la dernière cle qui doit concerner les absences
+		 */
+		List<Eleves> listofEleveslesPlusAbsentDansClasseSeq = classe.getListofEleveslesPlusAbsentDansClasseAnnee(an,10);
+		
+		donnee.put("absence", listofEleveslesPlusAbsentDansClasseSeq);
+		return donnee;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Eleves> getListeElevePlusIndisciplineAnnee(Classes classe, Annee an, int n){
+		List<Eleves> listofElevePlusIndiscSeq = new ArrayList<Eleves>();
+		Map<String, Object> donnee = this.getListeEleveParSanctionDiscAnnee(classe, an);
+		
+		List<SanctionDisciplinaire> listofSanctionDisc = this.findListAllSanctionDisciplinaire_DESC();
+		for (SanctionDisciplinaire sanctDisc : listofSanctionDisc) {
+			String label_cle="sanction"+sanctDisc.getNiveauSeverite();
+			//System.err.println(label_cle);
+			List<Eleves> listofEleveDeSanctionLabel_cle = (List<Eleves>) donnee.get(label_cle);
+			if(listofEleveDeSanctionLabel_cle!=null){
+				for(Eleves elv : listofEleveDeSanctionLabel_cle){
+					listofElevePlusIndiscSeq.add(elv);
+				}
+			}
+			if(listofElevePlusIndiscSeq.size()==n) break;
+		}
+		
+		if(listofElevePlusIndiscSeq.size()<n){
+			List<Eleves> listofEleveDeSanctionAbsence = (List<Eleves>) donnee.get("absence");
+			for(Eleves elv : listofEleveDeSanctionAbsence){
+				
+				if(elv.getNbreHeureAbsenceNonJustifieAnnee(an)>0){
+					listofElevePlusIndiscSeq.add(elv);
+					//System.err.println("elv pour absence "+elv.getNomsEleves());
+				}
+				if(listofElevePlusIndiscSeq.size()==n) break;
+			}
+		}
+		
+		return listofElevePlusIndiscSeq;
+	}
+	
 	@Override
 	public FicheConseilClasseBean getRapportConseilClasseAnnuel(Etablissement etab, 
 			Annee annee, Classes classe , double tauxReussite, double moyenne_general,	
@@ -8375,6 +9330,368 @@ public class UsersServiceImplementation implements IUsersService {
 				ficheCC.setSous_rapport2_conseil(sous_rapport2_conseil);
 				ficheCC.setSous_rapport3_conseil(sous_rapport3_conseil);
 
+
+				/*
+				 * Il faut placer dans ce bean le total des absences par sexe pour le total entier
+				 */
+				int totalAbsF = this.getNbreAbsNJSexeClasseAn(classe, annee, 0);
+				int totalAbsM = this.getNbreAbsNJSexeClasseAn(classe, annee, 1);
+				int totalAbs = totalAbsF+totalAbsM;
+				
+				ficheCC.setTotalAbs(totalAbs);
+				ficheCC.setTotalAbsF(totalAbsF);
+				ficheCC.setTotalAbsM(totalAbsM);
+				
+				/*
+				 * Il faut faire la liste des 10 élèves les plus indiscipline de la classe
+				 */
+				int n=10;
+				List<Eleves> listofEleveLesPlusIndisciDansClasseSeq = this.getListeElevePlusIndisciplineAnnee(classe, annee, n);
+				
+				//premier eleve le plus indiscipline
+				if(listofEleveLesPlusIndisciDansClasseSeq.size()>0){
+					String indiscnom1 = listofEleveLesPlusIndisciDansClasseSeq.get(0).getNomsEleves();
+					indiscnom1+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(0).getPrenomsEleves();
+					String sanction1 = "aucune";
+					List<RapportDisciplinaire> listofRappDiscEleve = 
+							(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(0).getListofRDisc_DESC();
+					
+					if(listofRappDiscEleve!=null){
+						if(listofRappDiscEleve.size()>0){
+							if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+								sanction1 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+							}
+							else{
+								sanction1 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+							}
+						}
+						else{
+							//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+							int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(0).getNbreHeureAbsenceNonJustifieAnnee(annee);
+							if(nbreHANJ>0){
+								sanction1=nbreHANJ+" H";
+							}
+						}
+					}
+					
+					
+					if(sanction1.equalsIgnoreCase("aucune")==false){
+						ficheCC.setIndiscnom1(indiscnom1);
+						ficheCC.setSanction1(sanction1);
+					}
+					
+				}
+				
+				//deuxieme eleve le plus indiscipline
+				if(listofEleveLesPlusIndisciDansClasseSeq.size()>1){
+					String indiscnom2 = listofEleveLesPlusIndisciDansClasseSeq.get(1).getNomsEleves();
+					indiscnom2+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(1).getPrenomsEleves();
+					String sanction2 = "aucune";
+					List<RapportDisciplinaire> listofRappDiscEleve = 
+							(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(1).getListofRDisc_DESC();
+					
+					if(listofRappDiscEleve!=null){
+						if(listofRappDiscEleve.size()>0){
+							if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+								sanction2 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+							}
+							else{
+								sanction2 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+							}
+						}
+						else{
+							//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+							int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(1).getNbreHeureAbsenceNonJustifieAnnee(annee);
+							if(nbreHANJ>0){
+								sanction2=nbreHANJ+" H";
+							}
+						}
+					}
+					
+					
+					if(sanction2.equalsIgnoreCase("aucune")==false){
+						ficheCC.setIndiscnom2(indiscnom2);
+						ficheCC.setSanction2(sanction2);
+					}
+					
+				}
+				
+				//3eme eleve le plus indiscipline
+						if(listofEleveLesPlusIndisciDansClasseSeq.size()>2){
+							String indiscnom3 = listofEleveLesPlusIndisciDansClasseSeq.get(2).getNomsEleves();
+							indiscnom3+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(2).getPrenomsEleves();
+							String sanction3 = "aucune";
+							List<RapportDisciplinaire> listofRappDiscEleve = 
+									(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(2).getListofRDisc_DESC();
+							
+							if(listofRappDiscEleve!=null){
+								if(listofRappDiscEleve.size()>0){
+									if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+										sanction3 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+									}
+									else{
+										sanction3 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+									}
+								}
+								else{
+									//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+									int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(2).getNbreHeureAbsenceNonJustifieAnnee(annee);
+									if(nbreHANJ>0){
+										sanction3=nbreHANJ+" H";
+									}
+								}
+							}
+							
+							
+							if(sanction3.equalsIgnoreCase("aucune")==false){
+								ficheCC.setIndiscnom3(indiscnom3);
+								ficheCC.setSanction3(sanction3);
+							}
+							
+						}
+				
+						//4eme eleve le plus indiscipline
+						if(listofEleveLesPlusIndisciDansClasseSeq.size()>3){
+							String indiscnom4 = listofEleveLesPlusIndisciDansClasseSeq.get(3).getNomsEleves();
+							indiscnom4+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(3).getPrenomsEleves();
+							String sanction4 = "aucune";
+							List<RapportDisciplinaire> listofRappDiscEleve = 
+									(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(3).getListofRDisc_DESC();
+							
+							if(listofRappDiscEleve!=null){
+								if(listofRappDiscEleve.size()>0){
+									if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+										sanction4 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+									}
+									else{
+										sanction4 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+									}
+								}
+								else{
+									//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+									int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(3).getNbreHeureAbsenceNonJustifieAnnee(annee);
+									if(nbreHANJ>0){
+										sanction4=nbreHANJ+" H";
+									}
+								}
+							}
+							
+							
+							if(sanction4.equalsIgnoreCase("aucune")==false){
+								ficheCC.setIndiscnom4(indiscnom4);
+								ficheCC.setSanction4(sanction4);
+							}
+							
+						}
+						
+						//5eme eleve le plus indiscipline
+						if(listofEleveLesPlusIndisciDansClasseSeq.size()>4){
+							String indiscnom5 = listofEleveLesPlusIndisciDansClasseSeq.get(4).getNomsEleves();
+							indiscnom5+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(4).getPrenomsEleves();
+							String sanction5 = "aucune";
+							List<RapportDisciplinaire> listofRappDiscEleve = 
+									(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(4).getListofRDisc_DESC();
+							
+							if(listofRappDiscEleve!=null){
+								if(listofRappDiscEleve.size()>0){
+									if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+										sanction5 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+									}
+									else{
+										sanction5 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+									}
+								}
+								else{
+									//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+									int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(4).getNbreHeureAbsenceNonJustifieAnnee(annee);
+									if(nbreHANJ>0){
+										sanction5=nbreHANJ+" H";
+									}
+								}
+							}
+							
+							
+							if(sanction5.equalsIgnoreCase("aucune")==false){
+								ficheCC.setIndiscnom5(indiscnom5);
+								ficheCC.setSanction5(sanction5);
+							}
+							
+						}
+						
+						//6eme eleve le plus indiscipline
+						if(listofEleveLesPlusIndisciDansClasseSeq.size()>5){
+							String indiscnom6 = listofEleveLesPlusIndisciDansClasseSeq.get(5).getNomsEleves();
+							indiscnom6+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(5).getPrenomsEleves();
+							String sanction6 = "aucune";
+							List<RapportDisciplinaire> listofRappDiscEleve = 
+									(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(5).getListofRDisc_DESC();
+							
+							if(listofRappDiscEleve!=null){
+								if(listofRappDiscEleve.size()>0){
+									if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+										sanction6 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+									}
+									else{
+										sanction6 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+									}
+								}
+								else{
+									//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+									int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(5).getNbreHeureAbsenceNonJustifieAnnee(annee);
+									if(nbreHANJ>0){
+										sanction6=nbreHANJ+" H";
+									}
+								}
+							}
+							
+							
+							if(sanction6.equalsIgnoreCase("aucune")==false){
+								ficheCC.setIndiscnom6(indiscnom6);
+								ficheCC.setSanction6(sanction6);
+							}
+							
+						}
+						
+						//7eme eleve le plus indiscipline
+						if(listofEleveLesPlusIndisciDansClasseSeq.size()>6){
+							String indiscnom7 = listofEleveLesPlusIndisciDansClasseSeq.get(6).getNomsEleves();
+							indiscnom7+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(6).getPrenomsEleves();
+							String sanction7 = "aucune";
+							List<RapportDisciplinaire> listofRappDiscEleve = 
+									(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(6).getListofRDisc_DESC();
+							
+							if(listofRappDiscEleve!=null){
+								if(listofRappDiscEleve.size()>0){
+									if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+										sanction7 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+									}
+									else{
+										sanction7 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+									}
+								}
+								else{
+									//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+									int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(6).getNbreHeureAbsenceNonJustifieAnnee(annee);
+									if(nbreHANJ>0){
+										sanction7=nbreHANJ+" H";
+									}
+								}
+							}
+							
+							
+							if(sanction7.equalsIgnoreCase("aucune")==false){
+								ficheCC.setIndiscnom7(indiscnom7);
+								ficheCC.setSanction7(sanction7);
+							}
+							
+						}
+						
+						//8eme eleve le plus indiscipline
+						if(listofEleveLesPlusIndisciDansClasseSeq.size()>7){
+							String indiscnom8 = listofEleveLesPlusIndisciDansClasseSeq.get(7).getNomsEleves();
+							indiscnom8+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(7).getPrenomsEleves();
+							String sanction8 = "aucune";
+							List<RapportDisciplinaire> listofRappDiscEleve = 
+									(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(7).getListofRDisc_DESC();
+							
+							if(listofRappDiscEleve!=null){
+								if(listofRappDiscEleve.size()>0){
+									if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+										sanction8 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+									}
+									else{
+										sanction8 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+									}
+								}
+								else{
+									//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+									int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(7).getNbreHeureAbsenceNonJustifieAnnee(annee);
+									if(nbreHANJ>0){
+										sanction8=nbreHANJ+" H";
+									}
+								}
+							}
+							
+							
+							if(sanction8.equalsIgnoreCase("aucune")==false){
+								ficheCC.setIndiscnom8(indiscnom8);
+								ficheCC.setSanction8(sanction8);
+							}
+							
+						}
+						
+						//9eme eleve le plus indiscipline
+						if(listofEleveLesPlusIndisciDansClasseSeq.size()>8){
+							String indiscnom9 = listofEleveLesPlusIndisciDansClasseSeq.get(8).getNomsEleves();
+							indiscnom9+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(8).getPrenomsEleves();
+							String sanction9 = "aucune";
+							List<RapportDisciplinaire> listofRappDiscEleve = 
+									(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(8).getListofRDisc_DESC();
+							
+							if(listofRappDiscEleve!=null){
+								if(listofRappDiscEleve.size()>0){
+									if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+										sanction9 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+									}
+									else{
+										sanction9 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+									}
+								}
+								else{
+									//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+									int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(8).getNbreHeureAbsenceNonJustifieAnnee(annee);
+									if(nbreHANJ>0){
+										sanction9=nbreHANJ+" H";
+									}
+								}
+							}
+							
+							
+							if(sanction9.equalsIgnoreCase("aucune")==false){
+								ficheCC.setIndiscnom9(indiscnom9);
+								ficheCC.setSanction9(sanction9);
+							}
+							
+						}
+						
+						//10eme eleve le plus indiscipline
+						if(listofEleveLesPlusIndisciDansClasseSeq.size()>9){
+							String indiscnom10 = listofEleveLesPlusIndisciDansClasseSeq.get(9).getNomsEleves();
+							indiscnom10+=" "+ listofEleveLesPlusIndisciDansClasseSeq.get(9).getPrenomsEleves();
+							String sanction10 = "aucune";
+							List<RapportDisciplinaire> listofRappDiscEleve = 
+									(List<RapportDisciplinaire>) listofEleveLesPlusIndisciDansClasseSeq.get(9).getListofRDisc_DESC();
+							
+							if(listofRappDiscEleve!=null){
+								if(listofRappDiscEleve.size()>0){
+									if(classe.getLangueClasses().equalsIgnoreCase("fr")==true){
+										sanction10 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("fr");
+									}
+									else{
+										sanction10 = listofRappDiscEleve.get(0).getRapportDisciplinaireStringReduit("en");
+									}
+								}
+								else{
+									//Le gar n'a pas de rapport disciplinaire donc on va regarder si il a des absences
+									int nbreHANJ = listofEleveLesPlusIndisciDansClasseSeq.get(9).getNbreHeureAbsenceNonJustifieAnnee(annee);
+									if(nbreHANJ>0){
+										sanction10=nbreHANJ+" H";
+									}
+								}
+							}
+							
+							
+							if(sanction10.equalsIgnoreCase("aucune")==false){
+								ficheCC.setIndiscnom10(indiscnom10);
+								ficheCC.setSanction10(sanction10);
+							}
+							
+						}
+			
+				
+		
+		
+		
 		
 		
 		return ficheCC;
@@ -9086,8 +10403,8 @@ public class UsersServiceImplementation implements IUsersService {
 		if(dateJour.compareTo(date_enreg)<0) return -2;
 		if(nbreHJ<0 || nbreHNJ<0) return -1;
 		//On récupere les heures qui existent le cas écheant
-		int total_nbreHJ = eleveConcerne.getNbreHeureAbscenceJustifie(idSequence);
-		int total_nbreNHJ = eleveConcerne.getNbreHeureAbscenceNonJustifie(idSequence);
+		int total_nbreHJ = eleveConcerne.getNbreHeureAbsenceJustifie(idSequence);
+		int total_nbreNHJ = eleveConcerne.getNbreHeureAbsenceNonJustifie(idSequence);
 		//On ajoute ceux qui ont ete envoye dans la requete
 		total_nbreHJ+=nbreHJ;
 		total_nbreNHJ+=nbreHNJ;
@@ -9132,6 +10449,19 @@ public class UsersServiceImplementation implements IUsersService {
 		
 		
 		rapportdisciplinaireRepository.save(rapDisc);
+		
+		/*
+		 * Si la sanction disciplinaire a un niveau de severite = 5 alors il s'agit d'une exclusion définitive et 
+		 * par cconséquent il faut actualiser l'état de l'élève. 
+		 */
+		if(sanctionDisc.getNiveauSeverite()>=5){
+			eleve.setStatutEleves(new String("exclu"));
+			
+			/*
+			 * On va donc effectuer effectivement la mise à jour
+			 */
+			elevesRepository.save(eleve);
+		}
 		
 		return 1;
 	}
@@ -9755,6 +11085,10 @@ public class UsersServiceImplementation implements IUsersService {
 		return sanctionDiscRepository.findAllByOrderByNiveauSeveriteAscCodeSancDiscAscIntituleSancDiscAsc();
 	}
 
+	@Override
+	public List<SanctionDisciplinaire> findListAllSanctionDisciplinaire_DESC(){
+		return sanctionDiscRepository.findAllByOrderByNiveauSeveriteDescCodeSancDiscAscIntituleSancDiscAsc();
+	}
 
 	@Override
 	public SanctionDisciplinaire findSanctionDisciplinaire(Long idSanctionDisc) {
@@ -9829,6 +11163,19 @@ public class UsersServiceImplementation implements IUsersService {
 			decisionConseilRepository.save(decConseil);
 		}
 		
+		/*
+		 * Si la sanction disciplinaire a un niveau de severite = 5 alors il s'agit d'une exclusion définitive et 
+		 * par cconséquent il faut actualiser l'état de l'élève. 
+		 */
+		if(sanctionDisc.getNiveauSeverite()>=5){
+			eleve.setStatutEleves(new String("exclu"));
+			
+			/*
+			 * On va donc effectuer effectivement la mise à jour
+			 */
+			elevesRepository.save(eleve);
+		}
+		
 		return 1;
 	}
 	
@@ -9869,6 +11216,19 @@ public class UsersServiceImplementation implements IUsersService {
 			decConseil.setUnite(unite);
 			
 			decisionConseilRepository.save(decConseil);
+		}
+		
+		/*
+		 * Si la sanction disciplinaire a un niveau de severite = 5 alors il s'agit d'une exclusion définitive et 
+		 * par cconséquent il faut actualiser l'état de l'élève. 
+		 */
+		if(sanctionDisc.getNiveauSeverite()>=5){
+			eleve.setStatutEleves(new String("exclu"));
+			
+			/*
+			 * On va donc effectuer effectivement la mise à jour
+			 */
+			elevesRepository.save(eleve);
 		}
 		
 		return 1;
@@ -9914,6 +11274,909 @@ public class UsersServiceImplementation implements IUsersService {
 		
 		return 1;
 	}
+	
+	@Override
+	public int getNbreAbsJSexeClasse(Classes classe, Date datemin, Date datemax, int sexe){
+		int nbreHJ = 0;
+		if(sexe == 0){//ici il s'agit du sexe feminin
+			for(Eleves eleve : classe.getListofEleves()){
+				if(eleve.getSexeEleves().equalsIgnoreCase("feminin")==true){
+					nbreHJ +=eleve.getNbreHeureAbsenceJustifie(datemin, datemax);
+				}
+			}
+		}
+		else{//ici on cherche pour le sexe masculin
+			for(Eleves eleve : classe.getListofEleves()){
+				if(eleve.getSexeEleves().equalsIgnoreCase("masculin")==true){
+					nbreHJ +=eleve.getNbreHeureAbsenceJustifie(datemin, datemax);
+				}
+			}
+		}
+		return nbreHJ;
+	}
+	
+	@Override
+	public int getNbreAbsJSexeClasseSeq(Classes classe, Sequences periode, int sexe){
+		int nbreHJ=0;
+		if(sexe == 0){//ici il s'agit du sexe feminin
+			for(Eleves eleve : classe.getListofEleves()){
+				if(eleve.getSexeEleves().equalsIgnoreCase("feminin")==true){
+					nbreHJ +=eleve.getNbreHeureAbsenceJustifie(periode.getIdPeriodes());
+				}
+			}
+		}
+		else{//ici on cherche pour le sexe masculin
+			for(Eleves eleve : classe.getListofEleves()){
+				if(eleve.getSexeEleves().equalsIgnoreCase("masculin")==true){
+					nbreHJ +=eleve.getNbreHeureAbsenceJustifie(periode.getIdPeriodes());
+				}
+			}
+		}
+		
+		return nbreHJ;
+	}
+	
+	@Override
+	public int getNbreAbsJSexeClasseTrim(Classes classe, Trimestres periode, int sexe){
+		int nbreHJ=0;
+		if(sexe == 0){//ici il s'agit du sexe feminin
+			for(Eleves eleve : classe.getListofEleves()){
+				if(eleve.getSexeEleves().equalsIgnoreCase("feminin")==true){
+					nbreHJ +=eleve.getNbreHeureAbsenceJustifieTrim(periode);
+				}
+			}
+		}
+		else{//ici on cherche pour le sexe masculin
+			for(Eleves eleve : classe.getListofEleves()){
+				if(eleve.getSexeEleves().equalsIgnoreCase("masculin")==true){
+					nbreHJ +=eleve.getNbreHeureAbsenceJustifieTrim(periode);
+				}
+			}
+		}
+		
+		return nbreHJ;
+	}
+	
+	@Override
+	public int getNbreAbsJSexeClasseAn(Classes classe, Annee periode, int sexe){
+		int nbreHJ=0;
+		if(sexe == 0){//ici il s'agit du sexe feminin
+			for(Eleves eleve : classe.getListofEleves()){
+				if(eleve.getSexeEleves().equalsIgnoreCase("feminin")==true){
+					nbreHJ +=eleve.getNbreHeureAbsenceJustifieAnnee(periode);
+				}
+			}
+		}
+		else{//ici on cherche pour le sexe masculin
+			for(Eleves eleve : classe.getListofEleves()){
+				if(eleve.getSexeEleves().equalsIgnoreCase("masculin")==true){
+					nbreHJ +=eleve.getNbreHeureAbsenceJustifieAnnee(periode);
+				}
+			}
+		}
+		
+		return nbreHJ;
+	}
+	
+	@Override
+	public int getNbreAbsNJSexeClasse(Classes classe, Date datemin, Date datemax, int sexe){
+		int nbreNHJ = 0;
+		if(sexe == 0){
+			for(Eleves eleve : classe.getListofEleves()){
+				if(eleve.getSexeEleves().equalsIgnoreCase("feminin")==true){
+					nbreNHJ +=eleve.getNbreHeureAbsenceNonJustifie(datemin, datemax);
+				}
+			}
+		}
+		else{
+			for(Eleves eleve : classe.getListofEleves()){
+				if(eleve.getSexeEleves().equalsIgnoreCase("masculin")==true){
+					nbreNHJ +=eleve.getNbreHeureAbsenceNonJustifie(datemin, datemax);
+				}
+			}
+		}
+		return nbreNHJ;
+	}
+
+	@Override
+	public int getNbreAbsNJSexeClasseSeq(Classes classe, Sequences periode, int sexe){
+		int nbreNHJ = 0;
+		if(sexe == 0){
+			for(Eleves eleve : classe.getListofEleves()){
+				if(eleve.getSexeEleves().equalsIgnoreCase("feminin")==true){
+					nbreNHJ +=eleve.getNbreHeureAbsenceNonJustifie(periode.getIdPeriodes());
+				}
+			}
+		}
+		else{
+			for(Eleves eleve : classe.getListofEleves()){
+				if(eleve.getSexeEleves().equalsIgnoreCase("masculin")==true){
+					nbreNHJ +=eleve.getNbreHeureAbsenceNonJustifie(periode.getIdPeriodes());
+				}
+			}
+		}
+		return nbreNHJ;
+	}
+	
+	@Override
+	public int getNbreAbsNJSexeClasseTrim(Classes classe, Trimestres periode, int sexe){
+		int nbreNHJ = 0;
+		if(sexe == 0){
+			for(Eleves eleve : classe.getListofEleves()){
+				if(eleve.getSexeEleves().equalsIgnoreCase("feminin")==true){
+					nbreNHJ +=eleve.getNbreHeureAbsenceNonJustifieTrim(periode);
+				}
+			}
+		}
+		else{
+			for(Eleves eleve : classe.getListofEleves()){
+				if(eleve.getSexeEleves().equalsIgnoreCase("masculin")==true){
+					nbreNHJ +=eleve.getNbreHeureAbsenceNonJustifieTrim(periode);
+				}
+			}
+		}
+		return nbreNHJ;
+	}
+	
+	@Override
+	public int getNbreAbsNJSexeClasseAn(Classes classe, Annee periode, int sexe){
+		int nbreNHJ = 0;
+		if(sexe == 0){
+			for(Eleves eleve : classe.getListofEleves()){
+				if(eleve.getSexeEleves().equalsIgnoreCase("feminin")==true){
+					nbreNHJ +=eleve.getNbreHeureAbsenceNonJustifieAnnee(periode);
+				}
+			}
+		}
+		else{
+			for(Eleves eleve : classe.getListofEleves()){
+				if(eleve.getSexeEleves().equalsIgnoreCase("masculin")==true){
+					nbreNHJ +=eleve.getNbreHeureAbsenceNonJustifieAnnee(periode);
+				}
+			}
+		}
+		return nbreNHJ;
+	}
+	
+	@Override
+	public int getNbreAbsJSexeNiveau(Niveaux niveau, Date datemin, Date datemax, int sexe){
+		int nbreHJ = 0;
+		
+		if(niveau == null){
+			for(Niveaux niv : this.findAllNiveaux()){
+				for(Classes classe : niv.getListofClasses()){
+					nbreHJ +=this.getNbreAbsJSexeClasse(classe, datemin, datemax, sexe);
+				}
+			}
+			return nbreHJ;
+		}
+		else{
+			for(Classes classe : niveau.getListofClasses()){
+				nbreHJ +=this.getNbreAbsJSexeClasse(classe, datemin, datemax, sexe);
+			}
+		}
+		return nbreHJ;
+	}
+	
+	@Override
+	public int getNbreAbsJSexeNiveauSeq(Niveaux niveau, Sequences periode, int sexe){
+		int nbreHJ = 0;
+		if(niveau == null){
+			for(Niveaux niv : this.findAllNiveaux()){
+				for(Classes classe : niv.getListofClasses()){
+					nbreHJ +=this.getNbreAbsJSexeClasseSeq(classe, periode, sexe);
+				}
+			}
+			return nbreHJ;
+		}
+		else{
+			for(Classes classe : niveau.getListofClasses()){
+				nbreHJ +=this.getNbreAbsJSexeClasseSeq(classe, periode, sexe);
+			}
+		}
+		return nbreHJ;
+	}
+	
+	@Override
+	public int getNbreAbsJSexeNiveauTrim(Niveaux niveau, Trimestres periode, int sexe){
+		int nbreHJ = 0;
+		if(niveau == null){
+			for(Niveaux niv : this.findAllNiveaux()){
+				for(Classes classe : niv.getListofClasses()){
+					nbreHJ +=this.getNbreAbsJSexeClasseTrim(classe, periode, sexe);
+				}
+			}
+			return nbreHJ;
+		}
+		else{
+			for(Classes classe : niveau.getListofClasses()){
+				nbreHJ +=this.getNbreAbsJSexeClasseTrim(classe, periode, sexe);
+			}
+		}
+		return nbreHJ;
+	}
+	
+	@Override
+	public int getNbreAbsJSexeNiveauAn(Niveaux niveau, Annee periode, int sexe){
+		int nbreHJ = 0;
+		if(niveau == null){
+			for(Niveaux niv : this.findAllNiveaux()){
+				for(Classes classe : niv.getListofClasses()){
+					nbreHJ +=this.getNbreAbsJSexeClasseAn(classe, periode, sexe);
+				}
+			}
+			return nbreHJ;
+		}
+		else{
+			for(Classes classe : niveau.getListofClasses()){
+				nbreHJ +=this.getNbreAbsJSexeClasseAn(classe, periode, sexe);
+			}
+		}
+		return nbreHJ;
+	}
+	
+	@Override
+	public int getNbreAbsNJSexeNiveau(Niveaux niveau, Date datemin, Date datemax, int sexe){
+		int nbreNHJ = 0;
+		
+		if(niveau == null){
+			for(Niveaux niv : this.findAllNiveaux()){
+				for(Classes classe : niv.getListofClasses()){
+					nbreNHJ +=this.getNbreAbsNJSexeClasse(classe, datemin, datemax, sexe);
+				}
+			}
+			return nbreNHJ;
+		}
+		else{
+			for(Classes classe : niveau.getListofClasses()){
+				nbreNHJ +=this.getNbreAbsNJSexeClasse(classe, datemin, datemax, sexe);
+			}
+		}
+		return nbreNHJ;
+		
+	}
+	
+	@Override
+	public int getNbreAbsNJSexeNiveauSeq(Niveaux niveau, Sequences periode, int sexe){
+		int nbreNHJ = 0;
+		if(niveau == null){
+			for(Niveaux niv : this.findAllNiveaux()){
+				for(Classes classe : niv.getListofClasses()){
+					nbreNHJ +=this.getNbreAbsNJSexeClasseSeq(classe, periode, sexe);
+				}
+			}
+			return nbreNHJ;
+		}
+		else{
+			for(Classes classe : niveau.getListofClasses()){
+				nbreNHJ +=this.getNbreAbsNJSexeClasseSeq(classe, periode, sexe);
+			}
+		}
+		return nbreNHJ;
+	}
+	
+	@Override
+	public int getNbreAbsNJSexeNiveauTrim(Niveaux niveau, Trimestres periode, int sexe){
+		int nbreNHJ = 0;
+		if(niveau == null){
+			for(Niveaux niv : this.findAllNiveaux()){
+				for(Classes classe : niv.getListofClasses()){
+					nbreNHJ +=this.getNbreAbsNJSexeClasseTrim(classe, periode, sexe);
+				}
+			}
+			return nbreNHJ;
+		}
+		else{
+			for(Classes classe : niveau.getListofClasses()){
+				nbreNHJ +=this.getNbreAbsNJSexeClasseTrim(classe, periode, sexe);
+			}
+		}
+		return nbreNHJ;
+	}
+	
+	@Override
+	public int getNbreAbsNJSexeNiveauAn(Niveaux niveau, Annee periode, int sexe){
+		int nbreNHJ = 0;
+		if(niveau == null){
+			for(Niveaux niv : this.findAllNiveaux()){
+				for(Classes classe : niv.getListofClasses()){
+					nbreNHJ +=this.getNbreAbsNJSexeClasseAn(classe, periode, sexe);
+				}
+			}
+			return nbreNHJ;
+		}
+		else{
+			for(Classes classe : niveau.getListofClasses()){
+				nbreNHJ +=this.getNbreAbsNJSexeClasseAn(classe, periode, sexe);
+			}
+		}
+		return nbreNHJ;
+	}
+	
+	@Override
+	public int getNbreAbsJSexeCycle(Cycles cycle, Date datemin, Date datemax, int sexe){
+		int nbreHJ = 0;
+		if(cycle == null){
+			List<Cycles> listofCycle = this.findAllCycle();
+			for(Cycles c : listofCycle){
+				for(Niveaux niv : c.getListofNiveaux()){
+					nbreHJ += this.getNbreAbsJSexeNiveau(niv, datemin, datemax, sexe);
+				}
+			}
+		}
+		else{
+			for(Niveaux niv : cycle.getListofNiveaux()){
+				nbreHJ += this.getNbreAbsJSexeNiveau(niv, datemin, datemax, sexe);
+			}
+		}
+		return nbreHJ;
+	}
+	
+	@Override
+	public int getNbreAbsJSexeCycleSeq(Cycles cycle, Sequences periode, int sexe){
+		int nbreHJ=0;
+		if(cycle == null){
+			List<Cycles> listofCycle = this.findAllCycle();
+			for(Cycles c : listofCycle){
+				for(Niveaux niv : c.getListofNiveaux()){
+					nbreHJ += this.getNbreAbsJSexeNiveauSeq(niv, periode, sexe);
+				}
+			}
+		}
+		else{
+			for(Niveaux niv : cycle.getListofNiveaux()){
+				nbreHJ += this.getNbreAbsJSexeNiveauSeq(niv, periode, sexe);
+			}
+		}
+		return nbreHJ;
+	}
+	
+	@Override
+	public int getNbreAbsJSexeCycleTrim(Cycles cycle, Trimestres periode, int sexe){
+		int nbreHJ=0;
+		if(cycle == null){
+			List<Cycles> listofCycle = this.findAllCycle();
+			for(Cycles c : listofCycle){
+				for(Niveaux niv : c.getListofNiveaux()){
+					nbreHJ += this.getNbreAbsJSexeNiveauTrim(niv, periode, sexe);
+				}
+			}
+		}
+		else{
+			for(Niveaux niv : cycle.getListofNiveaux()){
+				nbreHJ += this.getNbreAbsJSexeNiveauTrim(niv, periode, sexe);
+			}
+		}
+		return nbreHJ;
+	}
+	
+	@Override
+	public int getNbreAbsJSexeCycleAn(Cycles cycle, Annee periode, int sexe){
+		int nbreHJ=0;
+		if(cycle == null){
+			List<Cycles> listofCycle = this.findAllCycle();
+			for(Cycles c : listofCycle){
+				for(Niveaux niv : c.getListofNiveaux()){
+					nbreHJ += this.getNbreAbsJSexeNiveauAn(niv, periode, sexe);
+				}
+			}
+		}
+		else{
+			for(Niveaux niv : cycle.getListofNiveaux()){
+				nbreHJ += this.getNbreAbsJSexeNiveauAn(niv, periode, sexe);
+			}
+		}
+		return nbreHJ;
+	}
+	
+	@Override
+	public int getNbreAbsNJSexeCycle(Cycles cycle, Date datemin, Date datemax, int sexe){
+		int nbreNHJ = 0;
+		if(cycle == null){
+			List<Cycles> listofCycle = this.findAllCycle();
+			for(Cycles c : listofCycle){
+				for(Niveaux niv : c.getListofNiveaux()){
+					nbreNHJ += this.getNbreAbsNJSexeNiveau(niv, datemin, datemax, sexe);
+				}
+			}
+		}
+		else{
+			for(Niveaux niv : cycle.getListofNiveaux()){
+				nbreNHJ += this.getNbreAbsNJSexeNiveau(niv, datemin, datemax, sexe);
+			}
+		}
+		return nbreNHJ;
+	}
+	
+	@Override
+	public int getNbreAbsNJSexeCycleSeq(Cycles cycle, Sequences periode, int sexe){
+		int nbreNHJ=0;
+		if(cycle == null){
+			List<Cycles> listofCycle = this.findAllCycle();
+			for(Cycles c : listofCycle){
+				for(Niveaux niv : c.getListofNiveaux()){
+					nbreNHJ += this.getNbreAbsNJSexeNiveauSeq(niv, periode, sexe);
+				}
+			}
+		}
+		else{
+			for(Niveaux niv : cycle.getListofNiveaux()){
+				nbreNHJ += this.getNbreAbsNJSexeNiveauSeq(niv, periode, sexe);
+			}
+		}
+		return nbreNHJ;
+	}
+	
+	@Override
+	public int getNbreAbsNJSexeCycleTrim(Cycles cycle, Trimestres periode, int sexe){
+		int nbreNHJ=0;
+		if(cycle == null){
+			List<Cycles> listofCycle = this.findAllCycle();
+			for(Cycles c : listofCycle){
+				for(Niveaux niv : c.getListofNiveaux()){
+					nbreNHJ += this.getNbreAbsNJSexeNiveauTrim(niv, periode, sexe);
+				}
+			}
+		}
+		else{
+			for(Niveaux niv : cycle.getListofNiveaux()){
+				nbreNHJ += this.getNbreAbsNJSexeNiveauTrim(niv, periode, sexe);
+			}
+		}
+		return nbreNHJ;
+	}
+	
+	@Override
+	public int getNbreAbsNJSexeCycleAn(Cycles cycle, Annee periode, int sexe){
+		int nbreNHJ=0;
+		if(cycle == null){
+			List<Cycles> listofCycle = this.findAllCycle();
+			for(Cycles c : listofCycle){
+				for(Niveaux niv : c.getListofNiveaux()){
+					nbreNHJ += this.getNbreAbsNJSexeNiveauAn(niv, periode, sexe);
+				}
+			}
+		}
+		else{
+			for(Niveaux niv : cycle.getListofNiveaux()){
+				nbreNHJ += this.getNbreAbsNJSexeNiveauAn(niv, periode, sexe);
+			}
+		}
+		return nbreNHJ;
+	}
+	
+	
+	
+	@Override
+	public Collection<FicheRecapAbsenceCycleBean> generateListFicheRecapAbsenceCycleBean(Cycles cycle, 
+			Date datemin, Date datemax){
+		
+		List<FicheRecapAbsenceCycleBean> listofFicheRecapAbsenceCycleBean = 
+				new ArrayList<FicheRecapAbsenceCycleBean>();
+		
+		String cycle_string = (cycle == null)?"Tous les cycles \n All cycles":(cycle.getCodeCycles()+" \n "+cycle.getCodeCycles_en());
+		
+		if(cycle == null){
+			//Alors c'est le rapport complet de tous les cycles
+			
+			
+			for(Cycles cy : this.findAllCycle()){
+				FicheRecapAbsenceCycleBean fracb = new FicheRecapAbsenceCycleBean();
+				int nbreabsJfeminin_cy = this.getNbreAbsJSexeCycle(cy, datemin, datemax, 0);
+				int nbreabsNJfeminin_cy = this.getNbreAbsNJSexeCycle(cy, datemin, datemax, 0);
+				
+				int nbreabsJmasculin_cy = this.getNbreAbsJSexeCycle(cy, datemin, datemax, 1);
+				int nbreabsNJmasculin_cy = this.getNbreAbsNJSexeCycle(cy, datemin, datemax, 1);
+				
+				String nbreabsfeminin_cy = ""+nbreabsJfeminin_cy+" / "+nbreabsNJfeminin_cy;
+				String nbreabsmasculin_cy = ""+nbreabsJmasculin_cy+" / "+nbreabsNJmasculin_cy;
+				
+				int totalabsNJ_cy = nbreabsNJfeminin_cy+nbreabsNJmasculin_cy;
+				int totalabsJ_cy = nbreabsJfeminin_cy+nbreabsJmasculin_cy;
+				String nbreabstotal_cy = ""+totalabsJ_cy+" / "+totalabsNJ_cy;
+				
+				fracb.setCycle(cycle_string);
+				fracb.setNbreabsfeminin(nbreabsfeminin_cy);
+				fracb.setNbreabsmasculin(nbreabsmasculin_cy);
+				fracb.setNbreabstotal(nbreabstotal_cy);
+				
+				
+				listofFicheRecapAbsenceCycleBean.add(fracb);
+				
+			}
+			
+		
+			
+			int nbreabsJfeminin = this.getNbreAbsJSexeCycle(cycle, datemin, datemax, 0);
+			int nbreabsNJfeminin = this.getNbreAbsNJSexeCycle(cycle, datemin, datemax, 0);
+			
+			int nbreabsJmasculin = this.getNbreAbsJSexeCycle(cycle, datemin, datemax, 1);
+			int nbreabsNJmasculin = this.getNbreAbsNJSexeCycle(cycle, datemin, datemax, 1);
+			
+			String nbreabsfeminin = ""+nbreabsJfeminin+" / "+nbreabsNJfeminin;
+			String nbreabsmasculin = ""+nbreabsJmasculin+" / "+nbreabsNJmasculin;
+			
+			int totalabsNJ = nbreabsNJfeminin+nbreabsNJmasculin;
+			int totalabsJ = nbreabsJfeminin+nbreabsJmasculin;
+			String nbreabstotal= ""+totalabsJ+" / "+totalabsNJ;
+			
+			FicheRecapAbsenceCycleBean fracb = new FicheRecapAbsenceCycleBean();
+			fracb.setCycle(cycle_string);
+			fracb.setNbreabsfeminin(nbreabsfeminin);
+			fracb.setNbreabsmasculin(nbreabsmasculin);
+			fracb.setNbreabstotal(nbreabstotal);
+			
+			System.out.println("On ajoute dans liste fracb = "+cycle_string+" nbreabsfeminin=="
+					+ " "+nbreabsfeminin+" nbreabsmasculin=="+nbreabsmasculin+" nbreabstotal== "+nbreabstotal);
+			
+			listofFicheRecapAbsenceCycleBean.add(fracb);
+			
+		}
+		else{
+			/*
+			 * Ici on est sur qu'on a demandé le rapport pour un cycle bien precis
+			 */
+			
+			FicheRecapAbsenceCycleBean fracb = new FicheRecapAbsenceCycleBean();
+			
+			int nbreabsJfeminin_cy = this.getNbreAbsJSexeCycle(cycle, datemin, datemax, 0);
+			int nbreabsNJfeminin_cy = this.getNbreAbsNJSexeCycle(cycle, datemin, datemax, 0);
+			
+			int nbreabsJmasculin_cy = this.getNbreAbsJSexeCycle(cycle, datemin, datemax, 1);
+			int nbreabsNJmasculin_cy = this.getNbreAbsNJSexeCycle(cycle, datemin, datemax, 1);
+			
+			String nbreabsfeminin_cy = ""+nbreabsJfeminin_cy+" / "+nbreabsNJfeminin_cy;
+			String nbreabsmasculin_cy = ""+nbreabsJmasculin_cy+" / "+nbreabsNJmasculin_cy;
+			
+			int totalabsNJ_cy = nbreabsNJfeminin_cy+nbreabsNJmasculin_cy;
+			int totalabsJ_cy = nbreabsJfeminin_cy+nbreabsJmasculin_cy;
+			String nbreabstotal_cy = ""+totalabsJ_cy+" / "+totalabsNJ_cy;
+			
+			fracb.setCycle(cycle_string);
+			fracb.setNbreabsfeminin(nbreabsfeminin_cy);
+			fracb.setNbreabsmasculin(nbreabsmasculin_cy);
+			fracb.setNbreabstotal(nbreabstotal_cy);
+			
+			
+			listofFicheRecapAbsenceCycleBean.add(fracb);
+		
+			
+		}
+		
+		//System.out.println("Taille de la liste retourner "+listofFicheRecapAbsenceCycleBean.size());
+		
+		return listofFicheRecapAbsenceCycleBean;
+	}
+	
+	@Override
+	public Collection<FicheRecapAbsenceCycleBean> generateListFicheRecapAbsenceCycleSeqBean(Cycles cycle, 
+			Sequences periode){
+		
+		if(periode == null) return null;
+		
+		List<FicheRecapAbsenceCycleBean> listofFicheRecapAbsenceCycleBean = 
+				new ArrayList<FicheRecapAbsenceCycleBean>();
+		
+		String cycle_string = (cycle == null)?"Tous les cycles \n All cycles":(cycle.getCodeCycles()+" \n "+cycle.getCodeCycles_en());
+		
+		if(cycle == null){
+
+			//Alors c'est le rapport complet de tous les cycles
+			
+			
+			for(Cycles cy : this.findAllCycle()){
+				FicheRecapAbsenceCycleBean fracb = new FicheRecapAbsenceCycleBean();
+				int nbreabsJfeminin_cy = this.getNbreAbsJSexeCycleSeq(cy, periode, 0);
+				int nbreabsNJfeminin_cy = this.getNbreAbsNJSexeCycleSeq(cy, periode, 0);
+				
+				int nbreabsJmasculin_cy = this.getNbreAbsJSexeCycleSeq(cy, periode, 1);
+				int nbreabsNJmasculin_cy = this.getNbreAbsNJSexeCycleSeq(cy, periode, 1);
+				
+				String nbreabsfeminin_cy = ""+nbreabsJfeminin_cy+" / "+nbreabsNJfeminin_cy;
+				String nbreabsmasculin_cy = ""+nbreabsJmasculin_cy+" / "+nbreabsNJmasculin_cy;
+				
+				int totalabsNJ_cy = nbreabsNJfeminin_cy+nbreabsNJmasculin_cy;
+				int totalabsJ_cy = nbreabsJfeminin_cy+nbreabsJmasculin_cy;
+				String nbreabstotal_cy = ""+totalabsJ_cy+" / "+totalabsNJ_cy;
+				
+				fracb.setCycle(cycle_string);
+				fracb.setNbreabsfeminin(nbreabsfeminin_cy);
+				fracb.setNbreabsmasculin(nbreabsmasculin_cy);
+				fracb.setNbreabstotal(nbreabstotal_cy);
+				
+				
+				listofFicheRecapAbsenceCycleBean.add(fracb);
+				
+			}
+			
+		
+			
+			int nbreabsJfeminin = this.getNbreAbsJSexeCycleSeq(cycle, periode, 0);
+			int nbreabsNJfeminin = this.getNbreAbsNJSexeCycleSeq(cycle, periode, 0);
+			
+			int nbreabsJmasculin = this.getNbreAbsJSexeCycleSeq(cycle, periode, 1);
+			int nbreabsNJmasculin = this.getNbreAbsNJSexeCycleSeq(cycle, periode, 1);
+			
+			String nbreabsfeminin = ""+nbreabsJfeminin+" / "+nbreabsNJfeminin;
+			String nbreabsmasculin = ""+nbreabsJmasculin+" / "+nbreabsNJmasculin;
+			
+			int totalabsNJ = nbreabsNJfeminin+nbreabsNJmasculin;
+			int totalabsJ = nbreabsJfeminin+nbreabsJmasculin;
+			String nbreabstotal= ""+totalabsJ+" / "+totalabsNJ;
+			
+			FicheRecapAbsenceCycleBean fracb = new FicheRecapAbsenceCycleBean();
+			fracb.setCycle(cycle_string);
+			fracb.setNbreabsfeminin(nbreabsfeminin);
+			fracb.setNbreabsmasculin(nbreabsmasculin);
+			fracb.setNbreabstotal(nbreabstotal);
+			
+			System.out.println("On ajoute dans liste fracb = "+cycle_string+" nbreabsfeminin=="
+					+ " "+nbreabsfeminin+" nbreabsmasculin=="+nbreabsmasculin+" nbreabstotal== "+nbreabstotal);
+			
+			listofFicheRecapAbsenceCycleBean.add(fracb);
+			
+		
+		}
+		else{
+
+			/*
+			 * Ici on est sur qu'on a demandé le rapport pour un cycle bien precis
+			 */
+			
+			
+			FicheRecapAbsenceCycleBean fracb = new FicheRecapAbsenceCycleBean();
+			
+			int nbreabsJfeminin_cy = this.getNbreAbsJSexeCycleSeq(cycle, periode, 0);
+			int nbreabsNJfeminin_cy = this.getNbreAbsNJSexeCycleSeq(cycle, periode, 0);
+			
+			int nbreabsJmasculin_cy = this.getNbreAbsJSexeCycleSeq(cycle, periode, 1);
+			int nbreabsNJmasculin_cy = this.getNbreAbsNJSexeCycleSeq(cycle,periode, 1);
+			
+			String nbreabsfeminin_cy = ""+nbreabsJfeminin_cy+" / "+nbreabsNJfeminin_cy;
+			String nbreabsmasculin_cy = ""+nbreabsJmasculin_cy+" / "+nbreabsNJmasculin_cy;
+			
+			int totalabsNJ_cy = nbreabsNJfeminin_cy+nbreabsNJmasculin_cy;
+			int totalabsJ_cy = nbreabsJfeminin_cy+nbreabsJmasculin_cy;
+			String nbreabstotal_cy = ""+totalabsJ_cy+" / "+totalabsNJ_cy;
+			
+			fracb.setCycle(cycle_string);
+			fracb.setNbreabsfeminin(nbreabsfeminin_cy);
+			fracb.setNbreabsmasculin(nbreabsmasculin_cy);
+			fracb.setNbreabstotal(nbreabstotal_cy);
+			
+			System.out.println("On ajoute dans liste fracb = "+cycle_string+" nbreabsfeminin_cy=="
+					+ " "+nbreabsfeminin_cy+" nbreabsmasculin_cy=="+nbreabsmasculin_cy+" nbreabstotal_cy== "+nbreabstotal_cy);
+			
+			listofFicheRecapAbsenceCycleBean.add(fracb);
+		
+			
+		
+		}
+		
+		return listofFicheRecapAbsenceCycleBean;
+	}
+	
+	@Override
+	public Collection<FicheRecapAbsenceCycleBean> generateListFicheRecapAbsenceCycleTrimBean(Cycles cycle, 
+			Trimestres periode){
+
+		
+		if(periode == null) return null;
+		
+		List<FicheRecapAbsenceCycleBean> listofFicheRecapAbsenceCycleBean = 
+				new ArrayList<FicheRecapAbsenceCycleBean>();
+		
+		String cycle_string = (cycle == null)?"Tous les cycles \n All cycles":(cycle.getCodeCycles()+" \n "+cycle.getCodeCycles_en());
+		
+		if(cycle == null){
+
+			//Alors c'est le rapport complet de tous les cycles
+			
+			
+			for(Cycles cy : this.findAllCycle()){
+				FicheRecapAbsenceCycleBean fracb = new FicheRecapAbsenceCycleBean();
+				int nbreabsJfeminin_cy = this.getNbreAbsJSexeCycleTrim(cy, periode, 0);
+				int nbreabsNJfeminin_cy = this.getNbreAbsNJSexeCycleTrim(cy, periode, 0);
+				
+				int nbreabsJmasculin_cy = this.getNbreAbsJSexeCycleTrim(cy, periode, 1);
+				int nbreabsNJmasculin_cy = this.getNbreAbsNJSexeCycleTrim(cy, periode, 1);
+				
+				String nbreabsfeminin_cy = ""+nbreabsJfeminin_cy+" / "+nbreabsNJfeminin_cy;
+				String nbreabsmasculin_cy = ""+nbreabsJmasculin_cy+" / "+nbreabsNJmasculin_cy;
+				
+				int totalabsNJ_cy = nbreabsNJfeminin_cy+nbreabsNJmasculin_cy;
+				int totalabsJ_cy = nbreabsJfeminin_cy+nbreabsJmasculin_cy;
+				String nbreabstotal_cy = ""+totalabsJ_cy+" / "+totalabsNJ_cy;
+				
+				fracb.setCycle(cycle_string);
+				fracb.setNbreabsfeminin(nbreabsfeminin_cy);
+				fracb.setNbreabsmasculin(nbreabsmasculin_cy);
+				fracb.setNbreabstotal(nbreabstotal_cy);
+				
+				
+				listofFicheRecapAbsenceCycleBean.add(fracb);
+				
+			}
+			
+		
+			
+			int nbreabsJfeminin = this.getNbreAbsJSexeCycleTrim(cycle, periode, 0);
+			int nbreabsNJfeminin = this.getNbreAbsNJSexeCycleTrim(cycle, periode, 0);
+			
+			int nbreabsJmasculin = this.getNbreAbsJSexeCycleTrim(cycle, periode, 1);
+			int nbreabsNJmasculin = this.getNbreAbsNJSexeCycleTrim(cycle, periode, 1);
+			
+			String nbreabsfeminin = ""+nbreabsJfeminin+" / "+nbreabsNJfeminin;
+			String nbreabsmasculin = ""+nbreabsJmasculin+" / "+nbreabsNJmasculin;
+			
+			int totalabsNJ = nbreabsNJfeminin+nbreabsNJmasculin;
+			int totalabsJ = nbreabsJfeminin+nbreabsJmasculin;
+			String nbreabstotal= ""+totalabsJ+" / "+totalabsNJ;
+			
+			FicheRecapAbsenceCycleBean fracb = new FicheRecapAbsenceCycleBean();
+			fracb.setCycle(cycle_string);
+			fracb.setNbreabsfeminin(nbreabsfeminin);
+			fracb.setNbreabsmasculin(nbreabsmasculin);
+			fracb.setNbreabstotal(nbreabstotal);
+			
+			System.out.println("On ajoute dans liste fracb = "+cycle_string+" nbreabsfeminin=="
+					+ " "+nbreabsfeminin+" nbreabsmasculin=="+nbreabsmasculin+" nbreabstotal== "+nbreabstotal);
+			
+			listofFicheRecapAbsenceCycleBean.add(fracb);
+			
+		
+		}
+		else{
+
+			/*
+			 * Ici on est sur qu'on a demandé le rapport pour un cycle bien precis
+			 */
+			
+			
+			FicheRecapAbsenceCycleBean fracb = new FicheRecapAbsenceCycleBean();
+			
+			int nbreabsJfeminin_cy = this.getNbreAbsJSexeCycleTrim(cycle, periode, 0);
+			int nbreabsNJfeminin_cy = this.getNbreAbsNJSexeCycleTrim(cycle, periode, 0);
+			
+			int nbreabsJmasculin_cy = this.getNbreAbsJSexeCycleTrim(cycle, periode, 1);
+			int nbreabsNJmasculin_cy = this.getNbreAbsNJSexeCycleTrim(cycle,periode, 1);
+			
+			String nbreabsfeminin_cy = ""+nbreabsJfeminin_cy+" / "+nbreabsNJfeminin_cy;
+			String nbreabsmasculin_cy = ""+nbreabsJmasculin_cy+" / "+nbreabsNJmasculin_cy;
+			
+			int totalabsNJ_cy = nbreabsNJfeminin_cy+nbreabsNJmasculin_cy;
+			int totalabsJ_cy = nbreabsJfeminin_cy+nbreabsJmasculin_cy;
+			String nbreabstotal_cy = ""+totalabsJ_cy+" / "+totalabsNJ_cy;
+			
+			fracb.setCycle(cycle_string);
+			fracb.setNbreabsfeminin(nbreabsfeminin_cy);
+			fracb.setNbreabsmasculin(nbreabsmasculin_cy);
+			fracb.setNbreabstotal(nbreabstotal_cy);
+			
+			System.out.println("On ajoute dans liste fracb = "+cycle_string+" nbreabsfeminin_cy=="
+					+ " "+nbreabsfeminin_cy+" nbreabsmasculin_cy=="+nbreabsmasculin_cy+" nbreabstotal_cy== "+nbreabstotal_cy);
+			
+			listofFicheRecapAbsenceCycleBean.add(fracb);
+		
+			
+		
+		}
+		
+		return listofFicheRecapAbsenceCycleBean;
+	
+	}
+
+	@Override
+	public Collection<FicheRecapAbsenceCycleBean> generateListFicheRecapAbsenceCycleAnBean(Cycles cycle, 
+			Annee periode){
+
+		
+		if(periode == null) return null;
+		
+		List<FicheRecapAbsenceCycleBean> listofFicheRecapAbsenceCycleBean = 
+				new ArrayList<FicheRecapAbsenceCycleBean>();
+		
+		String cycle_string = (cycle == null)?"Tous les cycles \n All cycles":(cycle.getCodeCycles()+" \n "+cycle.getCodeCycles_en());
+		
+		if(cycle == null){
+
+			//Alors c'est le rapport complet de tous les cycles
+			
+			
+			for(Cycles cy : this.findAllCycle()){
+				FicheRecapAbsenceCycleBean fracb = new FicheRecapAbsenceCycleBean();
+				int nbreabsJfeminin_cy = this.getNbreAbsJSexeCycleAn(cy, periode, 0);
+				int nbreabsNJfeminin_cy = this.getNbreAbsNJSexeCycleAn(cy, periode, 0);
+				
+				int nbreabsJmasculin_cy = this.getNbreAbsJSexeCycleAn(cy, periode, 1);
+				int nbreabsNJmasculin_cy = this.getNbreAbsNJSexeCycleAn(cy, periode, 1);
+				
+				String nbreabsfeminin_cy = ""+nbreabsJfeminin_cy+" / "+nbreabsNJfeminin_cy;
+				String nbreabsmasculin_cy = ""+nbreabsJmasculin_cy+" / "+nbreabsNJmasculin_cy;
+				
+				int totalabsNJ_cy = nbreabsNJfeminin_cy+nbreabsNJmasculin_cy;
+				int totalabsJ_cy = nbreabsJfeminin_cy+nbreabsJmasculin_cy;
+				String nbreabstotal_cy = ""+totalabsJ_cy+" / "+totalabsNJ_cy;
+				
+				fracb.setCycle(cycle_string);
+				fracb.setNbreabsfeminin(nbreabsfeminin_cy);
+				fracb.setNbreabsmasculin(nbreabsmasculin_cy);
+				fracb.setNbreabstotal(nbreabstotal_cy);
+				
+				
+				listofFicheRecapAbsenceCycleBean.add(fracb);
+				
+			}
+			
+		
+			
+			int nbreabsJfeminin = this.getNbreAbsJSexeCycleAn(cycle, periode, 0);
+			int nbreabsNJfeminin = this.getNbreAbsNJSexeCycleAn(cycle, periode, 0);
+			
+			int nbreabsJmasculin = this.getNbreAbsJSexeCycleAn(cycle, periode, 1);
+			int nbreabsNJmasculin = this.getNbreAbsNJSexeCycleAn(cycle, periode, 1);
+			
+			String nbreabsfeminin = ""+nbreabsJfeminin+" / "+nbreabsNJfeminin;
+			String nbreabsmasculin = ""+nbreabsJmasculin+" / "+nbreabsNJmasculin;
+			
+			int totalabsNJ = nbreabsNJfeminin+nbreabsNJmasculin;
+			int totalabsJ = nbreabsJfeminin+nbreabsJmasculin;
+			String nbreabstotal= ""+totalabsJ+" / "+totalabsNJ;
+			
+			FicheRecapAbsenceCycleBean fracb = new FicheRecapAbsenceCycleBean();
+			fracb.setCycle(cycle_string);
+			fracb.setNbreabsfeminin(nbreabsfeminin);
+			fracb.setNbreabsmasculin(nbreabsmasculin);
+			fracb.setNbreabstotal(nbreabstotal);
+			
+			System.out.println("On ajoute dans liste fracb = "+cycle_string+" nbreabsfeminin=="
+					+ " "+nbreabsfeminin+" nbreabsmasculin=="+nbreabsmasculin+" nbreabstotal== "+nbreabstotal);
+			
+			listofFicheRecapAbsenceCycleBean.add(fracb);
+			
+		
+		}
+		else{
+
+			/*
+			 * Ici on est sur qu'on a demandé le rapport pour un cycle bien precis
+			 */
+			
+			
+			FicheRecapAbsenceCycleBean fracb = new FicheRecapAbsenceCycleBean();
+			
+			int nbreabsJfeminin_cy = this.getNbreAbsJSexeCycleAn(cycle, periode, 0);
+			int nbreabsNJfeminin_cy = this.getNbreAbsNJSexeCycleAn(cycle, periode, 0);
+			
+			int nbreabsJmasculin_cy = this.getNbreAbsJSexeCycleAn(cycle, periode, 1);
+			int nbreabsNJmasculin_cy = this.getNbreAbsNJSexeCycleAn(cycle,periode, 1);
+			
+			String nbreabsfeminin_cy = ""+nbreabsJfeminin_cy+" / "+nbreabsNJfeminin_cy;
+			String nbreabsmasculin_cy = ""+nbreabsJmasculin_cy+" / "+nbreabsNJmasculin_cy;
+			
+			int totalabsNJ_cy = nbreabsNJfeminin_cy+nbreabsNJmasculin_cy;
+			int totalabsJ_cy = nbreabsJfeminin_cy+nbreabsJmasculin_cy;
+			String nbreabstotal_cy = ""+totalabsJ_cy+" / "+totalabsNJ_cy;
+			
+			fracb.setCycle(cycle_string);
+			fracb.setNbreabsfeminin(nbreabsfeminin_cy);
+			fracb.setNbreabsmasculin(nbreabsmasculin_cy);
+			fracb.setNbreabstotal(nbreabstotal_cy);
+			
+			System.out.println("On ajoute dans liste fracb = "+cycle_string+" nbreabsfeminin_cy=="
+					+ " "+nbreabsfeminin_cy+" nbreabsmasculin_cy=="+nbreabsmasculin_cy+" nbreabstotal_cy== "+nbreabstotal_cy);
+			
+			listofFicheRecapAbsenceCycleBean.add(fracb);
+		
+			
+		
+		}
+		
+		return listofFicheRecapAbsenceCycleBean;
+	
+	}
+	
+	
 	
 	
 	

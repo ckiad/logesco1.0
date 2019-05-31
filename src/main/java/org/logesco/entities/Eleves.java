@@ -607,6 +607,18 @@ public class Eleves implements Serializable {
 				if(arg0.getSanctionDisc().getNiveauSeverite()<arg1.getSanctionDisc().getNiveauSeverite()) n=-1;
 				if(arg0.getSanctionDisc().getNiveauSeverite()>arg1.getSanctionDisc().getNiveauSeverite()) n=1;
 				if(arg0.getSanctionDisc().getNiveauSeverite()==arg1.getSanctionDisc().getNiveauSeverite()){
+					
+					if(arg0.getUnite().equalsIgnoreCase(arg1.getUnite())==true){
+						if(arg0.getUnite().equalsIgnoreCase("RAS")==false){
+							if(arg0.getNbreperiode()<arg1.getNbreperiode()) n=-1;
+							if(arg0.getNbreperiode()>arg1.getNbreperiode()) n=1;
+						}
+					}
+					else{
+						if(arg0.getUnite().equalsIgnoreCase("J")==true && arg0.getUnite().equalsIgnoreCase("H")==true) n=1;
+						if(arg0.getUnite().equalsIgnoreCase("H")==true && arg0.getUnite().equalsIgnoreCase("J")==true) n=-1;
+					}
+					
 					if(arg0.getDateenreg().compareTo(arg1.getDateenreg())<0) n=-1;
 					
 					if(arg0.getDateenreg().compareTo(arg1.getDateenreg())>0) n=1;
@@ -631,6 +643,17 @@ public class Eleves implements Serializable {
 				if(arg0.getSanctionDisc().getNiveauSeverite()<arg1.getSanctionDisc().getNiveauSeverite()) n=1;
 				if(arg0.getSanctionDisc().getNiveauSeverite()>arg1.getSanctionDisc().getNiveauSeverite()) n=-1;
 				if(arg0.getSanctionDisc().getNiveauSeverite()==arg1.getSanctionDisc().getNiveauSeverite()){
+					if(arg0.getUnite().equalsIgnoreCase(arg1.getUnite())==true){
+						if(arg0.getUnite().equalsIgnoreCase("RAS")==false){
+							if(arg0.getNbreperiode()<arg1.getNbreperiode()) n=1;
+							if(arg0.getNbreperiode()>arg1.getNbreperiode()) n=-1;
+						}
+					}
+					else{
+						if(arg0.getUnite().equalsIgnoreCase("J")==true && arg0.getUnite().equalsIgnoreCase("H")==true) n=-1;
+						if(arg0.getUnite().equalsIgnoreCase("H")==true && arg0.getUnite().equalsIgnoreCase("J")==true) n=1;
+					}
+					
 					if(arg0.getDateenreg().compareTo(arg1.getDateenreg())<0) n=1;
 					
 					if(arg0.getDateenreg().compareTo(arg1.getDateenreg())>0) n=-1;
@@ -662,7 +685,7 @@ public class Eleves implements Serializable {
 		return listofRabs;
 	}
 	
-	public int getNbreHeureAbscenceJustifie(Long idSequence){
+	public int getNbreHeureAbsenceJustifie(Long idSequence){
 		int som=0;
 		List<RapportDAbsence> listofRabs = null;
 		listofRabs = this.getListRapportDAbsenceSeq(idSequence);
@@ -671,6 +694,47 @@ public class Eleves implements Serializable {
 		}
 		return som;
 	}
+	
+	public int getNbreHeureAbsenceNonJustifie(Long idSequence){
+		int som=0;
+		List<RapportDAbsence> listofRabs = null;
+		listofRabs = this.getListRapportDAbsenceSeq(idSequence);
+		for(RapportDAbsence rabs: listofRabs){
+			som +=rabs.getNbreheureNJustifie();
+		}
+		return som;
+	}
+	
+	public List<RapportDAbsence> getListRapportDAbsenceSeq(Date datemin, Date datemax){
+		List<RapportDAbsence> listofRabs = new ArrayList<RapportDAbsence>();
+		for(RapportDAbsence rabs : this.getListofRabs()){
+			if((rabs.getDateenreg().compareTo(datemin)>=0) && (rabs.getDateenreg().compareTo(datemax)<=0)){
+				listofRabs.add(rabs);
+			}
+		}
+		return listofRabs;
+	}
+	
+	public int getNbreHeureAbsenceJustifie(Date datemin, Date datemax){
+		int som=0;
+		List<RapportDAbsence> listofRabs = null;
+		listofRabs = this.getListRapportDAbsenceSeq(datemin, datemax);
+		for(RapportDAbsence rabs: listofRabs){
+			som +=rabs.getNbreheureJustifie();
+		}
+		return som;
+	}
+	
+	public int getNbreHeureAbsenceNonJustifie(Date datemin, Date datemax){
+		int som=0;
+		List<RapportDAbsence> listofRabs = null;
+		listofRabs = this.getListRapportDAbsenceSeq(datemin, datemax);
+		for(RapportDAbsence rabs: listofRabs){
+			som +=rabs.getNbreheureNJustifie();
+		}
+		return som;
+	}
+	
 	
 	public List<RapportDisciplinaire> getListRapportDisciplinaireSeq(Long idSequence){
 		
@@ -694,20 +758,36 @@ public class Eleves implements Serializable {
 		return listofRapportDisc;
 	}
 	
-	public int getNbreHeureAbscenceNonJustifie(Long idSequence){
-		int som=0;
-		List<RapportDAbsence> listofRabs = null;
-		listofRabs = this.getListRapportDAbsenceSeq(idSequence);
-		for(RapportDAbsence rabs: listofRabs){
-			som +=rabs.getNbreheureNJustifie();
+	public List<RapportDisciplinaire> getListRapportDisciplinaireTrim_DESC(Trimestres trimestre){
+		List<RapportDisciplinaire> listofRapportDisc = new ArrayList<RapportDisciplinaire>();
+		for(Sequences seq : trimestre.getListofsequence()){
+			for(RapportDisciplinaire rdisc: this.getListofRDisc_DESC()){
+				if(rdisc.getSequence().getIdPeriodes().longValue() == seq.getIdPeriodes().longValue()){
+					listofRapportDisc.add(rdisc);
+				}
+			}
 		}
-		return som;
+		return listofRapportDisc;
+	}
+	
+	public List<RapportDisciplinaire> getListRapportDisciplinaireAnnee_DESC(Annee an){
+		List<RapportDisciplinaire> listofRapportDisc = new ArrayList<RapportDisciplinaire>();
+		for(Trimestres trim : an.getListoftrimestre()){
+			for(Sequences seq : trim.getListofsequence()){
+				for(RapportDisciplinaire rdisc: this.getListofRDisc_DESC()){
+					if(rdisc.getSequence().getIdPeriodes().longValue() == seq.getIdPeriodes().longValue()){
+						listofRapportDisc.add(rdisc);
+					}
+				}
+			}
+		}
+		return listofRapportDisc;
 	}
 	
 	public int getNbreHeureAbsenceNonJustifieTrim(Trimestres trim){
 		int som = 0;
 		for(Sequences seq: trim.getListofsequence()){
-			som+=this.getNbreHeureAbscenceNonJustifie(seq.getIdPeriodes());
+			som+=this.getNbreHeureAbsenceNonJustifie(seq.getIdPeriodes());
 		}
 		return som;
 	}
@@ -715,7 +795,7 @@ public class Eleves implements Serializable {
 	public int getNbreHeureAbsenceJustifieTrim(Trimestres trim){
 		int som = 0;
 		for(Sequences seq: trim.getListofsequence()){
-			som+=this.getNbreHeureAbscenceJustifie(seq.getIdPeriodes());
+			som+=this.getNbreHeureAbsenceJustifie(seq.getIdPeriodes());
 		}
 		return som;
 	}
@@ -736,6 +816,10 @@ public class Eleves implements Serializable {
 		return som;
 	}
 
+	
+	
+	
+	
 	/***
 	 *  @return the NotesEval
 	 * Cette méthode retourne pour un élève sa noteEval dans un cours donnée, 

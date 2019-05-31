@@ -19,6 +19,8 @@ public interface SanctionDisciplinaireRepository extends JpaRepository<SanctionD
 	
 	public List<SanctionDisciplinaire> findAllByOrderByNiveauSeveriteAscCodeSancDiscAscIntituleSancDiscAsc();
 	
+	public List<SanctionDisciplinaire> findAllByOrderByNiveauSeveriteDescCodeSancDiscAscIntituleSancDiscAsc();
+	
 	
 	public SanctionDisciplinaire findByCodeSancDisc(String codeSancDisc);
 	

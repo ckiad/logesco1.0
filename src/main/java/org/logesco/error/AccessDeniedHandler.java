@@ -31,9 +31,8 @@ public class AccessDeniedHandler implements
             /*logger.info("User '" + auth.getName()
                     + "' attempted to access the protected URL: "
                     + httpServletRequest.getRequestURI());*/
+        	httpServletResponse.sendRedirect(httpServletRequest.getContextPath() + "/errors/403");
         }
-
-        httpServletResponse.sendRedirect(httpServletRequest.getContextPath() + "/logesco/403");
 
     }
 }

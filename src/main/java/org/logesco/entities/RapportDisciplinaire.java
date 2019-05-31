@@ -37,7 +37,7 @@ public class RapportDisciplinaire implements Serializable {
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private Date dateenreg;
 	private int nbreperiode;
-	private String unite;//jours ou heures days or hours
+	private String unite;//jours ou heures days or hours RAS si nbreperiode =0
 	private String motif;
 	
 	
@@ -207,6 +207,29 @@ public class RapportDisciplinaire implements Serializable {
 			String dateString = spd.format(this.dateenreg);
 			ch+=dateString;
 			
+			return ch;
+		}
+	}
+	
+	public String getRapportDisciplinaireStringReduit(String lang){
+		if(this.sanctionDisc == null) return " ";
+		if(lang.equalsIgnoreCase("fr")==true){
+			String ch = "";
+			
+			if(this.nbreperiode>0){
+				ch+=" "+this.nbreperiode+" "+this.unite;
+			}
+			ch+= this.sanctionDisc.getCodeSancDisc();
+			
+			return ch;
+		}
+		else{
+			String ch = "";
+			
+			if(this.nbreperiode>0){
+				ch+=" "+this.nbreperiode+" "+this.unite;
+			}
+			ch+= this.sanctionDisc.getCodeSancDiscEn();
 			return ch;
 		}
 	}

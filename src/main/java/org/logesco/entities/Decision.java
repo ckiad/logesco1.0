@@ -42,6 +42,8 @@ public class Decision implements Serializable {
 	@NotNull
 	@Column(unique=true)
 	private String codeDecisionEn;
+	@NotNull
+	private int directionDecision;
 
 	
 	/******************************************
@@ -144,6 +146,20 @@ public class Decision implements Serializable {
 	 */
 	public void setListofDecisionConseil(Collection<DecisionConseil> listofDecisionConseil) {
 		this.listofDecisionConseil = listofDecisionConseil;
+	}
+
+	/**
+	 * @return the directionDecision
+	 */
+	public int getDirectionDecision() {
+		return directionDecision;
+	}
+
+	/**
+	 * @param directionDecision the directionDecision to set
+	 */
+	public void setDirectionDecision(int directionDecision) {
+		this.directionDecision = directionDecision;
 	}
 
 	

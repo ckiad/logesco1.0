@@ -13,7 +13,7 @@
 	<field name="moy_classe_g3" class="java.lang.Double"/>
 	<field name="appreciation_g3" class="java.lang.String"/>
 	<field name="prof_g3" class="java.lang.String"/>
-	<field name="pourcentage_g3" class="java.lang.Double"/>
+	<field name="pourcentage_g3" class="java.lang.String"/>
 	<field name="note_trim_g3" class="java.lang.Double"/>
 	<field name="total_trim_g3" class="java.lang.Double"/>
 	<background>
@@ -192,7 +192,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial Narrow" size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{pourcentage_g3}+" %"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{pourcentage_g3}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

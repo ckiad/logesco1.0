@@ -2488,7 +2488,7 @@ public class ChefetabController {
 		eleveAModif.setEmailParent(updateElevesForm.getEmailParent());
 		eleveAModif.setIdEleves(updateElevesForm.getIdEleves());
 		eleveAModif.setLieunaissEleves(updateElevesForm.getLieunaissEleves());
-		//eleveAModif.setMatriculeEleves(matricule);
+		eleveAModif.setMatriculeEleves(updateElevesForm.getMatriculeEleves());
 		eleveAModif.setNationaliteEleves(updateElevesForm.getNationaliteEleves());
 		eleveAModif.setNomsEleves(updateElevesForm.getNomsEleves());
 		eleveAModif.setNumtel1Parent(updateElevesForm.getNumtel1Parent());

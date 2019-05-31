@@ -21,16 +21,16 @@ public class MatiereGroupe2AnnuelBean implements Serializable {
     private String prof_g2;
 
     // Informations sur une ligne de matière
-    private double note_1_g2;
-    private double note_2_g2;
-    private double note_3_g2;
-    private double note_ann_g2;
-    private double total_ann_g2;
-    private double coef_g2;
+    private Double note_1_g2;
+    private Double note_2_g2;
+    private Double note_3_g2;
+    private Double note_ann_g2;
+    private Double total_ann_g2;
+    private Double coef_g2;
     private String extreme_g2;
     private String rang_g2;
-    private double moy_classe_g2;
-    private double pourcentage_g2;
+    private Double moy_classe_g2;
+    private String pourcentage_g2;
     private String appreciation_g2;
 
 
@@ -77,7 +77,7 @@ public class MatiereGroupe2AnnuelBean implements Serializable {
 	/**
 	 * @return the note_1_g2
 	 */
-	public double getNote_1_g2() {
+	public Double getNote_1_g2() {
 		return note_1_g2;
 	}
 
@@ -85,15 +85,20 @@ public class MatiereGroupe2AnnuelBean implements Serializable {
 	/**
 	 * @param note_1_g2 the note_1_g2 to set
 	 */
-	public void setNote_1_g2(double note_1_g2) {
-		this.note_1_g2 = note_1_g2;
+	public void setNote_1_g2(Double note_1_g2) {
+		if(note_1_g2>=0){
+        	this.note_1_g2 = note_1_g2;
+	     }
+	     else{
+	        	this.note_1_g2 = null;
+	      }
 	}
 
 
 	/**
 	 * @return the note_2_g2
 	 */
-	public double getNote_2_g2() {
+	public Double getNote_2_g2() {
 		return note_2_g2;
 	}
 
@@ -101,15 +106,20 @@ public class MatiereGroupe2AnnuelBean implements Serializable {
 	/**
 	 * @param note_2_g2 the note_2_g2 to set
 	 */
-	public void setNote_2_g2(double note_2_g2) {
-		this.note_2_g2 = note_2_g2;
+	public void setNote_2_g2(Double note_2_g2) {
+		if(note_2_g2>=0){
+        	this.note_2_g2 = note_2_g2;
+	     }
+	     else{
+	        	this.note_2_g2 = null;
+	      }
 	}
 
 
 	/**
 	 * @return the note_3_g2
 	 */
-	public double getNote_3_g2() {
+	public Double getNote_3_g2() {
 		return note_3_g2;
 	}
 
@@ -117,15 +127,20 @@ public class MatiereGroupe2AnnuelBean implements Serializable {
 	/**
 	 * @param note_3_g2 the note_3_g2 to set
 	 */
-	public void setNote_3_g2(double note_3_g2) {
-		this.note_3_g2 = note_3_g2;
+	public void setNote_3_g2(Double note_3_g2) {
+		if(note_3_g2>=0){
+        	this.note_3_g2 = note_3_g2;
+	     }
+	     else{
+	        	this.note_3_g2 = null;
+	      }
 	}
 
 
 	/**
 	 * @return the note_ann_g2
 	 */
-	public double getNote_ann_g2() {
+	public Double getNote_ann_g2() {
 		return note_ann_g2;
 	}
 
@@ -133,31 +148,43 @@ public class MatiereGroupe2AnnuelBean implements Serializable {
 	/**
 	 * @param note_ann_g2 the note_ann_g2 to set
 	 */
-	public void setNote_ann_g2(double note_ann_g2) {
-		this.note_ann_g2 = note_ann_g2;
+	public void setNote_ann_g2(Double note_ann_g2) {
+		if(note_ann_g2>=0){
+        	this.note_ann_g2 = note_ann_g2;
+	     }
+	     else{
+	        	this.note_ann_g2 = null;
+	      }
 	}
 
 
 	/**
 	 * @return the total_ann_g2
 	 */
-	public double getTotal_ann_g2() {
-		return total_ann_g2;
+	public Double getTotal_ann_g2() {
+		if(this.getNote_ann_g2() == null) return null;
+    	if(this.getNote_ann_g2()>=0) total_ann_g2 = getNote_ann_g2()*getCoef_g2();
+		return  total_ann_g2;
 	}
 
 
 	/**
 	 * @param total_ann_g2 the total_ann_g2 to set
 	 */
-	public void setTotal_ann_g2(double total_ann_g2) {
-		this.total_ann_g2 = total_ann_g2;
+	public void setTotal_ann_g2(Double total_ann_g2) {
+		if(total_ann_g2>=0){
+        	this.total_ann_g2 = total_ann_g2;
+        }
+        else{
+        	this.total_ann_g2 = null;
+        }
 	}
 
 
 	/**
 	 * @return the coef_g2
 	 */
-	public double getCoef_g2() {
+	public Double getCoef_g2() {
 		return coef_g2;
 	}
 
@@ -165,8 +192,13 @@ public class MatiereGroupe2AnnuelBean implements Serializable {
 	/**
 	 * @param coef_g2 the coef_g2 to set
 	 */
-	public void setCoef_g2(double coef_g2) {
-		this.coef_g2 = coef_g2;
+	public void setCoef_g2(Double coef_g2) {
+		if(coef_g2>0) {
+    		this.coef_g2 = coef_g2;
+    	}
+    	else{
+    		this.coef_g2 = null;
+    	}
 	}
 
 
@@ -205,7 +237,7 @@ public class MatiereGroupe2AnnuelBean implements Serializable {
 	/**
 	 * @return the moy_classe_g2
 	 */
-	public double getMoy_classe_g2() {
+	public Double getMoy_classe_g2() {
 		return moy_classe_g2;
 	}
 
@@ -213,15 +245,20 @@ public class MatiereGroupe2AnnuelBean implements Serializable {
 	/**
 	 * @param moy_classe_g2 the moy_classe_g2 to set
 	 */
-	public void setMoy_classe_g2(double moy_classe_g2) {
-		this.moy_classe_g2 = moy_classe_g2;
+	public void setMoy_classe_g2(Double moy_classe_g2) {
+		if(moy_classe_g2>=0){
+        	this.moy_classe_g2 = moy_classe_g2;
+        }
+        else{
+        	this.moy_classe_g2 = null;
+        }
 	}
 
 
 	/**
 	 * @return the pourcentage_g2
 	 */
-	public double getPourcentage_g2() {
+	public String getPourcentage_g2() {
 		return pourcentage_g2;
 	}
 
@@ -230,7 +267,12 @@ public class MatiereGroupe2AnnuelBean implements Serializable {
 	 * @param pourcentage_g2 the pourcentage_g2 to set
 	 */
 	public void setPourcentage_g2(double pourcentage_g2) {
-		this.pourcentage_g2 = pourcentage_g2;
+		if(pourcentage_g2>=0){
+        	this.pourcentage_g2 = pourcentage_g2+" %";
+	    }
+	    else{
+	      	this.pourcentage_g2 = null;
+	    }
 	}
 
 

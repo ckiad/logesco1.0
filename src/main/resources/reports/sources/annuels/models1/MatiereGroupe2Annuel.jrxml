@@ -14,7 +14,7 @@
 	<field name="moy_classe_g2" class="java.lang.Double"/>
 	<field name="appreciation_g2" class="java.lang.String"/>
 	<field name="prof_g2" class="java.lang.String"/>
-	<field name="pourcentage_g2" class="java.lang.Double"/>
+	<field name="pourcentage_g2" class="java.lang.String"/>
 	<field name="note_ann_g2" class="java.lang.Double"/>
 	<field name="total_ann_g2" class="java.lang.Double"/>
 	<background>
@@ -177,7 +177,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial Narrow" size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{pourcentage_g2}+" %"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{pourcentage_g2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="140" y="0" width="25" height="12" uuid="fa0254d0-192d-4c3d-ad0b-2550fbb753ba"/>

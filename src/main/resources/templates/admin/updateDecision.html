@@ -11,7 +11,7 @@
 <body>
 <div layout:fragment="formactionadmin">
 <!-- debut du FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
-<div class="col-md-10  col-md-offset-1  reculeverticalementmodifpasswordform">
+<div class="col-md-11  col-md-offset-1  reculeverticalementmodifpasswordform">
 	<div class="panel panel-primary">
 		<div class="panel-heading">
 			<h4>Gestion des différentes décisions à porter sur les bulletins selon les classes</h4>
@@ -51,6 +51,7 @@
 							<th class="text-center" scope="col">CODE 2<sup>nd</sup> LANGUE</th>
 							<th class="text-center" scope="col">INTITULE</th>
 							<th class="text-center" scope="col">INTITULE 2<sup>nd</sup> LANGUE</th>
+							<th class="text-center" scope="col">POUR SIGNIFIER</th>
 						    <th class="text-center" scope="col">ACTION</th>
 						</tr>
 					</thead>
@@ -98,6 +99,21 @@
 							</td>
 							
 							<td>
+								<div class="form-group">
+									<select class="form-control" name="directionDecision"
+										 id="directionDecision" th:value="*{directionDecision}">
+										 <option value="0">REDOUBLEMENT</option>
+										<option value="1">ADMISSION</option>
+										<option value="-1">EXCLUSION</option>
+									</select>
+								</div>
+								<div th:if="${#fields.hasErrors('directionDecision')}"
+												th:errors="*{directionDecision}" class="redcolor">Erreur de intitule de direction decision</div>
+								
+								
+							</td>
+							
+							<td>
 								<button type="submit" class="btn btn-primary  pull-right">
 											<span class="glyphicon glyphicon-save"></span> Envoyer
 								</button>
@@ -117,6 +133,7 @@
 							<td th:inline="text">[[${decision.codeDecisionEn}]] </td>
 							<td th:inline="text">[[${decision.intituleDecision}]] </td>
 							<td th:inline="text">[[${decision.intituleDecisionEn}]] </td>
+							<td th:inline="text">[[${decision.directionDecision}]] </td>
 							<td>
 							
 								<div>

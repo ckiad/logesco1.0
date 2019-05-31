@@ -174,6 +174,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		return listofElevesayantcomposeaumoinsunefois;
 	}
 	
+	
 	public static Collection<Eleves> getMoyenneAnnuelOrdreDecroissant1(Classes classe, Annee annee){
 		UtilitairesBulletins usi = new UtilitairesBulletins();
 		Comparator<Eleves> monComparator = new Comparator<Eleves>() {
@@ -198,10 +199,12 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		return listofElevesayantcomposeaumoinsunefois;
 	}
 
+	
 	public String calculAppreciation(Float note, String lang){
 
 		String appreciation = "";
 		if(note == null) return appreciation;
+		if(note<0) return appreciation;
 		//Double note = new Double(this.getNote_seq_g1());
 		if (note <= 3.0) {
 			appreciation = "NUL"+"(F)";
@@ -246,10 +249,12 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		return appreciation;
 	
 	}
+	
 	
 	public String calculAppreciation(Double note, String lang){
 		String appreciation = "";
 		if(note == null) return appreciation;
+		if(note<0) return appreciation;
 		//Double note = new Double(this.getNote_seq_g1());
 		if (note <= 3.0) {
 			appreciation = "NUL"+"(F)";
@@ -293,11 +298,13 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		}
 		return appreciation;
 	}
+	
 	
 	public String calculDistinction(Float note){
 
 		String distinction = "";
 		if(note == null) return distinction;
+		if(note<0) return distinction;
 		if(note>=12.0) {
 			distinction = "TH";
 		}
@@ -310,10 +317,12 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		return distinction;
 	
 	}
+
 	
 	public String calculDistinction(Double note){
 		String distinction = "";
 		if(note == null) return distinction;
+		if(note<0) return distinction;
 		if(note>=12.0) {
 			distinction = "TH";
 		}
@@ -325,6 +334,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		}
 		return distinction;
 	}
+	
 	
 	public Map<String, Object> getEffectifSexeClasse(List<Eleves> listofEleve ){
 		Map<String, Object> mapofEff = new HashMap<String, Object>();
@@ -1467,7 +1477,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 	
 	
 	public double getMoyenneSequentiel(Eleves eleve, Sequences sequence){
-		double moyenne = -1;
+		double moyenne = 0;
 		int possedeMoy =  0;
 		double soeValeurNote = 0;
 		double soeCoef = 0;
@@ -2990,14 +3000,14 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		
 		for(Sequences seq : trimestre.getListofsequence()){
 			double tauxinter = this.getTauxReussitePourGroupeCours(classe, listofCours, seq);
-			if(tauxinter>0){
+			if(tauxinter>=0){
 				soetauxreussite = soetauxreussite + tauxinter;
 				nbretaux+=1;
 			}
 		}
 		//System.err.println("tauxreussite trim "+trimestre.getNumeroTrim()+" == "+soetauxreussite);
 		if(nbretaux>0) tauxreussite = soetauxreussite/nbretaux;
-		
+		//System.out.println("tauxreussitetauxreussite "+"  == "+tauxreussite+"  et nbretaux == "+nbretaux);
 		/*java.text.DecimalFormat df = new java.text.DecimalFormat("0.##");
 		try {
 			tauxreussite =df.parse(df.format(tauxreussite)).doubleValue();
@@ -3019,7 +3029,7 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		
 		for(Trimestres trim : annee.getListoftrimestre()){
 			double tauxinter = this.getTauxReussitePourGroupeCoursTrim(classe, listofCours, trim);
-			if(tauxinter>0){
+			if(tauxinter>=0){
 				soetauxreussite = soetauxreussite + tauxinter;
 				nbretaux+=1;
 			}
@@ -3871,6 +3881,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		double pourcentage = 0;
 		int nbreNotes = this.getNbreNoteDansCourspourSeq(classe, cours, sequence);
 		int effectifreguliers = this.geteffectifEleveRegulierPourCoursDansSeq(classe, cours, sequence);
+		
+		if(nbreNotes <0 || effectifreguliers<0) return -1;
 
 		double nbreNote = new Double(nbreNotes).doubleValue();
 		double effectifregulier = new Double(effectifreguliers).doubleValue();
@@ -3899,6 +3911,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		int nbreNotes = this.getNbreNoteDansCourspourTrim(classe, cours, trimestre);
 		int effectifreguliers = this.geteffectifEleveRegulierPourCoursDansTrim(classe, cours, trimestre);
 
+		if(nbreNotes<0 || effectifreguliers<0) return -1;
+		
 		double nbreNote = new Double(nbreNotes).doubleValue();
 		double effectifregulier = new Double(effectifreguliers).doubleValue();
 		
@@ -3923,6 +3937,8 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		int nbreNotes = this.getNbreNoteDansCourspourAn(classe, cours, annee);
 		int effectifreguliers = this.geteffectifEleveRegulierPourCoursDansAn(classe,  cours, annee);
 
+		if(nbreNotes<0 || effectifreguliers<0) return -1;
+		
 		double nbreNote = new Double(nbreNotes).doubleValue();
 		double effectifregulier = new Double(effectifreguliers).doubleValue();
 		

@@ -27,6 +27,15 @@ public class UpdateDecisionForm {
 	@NotNull
 	@NotEmpty
 	private String codeDecisionEn;
+	/* 
+	 * En ce qui concerne le champ directiondecision il va permettre de savoir quand est ce que le code
+	 * de la decision signifie admis en classe supérieur et quand est ce qu'il signifie redouble ou exclu
+	 * Pour toutes les décisions désignant une admission en classe supérieur il vaudra 1
+	 * Pour toutes les décisions désignant un redoublement, il vaudra 0
+	 * Pour toutes autres type de décision il vaudra -1
+	 * */
+	@NotNull
+	private int directionDecision;
 	/**
 	 * 
 	 */
@@ -93,6 +102,19 @@ public class UpdateDecisionForm {
 	public void setCodeDecisionEn(String codeDecisionEn) {
 		this.codeDecisionEn = codeDecisionEn;
 	}
+	/**
+	 * @return the directionDecision
+	 */
+	public int getDirectionDecision() {
+		return directionDecision;
+	}
+	/**
+	 * @param directionDecision the directionDecision to set
+	 */
+	public void setDirectionDecision(int directionDecision) {
+		this.directionDecision = directionDecision;
+	}
+	
 	
 	
 

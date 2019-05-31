@@ -64,6 +64,8 @@
 						[[${eleve.getNumero(listofAllEleve)}]]) [[${#strings.toUpperCase(eleve.nomsEleves)}]] 
 						[[${eleve.prenomsEleves}]] <br/>
 						Né le <span class="bluecolor">[[${#dates.format(eleve.datenaissEleves,"dd-MM-yyyy")}]]</span> à [[${eleve.lieunaissEleves}]]
+						<br/>
+						Redoublant: <span class="redcolor">[[${eleve.redoublant}]]</span>
 						</b>
 					</span>
 				</td>
@@ -107,9 +109,9 @@
 							<label class="bluecolor" th:inline="text">Seq [[${seq.numeroSeq}]]:</label>
 							<span th:inline="text" class="badge">
 								<b>
-									[[${eleve.getNbreHeureAbscenceNonJustifie(seq.idPeriodes)}]]/
-									[[${eleve.getNbreHeureAbscenceNonJustifie(seq.idPeriodes)}+
-									${eleve.getNbreHeureAbscenceJustifie(seq.idPeriodes)}]]
+									[[${eleve.getNbreHeureAbsenceNonJustifie(seq.idPeriodes)}]]/
+									[[${eleve.getNbreHeureAbsenceNonJustifie(seq.idPeriodes)}+
+									${eleve.getNbreHeureAbsenceJustifie(seq.idPeriodes)}]]
 								</b>
 							</span>
 						</div>

@@ -24,10 +24,10 @@
 		<div class="col-md-4 redcolor"></div>
 		<div class="col-md-4">
 			<div class="col-md-4"></div>
-			<div class="col-md-4 reculelogoverticalementdansuserslayout">
-				<img alt="Ici le logo de l'application"  src="../static/images/logopng.png"  
-				th:src="@{/images/logopng.png}"/>
-			</div>
+				<div class="col-md-4 reculelogoverticalementdansuserslayout">
+					<img alt="Ici le logo de l'application"  src="../static/images/logopng.png"  
+					th:src="@{/images/logopng.png}"/>
+				</div>
 			<div class="col-md-4 "></div>	
 		</div>
 	<div class="col-md-4"></div>
@@ -49,7 +49,7 @@
 
 
 		
-		<!-- Modal de Choix classe à configurer-->
+	<!-- Modal de Choix classe à configurer-->
 		<div class="modal fade" id="dialogChoixClasse" tabindex="-1" role="dialog" 
 				aria-labelledby="dialogChoixClasse"  aria-hidden="true">
 				<div class="modal-dialog modal-dialog-centered" role="document">
@@ -105,9 +105,9 @@
 					</div>
 				</div>
 		</div>
-		<!-- FIN DE Modal de Choix classe à configurer-->
+	<!-- FIN DE Modal de Choix classe à configurer-->
 		
-		<!-- Modal de dialog de saisi du motif de recherche-->
+	<!-- Modal de dialog de saisi du motif de recherche-->
 		<div class="modal fade" id="dialogsendMotifRechElv" tabindex="-1" role="dialog" 
 				aria-labelledby="dialogsendMotifRechElv"  aria-hidden="true">
 				<div class="modal-dialog modal-dialog-centered" role="document">
@@ -140,7 +140,7 @@
 					</div>
 				</div>
 		</div>
-		<!-- FIN DE Modal de dialog de saisi du motif de recherche-->
+	<!-- FIN DE Modal de dialog de saisi du motif de recherche-->
 		
 		<div class="modal fade" id="dialogChoixClasseReleve" tabindex="-1" role="dialog" 
 				aria-labelledby="dialogChoixClasseReleve"  aria-hidden="true">
@@ -446,19 +446,19 @@
 									</a>
                             	</li>
                             	
-                            	<li class="list-group-item" sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_CENSEUR')">
+                            	<li class="list-group-item" sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_CENSEUR','ROLE_SG')">
                             		<a href="#" th:href="@{/logesco/users/getdonneesRAbsCycle}" th:inline="text">
 										[[#{sousmenu_discipline.donneeRabsCycle}]]
 									</a>
                             	</li>
                             	
-                            	<li class="list-group-item" sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_CENSEUR')">
+                            	<li class="list-group-item" sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_CENSEUR','ROLE_SG')">
                             		<a href="#" th:href="@{/logesco/users/getdonneesRabsNiveau}" th:inline="text">
 										[[#{sousmenu_discipline.donneeRabsNiveau}]]
 									</a>
                             	</li>
                             	
-                            	<li class="list-group-item" sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_CENSEUR')">
+                            	<li class="list-group-item" sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_CENSEUR','ROLE_SG')">
                             		<a href="#" th:href="@{/logesco/users/getdonneesRabsClasse}" th:inline="text">
 										[[#{sousmenu_discipline.donneeRabsClasse}]]
 									</a>
