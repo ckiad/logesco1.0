@@ -1,3 +1,64 @@
+/****************************
+		 * Il faut faire les configurations de base au démarage et de façon automatique
+		 * A) Configurer le SGBD en créant le user logesco ou root avec un mot de passe qui est indique
+		 * dans le fichier application.properties
+		 * B) Créer la base de donnée logescodb au niveau du SGBD
+		 * C) Deployer le logiciel pour permettre a JPA de creer les tables dans cette base de donnee
+		 * 
+		 * 
+		 * 1) Enregistrer les roles de base (ADMIN, SUPERADMIN, PROVISEUR, CENSEUR, SG, INTENDANT,
+		 * ENSEIGNANT: ceci est d'ailleurs fait par défaut à l'installation du logiciel donc faudra juste verifier)
+		 * 2) Enregistrer les utilisateurs de base qui sont tous des administrateurs (admin, superadmin)
+		 * L'un s'occupe de la configuration du serveur(admin) et l'autre de realiser dans sa session ce 
+		 * que  les utilisateurs n'ont pas pu réaliser (superadmin)
+		 * 3) Enregistrer les UtilisateurRoles qui permettra effectivement de donner les roles crées aux 
+		 * utilisateurs crées
+		 * 4) Créer les différents répertoires permettant d'upload (ceci etant realise par le code précédent)
+		 * 		a) documentsUpload: pour stocker les documents uploader
+		 * 		b) emblemes/baniere et emblemes/logo: pour stocker les emblemes de l'etablissement gérer
+		 * 		c)	imagesUpload/eleves et imagesUpload/personnels pour stocker les photos de profil des 
+		 * élèves et des membres du personnel.
+		 * 5) Apres les répertoires l'administrateur doit créer  les différents rôles que les utilisateurs 
+		 * peuvent avoir dans le système car on ne peut pas avoir des utilisateurs sans role. Le rôle admin
+		 * et superadmin ont deja ete crée donc il reste proviseur, censeur, sg, intendant et enseignant. 
+		 * 6) Il faut enregistrer le proviseur (chose qui se fait grâce à l'administrateur)
+		 * 7) Il faut enregistrer les différentes sections de l'établissement
+		 * 8) Il faut enregistrer les différents cycles qu'on a dans l'établissement
+		 * 9) Il faut enregistrer les différents niveaux qu'on a dans l'établissement
+		 * 10) Il faut enregistrer les classes qu'on a dans l'établissement
+		 * 11) Il faut enregistrer toutes les spécialités qu'on a dans l'établissement. Les troncs commun peuvent
+		 * etre enregistré avec un code vide afin de ne pas allonger le nom des classes puisque le code de la 
+		 * spécialité en fait partie
+		 * 12) Il faut enregistrer les salles de classes présentent dans l'établissement
+		 * 12) Il faut enregistrer les départements ie en quelques sortes les matieres dont les cours en feront partie
+		 * 13) Il faut maintenant configurer les cours qui passeront dans chacune des classes. 
+		 * Pour la section anglophones, il faudra pour une classe enregistrer tous les cours même si tous les élèves
+		 * ne les feront pas. En fait dans une classe comme form4 arts, tous les élèves ne font pas les cours programmés
+		 * pour la spécialités.
+		 * 14) Il faut enregistrer les sanctions disciplinaires (RAS, retards en heure, consignes en heure, retenus,
+		 * Avertissement conduite, Blame conduite, Exclusion temporaire, Exclusion définitive ) 
+		 * 15) Il faut enregistrer les distinctions due aux travail (Effort supplémentaire, Avertissement travail, 
+		 * Blame travail, Tableau d'honneur, Tableau d'honneur avec encouragement, Tableau d'honneur avec
+		 * félicitation, Tableau d'honneur refusé)
+		 * 16) Il faut enregistrer les décisions qui peuvent être prise pendant le conseil de classse annuel (Admis 
+		 * ou promoted, admis exceptionnellement, exclu pour age, exclu pour indiscipline, exclu si echec, 
+		 * exclu pour travail, redouble ou repeat, redouble si echec, redouble exceptionnellement, exclu pour 
+		 * insolvabilité, exclu pour démission, exclu pour absenteisme)
+		 * 17) ll faut enregistrer l'année scolaire qui sera gérer
+		 * 18) Il faut enregistrer les trimestres qui seront gérer dans l'année scolaire
+		 * 19) Il faut enregistrer les séquences qui seront gérer dans l'année scolaire
+		 * 20) Demander au proviseur de n'activer qu'une séquence et qu'un trimestre à la fois. Celui dans lequel
+		 * les enseignants devraient travailler afin d'éviter les erreurs par exemple l'enregistrement des notes 
+		 * d'une séquence dans une autre. 
+		 * 
+		 * 21) Le superadmin peut à chaque fois modifier les rôles attribués à un utilisateur afin de définir 
+		 * ce qu'il pourra ou pas faire dans le système.
+		 * 
+		 */
+			
+
+
+
 **) Changer le mot de passe administrateur et du superadministrateur
 **) Créér les roles PROVISEUR, CENSEUR, SG, ENSEIGNANT, TITULAIRE, USER
 **) Enregistrer l'année scolaire à gérer

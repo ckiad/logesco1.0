@@ -23,16 +23,18 @@ public class LogescoErrorController implements ErrorController {
 	 * 
 	 */
 	@RequestMapping("/error")
-    public String handleError(HttpServletRequest request, Model model) {
+    public String handleError(HttpServletRequest request, Model model, Exception ex) {
         //do something like logging
 	 
 	 	Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
+	 	
 	 	if (status != null) {
 	 		Integer statusCode = Integer.valueOf(status.toString());
 	 		 if(statusCode == HttpStatus.NOT_FOUND.value()) {
 	             return "errors/404";
 	         }
 	         else if(statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
+	        	 model.addAttribute("trace", ex.getMessage());
 	             return "errors/500";
 	         }
 	         else if(statusCode == HttpStatus.FORBIDDEN.value()) {

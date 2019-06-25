@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="admin/adminlayout">
+<head>
+<meta charset="UTF-8"/>
+<title>Ajouter / Retirer un rôle à un utilisateur</title>
+</head>
+<body>
+<div layout:fragment="formactionadmin">
+<!-- debut du FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
+<div class="col-md-8  col-md-offset-2  reculeverticalementmodifpasswordform">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h4>Attribution des rôles aux utilisateurs</h4>
+		</div>
+		
+		<div th:if="${param.updateRoleUserASuccess}">
+			<h4 align="justify" class="alert alert-success">
+					Le rôle a été ajouté avec succès.
+			</h4>
+		</div>
+		
+		<div th:if="${param.updateRoleUserRSuccess}">
+			<h4 align="justify" class="alert alert-success">
+					Le rôle a été retiré avec succès.
+			</h4>
+		</div>
+		
+		<div th:if="${param.updateRoleUserError}">
+			<h4 align="justify" class="alert alert-danger">
+					Erreur de mise à jour du rôle.
+			</h4>
+		</div>
+		
+		<div class="panel-body">
+			<form action="#" th:action="@{/logesco/admin/updateRolesUsers}" class="form-inline"
+				method="get">
+				<fieldset>
+					<legend class="text-primary">Attribution des rôles aux utilisateurs</legend>
+					
+					<div class="form-group">
+						<label for="role"> Utilisateurs : <span
+							class="redcolor">*</span></label> 
+						<select class="form-control" name="idUsers" id="idUsers">
+							<option th:each="u:${listofUsers}" th:value="${u.idUsers}"
+								th:inline="text">
+								[[${u.username}]] 
+							</option>
+						</select>
+					</div>
+					
+					<div class="form-group">
+						<label for="role"> Rôles : <span
+							class="redcolor">*</span></label> 
+						<select class="form-control" name="roles" id="roles">
+							<option th:each="r:${listofRoles}" th:value="${r.role}"
+								th:inline="text">
+								[[${r.role}]] 
+							</option>
+						</select>
+					</div>
+					
+					<div class="form-group radio">
+							    <label><input type="radio" name="choixaction" id="choixaction" class="radio-inline"
+						    				 value="1" checked="checked"/>Ajouter </label>
+							    <label><input type="radio" name="choixaction" id="choixaction" class="radio-inline"
+						      				value="0"/>Retirer</label>
+					   </div>
+					
+					<div class="form-group"> 
+						<input type="hidden" name="numPage" id="numPage"
+									class="form-control"  th:value="${pageCourante}"/>
+					</div>
+					
+					<div class="form-group">
+					
+						<button type="submit" class="btn btn-primary">
+							<span class="glyphicon glyphicon-send"></span> Envoyer
+						</button>
+						
+					</div>
+					
+				</fieldset>
+			</form>
+			
+			<div th:if="${pageofUsers}">
+				<table class="table table-striped">
+					<caption>Liste des utilisateurs avec leurs rôles respectifs</caption>
+					<thead class="thead-light">
+						<tr>
+							<th scope="col">NOMS D'UTILISATEURS</th>
+							<th scope="col">LISTE DES ROLES</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="u:${pageofUsers}">
+							<td th:inline="text">
+								[[${u.username}]]
+							</td>
+							
+							<td>
+								<span th:each="ur:${u.listofusersRoles}"  th:inline="text">
+									[[${ur.roleAssocie.role}]], &nbsp;&nbsp;
+								</span>
+							</td>
+							
+						</tr>
+					</tbody>
+				</table>
+				
+				<div class="container">
+					<ul class="pagination"><!-- nav nav-pills -->
+						<li th:each="p,status:${listofPagesUtilisateurs}" th:class="${status.index==pageCourante}?active:' ' ">
+							<a th:href="@{/logesco/admin/getUpdateRolesUsers(numPage=${status.index})}"
+								 th:text="${status.index+1}"></a>
+						</li>
+					</ul>
+					
+				</div>
+				
+			</div>
+			
+		</div>
+	</div>
+</div>
+<!-- fin du FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
+</div>
+</body>
+</html>

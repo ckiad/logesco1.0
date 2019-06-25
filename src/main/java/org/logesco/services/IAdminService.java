@@ -139,6 +139,12 @@ public interface IAdminService {
 	public Personnels findPersonnel(String numeroCni);
 	
 	/***
+	 * Cette méthode retourne le personnel qui possède le matricule passe en parametre
+	 * Elle retourne null si aucun personnel ne possède ce matricule
+	 */
+	public Personnels findPersonnelAvecMatricule(String matricule);
+	
+	/***
 	 * Cette méthode retourne le personnel qui possède le triplet noms prenoms datenaiss
 	 */
 	public Personnels findPersonnel(String nomPers, String prenomsPers, Date datenaisspers);
@@ -683,7 +689,21 @@ public interface IAdminService {
 	 */
 	public List<UtilisateursRoles> findAllUsersRoles();
 	
-	/****
+	public Page<Utilisateurs> findPageUtilisateurs(int numPage, int taillePage);
+	
+	/***************************************
+	 * Retourne la liste des roles enregistrées dans le systeme
+	 * @return
+	 */
+	public List<Roles> findAllRoles();
+	
+	/***************************************
+	 * Retourne la liste des roles enregistrées dans le systeme sauf le role passe en parametre
+	 * @return
+	 */
+	public List<Roles> findAllRoles(String roles);
+	
+	/********************************
 	 * Retourne le role donc la cle est passe en paramaètre ou null si le rôle n'existe pas
 	 * n'existe pas
 	 */

@@ -15,6 +15,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 /**
  * @author cedrickiadjeu
  *
@@ -32,10 +34,13 @@ public class Cycles implements Serializable {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long idCycles;
 	@NotNull
+	@NotEmpty
 	@Column(unique=true)
 	private String codeCycles;
 	
 	@NotNull
+	@NotEmpty
+	@Column(unique=true)
 	private String codeCycles_en;
 	
 	@NotNull

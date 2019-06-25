@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="users/userslayout">
+<head>
+<meta charset="UTF-8"/>
+<title>Bulletins trimestriels: Paramètres de production</title>
+</head>
+<body>
+<span layout:fragment="titre_boite">
+        <kbd>Sélectionner l'élève pour lequel le bulletin trimestriel est souhaité</kbd>
+</span>
+
+<div layout:fragment="formactionusers">
+<!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
+<div class="col-md-9">
+	<span class="col-md-12 alert alert-warning">
+			<label>
+				<span class="glyphicon glyphicon-minus">Si une erreur concernant la section survient, faites vérifier 
+				par l'administrateur si les codes des sections sont soit: GENERAL, INDUSTRIELLE OU COMMERCIALE
+				</span>
+			</label>
+	</span>
+	
+	<form action="#"
+			th:action="@{/logesco/users/bulletins/lancerEditions1BulletinsTrim}" method="get"
+			class="form-inline" target="_blank">
+		
+		<div th:if="${listofEleves != null}" >
+			<div class="form-group">
+					<label for="idClassesConcerne"> Sélectionner l'élève: <span
+						class="redcolor">*</span></label>
+					<select class="form-control" name="idEleveConcerne"
+						id="idEleveConcerne" >
+						<option th:each="e:${listofEleves}"
+							th:value="${e.idEleves}" th:inline="text">
+										
+							[[${e.nomsEleves}]] [[${e.prenomsEleves}]]
+											
+						</option>
+					</select>
+				</div>
+				
+				<input type="hidden" name="idAnneeConcerne" id="idAnneeConcerne" 
+					class="form-control" th:value="${idAnneeConcerne}" />
+				
+				<input type="hidden" name="idTrimestreConcerne" id="idTrimestreConcerne" 
+					class="form-control" th:value="${idTrimestreConcerne}" />
+				
+				<input type="hidden" name="idClasseConcerne" id="idClasseConcerne" 
+					class="form-control" th:value="${idClasseConcerne}" />
+				
+				<button type="submit" class="btn btn-primary  pull-right">
+					<span class="glyphicon glyphicon-send"></span> Envoyer
+				</button>
+				
+		</div>
+		
+		
+	</form>
+	
+	
+	
+</div>
+<!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
+</div>
+
+</body>
+</html>

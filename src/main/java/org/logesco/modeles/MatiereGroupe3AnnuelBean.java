@@ -18,6 +18,7 @@ public class MatiereGroupe3AnnuelBean implements Serializable {
 	
 	 // Informations sur le groupe de matieres
     private String matiere_g3;
+    private String matiere_g3_2emelang;
     private String prof_g3;
 
     // Informations sur une ligne de matière
@@ -55,6 +56,32 @@ public class MatiereGroupe3AnnuelBean implements Serializable {
 	 */
 	public void setMatiere_g3(String matiere_g3) {
 		this.matiere_g3 = matiere_g3;
+	}
+
+	
+	
+
+	/**
+	 * @return the matiere_g3_2emelang
+	 */
+	public String getMatiere_g3_2emelang() {
+		return matiere_g3_2emelang;
+	}
+
+
+	/**
+	 * @param matiere_g3_2emelang the matiere_g3_2emelang to set
+	 */
+	public void setMatiere_g3_2emelang(String matiere_g3_2emelang) {
+		this.matiere_g3_2emelang = matiere_g3_2emelang;
+	}
+
+
+	/**
+	 * @param pourcentage_g3 the pourcentage_g3 to set
+	 */
+	public void setPourcentage_g3(String pourcentage_g3) {
+		this.pourcentage_g3 = pourcentage_g3;
 	}
 
 

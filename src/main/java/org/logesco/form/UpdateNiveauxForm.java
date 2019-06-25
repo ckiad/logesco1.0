@@ -31,8 +31,7 @@ public class UpdateNiveauxForm {
 	@NotNull
 	@NotEmpty
 	private String enregOrmodif;
-	@NotNull
-	@NotEmpty
+	
 	private String codeNiveauxAModif;
 	
 	/**

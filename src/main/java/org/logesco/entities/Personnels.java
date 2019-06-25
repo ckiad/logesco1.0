@@ -44,15 +44,13 @@ public abstract class Personnels extends Utilisateurs implements Serializable {
 	@NotNull
 	@Past
 	@DateTimeFormat(pattern="yyyy-MM-dd")
-	private Date datenaissPers; 
+	private Date datenaissPers;
 	@NotNull
+	@NotEmpty
 	@Size(min = 2, max = 20)
 	private String diplomePers;
 	@Email
 	private String emailPers;
-	@NotNull
-	@NotEmpty
-	@Size(min = 3, max = 7)
 	private String gradePers;
 	@NotNull
 	@NotEmpty
@@ -72,9 +70,7 @@ public abstract class Personnels extends Utilisateurs implements Serializable {
 	private String numtel1Pers;
 	private String numtel2Pers;
 	private String photoPers;
-	@Size(min = 2, max = 50)
 	private String prenomsPers;
-	@Size(min = 2, max = 20)
 	private String quartierPers;
 	@NotNull
 	@NotEmpty
@@ -83,10 +79,34 @@ public abstract class Personnels extends Utilisateurs implements Serializable {
 	@NotNull
 	@NotEmpty
 	@Size(min = 3, max = 13)
-	private String statutPers;//ECI ou Vacataire ou alors Fonctionnaire
-	@Size(min = 2, max = 20)
+	private String statutPers;//ECI ou Vacataire ou Permanent ou alors Fonctionnaire
 	private String villePers;
-
+	
+	/*
+	 * Champ ajouter pour la conformite avec la realite sur le terrain
+	 */
+	@Column(unique=true)
+	private String matriculePers;
+	private String etabDAttache;
+	/*****
+	 * les différentes fonctions sont: proviseur, censeur, sg, enseignant, intendant, secretaire, surveillant,
+	 * Veilleur(Gardien), Nettoyeur, autres(dont la valeur sera le vide)
+	 */
+	@NotEmpty
+	private String fonctionPers; 
+	private int quotaHorairePers;
+	private String deptoriginePers;
+	private String regionoriginePers;
+	@NotEmpty
+	private String sitmatriPers;
+	@Past
+	@DateTimeFormat(pattern="yyyy-MM-dd")
+	private Date dateentreeFPPers; 
+	@Past
+	@DateTimeFormat(pattern="yyyy-MM-dd")
+	private Date datePSPers; 
+	private String observations;
+	
 	/**
 	 * 
 	 */
@@ -371,8 +391,151 @@ public abstract class Personnels extends Utilisateurs implements Serializable {
 		this.villePers = villePers;
 	}
 
+	/**
+	 * @return the matriculePers
+	 */
+	public String getMatriculePers() {
+		return matriculePers;
+	}
+
+	/**
+	 * @param matriculePers the matriculePers to set
+	 */
+	public void setMatriculePers(String matriculePers) {
+		this.matriculePers = matriculePers;
+	}
+
+	/**
+	 * @return the fonctionPers
+	 */
+	public String getFonctionPers() {
+		return fonctionPers;
+	}
+
+	/**
+	 * @param fonctionPers the fonctionPers to set
+	 */
+	public void setFonctionPers(String fonctionPers) {
+		this.fonctionPers = fonctionPers;
+	}
+
 	
 
+	/**
+	 * @return the quotaHorairePers
+	 */
+	public int getQuotaHorairePers() {
+		return quotaHorairePers;
+	}
+
+	/**
+	 * @param quotaHorairePers the quotaHorairePers to set
+	 */
+	public void setQuotaHorairePers(int quotaHorairePers) {
+		this.quotaHorairePers = quotaHorairePers;
+	}
+
+	/**
+	 * @return the deptoriginePers
+	 */
+	public String getDeptoriginePers() {
+		return deptoriginePers;
+	}
+
+	/**
+	 * @param deptoriginePers the deptoriginePers to set
+	 */
+	public void setDeptoriginePers(String deptoriginePers) {
+		this.deptoriginePers = deptoriginePers;
+	}
+
+	/**
+	 * @return the regionoriginePers
+	 */
+	public String getRegionoriginePers() {
+		return regionoriginePers;
+	}
+
+	/**
+	 * @param regionoriginePers the regionoriginePers to set
+	 */
+	public void setRegionoriginePers(String regionoriginePers) {
+		this.regionoriginePers = regionoriginePers;
+	}
+
+	/**
+	 * @return the sitmatriPers
+	 */
+	public String getSitmatriPers() {
+		return sitmatriPers;
+	}
+
+	/**
+	 * @param sitmatriPers the sitmatriPers to set
+	 */
+	public void setSitmatriPers(String sitmatriPers) {
+		this.sitmatriPers = sitmatriPers;
+	}
+
+	/**
+	 * @return the dateentreeFPPers
+	 */
+	public Date getDateentreeFPPers() {
+		return dateentreeFPPers;
+	}
+
+	/**
+	 * @param dateentreeFPPers the dateentreeFPPers to set
+	 */
+	public void setDateentreeFPPers(Date dateentreeFPPers) {
+		this.dateentreeFPPers = dateentreeFPPers;
+	}
+
+	/**
+	 * @return the datePSPers
+	 */
+	public Date getDatePSPers() {
+		return datePSPers;
+	}
+
+	/**
+	 * @param datePSPers the datePSPers to set
+	 */
+	public void setDatePSPers(Date datePSPers) {
+		this.datePSPers = datePSPers;
+	}
+
+	/**
+	 * @return the observations
+	 */
+	public String getObservations() {
+		return observations;
+	}
+
+	/**
+	 * @param observations the observations to set
+	 */
+	public void setObservations(String observations) {
+		this.observations = observations;
+	}
+
+	/**
+	 * @return the etabDAttache
+	 */
+	public String getEtabDAttache() {
+		return etabDAttache;
+	}
+
+	/**
+	 * @param etabDAttache the etabDAttache to set
+	 */
+	public void setEtabDAttache(String etabDAttache) {
+		this.etabDAttache = etabDAttache;
+	}
+
+	
+	
+	
 	
 	
 

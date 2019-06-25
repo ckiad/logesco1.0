@@ -30,6 +30,12 @@ public class PersonnelBean implements Serializable {
 	private String adresse;
 	private String numtel1;
 	private String numtel2;
+	private String numero;
+	private String matricule;
+	private String quotah;
+	private String sitmatri;
+	private String region;
+	private String observation;
 	
 
 	/**
@@ -238,7 +244,92 @@ public class PersonnelBean implements Serializable {
 		this.numtel2 = numtel2;
 	}
 
+	/**
+	 * @return the numero
+	 */
+	public String getNumero() {
+		return numero;
+	}
 
+	/**
+	 * @param numero the numero to set
+	 */
+	public void setNumero(String numero) {
+		this.numero = numero;
+	}
+
+	/**
+	 * @return the quotah
+	 */
+	public String getQuotah() {
+		return quotah;
+	}
+
+	/**
+	 * @param quotah the quotah to set
+	 */
+	public void setQuotah(String quotah) {
+		this.quotah = quotah;
+	}
+
+	/**
+	 * @return the sitmatri
+	 */
+	public String getSitmatri() {
+		return sitmatri;
+	}
+
+	/**
+	 * @param sitmatri the sitmatri to set
+	 */
+	public void setSitmatri(String sitmatri) {
+		this.sitmatri = sitmatri;
+	}
+
+	/**
+	 * @return the region
+	 */
+	public String getRegion() {
+		return region;
+	}
+
+	/**
+	 * @param region the region to set
+	 */
+	public void setRegion(String region) {
+		this.region = region;
+	}
+
+	/**
+	 * @return the observation
+	 */
+	public String getObservation() {
+		return observation;
+	}
+
+	/**
+	 * @param observation the observation to set
+	 */
+	public void setObservation(String observation) {
+		this.observation = observation;
+	}
+
+	/**
+	 * @return the matricule
+	 */
+	public String getMatricule() {
+		return matricule;
+	}
+
+	/**
+	 * @param matricule the matricule to set
+	 */
+	public void setMatricule(String matricule) {
+		this.matricule = matricule;
+	}
+
+
+	
 	
 	
 }

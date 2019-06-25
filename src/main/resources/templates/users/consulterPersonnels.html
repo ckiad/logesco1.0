@@ -22,9 +22,10 @@
 		</div>
 		
 		<div>
-		<div class="col-md-2"></div>
-		<div th:if="${listofCenseurs!=null or listofSg!=null or listofIntendant!=null or listofEnseignants!=null}" 
-			class="col-md-8 btn-group">
+		<!-- <div class="col-md-1"></div> -->
+		<div class="col-md-12">
+		<div th:if="${listofCenseurs!=null or listofSg!=null or listofIntendant!=null or listofEnseignants!=null or listofPersonnelsDAppui!=null}" 
+			class="btn-group">
 			
 			<a class="btn btn-default btn-sm" href="#" th:if="${listofCenseurs!=null}"
 				 th:href="@{/logesco/users/chefetab/exportlistCenseur}" 
@@ -50,13 +51,55 @@
 				  <span class="glyphicon glyphicon-list-alt"></span> [[#{consultpers.bouton_exportIntendant}]]
 			</a>
 			
+			<a class="btn btn-default btn-sm" href="#" th:if="${listofPersonnelsDAppui!=null}"
+				  th:href="@{/logesco/users/chefetab/exportlistPersonnelsDAppui}"
+				  role="button" target="_blank" th:inline="text">
+				  <span class="glyphicon glyphicon-list-alt"></span> [[#{consultpers.bouton_exportPersonnelDAppui}]]
+			</a>
+			
 			<a class="btn btn-default btn-sm" href="#"
 				  th:href="@{/logesco/users/chefetab/exportlistMembrePersonnels}"
 				  role="button" target="_blank" th:inline="text">
 				  <span class="glyphicon glyphicon-list-alt"></span> [[#{consultpers.bouton_exportPersonnel}]]
 			</a>
 		</div>
-		<div class="col-md-2"></div>
+		<br/><br/>
+		<div th:if="${listofPersonnelsVacataire!=null or listofPersonnelsPermanent!=null or listofPersonnelsECI!=null or listofEnseignantVacataire!=null or listofEnseignantPermanent!=null}" 
+			class="btn-group">
+			
+			<a class="btn btn-default btn-sm" href="#" th:if="${listofPersonnelsPermanent!=null}"
+				  th:href="@{/logesco/users/chefetab/exportlistMembrePersonnelsPermanent}"
+				  role="button" target="_blank" th:inline="text">
+				  <span class="glyphicon glyphicon-list-alt"></span> [[#{consultpers.bouton_exportPersonnelPermanent}]]
+			</a>
+			
+			<a class="btn btn-default btn-sm" href="#" th:if="${listofEnseignantPermanent!=null}"
+				  th:href="@{/logesco/users/chefetab/exportlistEnseignantPermanent}"
+				  role="button" target="_blank" th:inline="text">
+				  <span class="glyphicon glyphicon-list-alt"></span> [[#{consultpers.bouton_exportEnseignantPermanent}]]
+			</a>
+			
+			<a class="btn btn-default btn-sm" href="#" th:if="${listofPersonnelsVacataire!=null}"
+				  th:href="@{/logesco/users/chefetab/exportlistMembrePersonnelsVacataire}"
+				  role="button" target="_blank" th:inline="text">
+				  <span class="glyphicon glyphicon-list-alt"></span> [[#{consultpers.bouton_exportPersonnelVacataire}]]
+			</a>
+			
+			<a class="btn btn-default btn-sm" href="#" th:if="${listofEnseignantVacataire!=null}"
+				  th:href="@{/logesco/users/chefetab/exportlistEnseignantVacataire}"
+				  role="button" target="_blank" th:inline="text">
+				  <span class="glyphicon glyphicon-list-alt"></span> [[#{consultpers.bouton_exportEnseignantVacataire}]]
+			</a>
+			
+			<a class="btn btn-default btn-sm" href="#" th:if="${listofPersonnelsECI!=null}"
+				  th:href="@{/logesco/users/chefetab/exportlistMembrePersonnelsECI}"
+				  role="button" target="_blank" th:inline="text">
+				  <span class="glyphicon glyphicon-list-alt"></span> [[#{consultpers.bouton_exportPersonnelECI}]]
+			</a>
+			
+		</div>
+		</div>
+		<!-- <div class="col-md-1"></div> -->
 		</div>
 		
 			
@@ -73,7 +116,7 @@
 					</thead>
 					<tbody>
 						<tr th:each="proviseur:${listofProviseur}">
-							<td th:text="${proviseur.numcniPers}"></td>
+							<td th:inline="text" >[[${#strings.toUpperCase(proviseur.matriculePers)}]] ([[${#strings.toUpperCase(proviseur.numcniPers)}]])</td>
 							<td th:inline="text">[[${#strings.toUpperCase(proviseur.nomsPers)}]] [[${proviseur.prenomsPers}]] 
 								[[#{consultpers.nele}]] [[${#dates.format(proviseur.datenaissPers,"dd-MM-yyyy")}]]</td>
 							
@@ -110,7 +153,7 @@
 							        </button>
 							      </div>
 							      <div class="modal-body">
-							        	<h4><b>Numéro de CNI:</b> <span th:text="${proviseur.numcniPers}"></span></h4>
+							        	<h4><b>Matricule:</b> <span th:inline="text">[[${#strings.toUpperCase(proviseur.matriculePers)}]] ([[${#strings.toUpperCase(proviseur.numcniPers)}]])</span></h4>
 							        	<h4><b>Noms et prénoms:</b> <span th:inline="text">[[${#strings.toUpperCase(proviseur.nomsPers)}]]  
 							        		[[${proviseur.prenomsPers}]]</span></h4>
 							        	<h4><b>Date et lieu de naissance:</b> <span th:inline="text">[[${#dates.format(proviseur.datenaissPers,"dd-MM-yyyy")}]] à 
@@ -172,7 +215,7 @@
 					</thead>
 					<tbody>
 						<tr th:each="censeur:${listofCenseurs}">
-							<td th:text="${censeur.numcniPers}"></td>
+							<td th:inline="text">[[${#strings.toUpperCase(censeur.matriculePers)}]] ([[${#strings.toUpperCase(censeur.numcniPers)}]])</td>
 							<td th:inline="text">[[${#strings.toUpperCase(censeur.nomsPers)}]] [[${censeur.prenomsPers}]] 
 								[[#{consultpers.nele}]] [[${#dates.format(censeur.datenaissPers,"dd-MM-yyyy")}]]</td>
 							<td>
@@ -228,7 +271,7 @@
 							        </button>
 							      </div>
 							      <div class="modal-body">
-							        	<h4><b>Numéro de CNI:</b> <span th:text="${censeur.numcniPers}"></span></h4>
+							        	<h4><b>Matricule:</b> <span th:inline="text">[[${#strings.toUpperCase(censeur.matriculePers)}]] ([[${#strings.toUpperCase(censeur.numcniPers)}]])</span></h4>
 							        	<h4><b>Noms et prénoms:</b> <span th:inline="text">[[${#strings.toUpperCase(censeur.nomsPers)}]]  
 							        		[[${censeur.prenomsPers}]]</span></h4>
 							        	<h4><b>Date et lieu de naissance:</b> <span th:inline="text">[[${#dates.format(censeur.datenaissPers,"dd-MM-yyyy")}]] à 
@@ -335,7 +378,7 @@
 					</thead>
 					<tbody>
 						<tr th:each="sg:${listofSg}">
-							<td th:text="${sg.numcniPers}"></td>
+							<td th:inline="text">[[${#strings.toUpperCase(sg.matriculePers)}]] ([[${#strings.toUpperCase(sg.numcniPers)}]])</td>
 							<td th:inline="text">[[${#strings.toUpperCase(sg.nomsPers)}]] [[${sg.prenomsPers}]] 
 								né le [[${#dates.format(sg.datenaissPers,"dd-MM-yyyy")}]]</td>
 							<td>
@@ -390,7 +433,7 @@
 							        </button>
 							      </div>
 							      <div class="modal-body">
-							        	<h4><b>Numéro de CNI:</b> <span th:text="${sg.numcniPers}"></span></h4>
+							        	<h4><b>Matricule:</b> <span th:inline="text">[[${#strings.toUpperCase(sg.matriculePers)}]] ([[${#strings.toUpperCase(sg.numcniPers)}]])</span></h4>
 							        	<h4><b>Noms et prénoms:</b> <span th:inline="text">[[${#strings.toUpperCase(sg.nomsPers)}]]  
 							        		[[${sg.prenomsPers}]]</span></h4>
 							        	<h4><b>Date et lieu de naissance:</b> <span th:inline="text">[[${#dates.format(sg.datenaissPers,"dd-MM-yyyy")}]] à 
@@ -494,7 +537,7 @@
 					</thead>
 					<tbody>
 						<tr th:each="intendant:${listofIntendant}">
-							<td th:text="${intendant.numcniPers}"></td>
+							<td th:inline="text">[[${#strings.toUpperCase(intendant.matriculePers)}]] ([[${#strings.toUpperCase(intendant.numcniPers)}]])</td>
 							<td th:inline="text">[[${#strings.toUpperCase(intendant.nomsPers)}]] [[${intendant.prenomsPers}]] 
 								né le [[${#dates.format(intendant.datenaissPers,"dd-MM-yyyy")}]]</td>
 							<td>
@@ -550,7 +593,7 @@
 							        </button>
 							      </div>
 							      <div class="modal-body">
-							        	<h4><b>Numéro de CNI:</b> <span th:text="${intendant.numcniPers}"></span></h4>
+							        	<h4><b>Matricule:</b> <span th:inline="text">[[${#strings.toUpperCase(intendant.matriculePers)}]] ([[${#strings.toUpperCase(intendant.numcniPers)}]])</span></h4>
 							        	<h4><b>Noms et prénoms:</b> <span th:inline="text">[[${#strings.toUpperCase(intendant.nomsPers)}]]  
 							        		[[${intendant.prenomsPers}]]</span></h4>
 							        	<h4><b>Date et lieu de naissance:</b> <span th:inline="text">[[${#dates.format(intendant.datenaissPers,"dd-MM-yyyy")}]] à 
@@ -655,7 +698,7 @@
 					</thead>
 					<tbody>
 						<tr th:each="ens:${listofEnseignants}">
-							<td th:text="${ens.numcniPers}"></td>
+							<td th:inline="text">[[${#strings.toUpperCase(ens.matriculePers)}]] ([[${#strings.toUpperCase(ens.numcniPers)}]])</td>
 							<td th:inline="text">[[${#strings.toUpperCase(ens.nomsPers)}]] [[${ens.prenomsPers}]] 
 								né le [[${#dates.format(ens.datenaissPers,"dd-MM-yyyy")}]]</td>
 							<td>
@@ -715,7 +758,7 @@
 							        </button>
 							      </div>
 							      <div class="modal-body">
-							        	<h4><b>Numéro de CNI:</b> <span th:text="${ens.numcniPers}"></span></h4>
+							        	<h4><b>Matricule:</b> <span th:inline="text">[[${#strings.toUpperCase(ens.matriculePers)}]] ([[${#strings.toUpperCase(ens.numcniPers)}]])</span></h4>
 							        	<h4><b>Noms et prénoms:</b> <span th:inline="text">[[${#strings.toUpperCase(ens.nomsPers)}]]  
 							        		[[${ens.prenomsPers}]]</span></h4>
 							        	<h4><b>Date et lieu de naissance:</b> <span th:inline="text">[[${#dates.format(ens.datenaissPers,"dd-MM-yyyy")}]] à 
@@ -806,6 +849,172 @@
 				
 			</div>
 			
+			<!-- Affichage des Personnels D'appui -->
+			
+			<div th:if="${listofPersonnelsDAppui}">
+				<table class="table table-striped">
+					<caption><h3>Liste des personnels d'appui enregistrés</h3></caption>
+					<thead class="thead-light">
+						<tr>
+							<th scope="col" th:inline="text">[[#{consultpers.th_numcni}]]</th>
+							<th scope="col" th:inline="text">[[#{consultpers.th_nomsprenomsdatenaiss}]]</th>
+							<th scope="col" th:inline="text">[[#{consultpers.th_listrole}]]</th>
+							<th scope="col">PROFIL</th>
+						     <th class="text-center" scope="col">ACTION</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="pers:${listofPersonnelsDAppui}">
+							<td th:inline="text">[[${#strings.toUpperCase(pers.matriculePers)}]] ([[${#strings.toUpperCase(pers.numcniPers)}]])</td>
+							<td th:inline="text">[[${#strings.toUpperCase(pers.nomsPers)}]] [[${pers.prenomsPers}]] 
+								né le [[${#dates.format(pers.datenaissPers,"dd-MM-yyyy")}]]</td>
+							<td>
+								<div th:each="usersroles:${pers.listofusersRoles}">
+									<span th:inline="text">[[${usersroles.roleAssocie.role}]] </span>
+								</div>
+							</td>
+							<td>
+								<div class="card col-md-4"> 
+									<img th:src="@{/logesco/users/getphotoPers(idPers=${pers.idUsers})}" 
+										class="card-img-top img-rounded" width="100" height="100"/>
+										
+								</div>
+							</td>
+							<td>
+			      				<div>
+			      				
+			      					
+			      					<div>
+				      					<a class="btn btn-primary btn-sm pull-left" href="#" 
+												th:href="@{/logesco/users/chefetab/getupdatePersonnels(idUsers=${pers.idUsers}, 
+												numPagePersAppui=${pageCourantePersonnelsDAppui})}" role="button" th:inline="text">
+												<span class="glyphicon glyphicon-edit"></span> [[#{consultpers.bouton_modifier}]]
+										</a>
+				      				</div>
+				      				<br/>&nbsp;
+				      				<div>
+										<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" 
+											th:attr="data-target='#'+${pers.idUsers}" th:inline="text">
+										  <span class="glyphicon glyphicon-eye-open"></span> [[#{consultpers.bouton_afficher}]]
+										</button>
+				      				</div>
+				      				<br/>&nbsp;
+				      				<div>
+				      					<!-- <a class="btn btn-danger btn-sm pull-right" href="#" 
+				      						role="button">Supprimer</a> -->
+				      					<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" 
+											data-target="#dialogSupprPers" th:inline="text">
+										  <span class="glyphicon glyphicon-trash"></span> [[#{consultpers.bouton_supprimer}]]
+										</button>
+				      				</div>
+			      				
+			      				
+			      				</div>
+			      			</td>
+							
+							
+							<!-- Modal Division concernant la boite de dialogue d'affichage-->
+							<div class="modal fade" th:id="${pers.idUsers}"  tabindex="-1" role="dialog" 
+										aria-labelledby="affichage" aria-hidden="true">
+							  <div class="modal-dialog modal-dialog-centered" role="document">
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <h3 class="modal-title" id="affichage">BADGE</h3>
+							        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							          <span aria-hidden="true">&times;</span>
+							        </button>
+							      </div>
+							      <div class="modal-body">
+							        	<h4><b>Numéro de CNI:</b> <span th:text="${pers.numcniPers}"></span></h4>
+							        	<h4><b>Noms et prénoms:</b> <span th:inline="text">[[${#strings.toUpperCase(pers.nomsPers)}]]  
+							        		[[${pers.prenomsPers}]]</span></h4>
+							        	<h4><b>Date et lieu de naissance:</b> <span th:inline="text">[[${#dates.format(pers.datenaissPers,"dd-MM-yyyy")}]] à 
+							        		[[${pers.lieunaissPers}]]</span></h4>
+							        	<h4><b>Sexe et nationnalité:</b> <span th:inline="text">[[${pers.sexePers}]] de 
+							        		nationalité [[${pers.nationalitePers}]]</span></h4>
+							        	<h4><b>Grade et statut:</b> <span th:inline="text"> [[${pers.statutPers}]]</span></h4>
+							        	<h4><b>Diplôme et spécialité:</b> <span th:inline="text">[[${pers.diplomePers}]]</span></h4>
+							        	<h4><b>Fonction:</b> <span th:inline="text">[[${pers.fonctionPers}]]</span></h4>
+							        	<h4><b>Adresses:</b> <span th:inline="text">[[${pers.numtel1Pers}]] / 
+							        	[[${pers.numtel2Pers}]] / [[${pers.emailPers}]]</span></h4>
+							        	<h4><b>Domicilié à:</b> <span th:inline="text">[[${pers.villePers}]] plus précisément au quartier  
+							        		[[${pers.quartierPers}]]</span></h4>
+							        	<h4><b>Nom d'utilisateur:</b> <span th:text="${pers.username}"></span></h4>
+								        <span class="card col-md-4"> 
+											<img th:src="@{/logesco/users/getphotoPers(idPers=${pers.idUsers})}" 
+													class="card-img-top img-rounded" width="100" height="100"/>
+													
+										</span>
+										<h4>&nbsp;&nbsp;&nbsp;&nbsp;</h4>
+										<h4>&nbsp;&nbsp;&nbsp;&nbsp;</h4>
+										<h4>&nbsp;&nbsp;&nbsp;&nbsp;</h4>
+							      </div>
+							      <div class="modal-footer">
+							        <button type="button" class="btn btn-secondary" data-dismiss="modal" th:inline="text">
+							        	[[#{consultpers.bouton_fermer}]]
+							        </button>
+							        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+							        <a class="btn btn-primary btn-sm" href="#" 
+											th:href="@{/logesco/users/chefetab/getimprimerPersonnels(idUsers=${pers.idUsers})}" 
+											role="button" th:inline="text"><span class="glyphicon glyphicon-print"></span>
+											[[#{consultpers.bouton_imprimer}]]
+									</a>
+							      </div>
+							    </div>
+							  </div>
+							</div>
+							<!-- Modal Fin de la Division concernant la boite de dialogue -->
+				
+							 <!-- Modal de suppression-->
+							<div class="modal fade" id="dialogSupprPers" tabindex="-1" role="dialog" aria-labelledby="dialogSupprLabel" 
+								aria-hidden="true">
+							  <div class="modal-dialog modal-dialog-centered" role="document">
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <h5 class="modal-title" id="dialogSupprLabel">Confirmation</h5>
+							        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							          <span aria-hidden="true">&times;</span>
+							        </button>
+							      </div>
+							      <div class="modal-body" th:inline="text">
+							        [[#{consultpers.label_confirm}]]?
+							      </div>
+							      <div class="modal-footer">
+							        <button type="button" class="btn btn-secondary" data-dismiss="modal" th:inline="text">
+							        	[[#{consultpers.bouton_fermer}]]
+							        </button>
+							        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+							        <a class="btn btn-danger btn-sm" href="#" 
+											th:href="@{/logesco/users/chefetab/getsuppressionPersonnels(idUsers=${pers.idUsers})}" 
+											role="button" th:inline="text">
+											[[#{consultpers.bouton_continuer}]]	
+									</a>
+							      </div>
+							    </div>
+							  </div>
+							</div>
+							<!--Fin du Modal de suppression-->
+							
+							
+						</tr>
+					</tbody>
+				</table>
+				
+				<div class="container">
+					<ul class="pagination"><!-- nav nav-pills -->
+						<li th:each="p,status:${listofPagePersonnelsDAppui}" th:class="${status.index==pageCourantePersonnelsDAppui}?active:' ' ">
+							<a th:href="@{/logesco/users/chefetab/getconsulterPersonnels(numPagePersAppui=${status.index})}"
+								 th:text="${status.index+1}"></a>
+						</li>
+					</ul>
+					
+				</div> 
+				
+				
+				
+			</div>
+			
+			
 			<!-- <a class=" pull-right" href="#"  target="_blank"
 			      						th:href="@{/logesco/users/chefetab/exportlistMembrePersonnels}" 
 			      						role="button" th:inline="text">
@@ -819,9 +1028,10 @@
 				
 		
 		<div>
-		<div class="col-md-2"></div>
+		
+		
 		<div th:if="${listofCenseurs!=null or listofSg!=null or listofIntendant!=null or listofEnseignants!=null}" 
-			class="col-md-8 btn-group">
+			class="col-md-12 btn-group">
 			
 			<a class="btn btn-default btn-sm" href="#" th:if="${listofCenseurs!=null}"
 				 th:href="@{/logesco/users/chefetab/exportlistCenseur}" 
@@ -847,13 +1057,56 @@
 				  <span class="glyphicon glyphicon-list-alt"></span> [[#{consultpers.bouton_exportIntendant}]]
 			</a>
 			
+			<a class="btn btn-default btn-sm" href="#" th:if="${listofPersonnelsDAppui!=null}"
+				  th:href="@{/logesco/users/chefetab/exportlistPersonnelsDAppui}"
+				  role="button" target="_blank" th:inline="text">
+				  <span class="glyphicon glyphicon-list-alt"></span> [[#{consultpers.bouton_exportPersonnelDAppui}]]
+			</a>
+			
 			<a class="btn btn-default btn-sm" href="#"
 				  th:href="@{/logesco/users/chefetab/exportlistMembrePersonnels}"
 				  role="button" target="_blank" th:inline="text">
 				  <span class="glyphicon glyphicon-list-alt"></span> [[#{consultpers.bouton_exportPersonnel}]]
 			</a>
 		</div>
-		<div class="col-md-2"></div>
+		
+		<br/><br/>
+		<div th:if="${listofPersonnelsVacataire!=null or listofPersonnelsPermanent!=null or listofPersonnelsECI!=null or listofEnseignantVacataire!=null or listofEnseignantPermanent!=null}" 
+			class="btn-group">
+			
+			<a class="btn btn-default btn-sm" href="#" th:if="${listofPersonnelsPermanent!=null}"
+				  th:href="@{/logesco/users/chefetab/exportlistMembrePersonnelsPermanent}"
+				  role="button" target="_blank" th:inline="text">
+				  <span class="glyphicon glyphicon-list-alt"></span> [[#{consultpers.bouton_exportPersonnelPermanent}]]
+			</a>
+			
+			<a class="btn btn-default btn-sm" href="#" th:if="${listofEnseignantPermanent!=null}"
+				  th:href="@{/logesco/users/chefetab/exportlistEnseignantPermanent}"
+				  role="button" target="_blank" th:inline="text">
+				  <span class="glyphicon glyphicon-list-alt"></span> [[#{consultpers.bouton_exportEnseignantPermanent}]]
+			</a>
+			
+			<a class="btn btn-default btn-sm" href="#" th:if="${listofPersonnelsVacataire!=null}"
+				  th:href="@{/logesco/users/chefetab/exportlistMembrePersonnelsVacataire}"
+				  role="button" target="_blank" th:inline="text">
+				  <span class="glyphicon glyphicon-list-alt"></span> [[#{consultpers.bouton_exportPersonnelVacataire}]]
+			</a>
+			
+			<a class="btn btn-default btn-sm" href="#" th:if="${listofEnseignantVacataire!=null}"
+				  th:href="@{/logesco/users/chefetab/exportlistEnseignantVacataire}"
+				  role="button" target="_blank" th:inline="text">
+				  <span class="glyphicon glyphicon-list-alt"></span> [[#{consultpers.bouton_exportEnseignantVacataire}]]
+			</a>
+			
+			<a class="btn btn-default btn-sm" href="#" th:if="${listofPersonnelsECI!=null}"
+				  th:href="@{/logesco/users/chefetab/exportlistMembrePersonnelsECI}"
+				  role="button" target="_blank" th:inline="text">
+				  <span class="glyphicon glyphicon-list-alt"></span> [[#{consultpers.bouton_exportPersonnelECI}]]
+			</a>
+			
+		</div>
+		
+		
 		</div>
 			      						
 			 

@@ -6,6 +6,8 @@ package org.logesco.dao;
 import java.util.List;
 
 import org.logesco.entities.Utilisateurs;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,4 +24,7 @@ public interface UtilisateursRepository extends JpaRepository<Utilisateurs, Long
 	
 	@Query("select u from Utilisateurs u order by u.username")
 	public List<Utilisateurs> findAllUtilisateurs();
+	
+	@Query("SELECT u FROM Utilisateurs u ORDER BY u.username ASC")
+	public Page<Utilisateurs> findAll(Pageable pageable);
 }

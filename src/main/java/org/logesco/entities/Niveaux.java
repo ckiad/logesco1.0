@@ -44,6 +44,7 @@ public class Niveaux implements Serializable {
 	private int numeroOrdreNiveaux;
 	
 	@NotNull
+	@Column(unique=true)
 	private String codeNiveaux_en;
 	
 	/******************************************
@@ -207,6 +208,10 @@ public class Niveaux implements Serializable {
 		this.codeNiveaux_en = codeNiveaux_en;
 	}
 
-	
+	public String getNiveauString(){
+		String niveauString ="";
+		niveauString = this.getCodeNiveaux()+" / "+this.getCodeNiveaux_en();
+		return niveauString;
+	}
 
 }

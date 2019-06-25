@@ -28,7 +28,9 @@ import org.logesco.form.*;
 import org.logesco.modeles.EleveBean;
 import org.logesco.modeles.EleveBean2;
 import org.logesco.modeles.EleveInsolvableBean;
+import org.logesco.modeles.FicheRecapAbsenceClasseBean;
 import org.logesco.modeles.FicheRecapAbsenceCycleBean;
+import org.logesco.modeles.FicheRecapAbsenceNiveauBean;
 import org.logesco.modeles.OperationBean;
 import org.logesco.modeles.PV_NoteBean;
 import org.logesco.modeles.PV_SequenceBean;
@@ -376,7 +378,7 @@ public class UsersController {
 		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
 		parameters.put("ville", etablissementConcerne.getVilleEtab());
 		
-		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
+		parameters.put("LOGO", "classpath:/static/images/logobekoko.png");
 		
 		String nomClasse= classeSelect.getCodeClasses()+classeSelect.getSpecialite().getCodeSpecialite()+
 				classeSelect.getNumeroClasses();
@@ -703,7 +705,7 @@ public class UsersController {
 		parameters.put("titre_liste", titre);
 		parameters.put("ville", etablissementConcerne.getVilleEtab());
 		
-		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
+		parameters.put("LOGO", "classpath:/static/images/logobekoko.png");
 		
 		JasperReportsPdfView view = new JasperReportsPdfView();
 		view.setUrl("classpath:/reports/compiled/fiches/ListeEleveParClasse.jasper");
@@ -1560,12 +1562,12 @@ public class UsersController {
 		parameters.put("classe", nomClasse);
 
 		List<EleveBean2> listofEleve = (List<EleveBean2>) usersService.generateReleveNote(idClasseSelect);
-		parameters.put("SUBREPORT_DIR", "src/main/resources/reports/compiled/fiches/");
+		parameters.put("SUBREPORT_DIR", "classpath:/reports/compiled/fiches/");
 		
 		String titulaire = classeConcerne.getProffesseur().getNomsPers()+" "+
 				classeConcerne.getProffesseur().getPrenomsPers();
 		parameters.put("titulaire", titulaire.toUpperCase());
-		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
+		parameters.put("LOGO", "classpath:/static/images/logobekoko.png");
 		parameters.put("datasource", listofEleve);
 		//System.out.println("Aucun de ces truc n'est null vraiment  "+listofEleve.size());
 		JasperReportsPdfView view = new JasperReportsPdfView();
@@ -1692,7 +1694,7 @@ public class UsersController {
 		parameters.put("pourcc", pourcc);
 		parameters.put("pourds", pourds);
 		parameters.put("pourR", pourR);
-		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
+		parameters.put("LOGO", "classpath:/static/images/logobekoko.png");
 		//parameters.put("IMAGE_FOND", "src/main/resources/static/images/logobekoko.png");
 		parameters.put("datasource", listofPV);
 		//System.out.println("Aucun de ces truc n'est null vraiment  "+listofPV.size());
@@ -1821,7 +1823,7 @@ public class UsersController {
 				idCoursConcerne, idTrimestreConcerne);
 		
 		parameters.put("pourR", pourR);
-		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
+		parameters.put("LOGO", "classpath:/static/images/logobekoko.png");
 		//parameters.put("IMAGE_FOND", "src/main/resources/static/images/logobekoko.png");
 		parameters.put("datasource", listofPV);
 		//System.out.println("Aucun de ces truc n'est null vraiment  "+listofPV.size());
@@ -2028,7 +2030,7 @@ public class UsersController {
 		parameters.put("pourd", evalConcerne.getProportionEval()+"%");
 		parameters.put("pourR", pourR);
 		parameters.put("label_devoir", label_devoir);
-		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
+		parameters.put("LOGO", "classpath:/static/images/logobekoko.png");
 		//parameters.put("IMAGE_FOND", "src/main/resources/static/images/logobekoko.png");
 		parameters.put("datasource", listofPV);
 		//System.out.println("Aucun de ces truc n'est null vraiment  "+listofPV.size());
@@ -2164,7 +2166,7 @@ public class UsersController {
 		parameters.put("pourds", pourds+"%");
 		parameters.put("pourcc", pourcc+"%");
 		parameters.put("pourR", pourR);
-		parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
+		parameters.put("LOGO", "classpath:/static/images/logobekoko.png");
 		//parameters.put("IMAGE_FOND", "src/main/resources/static/images/logobekoko.png");
 		parameters.put("datasource", listofPVSeq);
 		//System.out.println("Aucun de ces truc n'est null vraiment  "+listofPVSeq.size());
@@ -2315,7 +2317,7 @@ public class UsersController {
 			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
 		}
 		else{
-			parameters.put("logo", "src/main/resources/static/images/logobekoko.png");
+			parameters.put("logo", "classpath:/static/images/logobekoko.png");
 		}
 		
 		Operations operation_concerne = usersService.findOperation(idOperation_a_imprimer);
@@ -2408,7 +2410,7 @@ public class UsersController {
 				parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
 			}
 			else{
-				parameters.put("logo", "src/main/resources/static/images/logobekoko.png");
+				parameters.put("logo", "classpath:/static/images/logobekoko.png");
 			}
 
 			parameters.put("datemin", datemin);
@@ -2479,7 +2481,7 @@ public class UsersController {
 			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
 		}
 		else{
-			parameters.put("logo", "src/main/resources/static/images/logobekoko.png");
+			parameters.put("logo", "classpath:/static/images/logobekoko.png");
 		}
 		
 		String nomeleveconcerne = eleveConcerne.getNomsEleves();
@@ -2545,7 +2547,7 @@ public class UsersController {
 			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
 		}
 		else{
-			parameters.put("logo", "src/main/resources/static/images/logobekoko.png");
+			parameters.put("logo", "classpath:/static/images/logobekoko.png");
 		}
 		
 		String classe_concerne =  classe.getCodeClasses();
@@ -2943,7 +2945,6 @@ public class UsersController {
 		model.addAttribute("idAnneeActive", idAnneeActive);
 		
 		/*
-		 * 
 		 * Si cette liste est vide alors le conseil ne saurait se passé
 		 * On doit faire pareille avec la liste des sanctions travail (distinctions)
 		 * et pour la liste des décisions car etant donnée que c'est un conseil de classe annuel, ce sont les 
@@ -2952,6 +2953,7 @@ public class UsersController {
 		//List<SanctionDisciplinaire> listofSanctionDisc = usersService.findListAllSanctionDisciplinaire();
 		List<SanctionTravail> listofSanctionTrav = usersService.findListAllSanctionTravail();
 		List<Decision> listofDecision = usersService.findListAllDecision();
+		
 		
 		if(listofDecision.size()>0 && listofSanctionTrav.size()>0){
 			model.addAttribute("listofDecision", listofDecision);
@@ -2964,6 +2966,13 @@ public class UsersController {
 				Classes classeConcerne = usersService.findClasses(idClasseConcerne);
 				model.addAttribute("anneeConcerne", anneeConcerne);
 				model.addAttribute("classeConcerne", classeConcerne);
+				
+				/*
+				 * Il faut charger aussi dans le modele de la page du formulaire les probables futur classe qu'un 
+				 * élève peut avoir après un conseil de classe annuelle
+				 */
+				List<Niveaux> listofNiveauSup = usersService.findListNiveauSup(classeConcerne);
+				model.addAttribute("listniveauClasseSup", listofNiveauSup);
 				
 				Page<Eleves> pageofEleves=usersService.findPageElevesClasse(idClasseConcerne,	
 						numPageEleves, taillePage);
@@ -3005,6 +3014,7 @@ public class UsersController {
 			@RequestParam(name="idClasseConcerne", defaultValue="-1") Long idClasseConcerne,
 			@RequestParam(name="idDecisionAssocie", defaultValue="-1") Long idDecisionAssocie,
 			@RequestParam(name="idsanctionTravAssocie", defaultValue="-1") Long idsanctionTravAssocie,
+			@RequestParam(name="idClasseFuturAssocie", defaultValue="-1") Long idClasseFuturAssocie,
 			@RequestParam(name="numPageEleves", defaultValue="0") int numPageEleves,
 			@RequestParam(name="taillePage", defaultValue="5") int taillePage){
 		
@@ -3012,7 +3022,7 @@ public class UsersController {
 		session.setAttribute("idElevesConcerne", idElevesConcerne);
 		
 		int ret = usersService.saveDecisionConseilAn(idElevesConcerne, idAnneeActive, 
-				idsanctionTravAssocie, idDecisionAssocie);
+				idsanctionTravAssocie, idClasseFuturAssocie, idDecisionAssocie);
 		
 		if(ret == 0){
 			return "redirect:/logesco/users/getformSaisieConseilClasseAn?updateDecisionConseilAnError"
@@ -3107,7 +3117,7 @@ public class UsersController {
 			parameters.put("LOGO", logoetabDir+etablissementConcerne.getLogoEtab());
 		}
 		else{
-			parameters.put("LOGO", "src/main/resources/static/images/logobekoko.png");
+			parameters.put("LOGO", "classpath:/static/images/logobekoko.png");
 		}
 
 		
@@ -3158,7 +3168,7 @@ public class UsersController {
 			Trimestres periodTrimestre = usersService.findTrimestres(idPeriode);
 			Annee periodAnnee = usersService.findAnnee(idPeriode);
 			
-			if(periodSequence == null || periodTrimestre == null || periodAnnee == null) return null;
+			if(periodSequence == null && periodTrimestre == null && periodAnnee == null) return null;
 			
 			Collection<FicheRecapAbsenceCycleBean> listofFicheRecapAbsenceCycleBean = null;
 			
@@ -3244,12 +3254,343 @@ public class UsersController {
 		return "users/donneesRabsNiveaux";
 	}
 	
+	@GetMapping(path="/exportRAbsencesNiveaux")
+	public ModelAndView exportRAbsencesNiveaux(Model model, HttpServletRequest request,
+			@RequestParam(name="idNiveauxConcerne", defaultValue="0") Long idNiveauxConcerne,
+			@RequestParam(name="idPeriode", defaultValue="0") Long idPeriode,
+			@RequestParam(name="datedebut", defaultValue="2019-01-01") String datedebut,
+			@RequestParam(name="datefin", defaultValue="2035-01-01") String datefin){
+		
+		HttpSession session = request.getSession();
+		/*
+		 * Il faut chercher le cycle et retourner une erreur s'il n'existe pas
+		 */
+		System.out.println("on va aller cherche les donnees");
+		Etablissement etablissementConcerne = usersService.getEtablissement();
+		Annee anneeScolaire = usersService.findAnneeActive();
+		if(etablissementConcerne == null ||  anneeScolaire == null){
+			
+			
+			return null;
+		}
+		
+		System.out.println("on cherche les vraies donnees");
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		parameters.put("delegation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
+		parameters.put("delegation_en", etablissementConcerne.getDeleguationdeptuteleanglaisEtab().toUpperCase());
+		parameters.put("etablissement_fr", etablissementConcerne.getNomsEtab().toUpperCase());
+		parameters.put("etablissement_en", etablissementConcerne.getNomsanglaisEtab().toUpperCase());
+		String adresse = "BP "+etablissementConcerne.getBpEtab()+
+				"  TEL: "+etablissementConcerne.getNumtel1Etab();
+		parameters.put("adresse", adresse);
+		parameters.put("annee_scolaire_fr", "Année Académique "+anneeScolaire.getIntituleAnnee());
+		parameters.put("annee_scolaire_en", "Academic year "+anneeScolaire.getIntituleAnnee());
+		parameters.put("ministere_fr", etablissementConcerne.getMinisteretuteleEtab());
+		parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
+		parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
+		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
+		parameters.put("ville", etablissementConcerne.getVilleEtab());
+
+		File f=new File(logoetabDir+etablissementConcerne.getLogoEtab());
+
+		if(f.exists()==true){
+			parameters.put("LOGO", logoetabDir+etablissementConcerne.getLogoEtab());
+		}
+		else{
+			parameters.put("LOGO", "classpath:/static/images/logobekoko.png");
+		}
+
+		
+		
+		/*
+		 * On fixe les autres paramètres du PDF et on va aussi aller chercher les rapports par niveau
+		 * Donc il faut le niveau et si le niveau rechercher est null alors on veut pour tous les niveaux
+		 */
+		Niveaux niveauConcerne = usersService.findNiveaux(idNiveauxConcerne);
+		if(idPeriode.longValue()==0){
+			SimpleDateFormat spd = new SimpleDateFormat("yyyy-MM-dd");
+			try{
+				Date date_min = spd.parse(datedebut);
+				Date date_max = spd.parse(datefin);
+				parameters.put("date1", datedebut);
+				parameters.put("date2", datefin);
+				parameters.put("periode", "");
+				
+				Collection<FicheRecapAbsenceNiveauBean> listofFicheRecapAbsenceNiveauBean = 
+						usersService.generateListFicheRecapAbsenceNiveauBean(niveauConcerne, date_min, date_max);
+				
+				//System.out.println("taille de la liste des fiches = "+listofFicheRecapAbsenceCycleBean.size());
+				
+				
+				parameters.put("datasource", listofFicheRecapAbsenceNiveauBean);
+				JasperReportsPdfView view = new JasperReportsPdfView();
+				view.setUrl("classpath:/reports/compiled/fiches/FicheRecapAbsenceCycle.jasper");
+				view.setApplicationContext(applicationContext);
+				
+				return new ModelAndView(view, parameters);
+				
+			}
+			catch(Exception e){
+				System.out.println("Erreur de conversion des dates "+datedebut+" et "+datefin+" et on doit "
+						+ " lancer un pdf d'erreur "+e.getMessage());
+				e.printStackTrace();
+			}
+		}
+		else{
+			/*
+			 * A ce niveau cela signifie qu'il n'a pas choisi un intervalle de date mais juste une période bien 
+			 * déterminer et enregistrer dans le système comme une séquence, un trimestre ou une 
+			 * année scolaire
+			 */
+			System.out.println("on cherche les vraies donnees mais avec la periode");
+			String periode = "";
+			String lang = (String)session.getAttribute("lang");
+			Sequences periodSequence = usersService.findSequences(idPeriode);
+			Trimestres periodTrimestre = usersService.findTrimestres(idPeriode);
+			Annee periodAnnee = usersService.findAnnee(idPeriode);
+			
+			if(periodSequence == null && periodTrimestre == null && periodAnnee == null) {
+				
+				
+				return null;
+			}
+			
+			Collection<FicheRecapAbsenceNiveauBean> listofFicheRecapAbsenceNiveauBean = null;
+			
+			if(periodSequence !=null) {
+				periode = lang.equalsIgnoreCase("fr")==true?"Séquence "+periodSequence.getNumeroSeq(): 
+					"Sequence "+periodSequence.getNumeroSeq();
+
+				listofFicheRecapAbsenceNiveauBean = 
+						usersService.generateListFicheRecapAbsenceNiveauSeqBean(niveauConcerne, periodSequence);
+				
+			}
+			
+			if(periodTrimestre !=null) {
+				periode = lang.equalsIgnoreCase("fr")==true?"Trimestre "+periodTrimestre.getNumeroTrim(): 
+					"Term "+periodTrimestre.getNumeroTrim();
+				
+				listofFicheRecapAbsenceNiveauBean = 
+						usersService.generateListFicheRecapAbsenceNiveauTrimBean(niveauConcerne, periodTrimestre);
+				
+			}
+			
+			if(periodAnnee !=null) {
+				periode = lang.equalsIgnoreCase("fr")==true?" "+periodAnnee.getIntituleAnnee(): 
+					" "+periodAnnee.getIntituleAnnee();
+				
+				listofFicheRecapAbsenceNiveauBean = 
+						usersService.generateListFicheRecapAbsenceNiveauAnBean(niveauConcerne, periodAnnee);
+				
+			}
+			
+			parameters.put("date1", "");
+			parameters.put("date2", "");
+			parameters.put("periode", periode);
+			
+			parameters.put("datasource", listofFicheRecapAbsenceNiveauBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/fiches/FicheRecapAbsenceNiveau.jasper");
+			view.setApplicationContext(applicationContext);
+			
+			return new ModelAndView(view, parameters);
+			
+			
+		}
+		
+		System.out.println("aucun traitement");
+		
+		Map<String, Object> parameters_erreur = new HashMap<String, Object>();
+		String message = "AUCUN TRAITEMENT EFFECTUE \n NO TREATMENT EFFECTS";
+		parameters_erreur.put("erreur", message);
+		parameters_erreur.put("datasource", null);
+		JasperReportsPdfView view = new JasperReportsPdfView();
+		view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+		view.setApplicationContext(applicationContext);
+		
+		return new ModelAndView(view, parameters_erreur);
+	}
 	
 	
+	public void constructModelgetdonneesRabsClasse(Model model,	HttpServletRequest request){
+		List<Niveaux> listofNiveaux = usersService.findAllNiveaux();
+		
+		if(listofNiveaux.size()>0){
+			model.addAttribute("affichechoixcycle", "oui");
+			model.addAttribute("listofNiveaux", listofNiveaux);
+		}
+		else{
+			model.addAttribute("affichechoixcycle", "non");
+		}
+		
+		
+		Annee anneeActive = usersService.findAnneeActive();
+		
+		if(anneeActive != null) {
+			model.addAttribute("anneeActive", anneeActive);
+			
+		}
+		
+		List<Trimestres> listofTrimestreActif = usersService.findAllActiveTrimestre(anneeActive.getIdPeriodes());
+		model.addAttribute("listofTrimestreActif", listofTrimestreActif);
+		
+		List<Sequences> listofSequenceActif = usersService.findAllSequenceActive(anneeActive.getIdPeriodes());
+		model.addAttribute("listofSequenceActif", listofSequenceActif);
+		
+	}
 	
+	@GetMapping(path="/getdonneesRabsClasse")
+	public String getdonneesRabsClasse(Model model, HttpServletRequest request){
+		
+		this.constructModelgetdonneesRabsClasse(model,	request);
+		
+		return "users/donneesRabsClasses";
+	}
 	
-	
-	
+	@GetMapping(path="/exportRAbsencesClasses")
+	public ModelAndView exportRAbsencesClasses(Model model, HttpServletRequest request,
+			@RequestParam(name="idClasseConcerne", defaultValue="0") Long idClasseConcerne,
+			@RequestParam(name="idPeriode", defaultValue="0") Long idPeriode,
+			@RequestParam(name="datedebut", defaultValue="2019-01-01") String datedebut,
+			@RequestParam(name="datefin", defaultValue="2035-01-01") String datefin){
+		
+		HttpSession session = request.getSession();
+		/*
+		 * Il faut chercher le cycle et retourner une erreur s'il n'existe pas
+		 */
+		
+		Etablissement etablissementConcerne = usersService.getEtablissement();
+		Annee anneeScolaire = usersService.findAnneeActive();
+		if(etablissementConcerne == null ||  anneeScolaire == null){
+			return null;
+		}
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		parameters.put("delegation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
+		parameters.put("delegation_en", etablissementConcerne.getDeleguationdeptuteleanglaisEtab().toUpperCase());
+		parameters.put("etablissement_fr", etablissementConcerne.getNomsEtab().toUpperCase());
+		parameters.put("etablissement_en", etablissementConcerne.getNomsanglaisEtab().toUpperCase());
+		String adresse = "BP "+etablissementConcerne.getBpEtab()+
+				"  TEL: "+etablissementConcerne.getNumtel1Etab();
+		parameters.put("adresse", adresse);
+		parameters.put("annee_scolaire_fr", "Année Académique "+anneeScolaire.getIntituleAnnee());
+		parameters.put("annee_scolaire_en", "Academic year "+anneeScolaire.getIntituleAnnee());
+		parameters.put("ministere_fr", etablissementConcerne.getMinisteretuteleEtab());
+		parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
+		parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
+		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
+		parameters.put("ville", etablissementConcerne.getVilleEtab());
+
+		File f=new File(logoetabDir+etablissementConcerne.getLogoEtab());
+
+		if(f.exists()==true){
+			parameters.put("LOGO", logoetabDir+etablissementConcerne.getLogoEtab());
+		}
+		else{
+			parameters.put("LOGO", "classpath:/static/images/logobekoko.png");
+		}
+
+		/*
+		 * On fixe les autres paramètres du PDF et on va aussi aller chercher les rapports par classe
+		 * Donc il faut la classe et si la classe rechercher est null alors on veut pour toutes les classes
+		 */
+		Classes classeConcerne = usersService.findClasses(idClasseConcerne);
+		
+		if(idPeriode.longValue()==0){
+
+			SimpleDateFormat spd = new SimpleDateFormat("yyyy-MM-dd");
+			try{
+				Date date_min = spd.parse(datedebut);
+				Date date_max = spd.parse(datefin);
+				parameters.put("date1", datedebut);
+				parameters.put("date2", datefin);
+				parameters.put("periode", "");
+				
+				Collection<FicheRecapAbsenceClasseBean> listofFicheRecapAbsenceClasseBean = 
+						usersService.generateListFicheRecapAbsenceClasseBean(classeConcerne, date_min, date_max);
+				
+				//System.out.println("taille de la liste des fiches = "+listofFicheRecapAbsenceCycleBean.size());
+				
+				
+				parameters.put("datasource", listofFicheRecapAbsenceClasseBean);
+				JasperReportsPdfView view = new JasperReportsPdfView();
+				view.setUrl("classpath:/reports/compiled/fiches/FicheRecapAbsenceCycle.jasper");
+				view.setApplicationContext(applicationContext);
+				
+				return new ModelAndView(view, parameters);
+				
+			}
+			catch(Exception e){
+				System.out.println("Erreur de conversion des dates "+datedebut+" et "+datefin+" et on doit "
+						+ " lancer un pdf d'erreur "+e.getMessage());
+				e.printStackTrace();
+			}
+		
+		}
+		else{
+
+			/*
+			 * A ce niveau cela signifie qu'il n'a pas choisi un intervalle de date mais juste une période bien 
+			 * déterminer et enregistrer dans le système comme une séquence, un trimestre ou une 
+			 * année scolaire
+			 */
+			
+			String periode = "";
+			String lang = (String)session.getAttribute("lang");
+			Sequences periodSequence = usersService.findSequences(idPeriode);
+			Trimestres periodTrimestre = usersService.findTrimestres(idPeriode);
+			Annee periodAnnee = usersService.findAnnee(idPeriode);
+			
+			if(periodSequence == null && periodTrimestre == null && periodAnnee == null) return null;
+			
+			Collection<FicheRecapAbsenceClasseBean> listofFicheRecapAbsenceClasseBean = null;
+			
+			if(periodSequence !=null) {
+				periode = lang.equalsIgnoreCase("fr")==true?"Séquence "+periodSequence.getNumeroSeq(): 
+					"Sequence "+periodSequence.getNumeroSeq();
+
+				listofFicheRecapAbsenceClasseBean = 
+						usersService.generateListFicheRecapAbsenceClasseSeqBean(classeConcerne, periodSequence);
+				
+			}
+			
+			if(periodTrimestre !=null) {
+				periode = lang.equalsIgnoreCase("fr")==true?"Trimestre "+periodTrimestre.getNumeroTrim(): 
+					"Term "+periodTrimestre.getNumeroTrim();
+				
+				listofFicheRecapAbsenceClasseBean = 
+						usersService.generateListFicheRecapAbsenceClasseTrimBean(classeConcerne, periodTrimestre);
+				
+			}
+			
+			if(periodAnnee !=null) {
+				periode = lang.equalsIgnoreCase("fr")==true?" "+periodAnnee.getIntituleAnnee(): 
+					" "+periodAnnee.getIntituleAnnee();
+				
+				listofFicheRecapAbsenceClasseBean = 
+						usersService.generateListFicheRecapAbsenceClasseAnBean(classeConcerne, periodAnnee);
+				
+			}
+			
+			parameters.put("date1", "");
+			parameters.put("date2", "");
+			parameters.put("periode", periode);
+			
+			parameters.put("datasource", listofFicheRecapAbsenceClasseBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/fiches/FicheRecapAbsenceNiveau.jasper");
+			view.setApplicationContext(applicationContext);
+			
+			return new ModelAndView(view, parameters);
+			
+		}
+		
+		
+		return null;
+	}
 	
 	
 	

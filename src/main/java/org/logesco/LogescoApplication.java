@@ -160,7 +160,7 @@ public class LogescoApplication implements CommandLineRunner{
 		new File(photoPersonnelsDir).mkdirs();
 		new File(photoElevesDir).mkdirs();
 		new File(logsDir).mkdirs();
-		//Ici il faut donc cache ce dossier racine pour qu'il ne soit pas visible par les premiers venus
+		//Ici il faut donc cacher ce dossier racine pour qu'il ne soit pas visible par les premiers venus
 		String[] cmd = {"attrib","+s","+h",f.getAbsolutePath()};
 		Process process = Runtime.getRuntime().exec(cmd);
 		process.getOutputStream().close();
@@ -170,13 +170,30 @@ public class LogescoApplication implements CommandLineRunner{
 		logger.debug("LANCEMENT DE LA CREATION DE L'ARBORESECENCE SE  TROUVANT DANS "+racineDir);
 	}
 	catch(Exception e){
-		logger.error("Erreur lors de la création des dossiers necessaires au bon fonctionnement du logiciel. Exception "+e.getMessage());
+		logger.error("Erreur lors de la creation des dossiers necessaires au bon fonctionnement du logiciel. Exception "+e.getMessage());
 	}
 		
 		
 		/****************************
+		 * AA) INSTALLER LES POLICES UTILISEES DANS LES RAPPORTS (ARIAL NARROW)
+		 * 			Telecharger le zip sur 
+		 * 			decompresser et copier les polices dans jdk_home/jre/lib/fonts et dans jre/lib/fonts
+		 * 			installer chacune d'elle en faisant un clic droit puis en cliquant sur installer
+		 * 
+		 * BB) Il est recommendée d'uploader les emblemes de l'établissement avant l'édition de tous rapport
+		 * sur PDF. Il s'agit notamment du logo et de la banniere de l'établissement. Tous les rapports porteront
+		 * ce logo. Seul l'administrateur est habileté à uploader ces éléments
+		 * 
 		 * Il faut faire les configurations de base au démarage et de façon automatique
-		 * 1) Enregistrer les roles de base (ADMIN, SUPERADMIN)
+		 * A) Configurer le SGBD en créant le user logesco ou root avec un mot de passe qui est indique
+		 * dans le fichier application.properties
+		 * B) Créer la base de donnée logescodb au niveau du SGBD
+		 * C) Deployer le logiciel pour permettre a JPA de creer les tables dans cette base de donnee
+		 * 
+		 * 
+		 * 
+		 * 1) Enregistrer les roles de base (ADMIN, SUPERADMIN, PROVISEUR, CENSEUR, SG, INTENDANT,
+		 * ENSEIGNANT: ceci est d'ailleurs fait par défaut à l'installation du logiciel donc faudra juste verifier)
 		 * 2) Enregistrer les utilisateurs de base qui sont tous des administrateurs (admin, superadmin)
 		 * L'un s'occupe de la configuration du serveur(admin) et l'autre de realiser dans sa session ce 
 		 * que  les utilisateurs n'ont pas pu réaliser (superadmin)
@@ -190,28 +207,87 @@ public class LogescoApplication implements CommandLineRunner{
 		 * 5) Apres les répertoires l'administrateur doit créer  les différents rôles que les utilisateurs 
 		 * peuvent avoir dans le système car on ne peut pas avoir des utilisateurs sans role. Le rôle admin
 		 * et superadmin ont deja ete crée donc il reste proviseur, censeur, sg, intendant et enseignant. 
-		 * 6) Il faut enregistrer le proviseur (chose qui se fait grâce à l'administrateur)
+		 * 6) Il faut modifier l'établissement par défaut enregistré et surtout uploader les emblèmes (logo et banniere)
+		 * 7) Il faut enregistrer le proviseur (chose qui se fait grâce à l'administrateur)
+		 * 8) Il faut enregistrer les différentes sections (type d'enseignement) de l'établissement: 
+		 * Les différents code des sections sont standard donc il ne restera plus qu'à changer 
+		 * les libelles sans changer leur code: 
+		 * ---Section GENERAl a pour code GENERAL
+		 * ---Section INDUSTRIELLE a pour code INDUSTRIELLE
+		 * ---Section COMMERCIAL a pour code COMMERCIAL
+		 * 9) Il faut enregistrer les différents cycles qu'on a dans l'établissement
+		 * 10) Il faut enregistrer les différents niveaux qu'on a dans l'établissement
+		 * 11) Il faut enregistrer toutes les spécialités qu'on a dans l'établissement. Les troncs commun peuvent
+		 * etre enregistré avec un code vide afin de ne pas allonger le nom des classes puisque le code de la 
+		 * spécialité en fait partie. Toutes les classes où les specialités se mélangent doivent donc prendre cette 
+		 * spécialité de code vide. On a par exemple les 6eme, les 5eme, les 2nd, etc.
+		 * 12) Il faut enregistrer les classes qu'on a dans l'établissement
+		 * 13) Il faut enregistrer les départements ie en quelques sortes les matieres dont les cours en feront partie
+		 * 14) Il faut maintenant configurer les cours qui passeront dans chacune des classes. 
+		 * Pour la section anglophones, il faudra pour une classe enregistrer tous les cours même si tous les élèves
+		 * ne les feront pas. En fait dans une classe comme form4 arts, tous les élèves ne font pas les cours programmés
+		 * pour la spécialités.
+		 * 16) Il faut enregistrer les sanctions disciplinaires (RAS, retards en heure, consignes en heure, retenus,
+		 * Avertissement conduite, Blame conduite, Exclusion temporaire, Exclusion définitive ). Il faut noter que 
+		 * le niveau de sévérité le plus petit (0) correspond à la sanction la moins lourde. En occurence RAS qui signifie 
+		 * Rien à Signaler. 
+		 * 17) Il faut enregistrer les distinctions due aux travail (Effort supplémentaire, Avertissement travail, 
+		 * Blame travail, Tableau d'honneur, Tableau d'honneur avec encouragement, Tableau d'honneur avec
+		 * félicitation, Tableau d'honneur refusé)
+		 * 18) Il faut enregistrer les décisions qui peuvent être prise pendant le conseil de classse annuel (Admis 
+		 * ou promoted, admis exceptionnellement, exclu pour age, exclu pour indiscipline, exclu si echec, 
+		 * exclu pour travail, redouble ou repeat, redouble si echec, redouble exceptionnellement, exclu pour 
+		 * insolvabilité, exclu pour démission, exclu pour absenteisme)
+		 * 19) ll faut enregistrer l'année scolaire qui sera gérer
+		 * 20) Il faut enregistrer les trimestres qui seront gérer dans l'année scolaire
+		 * 21) Il faut enregistrer les séquences qui seront gérer dans l'année scolaire
+		 * 22) Demander au proviseur de n'activer qu'une séquence et qu'un trimestre à la fois. Celui dans lequel
+		 * les enseignants devraient travailler afin d'éviter les erreurs par exemple l'enregistrement des notes 
+		 * d'une séquence dans une autre. 
+		 * 23) Les secretaires devront s'accomoder au modèle de fichier excel qui leur sont proposés. En effet, 
+		 * pour l'enregistrement des élèves pendant les recrutements, elles peuvents simplement remplir un 
+		 * fichier par classe selon le modèle proposé. Ainsi, puisque ce sont des élèves nouvellement recrutés, on est 
+		 * sur que leurs statut est nouveau, leurs etat est non inscrit et ils ne sont pas redoublant. 
+		 * 24) Le superadmin peut à chaque fois modifier les rôles attribués à un utilisateur afin de définir 
+		 * ce qu'il pourra ou pas faire dans le système.
+		 * 
 		 */
 			
 		try{
 			/*log.log(Level.DEBUG, "==== Création des supers rôles de l'application (admin et super admin) "
 					+ "s'il n'existe pas déjà ");*/
-			logger.debug("Création des supers rôles de l'application (admin et super admin) s'il n'existe pas déjà.");
-			//On enregistre les role de base de l'aapplication
+			logger.debug("Creation des supers roles de l'application (admin et super admin) s'il n'existe pas deja.");
+			//On enregistre les role de base de l'application
 			rolesRepository.save(new Roles("ADMIN"));
 			rolesRepository.save(new Roles("SUPERADMIN"));
+			rolesRepository.save(new Roles("PROVISEUR"));
+			rolesRepository.save(new Roles("CENSEUR"));
+			rolesRepository.save(new Roles("SG"));
+			rolesRepository.save(new Roles("INTENDANT"));
+			rolesRepository.save(new Roles("ENSEIGNANT"));
+			/****
+			 * les autres roles qui sont crées mais qui n'ont pas encore de vue sur le système
+			 * 
+			 */
+			rolesRepository.save(new Roles("SECRETAIRE"));
+			rolesRepository.save(new Roles("SURVEILLANT"));
+			rolesRepository.save(new Roles("VEILLEUR"));
+			rolesRepository.save(new Roles("ELEVES"));
+			rolesRepository.save(new Roles("PARENTS"));
+			rolesRepository.save(new Roles("AUTRES"));
+			
 		}
 		catch(Exception e){
 			/*log.log(Level.WARN, "les rôles de base pour la configuration de l'application existe déjà.  "
 					+ "Exception "+e.getMessage());*/
-			logger.error("les rôles de base pour la configuration de l'application existe déjà. Exception "+e.getMessage());
+			logger.error("les roles de base pour la configuration de l'application existe deja. Exception "+e.getMessage());
 		}
 		Utilisateurs admin = null;
 		Utilisateurs superadmin = null;
 		try{
 			/*log.log(Level.DEBUG, "Création des utilisateurs de base assumant les "
 					+ "rôles de base (admin et superadmin) ");*/
-			logger.debug("Création des utilisateurs de base (admin et superadmin)");
+			logger.debug("Creation des utilisateurs de base (admin et superadmin)");
 			
 			Pbkdf2PasswordEncoder p=new Pbkdf2PasswordEncoder();
 			admin=usersRepository.save(new Administrateurs("admin@gmail.com", 
@@ -239,11 +315,11 @@ public class LogescoApplication implements CommandLineRunner{
 				if(listofMatricule.size()>0){
 					/*System.err.println("Le champ permettant de créer le numero d'ordre dans la génération des "
 							+ " matricules existe deja");*/
-					logger.debug("Le champ permettant de créer le numero d'ordre dans la génération des matricules existe deja ");
+					logger.debug("Le champ permettant de creer le numero d'ordre dans la generation des matricules existe deja ");
 				}
 				else if(listofMatricule.size() == 0){
 					/*System.err.println("enregistrement du premier numero qui permettra la génération des matricules");*/
-					logger.debug("Enregistrement du premier numero qui permettra la génération des matricules ");
+					logger.debug("Enregistrement du premier numero qui permettra la generation des matricules ");
 					Matricule mat = new Matricule();
 					mat.setValeur(0);
 					matriculeRepository.save(mat);
@@ -251,7 +327,7 @@ public class LogescoApplication implements CommandLineRunner{
 			}
 			else{
 				/*System.err.println("la liste des matricules est null donc problème");*/
-				logger.error("la liste des matricules est null donc problème ");
+				logger.error("la liste des matricules est null donc probleme ");
 			}
 		}
 		catch(Exception e){
@@ -273,7 +349,7 @@ public class LogescoApplication implements CommandLineRunner{
 				}
 				else if(listofIdentop.size() == 0){
 					/*System.err.println("enregistrement du premier numero qui permettra la génération des matricules");*/
-					logger.debug("Enregistrement du premier numero qui permettra la génération des numero de transaction ");
+					logger.debug("Enregistrement du premier numero qui permettra la generation des numeros de transaction ");
 					IdentOperation identop = new IdentOperation();
 					identop.setNumero(0);
 					identopRepository.save(identop);
@@ -281,7 +357,7 @@ public class LogescoApplication implements CommandLineRunner{
 			}
 			else{
 				/*System.err.println("la liste des matricules est null donc problème");*/
-				logger.error("la liste des Ident Operation est null donc problème ");
+				logger.error("la liste des Ident Operation est null donc probleme ");
 			}
 		}
 		catch(Exception e){

@@ -37,7 +37,7 @@
 				<th></th>
 				<th>Moyenne Obtenue</th>
 				<th>Sanction disciplinaire</th>
-				<th>Abs NJ/Total</th>
+				<th>Abs J/Abs NJ</th>
 				<!-- <th>DECISION DU CONSEIL DE CLASSE</th> -->
 			</tr>
 			
@@ -109,18 +109,16 @@
 							<label class="bluecolor" th:inline="text">Seq [[${seq.numeroSeq}]]:</label>
 							<span th:inline="text" class="badge">
 								<b>
-									[[${eleve.getNbreHeureAbsenceNonJustifie(seq.idPeriodes)}]]/
-									[[${eleve.getNbreHeureAbsenceNonJustifie(seq.idPeriodes)}+
-									${eleve.getNbreHeureAbsenceJustifie(seq.idPeriodes)}]]
+									[[${eleve.getNbreHeureAbsenceJustifie(seq.idPeriodes)}]]/
+									[[${eleve.getNbreHeureAbsenceNonJustifie(seq.idPeriodes)}]]
 								</b>
 							</span>
 						</div>
 						<label class="redcolor" th:inline="text">Trim [[${trim.numeroTrim}]]:</label>
 							<span th:inline="text" class="badge">
 								<b>
-									[[${eleve.getNbreHeureAbsenceNonJustifieTrim(trim)}]]/
-									[[${eleve.getNbreHeureAbsenceNonJustifieTrim(trim)}+
-									${eleve.getNbreHeureAbsenceJustifieTrim(trim)}]]
+									[[${eleve.getNbreHeureAbsenceJustifieTrim(trim)}]]/
+									[[${eleve.getNbreHeureAbsenceNonJustifieTrim(trim)}]]
 								</b>
 							</span>
 						<hr/>
@@ -130,9 +128,8 @@
 						<label class="redcolor" th:inline="text">Total<!--  [[${anneeConcerne.intituleAnnee}]] -->:</label>
 						<span th:inline="text" class="badge">
 						<b>
-							[[${eleve.getNbreHeureAbsenceNonJustifieAnnee(anneeConcerne)}]] /
-							[[${eleve.getNbreHeureAbsenceNonJustifieAnnee(anneeConcerne)}+
-							${eleve.getNbreHeureAbsenceJustifieAnnee(anneeConcerne)}]]
+							[[${eleve.getNbreHeureAbsenceJustifieAnnee(anneeConcerne)}]] /
+							[[${eleve.getNbreHeureAbsenceNonJustifieAnnee(anneeConcerne)}]]
 						</b>
 						</span>
 					</div>
@@ -198,6 +195,17 @@
 																[[${sanctTrav.intituleDecisionEn}]] ( [[${decision.codeDecisionEn}]])
 															</option>
 													</select>
+													<br/><br/>
+													<label for="idClasseFuturAssocie">Future classe: <span class="redcolor">*</span></label>
+													<select class="form-control" name="idClasseFuturAssocie" id="idClasseFuturAssocie">
+														<optgroup  th:if="${listniveauClasseSup}" th:each="n:${listniveauClasseSup}"
+															th:label="${session.lang=='fr'?n.codeNiveaux:n.codeNiveaux_en}">
+															<option th:each="c:${n.listofClasses}" th:if="${c.langueClasses == session.lang}"
+																	th:value="${c.idClasses}" th:inline="text">
+																[[${c.getClasseString()}]]
+															</option>
+														</optgroup>
+													</select>
 													<hr/>
 													<span>
 														<label>Distintions : </label><label class="greencolor" th:inline="text">
@@ -211,6 +219,7 @@
 															${eleve.getDecisionConseilPeriode(idAnneeActive)}==null?' ':
 															${eleve.getDecisionConseilPeriode(idAnneeActive).getDecisionDecisionConseilString(session.lang)}
 															]]
+															
 														</label>
 													</span>
 												</div>

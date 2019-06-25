@@ -98,6 +98,7 @@ public class BulletinTrimestreBean implements Serializable {
     // Informations sur le résultat trimestriel de l'élève
     private double result_tt_points;
     private double result_tt_coef;
+    private double result_moy_trim;
     private String result_rang_trim;
 
     // Informations sur le profil de la classe
@@ -121,10 +122,13 @@ public class BulletinTrimestreBean implements Serializable {
     // Informations sur les rappels des moyennes des sequences antérieures
     private String rappel_1;
     private String rappel_2;
+    private String rappel_3;
     private double r_moy_1;
     private double r_moy_2;
+    private double r_moy_trim;
     private String r_rang_1;
     private String r_rang_2;
+    private String r_rang_trim;
 
     // Informations sur l'appreciation du travail de l'eleve
     private String appreciation;
@@ -1111,6 +1115,22 @@ public class BulletinTrimestreBean implements Serializable {
 	public void setResult_tt_coef(double result_tt_coef) {
 		this.result_tt_coef = result_tt_coef;
 	}
+	
+
+	/**
+	 * @return the result_moy_trim
+	 */
+	public double getResult_moy_trim() {
+		return result_moy_trim;
+	}
+
+
+	/**
+	 * @param result_moy_trim the result_moy_trim to set
+	 */
+	public void setResult_moy_trim(double result_moy_trim) {
+		this.result_moy_trim = result_moy_trim;
+	}
 
 
 	/**
@@ -1335,6 +1355,24 @@ public class BulletinTrimestreBean implements Serializable {
 	public void setRappel_2(String rappel_2) {
 		this.rappel_2 = rappel_2;
 	}
+	
+	
+
+
+	/**
+	 * @return the rappel_3
+	 */
+	public String getRappel_3() {
+		return rappel_3;
+	}
+
+
+	/**
+	 * @param rappel_3 the rappel_3 to set
+	 */
+	public void setRappel_3(String rappel_3) {
+		this.rappel_3 = rappel_3;
+	}
 
 
 	/**
@@ -1398,6 +1436,63 @@ public class BulletinTrimestreBean implements Serializable {
 	 */
 	public void setR_rang_2(String r_rang_2) {
 		this.r_rang_2 = r_rang_2;
+	}
+
+	
+
+	/**
+	 * @return the r_moy_trim
+	 */
+	public double getR_moy_trim() {
+		return r_moy_trim;
+	}
+
+
+	/**
+	 * @param r_moy_trim the r_moy_trim to set
+	 */
+	public void setR_moy_trim(double r_moy_trim) {
+		this.r_moy_trim = r_moy_trim;
+	}
+
+
+	/**
+	 * @return the r_rang_trim
+	 */
+	public String getR_rang_trim() {
+		return r_rang_trim;
+	}
+
+
+	/**
+	 * @param r_rang_trim the r_rang_trim to set
+	 */
+	public void setR_rang_trim(String r_rang_trim) {
+		this.r_rang_trim = r_rang_trim;
+	}
+
+
+	/**
+	 * @param total_pourcentage_g1 the total_pourcentage_g1 to set
+	 */
+	public void setTotal_pourcentage_g1(String total_pourcentage_g1) {
+		this.total_pourcentage_g1 = total_pourcentage_g1;
+	}
+
+
+	/**
+	 * @param total_pourcentage_g2 the total_pourcentage_g2 to set
+	 */
+	public void setTotal_pourcentage_g2(String total_pourcentage_g2) {
+		this.total_pourcentage_g2 = total_pourcentage_g2;
+	}
+
+
+	/**
+	 * @param total_pourcentage_g3 the total_pourcentage_g3 to set
+	 */
+	public void setTotal_pourcentage_g3(String total_pourcentage_g3) {
+		this.total_pourcentage_g3 = total_pourcentage_g3;
 	}
 
 

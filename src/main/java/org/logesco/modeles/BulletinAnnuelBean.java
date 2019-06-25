@@ -100,6 +100,7 @@ public class BulletinAnnuelBean implements Serializable {
     private double result_tt_points;
     private double result_tt_coef;
     private String result_rang_ann;
+    private String result_moy_an;
 
     // Informations sur le profil de la classe
     private double moy_premier;
@@ -129,6 +130,9 @@ public class BulletinAnnuelBean implements Serializable {
     private String rappel_3;
     private double r_moy_3;
     private String r_rang_3;
+    private String rappel_4;
+    private double r_moy_an;
+    private String r_rang_an;
 
     // Informations sur l'appreciation du travail de l'eleve
     private String appreciation;
@@ -1148,6 +1152,47 @@ public class BulletinAnnuelBean implements Serializable {
 		this.result_rang_ann = result_rang_ann;
 	}
 
+	
+
+	/**
+	 * @return the result_moy_an
+	 */
+	public String getResult_moy_an() {
+		return result_moy_an;
+	}
+
+
+	/**
+	 * @param result_moy_an the result_moy_an to set
+	 */
+	public void setResult_moy_an(String result_moy_an) {
+		this.result_moy_an = result_moy_an;
+	}
+
+
+	/**
+	 * @param total_pourcentage_g1 the total_pourcentage_g1 to set
+	 */
+	public void setTotal_pourcentage_g1(String total_pourcentage_g1) {
+		this.total_pourcentage_g1 = total_pourcentage_g1;
+	}
+
+
+	/**
+	 * @param total_pourcentage_g2 the total_pourcentage_g2 to set
+	 */
+	public void setTotal_pourcentage_g2(String total_pourcentage_g2) {
+		this.total_pourcentage_g2 = total_pourcentage_g2;
+	}
+
+
+	/**
+	 * @param total_pourcentage_g3 the total_pourcentage_g3 to set
+	 */
+	public void setTotal_pourcentage_g3(String total_pourcentage_g3) {
+		this.total_pourcentage_g3 = total_pourcentage_g3;
+	}
+
 
 	/**
 	 * @return the moy_premier
@@ -1466,6 +1511,55 @@ public class BulletinAnnuelBean implements Serializable {
 	 */
 	public void setR_rang_3(String r_rang_3) {
 		this.r_rang_3 = r_rang_3;
+	}
+
+	
+
+	/**
+	 * @return the rappel_4
+	 */
+	public String getRappel_4() {
+		return rappel_4;
+	}
+
+
+	/**
+	 * @param rappel_4 the rappel_4 to set
+	 */
+	public void setRappel_4(String rappel_4) {
+		this.rappel_4 = rappel_4;
+	}
+
+
+	/**
+	 * @return the r_moy_an
+	 */
+	public double getR_moy_an() {
+		return r_moy_an;
+	}
+
+
+	/**
+	 * @param r_moy_an the r_moy_an to set
+	 */
+	public void setR_moy_an(double r_moy_an) {
+		this.r_moy_an = r_moy_an;
+	}
+
+
+	/**
+	 * @return the r_rang_an
+	 */
+	public String getR_rang_an() {
+		return r_rang_an;
+	}
+
+
+	/**
+	 * @param r_rang_an the r_rang_an to set
+	 */
+	public void setR_rang_an(String r_rang_an) {
+		this.r_rang_an = r_rang_an;
 	}
 
 

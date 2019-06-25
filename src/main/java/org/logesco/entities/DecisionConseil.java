@@ -64,6 +64,12 @@ public class DecisionConseil implements Serializable {
 	@ManyToOne
 	Decision decisionAssocie;
 	
+	/*
+	 * Association avec la table Classe
+	 ******************************************/
+	@ManyToOne
+	Classes futurClasse;
+	
 	
 	
 	/**
@@ -217,6 +223,26 @@ public class DecisionConseil implements Serializable {
 		this.decisionAssocie = decisionAssocie;
 	}
 	
+	
+	
+	/**
+	 * @return the futurClasse
+	 */
+	public Classes getFuturClasse() {
+		return futurClasse;
+	}
+
+
+
+	/**
+	 * @param futurClasse the futurClasse to set
+	 */
+	public void setFuturClasse(Classes futurClasse) {
+		this.futurClasse = futurClasse;
+	}
+
+
+
 	public String getSanctionDiscDecisionConseilString(String lang){
 		if(this.sanctionDiscAssocie == null) return " ";
 		if(lang.equalsIgnoreCase("fr")==true){
@@ -324,13 +350,45 @@ public class DecisionConseil implements Serializable {
 	
 	public String getDecisionDecisionConseilString(String lang){
 		if(this.decisionAssocie == null) return " ";
+		String chaine = "";
 		if(lang.equalsIgnoreCase("fr")==true){
-			return this.decisionAssocie.getIntituleDecision()+" ("+
-					this.decisionAssocie.getCodeDecision()+")";
+			
+			if(this.decisionAssocie.getDirectionDecision()>0){
+				chaine = this.decisionAssocie.getIntituleDecision()+" ("+
+						this.decisionAssocie.getCodeDecision()+")";
+				if( this.futurClasse!=null){
+					chaine += " EN ";
+					chaine += this.futurClasse.getClasseString();
+				}
+			}
+			else{
+				chaine = this.decisionAssocie.getIntituleDecision()+" ("+
+						this.decisionAssocie.getCodeDecision()+")";
+				if( this.futurClasse!=null){
+					chaine += " LA ";
+					chaine += this.futurClasse.getClasseString();
+				}
+			}
+			return chaine;
 		}
 		else{
-			return this.decisionAssocie.getIntituleDecisionEn()+" ("+
-					this.decisionAssocie.getCodeDecisionEn()+")";
+			if(this.decisionAssocie.getDirectionDecision()>0){
+				chaine =  this.decisionAssocie.getIntituleDecisionEn()+" ("+
+						this.decisionAssocie.getCodeDecisionEn()+")";
+				if( this.futurClasse!=null){
+					chaine += " IN ";
+					chaine += this.futurClasse.getClasseString();
+				}
+			}
+			else{
+				chaine =  this.decisionAssocie.getIntituleDecisionEn()+" ("+
+						this.decisionAssocie.getCodeDecisionEn()+")";
+				if( this.futurClasse!=null){
+					chaine += " THE ";
+					chaine += this.futurClasse.getClasseString();
+				}
+			}
+			return chaine;
 		}
 	
 	}
@@ -338,11 +396,40 @@ public class DecisionConseil implements Serializable {
 	public String getDecisionDecisionConseilStringCode(String lang){
 
 		if(this.decisionAssocie == null) return " ";
+		String chaine="";
 		if(lang.equalsIgnoreCase("fr")==true){
-			return this.decisionAssocie.getCodeDecision();
+			if(this.decisionAssocie.getDirectionDecision()>0){
+				chaine = this.decisionAssocie.getCodeDecision();
+				if( this.futurClasse!=null){
+					chaine += " EN ";
+					chaine += this.futurClasse.getClasseString();
+				}
+			}
+			else{
+				chaine = this.decisionAssocie.getCodeDecision();
+				if( this.futurClasse!=null){
+					chaine += " LA ";
+					chaine += this.futurClasse.getClasseString();
+				}
+			}
+			return chaine;
 		}
 		else{
-			return this.decisionAssocie.getCodeDecisionEn();
+			if(this.decisionAssocie.getDirectionDecision()>0){
+				chaine = this.decisionAssocie.getCodeDecisionEn();
+				if( this.futurClasse!=null){
+					chaine += " IN ";
+					chaine += this.futurClasse.getClasseString();
+				}
+			}
+			else{
+				chaine = this.decisionAssocie.getCodeDecisionEn();
+				if( this.futurClasse!=null){
+					chaine += " THE ";
+					chaine += this.futurClasse.getClasseString();
+				}
+			}
+			return chaine;
 		}
 	
 	}
@@ -350,11 +437,44 @@ public class DecisionConseil implements Serializable {
 	public String getDecisionDecisionConseilStringIntitule(String lang){
 
 		if(this.decisionAssocie == null) return " ";
+		String chaine ="";
 		if(lang.equalsIgnoreCase("fr")==true){
-			return this.decisionAssocie.getIntituleDecision();
+			
+			if(this.decisionAssocie.getDirectionDecision()>0){
+				chaine = this.decisionAssocie.getIntituleDecision();
+				if( this.futurClasse!=null){
+					chaine += " EN ";
+					chaine += this.futurClasse.getClasseString();
+				}
+			}
+			else{
+				chaine = this.decisionAssocie.getIntituleDecision();
+				if( this.futurClasse!=null){
+					chaine += " LA ";
+					chaine += this.futurClasse.getClasseString();
+				}
+			}
+			return chaine;
+			
 		}
 		else{
-			return this.decisionAssocie.getIntituleDecisionEn();
+			
+			if(this.decisionAssocie.getDirectionDecision()>0){
+				chaine = this.decisionAssocie.getIntituleDecisionEn();
+				if( this.futurClasse!=null){
+					chaine += " IN ";
+					chaine += this.futurClasse.getClasseString();
+				}
+			}
+			else{
+				chaine = this.decisionAssocie.getIntituleDecisionEn();
+				if( this.futurClasse!=null){
+					chaine += " THE ";
+					chaine += this.futurClasse.getClasseString();
+				}
+			}
+			return chaine;
+			
 		}
 	
 	}

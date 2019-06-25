@@ -43,6 +43,7 @@ public class Sections implements Serializable {
 	
 	@NotNull
 	@NotEmpty
+	@Column(unique=true)
 	private String codeSections_en;
 	@NotNull
 	@NotEmpty

@@ -37,7 +37,7 @@
 				<th></th>
 				<th>Moyenne Obtenue</th>
 				<th>Sanction disciplinaire</th>
-				<th>Abs NJ/Total</th>
+				<th>Abs J/Abs NJ</th>
 				<!-- <th>DECISION DU CONSEIL DE CLASSE</th> -->
 			</tr>
 			
@@ -102,9 +102,8 @@
 						<label class="bluecolor" th:inline="text">Séquence [[${seq.numeroSeq}]]:</label>
 						<span th:inline="text" class="badge">
 						<b>
-							[[${eleve.getNbreHeureAbsenceNonJustifie(seq.idPeriodes)}]]/
-							[[${eleve.getNbreHeureAbsenceNonJustifie(seq.idPeriodes)}+
-							${eleve.getNbreHeureAbsenceJustifie(seq.idPeriodes)}]]
+							[[${eleve.getNbreHeureAbsenceJustifie(seq.idPeriodes)}]]/
+							[[${eleve.getNbreHeureAbsenceNonJustifie(seq.idPeriodes)}]]
 						</b>
 						</span>
 					</div>
@@ -113,9 +112,8 @@
 						<label class="redcolor" th:inline="text">Total [[${trimestreConcerne.numeroTrim}]]:</label>
 						<span th:inline="text" class="badge">
 						<b>
-							[[${eleve.getNbreHeureAbsenceNonJustifieTrim(trimestreConcerne)}]] /
-							[[${eleve.getNbreHeureAbsenceNonJustifieTrim(trimestreConcerne)}+
-							${eleve.getNbreHeureAbsenceJustifieTrim(trimestreConcerne)}]]
+							[[${eleve.getNbreHeureAbsenceJustifieTrim(trimestreConcerne)}]] /
+							[[${eleve.getNbreHeureAbsenceNonJustifieTrim(trimestreConcerne)}]]
 						</b>
 						</span>
 					</div>

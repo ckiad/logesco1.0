@@ -166,17 +166,18 @@ public class IntendantController {
 		 */
 		//System.err.println("Appel à la fonction d'enregistrement de versement ");
 		
-		int repServeur = usersService.enregVersementSco(idEleveAModif, montantAVerse);
+		Long repServeur = usersService.enregVersementSco(idEleveAModif, montantAVerse);
 		
-		/*
-		 * System.err.println("Le montant versé est enregistré et il faut à présent sortir 
-		 * un reçu qui approuve ce versement. Ce reçu ne sort que si l'enregistrement s'est bien passé c'est 
-		 * pourquoi dans le code on va d'abord interprété les cas ou l'opération s'est mal passé avant d'appeler
-		 * la fonction qui impremera le reçu de versement donc apres repServeur == -1 et repServeur == -2");
-		 */
 		
-		/*//System.err.println("idEleveAModif=="+idEleveAModif+"  montantAVerse=="+montantAVerse
-				+"  montantScolarite=="+montantScolarite+" repServeur=="+repServeur);*/
+		 System.out.println("Le montant versé est enregistré et il faut à présent sortir  un reçu qui approuve "
+		 		+ "ce versement. Ce reçu ne sort que si l'enregistrement s'est bien passé c'est  pourquoi dans le code"
+		 		+ " on va d'abord interprété les cas ou l'opération s'est mal passé avant d'appelerla fonction qui"
+		 		+ " impremera le reçu de versement donc apres repServeur == -1 et repServeur == -2  "
+		 		+ " Mais la fonction enregVersementSco retourne "+repServeur);
+		 
+		
+		System.out.println("idEleveAModif=="+idEleveAModif+"  montantAVerse=="+montantAVerse
+				+" repServeur=="+repServeur);
 		
 		if(repServeur == -1) return "redirect:/logesco/users/intendant/getinscriptionEleves?updateetatInsceleveserror"
 				+ "&&idClasseSelect="+idClasseSelect
@@ -202,13 +203,22 @@ public class IntendantController {
 		 */
 		session.setAttribute("idEleveConcerne", idEleveAModif);
 		
-		Long idOperation_a_imprimer  = usersService.getLastOperationOnCompte(idEleveAModif);
-		System.out.println("Operation recherche");
+		//System.out.println(" L'operation realise a pour identifiant "+repServeur);
+		session.setAttribute("idOperation_a_imprimer", repServeur);
+		session.setAttribute("operation_presente", "1");
+		
+		/*System.out.println("On la garde donc en session  cle: idOperation_a_imprimer == "
+		+session.getAttribute("idOperation_a_imprimer")+"  cle: operation_presente == "
+				+session.getAttribute("operation_presente"));*/
+		
+		/*Long idOperation_a_imprimer  = usersService.getLastOperationOnCompte(idEleveAModif);
+		System.out.println("Operation recherche  "+idOperation_a_imprimer);
 		if(idOperation_a_imprimer!=null) {
 			session.setAttribute("idOperation_a_imprimer", idOperation_a_imprimer);
 			session.setAttribute("operation_presente", "1");
 			System.out.println("Operation trouver et placer en session");
-		}
+		}*/
+		
 		return "redirect:/logesco/users/intendant/getinscriptionEleves?updateetatInscelevessuccess"
 				+ "&&idClasseSelect="+idClasseSelect
 				+ "&&numPageEleves="+numPageEleves;
@@ -256,7 +266,7 @@ public class IntendantController {
 			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
 		}
 		else{
-			parameters.put("logo", "src/main/resources/static/images/logobekoko.png");
+			parameters.put("logo", "classpath:/static/images/logobekoko.png");
 		}
 		
 		Date dateJour = new Date();

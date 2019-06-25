@@ -22,7 +22,7 @@
 						th:object="${updateNiveauxForm}" method="post">
 						
 				<div th:if="${param.updateniveauxsuccess}">
-						<h4 align="justify" class="alert alert-success">Niveau enregistré avec succès.</h4>
+						<h4 align="justify" class="alert alert-success">Niveau enregistré ou modifié avec succès.</h4>
 				</div>
 				
 				<div th:if="${param.updateniveauxerrorNumeroOrdre}">
@@ -35,6 +35,10 @@
 				
 				<div th:if="${param.updateniveauxerrorCode}">
 							<h4 align="justify" class="alert alert-danger">Vérifier le code il est peut être déjà utiliser .</h4>
+				</div>
+				
+				<div th:if="${param.updateniveauxerrorNiveausup}">
+						<h4 align="justify" class="alert alert-danger">Le niveau suivant ne saurait être identique .</h4>
 				</div>
 				
 				<fieldset>
@@ -125,7 +129,7 @@
 			</div>
 			<div class="col-md-9">
 				<div th:if="${param.supprimNiveauxerrorNiveaux}">
-							<h4 align="justify" class="alert alert-danger">Impossible de supprimer un niveau qui contient un sous niveau.</h4>
+							<h4 align="justify" class="alert alert-danger">Impossible de supprimer le niveau : il désigne le niveau suivant d'un autre niveau.</h4>
 				</div>
 				<div th:if="${param.supprimNiveauxerrorClasses}">
 							<h4 align="justify" class="alert alert-danger">Impossible de supprimer un niveau qui contient dèjà des classes.</h4>

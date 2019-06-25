@@ -37,7 +37,7 @@
 				<th></th>
 				<th>Moyenne Obtenue</th>
 				<th>Sanction disciplinaire</th>
-				<th>Abs NJ/Total</th>
+				<th>Abs J/Abs NJ</th>
 				<!-- <th>DECISION DU CONSEIL DE CLASSE</th> -->
 			</tr>
 			
@@ -96,9 +96,8 @@
 				<td>
 					<span th:inline="text" class="redcolor">
 					<b>
-						[[${eleve.getNbreHeureAbsenceNonJustifie(idSequenceConcerne)}]]/
-						[[${eleve.getNbreHeureAbsenceNonJustifie(idSequenceConcerne)}+
-						${eleve.getNbreHeureAbsenceJustifie(idSequenceConcerne)}]]
+						[[${eleve.getNbreHeureAbsenceJustifie(idSequenceConcerne)}]]/
+						[[${eleve.getNbreHeureAbsenceNonJustifie(idSequenceConcerne)}]]
 					</b>
 					</span>
 				</td>

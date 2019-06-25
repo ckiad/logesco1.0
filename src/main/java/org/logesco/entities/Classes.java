@@ -102,6 +102,14 @@ public class Classes implements Serializable{
 	@ManyToOne
 	Proffesseurs proffesseur;
 	
+	/*
+	 * Association avec la table DecisionConseil
+	 **********************************************/
+	@OneToMany(mappedBy="futurClasse")
+	Collection<DecisionConseil> listofDecisionConseil;
+	
+	
+	
 	
 	
 	
@@ -1577,6 +1585,39 @@ public class Classes implements Serializable{
 	}
 	
 
+	public String getClasseString(){
+		String classeString="";
+		int compt=0;
+		for(int i=0; i<this.specialite.getCodeSpecialite().length();i++){
+			if(specialite.getCodeSpecialite().charAt(i) != ' '){
+				compt = 1;
+				break;
+			}
+		}
+		if(compt>0){
+			classeString = this.codeClasses+" "+this.specialite.getCodeSpecialite()+" "+this.numeroClasses;
+		}
+		else{
+			classeString = this.codeClasses+" "+this.numeroClasses;
+		}
+		return classeString;
+	}
+
+	/**
+	 * @return the listofDecisionConseil
+	 */
+	public Collection<DecisionConseil> getListofDecisionConseil() {
+		return listofDecisionConseil;
+	}
+
+	/**
+	 * @param listofDecisionConseil the listofDecisionConseil to set
+	 */
+	public void setListofDecisionConseil(Collection<DecisionConseil> listofDecisionConseil) {
+		this.listofDecisionConseil = listofDecisionConseil;
+	}
+	
+	
 
 
 }

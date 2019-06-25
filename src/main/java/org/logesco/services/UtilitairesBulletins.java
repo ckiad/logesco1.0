@@ -214,16 +214,16 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			appreciation = lang.equalsIgnoreCase("fr")==true?"MAUVAIS":"BAD"+" (F)";
 		}else if((note >=6.0) && (note < 7.0))  {
 			appreciation = "FAIBLE";
-			appreciation = lang.equalsIgnoreCase("fr")==true?"FAIBLE":"POOR"+" (F)";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"TRES FAIBLE":"WEAK"+" (F)";
 		}else if((note >=7.0) && (note < 8.0))  {
 			appreciation = "FAIBLE";
-			appreciation = lang.equalsIgnoreCase("fr")==true?"FAIBLE":"POOR"+" (E)";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"FAIBLE":"WEAK"+" (E)";
 		}else if((note >=8.0) && (note < 9.0))  {
 			appreciation = "INSUFFISANT";
 			appreciation = lang.equalsIgnoreCase("fr")==true?"INSUFFISANT":"INSUFFICIENT"+" (D/C-)";
 		}else if((note >=9.0) && (note < 10.0))  {
 			appreciation = "MEDIOCRE";
-			appreciation = lang.equalsIgnoreCase("fr")==true?"MEDIOCRE":"MEDIOCRE"+" (C/C+)";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"MEDIOCRE":"BELOW AVERAGE"+" (C/C+)";
 		}else if((note >=10.0) && (note < 11.0))  {
 			appreciation = "PASSABLE";
 			appreciation = lang.equalsIgnoreCase("fr")==true?"PASSABLE":"AVERAGE"+" (B-/B)";
@@ -264,16 +264,16 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 			appreciation = lang.equalsIgnoreCase("fr")==true?"MAUVAIS":"BAD"+" (F)";
 		}else if((note >=6.0) && (note < 7.0))  {
 			appreciation = "FAIBLE";
-			appreciation = lang.equalsIgnoreCase("fr")==true?"FAIBLE":"POOR"+" (F)";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"TRES FAIBLE":"WEAK"+" (F)";
 		}else if((note >=7.0) && (note < 8.0))  {
 			appreciation = "FAIBLE";
-			appreciation = lang.equalsIgnoreCase("fr")==true?"FAIBLE":"POOR"+" (E)";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"FAIBLE":"WEAK"+" (E)";
 		}else if((note >=8.0) && (note < 9.0))  {
 			appreciation = "INSUFFISANT";
 			appreciation = lang.equalsIgnoreCase("fr")==true?"INSUFFISANT":"INSUFFICIENT"+" (D/C-)";
 		}else if((note >=9.0) && (note < 10.0))  {
 			appreciation = "MEDIOCRE";
-			appreciation = lang.equalsIgnoreCase("fr")==true?"MEDIOCRE":"MEDIOCRE"+" (C/C+)";
+			appreciation = lang.equalsIgnoreCase("fr")==true?"MEDIOCRE":"BELOW AVERAGE"+" (C/C+)";
 		}else if((note >=10.0) && (note < 11.0))  {
 			appreciation = "PASSABLE";
 			appreciation = lang.equalsIgnoreCase("fr")==true?"PASSABLE":"AVERAGE"+" (B-/B)";
@@ -4169,6 +4169,21 @@ public static List<Eleves> getListofeleveTrieparordrealphabetique(List<Eleves> l
 		}
 		
 		return listofSousRapport3Sequence;
+	}
+	
+	
+	public String subString(String chaine, int n){
+		String ch = "";
+		//System.out.println();
+		//System.out.print("chaine entree ==  "+chaine);
+		if(chaine.length()<=n){
+			ch = chaine;
+		}
+		else{
+			ch = chaine.substring(0,n);
+		}
+		//System.out.print(" |   chaine sortie == "+ch);
+		return ch;
 	}
 	
 	

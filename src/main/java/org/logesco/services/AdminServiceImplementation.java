@@ -256,6 +256,11 @@ public class AdminServiceImplementation implements IAdminService {
 	}
 	
 	@Override
+	public Personnels findPersonnelAvecMatricule(String matriculePers){
+		return persRepository.findByMatriculePers(matriculePers);
+	}
+	
+	@Override
 	public Personnels findPersonnel(String nomPers, String prenomsPers, Date datenaisspers){
 		return persRepository.findByNomsPersAndPrenomsPersAndDatenaissPers(nomPers, prenomsPers, datenaisspers);
 	}
@@ -309,19 +314,20 @@ public class AdminServiceImplementation implements IAdminService {
 			 * dans ce cas, Si les nouvelles donnees devant etre unique sont différentes de celle qui existe alors il faut 
 			 * se rassurer que les contraintes resteront inviolé apres la dite mise a jour
 			 */
-			System.err.println("Nous voici a l'execution   111");
+			//System.err.println("Nous voici a l'execution   111");
 			/*
 			 * Pour le triplet noms, prenoms, datenaiss
 			 */
 			
-			if(!(proviseur.getNomsPers().equals(proviseurExistant.getNomsPers())) ||
-					!(proviseur.getPrenomsPers().equals(proviseurExistant.getPrenomsPers()))||
+			if(!(proviseur.getNomsPers().equalsIgnoreCase(proviseurExistant.getNomsPers())) ||
+					!(proviseur.getPrenomsPers().equalsIgnoreCase(proviseurExistant.getPrenomsPers()))||
 					(proviseur.getDatenaissPers().getTime()!=proviseurExistant.getDatenaissPers().getTime())){
 				
-				System.err.println("Nous voici a l'execution   222");
+				/*System.err.println("Nous voici a l'execution   222");
 				System.err.println("proviseur.getNomsPers()="+proviseur.getNomsPers()+" proviseurExistant.getNomsPers()="+proviseurExistant.getNomsPers());
 				System.err.println("proviseur.getPrenomsPers()="+proviseur.getPrenomsPers()+" proviseurExistant.getPrenomsPers()="+proviseurExistant.getPrenomsPers());
 				System.err.println("proviseur.getDatenaissPers().getTime()="+proviseur.getDatenaissPers().getTime()+" proviseurExistant.getDatenaissPers().getTime()="+proviseurExistant.getDatenaissPers().getTime());
+				*/
 				/*
 				 * On doit vérifier l'unicite du nouveau triplet
 				 */
@@ -329,27 +335,74 @@ public class AdminServiceImplementation implements IAdminService {
 						proviseur.getDatenaissPers());
 				if(persExistantAvectriplet!=null) return new Long(-2);
 			}
-			System.err.println("Nous voici a l'execution   333");
+			//System.err.println("Nous voici a l'execution   333");
 			/*
 			 * Pour le numero de cni
 			 */
-			if(!(proviseur.getNumcniPers().equals(proviseurExistant.getNumcniPers()))){
-				System.err.println("Nous voici a l'execution   444");
+			if(!(proviseur.getNumcniPers().equalsIgnoreCase(proviseurExistant.getNumcniPers()))){
+				//System.err.println("Nous voici a l'execution   444");
 				/*
 				 * Il faut vérifier unicité du nouveau numero de cni
 				 */
 				Personnels persExistantAvecNumcni=this.findPersonnel(proviseur.getNumcniPers());
 				if(persExistantAvecNumcni!=null) return new Long(-1);
 			}
-			System.err.println("Nous voici a l'execution   555");
+			
+			/*
+			 * Pour le matricule
+			 */
+			if(!(proviseur.getMatriculePers().equalsIgnoreCase(proviseurExistant.getMatriculePers()))){
+				//System.err.println("Nous voici a l'execution   444");
+				/*
+				 * Il faut vérifier unicité du nouveau numero de cni
+				 */
+				Personnels persExistantAvecMatricule=this.findPersonnelAvecMatricule(proviseur.getMatriculePers());
+				if(persExistantAvecMatricule!=null) return new Long(-1);
+			}
+			
+			//System.err.println("Nous voici a l'execution   555");
 			/*
 			 * Pour le username
 			 */
-			if(!(proviseur.getUsername().equals(proviseurExistant.getUsername()))){
+			if(!(proviseur.getUsername().equalsIgnoreCase(proviseurExistant.getUsername()))){
 				Utilisateurs usersExistAvecUsername=this.getUsers(proviseur.getUsername());
 				if(usersExistAvecUsername!=null) return new Long(-3);
 			}
-			System.err.println("Nous voici a l'execution   666");
+			
+			if(proviseur.getFonctionPers().equalsIgnoreCase("PROVISEUR")==true ||
+					proviseur.getFonctionPers().equalsIgnoreCase("CENSEUR")==true||
+					proviseur.getFonctionPers().equalsIgnoreCase("SG")==true||
+					proviseur.getFonctionPers().equalsIgnoreCase("ENSEIGNANT")==true){
+				if(proviseur.getSpecialiteProf().length()<=0){
+					return new Long(-4);
+				}
+			}
+			
+			if(proviseur.getStatutPers().equalsIgnoreCase("FONCTIONNAIRE")==true){
+				if(proviseur.getFonctionPers().equalsIgnoreCase("PROVISEUR")==true ||
+						proviseur.getFonctionPers().equalsIgnoreCase("CENSEUR")==true||
+						proviseur.getFonctionPers().equalsIgnoreCase("SG")==true||
+						proviseur.getFonctionPers().equalsIgnoreCase("INTENDANT")==true||
+						proviseur.getFonctionPers().equalsIgnoreCase("ENSEIGNANT")==true){
+					if(proviseur.getMatriculePers().length()<=0){
+						return new Long(-5);
+					}
+				}
+			}
+			
+			if(proviseur.getStatutPers().equalsIgnoreCase("VACATAIRE")==false){
+				if(proviseur.getFonctionPers().equalsIgnoreCase("PROVISEUR")==true ||
+						proviseur.getFonctionPers().equalsIgnoreCase("CENSEUR")==true||
+						proviseur.getFonctionPers().equalsIgnoreCase("SG")==true||
+						proviseur.getFonctionPers().equalsIgnoreCase("INTENDANT")==true||
+						proviseur.getFonctionPers().equalsIgnoreCase("ENSEIGNANT")==true){
+					if(proviseur.getGradePers().length()<=0){
+						return new Long(-6);
+					}
+				}
+			}
+			
+			//System.err.println("Nous voici a l'execution   666");
 			/*
 			 * Ici a ce stade du code on est sur que tout a été vérifier donc on peut faire les mises à jour sans souci
 			 */
@@ -376,10 +429,43 @@ public class AdminServiceImplementation implements IAdminService {
 			proviseurExistant.setVillePers(proviseur.getVillePers());
 			
 			/*
+			 * Traitement des nouveaux champs
+			 */
+			proviseurExistant.setSitmatriPers(proviseur.getSitmatriPers());
+			proviseurExistant.setMatriculePers(proviseur.getMatriculePers());
+			proviseurExistant.setDeptoriginePers(proviseur.getDeptoriginePers());
+			proviseurExistant.setRegionoriginePers(proviseur.getRegionoriginePers());
+			proviseurExistant.setFonctionPers(proviseur.getFonctionPers());
+			proviseurExistant.setQuotaHorairePers(proviseur.getQuotaHorairePers());
+			proviseurExistant.setDateentreeFPPers(proviseur.getDateentreeFPPers());
+			proviseurExistant.setDatePSPers(proviseur.getDatePSPers());
+			proviseurExistant.setObservations(proviseur.getObservations());
+			proviseurExistant.setFonctionPers(proviseur.getFonctionPers());
+			proviseurExistant.setEtabDAttache(proviseur.getEtabDAttache());
+			
+			
+			/*
 			 * On peut maintenant faire la mise à jour
 			 */
 			provRepository.save(proviseurExistant);
-			System.err.println("Nous voici a l'execution   777  password== "+proviseur.getPassword());
+			//System.err.println("Nous voici a l'execution   777  password== "+proviseur.getPassword());
+			/*
+			 * On met aussi a jour le userrole au cas ou il n'existe pas
+			 */
+			Roles roles1=rolesRepository.findByRole("PROVISEUR");
+			if(roles1==null) return new Long(-7);
+			UtilisateursRoles userRole = usersrolesRepository.getUtilisateursRoles(proviseurExistant.getIdUsers(), 
+					roles1.getRole());
+			if(userRole == null) {
+				//On enregistre le roleUser
+				UtilisateursRoles userR = new UtilisateursRoles();
+				userR.setRoleAssocie(roles1);
+				userR.setUsers(proviseurExistant);
+				//System.out.println("On va encore enregistrer le userRole du proviseur   111111111");
+				usersrolesRepository.save(userR);
+				//System.out.println("On a donc reenregistrer le userRole du proviseur   2222222222");
+			}
+			
 			return  proviseurExistant.getIdUsers();
 			
 			
@@ -388,26 +474,64 @@ public class AdminServiceImplementation implements IAdminService {
 		 * Ici ca veut dire l'entite proviseur n'existe pas encore donc il faut la créer 
 		 * mais avant il faut faire toutes les vérifications
 		 */
-		System.err.println("Nous voici a l'execution   888");
+		//System.err.println("Nous voici a l'execution   888");
 		/*
 		 * Est ce que quelqu'un existe en bd avec le meme numerocni?
 		 */
 		Personnels persExistantAvecNumcni=this.findPersonnel(proviseur.getNumcniPers());
 		if(persExistantAvecNumcni!=null) return new Long(-1);
-		System.err.println("Nous voici a l'execution   999");
+		
+		Personnels persExistantAvecmatricule = this.findPersonnelAvecMatricule(proviseur.getMatriculePers());
+		if(persExistantAvecmatricule!=null) return new Long(-1);
+		
+		//System.err.println("Nous voici a l'execution   999");
 		/*
 		 * Est ce que quelqu'un existe en bd avec le meme triplet noms, prenoms datenaiss
 		 */
 		Personnels persExistantAvectriplet=this.findPersonnel(proviseur.getNomsPers(), proviseur.getPrenomsPers(), 
 				proviseur.getDatenaissPers());
 		if(persExistantAvectriplet!=null) return new Long(-2);
-		System.err.println("Nous voici a l'execution   101010");
+		//System.err.println("Nous voici a l'execution   101010");
 		/*
 		 * Est ce qu'un utilisateur existe donc avec le même username
 		 */
 		Utilisateurs usersExistAvecUsername=this.getUsers(proviseur.getUsername());
 		if(usersExistAvecUsername!=null) return new Long(-3);
-		System.err.println("Nous voici a l'execution   111111");
+		//System.err.println("Nous voici a l'execution   111111");
+		
+		if(proviseur.getFonctionPers().equalsIgnoreCase("PROVISEUR")==true ||
+				proviseur.getFonctionPers().equalsIgnoreCase("CENSEUR")==true||
+				proviseur.getFonctionPers().equalsIgnoreCase("SG")==true||
+				proviseur.getFonctionPers().equalsIgnoreCase("ENSEIGNANT")==true){
+			if(proviseur.getSpecialiteProf().length()<=0){
+				return new Long(-4);
+			}
+		}
+		
+		if(proviseur.getStatutPers().equalsIgnoreCase("FONCTIONNAIRE")==true){
+			if(proviseur.getFonctionPers().equalsIgnoreCase("PROVISEUR")==true ||
+					proviseur.getFonctionPers().equalsIgnoreCase("CENSEUR")==true||
+					proviseur.getFonctionPers().equalsIgnoreCase("SG")==true||
+					proviseur.getFonctionPers().equalsIgnoreCase("INTENDANT")==true||
+					proviseur.getFonctionPers().equalsIgnoreCase("ENSEIGNANT")==true){
+				if(proviseur.getMatriculePers().length()<=0){
+					return new Long(-5);
+				}
+			}
+		}
+		
+		if(proviseur.getStatutPers().equalsIgnoreCase("VACATAIRE")==false){
+			if(proviseur.getFonctionPers().equalsIgnoreCase("PROVISEUR")==true ||
+					proviseur.getFonctionPers().equalsIgnoreCase("CENSEUR")==true||
+					proviseur.getFonctionPers().equalsIgnoreCase("SG")==true||
+					proviseur.getFonctionPers().equalsIgnoreCase("INTENDANT")==true||
+					proviseur.getFonctionPers().equalsIgnoreCase("ENSEIGNANT")==true){
+				if(proviseur.getGradePers().length()<=0){
+					return new Long(-6);
+				}
+			}
+		}
+		
 		/*
 		 * Ici on est donc sur que tout est bon et qu'on peut effectuer l'enregistrement
 		 */
@@ -416,19 +540,21 @@ public class AdminServiceImplementation implements IAdminService {
 		 * Il faut toujours encoder le mot de passe car il n'a pas été code avant d'être envoyé
 		 */
 		proviseur.setPassword(p.encode(proviseur.getPassword()));
-		System.err.println("le mot de passe enregistré est "+p.matches("misse",p.encode(proviseur.getPassword())));
+		//System.err.println("le mot de passe enregistré est "+p.matches("misse",p.encode(proviseur.getPassword())));
 		Proviseur proviseurEnregistre=provRepository.save(proviseur);
-		System.err.println("Nous voici a l'execution   121212");
+		//System.err.println("Nous voici a l'execution   121212");
+		
 		/*
 		 * Avant de retourner il faut d'abord enregistrer cet utilisateur comme ayant le role PROVISEUR
 		 */
 		
 		Roles roles1=rolesRepository.findByRole("PROVISEUR");
-		if(roles1==null) return new Long(-5);
+		if(roles1==null) return new Long(-7);
 		UtilisateursRoles usersroles=new UtilisateursRoles();
 		usersroles.setUsers((Utilisateurs)proviseurEnregistre);
 		usersroles.setRoleAssocie(roles1);
-		System.err.println("Nous voici a l'execution   131313");
+		
+		//System.err.println("Nous voici a l'execution   131313");
 		
 		usersrolesRepository.save(usersroles);
 		
@@ -451,7 +577,8 @@ public class AdminServiceImplementation implements IAdminService {
 		Cycles cycle1=this.getCyclesByNumeroOrdreCycles(cycles.getNumeroOrdreCycles());
 		if(cycle1!=null) return 0;
 		Cycles cycle2=this.getCyclesByCodeCycles(cycles.getCodeCycles());
-		if(cycle2!=null) return -1;
+		Cycles cycle3=this.getCyclesByCodeCycles(cycles.getCodeCycles_en());
+		if(cycle2!=null || cycle3!=null) return -1;
 		
 		cyclesRepository.save(cycles);
 		
@@ -525,10 +652,19 @@ public class AdminServiceImplementation implements IAdminService {
 	@Override
 	public int saveNiveaux(Niveaux niveau) {
 		Niveaux niveau1=niveauxRepository.findByCodeNiveaux(niveau.getCodeNiveaux());
-		if(niveau1!=null) return 0;
+		Niveaux niveau3=niveauxRepository.findByCodeNiveaux(niveau.getCodeNiveaux_en());
+		if(niveau1!=null || niveau3!=null ) return 0;
 		Niveaux niveau2=niveauxRepository.findByNumeroOrdreNiveaux(
 				niveau.getNumeroOrdreNiveaux());
 		if(niveau2!=null) return -1;
+		
+		if(niveau.getNiveau()!=null){
+			//on ne peut designer comme niveau suivant le meme niveau qu'on est entrain d'ajouter
+			Niveaux niveau4=niveauxRepository.findByCodeNiveaux(niveau.getNiveau().getCodeNiveaux());
+			if(niveau4 != null){
+				if(niveau4.getNumeroOrdreNiveaux() == niveau.getNumeroOrdreNiveaux()) return -2;
+			}
+		}
 		
 		niveauxRepository.save(niveau);
 		
@@ -547,6 +683,13 @@ public class AdminServiceImplementation implements IAdminService {
 		niveauAModif.setCycle(niveauModif.getCycle());
 		niveauAModif.setNiveau(niveauModif.getNiveau());
 		niveauAModif.setNumeroOrdreNiveaux(niveauModif.getNumeroOrdreNiveaux());
+		
+		//on ne peut dsigner comme niveau suivant le meme niveau qu'on est entrain d'ajouter
+		Niveaux niveau1=niveauxRepository.findByCodeNiveaux(niveauAModif.getNiveau().getCodeNiveaux());
+		if(niveau1 != null){
+			if(niveau1.getNumeroOrdreNiveaux() == niveauAModif.getNumeroOrdreNiveaux()) return -2;
+		}
+		
 		
 		Niveaux niveauUpdate=niveauxRepository.save(niveauAModif);
 		
@@ -600,9 +743,13 @@ public class AdminServiceImplementation implements IAdminService {
 
 	@Override
 	public int saveSections(Sections sections) {
+		//System.out.println("DEBUT DE saveSections");
 		Sections section1=sectionsRepository.findByCodeSections(sections.getCodeSections());
-		if(section1!=null) return 0;
+		Sections section2=sectionsRepository.findByCodeSections(sections.getCodeSections_en());
+		//System.out.println("On regarde si une section de ce code existe deja "+section1);
+		if(section1!=null || section2!=null) return 0;
 		sectionsRepository.save(sections);
+		//System.out.println("FIN DE saveSections");
 		return 1;
 	}
 	
@@ -1314,13 +1461,21 @@ public class AdminServiceImplementation implements IAdminService {
 					}
 				}
 				if(compt==0){
-					listofUsers.add(userRole.getUsers());
+					listofUsers.add(userRole.getUsers()); 
 				}
 			}
 		}
 		return listofUsers;
 	}
 
+	public Page<Utilisateurs> findPageUtilisateurs(int numPage, int taillePage){
+		return usersRepository.findAll(new PageRequest(numPage, taillePage));
+	}
+	
+	
+	
+	
+	
 	@Override
 	public Roles findRoles(String role) {
 		Roles roleRechercher=null;
@@ -1477,8 +1632,20 @@ public class AdminServiceImplementation implements IAdminService {
 	}
 	
 	@Override
+	public List<Roles> findAllRoles(){
+		return rolesRepository.findAll();
+	}
+	
+	@Override
+	public List<Roles> findAllRoles(String roles){
+		return rolesRepository.findAll("ADMIN");
+	}
+	
+	@Override
 	public int updateSanctionDisciplinaire(SanctionDisciplinaire sanctionDisc){
+		
 		SanctionDisciplinaire sanctionDiscExistCode =sanctionDiscRepository.findByCodeSancDisc(sanctionDisc.getCodeSancDisc());
+		
 		SanctionDisciplinaire sanctionDiscExistCodeEn = sanctionDiscRepository.findByCodeSancDiscEn(sanctionDisc.getCodeSancDiscEn());
 		
 		SanctionDisciplinaire sanctionDiscAModif = sanctionDiscRepository.findOne(sanctionDisc.getIdSancDisc());
@@ -1512,8 +1679,8 @@ public class AdminServiceImplementation implements IAdminService {
 		 * la contrainte ne sera pas violé
 		 */
 		
-		if(!(sanctionDisc.getCodeSancDisc().equals(sanctionDiscAModif.getCodeSancDisc()))||
-				!(sanctionDisc.getCodeSancDiscEn().equals(sanctionDiscAModif.getCodeSancDiscEn()))){
+		if((sanctionDisc.getCodeSancDisc().equals(sanctionDiscAModif.getCodeSancDisc())==false)||
+				(sanctionDisc.getCodeSancDiscEn().equals(sanctionDiscAModif.getCodeSancDiscEn()))==false){
 			/*
 			 * il ne sont pas égaux donc on veut aussi modifier le code 
 			 * on va donc se rassurer que la contrainte ne sera pas violé
@@ -1521,15 +1688,28 @@ public class AdminServiceImplementation implements IAdminService {
 			 * car dans ce cas aucune sanction n'existe avec l'un des nouveau code
 			 */
 			
-			if(!(sanctionDisc.getCodeSancDisc().equals(sanctionDiscAModif.getCodeSancDisc()))){
-				if(sanctionDiscExistCode!=null) return 0;
+			if((sanctionDisc.getCodeSancDisc().equals(sanctionDiscAModif.getCodeSancDisc()))==false){
+				System.out.println("nouveau code "+sanctionDisc.getCodeSancDisc()+" et code existant "+sanctionDiscAModif.getCodeSancDisc());
+				if(sanctionDiscExistCode!=null) {
+					System.out.println("on retourne donc 0 sanctionDiscExistCode");
+					return 0;
+				}
 			}
 			
-			if(!(sanctionDisc.getCodeSancDiscEn().equals(sanctionDiscAModif.getCodeSancDiscEn()))){
-				if(sanctionDiscExistCodeEn!=null) return 0;
+			if((sanctionDisc.getCodeSancDiscEn().equals(sanctionDiscAModif.getCodeSancDiscEn()))==false){
+				System.out.println("nouveau code en"+sanctionDisc.getCodeSancDiscEn()+" et code existant en "+sanctionDiscAModif.getCodeSancDiscEn());
+				if(sanctionDiscExistCodeEn!=null) {
+					System.out.println("on retourne donc 0 sanctionDiscExistCodeEn");
+					return 0;
+				}
 			}
 			
-			if(sanctionDisc.getNiveauSeverite() == sanctionDiscAModifNS.getNiveauSeverite()) return 0;
+			if(sanctionDisc.getNiveauSeverite() != sanctionDiscAModif.getNiveauSeverite()) {
+				if(sanctionDiscAModifNS!=null) {
+					System.out.println("on retourne donc 0 sanctionDiscAModifNS");
+					return 0;
+				}
+			}
 			
 			/*
 			 * Ici on est sur qu'aucun des deux codes ne va viole la contrainte d'unicite
@@ -1586,8 +1766,8 @@ public class AdminServiceImplementation implements IAdminService {
 		 * On va donc vérifier si le nouveau code est différent de l'ancien et le cas échéant vérifier que 
 		 * la contrainte ne sera pas violé
 		 */
-		if(!(sanctionTrav.getCodeSancTrav().equals(sanctionTravAModif.getCodeSancTrav()))||
-				!(sanctionTrav.getCodeSancTravEn().equals(sanctionTravAModif.getCodeSancTravEn()))){
+		if((sanctionTrav.getCodeSancTrav().equals(sanctionTravAModif.getCodeSancTrav())==false)||
+				(sanctionTrav.getCodeSancTravEn().equals(sanctionTravAModif.getCodeSancTravEn()))==false){
 			
 			/*
 			 * il ne sont pas égaux donc on veut aussi modifier le code 
@@ -1595,11 +1775,11 @@ public class AdminServiceImplementation implements IAdminService {
 			 * et cette contrainte n'est pas viole lorsque sanctionTravExistCode est null 
 			 * car dans ce cas aucune sanction n'existe avec l'un des nouveau code
 			 */
-			if(!(sanctionTrav.getCodeSancTrav().equals(sanctionTravAModif.getCodeSancTrav()))){
+			if((sanctionTrav.getCodeSancTrav().equals(sanctionTravAModif.getCodeSancTrav()))==false){
 				if(sanctionTravExistCode!=null) return 0;
 			}
 			
-			if(!(sanctionTrav.getCodeSancTravEn().equals(sanctionTravAModif.getCodeSancTravEn()))){
+			if((sanctionTrav.getCodeSancTravEn().equals(sanctionTravAModif.getCodeSancTravEn()))==false){
 				if(sanctionTravExistCodeEn!=null) return 0;
 			}
 			
@@ -1632,6 +1812,7 @@ public class AdminServiceImplementation implements IAdminService {
 	@Override
 	public int updateDecision(Decision decision){
 		Decision decisionExistCode =decisionRepository.findByCodeDecision(decision.getCodeDecision());
+		
 		Decision decisionExistCodeEn = decisionRepository.findByCodeDecisionEn(decision.getCodeDecisionEn());
 		
 		Decision decisionAModif = decisionRepository.findOne(decision.getIdDecision());
@@ -1660,15 +1841,22 @@ public class AdminServiceImplementation implements IAdminService {
 		 * On va donc vérifier si le nouveau code est différent de l'ancien et le cas échéant vérifier que 
 		 * la contrainte ne sera pas violé
 		 */
-		if(!(decision.getCodeDecision().equals(decisionAModif.getCodeDecision()))||
-				!(decision.getCodeDecisionEn().equals(decisionAModif.getCodeDecisionEn()))){
+		if((decision.getCodeDecision().equals(decisionAModif.getCodeDecision())==false)||
+				(decision.getCodeDecisionEn().equals(decisionAModif.getCodeDecisionEn()))==false){
 			/*
 			 * il ne sont pas égaux donc on veut aussi modifier le code 
 			 * on va donc se rassurer que la contrainte ne sera pas violé
 			 * et cette contrainte n'est pas viole lorsque decisionExistCode est null 
 			 * car dans ce cas aucune sanction n'existe avec l'un des nouveau code
 			 */
-			if(decisionExistCode!=null || decisionExistCodeEn!=null) return 0;
+			if(decision.getCodeDecision().equals(decisionAModif.getCodeDecision())==false){
+				if(decisionExistCode!=null ) return 0;
+			}
+			
+			if(decision.getCodeDecisionEn().equals(decisionAModif.getCodeDecisionEn())==false){
+				if(decisionExistCodeEn!=null ) return 0;
+			}
+			
 			
 			/*
 			 * Ici on est sur qu'aucun des deux codes ne va viole la contrainte d'unicite

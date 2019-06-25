@@ -2,8 +2,9 @@ package org.logesco.modeles;
 
 public class MatiereGroupe2SequenceBean {
 
-    // Informations sur le groupe de matieres
+	// Informations sur une ligne de cours
     private String matiere_g2;
+    private String matiere_g2_2emelang;
     private String prof_g2;
 
     // Informations sur une ligne de matière
@@ -128,6 +129,29 @@ public class MatiereGroupe2SequenceBean {
         	this.total_seq_g2 = null;
         }
     }
+
+
+
+	/**
+	 * @return the matiere_g2_2emelang
+	 */
+	public String getMatiere_g2_2emelang() {
+		return matiere_g2_2emelang;
+	}
+
+	/**
+	 * @param matiere_g2_2emelang the matiere_g2_2emelang to set
+	 */
+	public void setMatiere_g2_2emelang(String matiere_g2_2emelang) {
+		this.matiere_g2_2emelang = matiere_g2_2emelang;
+	}
+
+	/**
+	 * @param pourcentage_g2 the pourcentage_g2 to set
+	 */
+	public void setPourcentage_g2(String pourcentage_g2) {
+		this.pourcentage_g2 = pourcentage_g2;
+	}
 
     
     

@@ -26,9 +26,9 @@
 						<input type="hidden"
 							name="idPersonnels" id="idPersonnels" class="form-control" th:field="*{idPersonnels}" th:value="*{idPersonnels}" />
 				
-				<div th:if="${param.enregpersonnelserrorNumeroCni}">
+				<div th:if="${param.updateproviseurerrorNumerocniOUMatricule}">
 					<h4 align="justify" class="alert alert-danger" th:inline="text">
-						[[#{enregpers.labelerreur_enregpersonnelserrorNumeroCni}]].
+						[[#{enregpers.labelerreur_updateproviseurerrorNumerocniOUMatricule}]].
 					</h4>
 				</div>
 				
@@ -50,9 +50,21 @@
 					</h4>
 				</div>
 				
-				<div th:if="${param.enregpersonnelserrorUsername}" th:inline="text">
+				<div th:if="${param.enregpersonnelserrorSpecialite}" th:inline="text">
 					<h4 align="justify" class="alert alert-danger">
-						[[#{enregpers.labelerreur_enregpersonnelserrorUsername}]].
+						[[#{enregpers.labelerreur_enregpersonnelserrorSpecialite}]].
+					</h4>
+				</div>
+				
+				<div th:if="${param.enregpersonnelserrorMatricule}" th:inline="text">
+					<h4 align="justify" class="alert alert-danger">
+						[[#{enregpers.labelerreur_enregpersonnelserrorMatricule}]].
+					</h4>
+				</div>
+				
+				<div th:if="${param.enregpersonnelserrorGrade}" th:inline="text">
+					<h4 align="justify" class="alert alert-danger">
+						[[#{enregpers.labelerreur_enregpersonnelserrorGrade}]].
 					</h4>
 				</div>
 				
@@ -81,6 +93,19 @@
 							<div th:if="${#fields.hasErrors('numcniPers')}"
 								th:errors="*{numcniPers}" class="redcolor">Erreur de numero de carte d'identité</div>
 								
+						
+							<div class="form-group">
+								<label for="matriculePers" th:inline="text"> [[#{enregpers.label_matricule}]]: 
+									</label> <input type="text" name="matriculePers"
+									id="matriculePers" class="form-control" th:value="*{matriculePers}" th:field="*{matriculePers}"
+									placeholder="Matricule" />
+									<!-- <a href="#" th:href="@{/logesco/users/chefetab/getenregPersonnels(numcniPers=*{numcniPers})}" class="pull-right">
+										Rechercher</a> -->
+							</div>
+							<div th:if="${#fields.hasErrors('matriculePers')}"
+								th:errors="*{matriculePers}" class="redcolor">Erreur de matricule</div>
+								
+								
 						    <div class="form-group">
 								<label for="nomsPers" th:inline="text"> [[#{enregpers.label_noms}]] : <span
 									class="redcolor">*</span></label> <input type="text" name="nomsPers"
@@ -91,8 +116,8 @@
 								th:errors="*{nomsPers}" class="redcolor">Erreur de noms</div>
 						 	
 						 	 <div class="form-group">
-								<label for="prenomsPers" th:inline="text"> [[#{enregpers.label_prenoms}]]: <span
-									class="redcolor">*</span></label> <input type="text" name="prenomsPers"
+								<label for="prenomsPers" th:inline="text"> [[#{enregpers.label_prenoms}]]: 
+									</label> <input type="text" name="prenomsPers"
 									id="prenomsPers" class="form-control" th:value="*{prenomsPers}" th:field="*{prenomsPers}"
 									placeholder="Vos prénoms" />
 							</div>
@@ -103,7 +128,7 @@
 								<label for="datenaissPers" th:inline="text"> [[#{enregpers.label_datenaiss}]]: <span
 									class="redcolor">*</span></label> <input type="date" name="datenaissPers"
 									id="datenaissPers" class="form-control" th:value="*{datenaissPers}" th:field="*{datenaissPers}"
-									placeholder="Date de naissance(année-mois-jour)" min="1960-01-01" max="2000-01-01" />
+									placeholder="Date de naissance(année-mois-jour)" min="1945-01-01" max="2005-01-01" />
 							</div>
 							<div th:if="${#fields.hasErrors('datenaissPers')}"
 									th:errors="*{datenaissPers}" class="redcolor">Erreur de date de naissance
@@ -119,6 +144,36 @@
 								th:errors="*{lieunaissPers}" class="redcolor">Erreur de lieu de naissance</div>
 								
 							<div class="form-group">
+								<label for="sexePers" class="control-label  text-left" th:inline="text">  [[#{enregpers.label_sexe}]]: <span
+									class="redcolor">*</span></label> 
+									
+									<span class="radio">
+									    <label>
+									    	<input type="radio" name="sexePers" id="sexePers" class="radio-inline"
+									    		th:field="*{sexePers}" value="masculin" checked="checked"/>MASCULIN/MALE</label>
+									    <label><input type="radio" name="sexePers" id="sexePers" class="radio-inline"
+									      				th:field="*{sexePers}" value="féminin"/>FEMININ/FEMALE</label>
+									 </span>
+							</div>
+							<div th:if="${#fields.hasErrors('sexePers')}"
+									th:errors="*{sexePers}" class="redcolor">erreur sexePers</div>
+							
+							<div class="form-group">
+								<label for="sitmatriPers" class="control-label  text-left" th:inline="text">  [[#{enregpers.label_sitmatri}]]: <span
+									class="redcolor">*</span></label> 
+									
+									<span class="radio">
+									    <label>
+									    	<input type="radio" name="sitmatriPers" id="sitmatriPers" class="radio-inline"
+									    		th:field="*{sitmatriPers}" value="M" checked="checked"/>MARIE/MARRIED</label>
+									    <label><input type="radio" name="sitmatriPers" id="sitmatriPers" class="radio-inline"
+									      				th:field="*{sitmatriPers}" value="C"/>CELIBATAIRE/SINGLE</label>
+									 </span>
+							</div>
+							<div th:if="${#fields.hasErrors('sitmatriPers')}"
+									th:errors="*{sitmatriPers}" class="redcolor">erreur sitmatriPers</div>
+						
+							<div class="form-group">
 								<label for="nationalitePers" th:inline="text"> [[#{enregpers.label_nationalite}]]: <span
 									class="redcolor">*</span></label> <input type="text" name="nationalitePers"
 									id="nationalitePers" class="form-control" th:value="*{nationalitePers}" th:field="*{nationalitePers}"
@@ -128,20 +183,34 @@
 								th:errors="*{nationalitePers}" class="redcolor">Erreur de nationalite</div>
 							
 							<div class="form-group">
-								<label for="sexePers" class="control-label  text-left" th:inline="text">  [[#{enregpers.label_sexe}]]: <span
-									class="redcolor">*</span></label> 
-									
-									<span class="radio">
-									    <label>
-									    	<input type="radio" name="sexePers" id="sexePers" class="radio-inline"
-									    		th:field="*{sexePers}" value="masculin" checked="checked"/>Masculin/Male</label>
-									    <label><input type="radio" name="sexePers" id="sexePers" class="radio-inline"
-									      				th:field="*{sexePers}" value="féminin"/>Féminin/Female</label>
-									 </span>
+								<label for="deptoriginePers" th:inline="text"> [[#{enregpers.label_deptorigine}]]: <span
+									class="redcolor">*</span></label> <input type="text" name="deptoriginePers"
+									id="deptoriginePers" class="form-control" th:value="*{deptoriginePers}" th:field="*{deptoriginePers}"
+									placeholder="Département d'origine" />
 							</div>
-							<div th:if="${#fields.hasErrors('sexePers')}"
-									th:errors="*{sexePers}" class="redcolor">erreur sexePers</div>
+							<div th:if="${#fields.hasErrors('deptoriginePers')}"
+								th:errors="*{deptoriginePers}" class="redcolor">Erreur de deptoriginePers</div>
 							
+							<div class="form-group">
+								<label for="regionoriginePers" th:inline="text"> [[#{enregpers.label_regionorigine}]]: <span
+									class="redcolor">*</span></label> <!-- <input type="text" name="regionoriginePers"
+									id="regionoriginePers" class="form-control" th:value="*{regionoriginePers}" th:field="*{regionoriginePers}"
+									placeholder="Région d'origine" /> -->
+									<select class="form-control" id="regionoriginePers" name="regionoriginePers" th:field="*{regionoriginePers}">
+								        <option value="AD">ADAMAOUA/ADAMAOUA</option>
+								        <option value="CE">CENTRE/CENTER</option>
+								        <option value="EST">EST/EAST</option>
+								        <option value="EN">EXTREME NORD/EXTREME NORTH</option>
+								        <option value="LT">LITTORAL</option>
+								        <option value="NO">NORD/NORTH</option>
+								        <option value="NW">NORD OUEST/NORTH WEST</option>
+								        <option value="OU">OUEST/WEST</option>
+								        <option value="SUD">SUD/SOUTH</option>
+								        <option value="SW">SUD OUEST/SOUTH WEST</option>
+								     </select>
+							</div>
+							<div th:if="${#fields.hasErrors('regionoriginePers')}"
+								th:errors="*{regionoriginePers}" class="redcolor">Erreur de regionoriginePers</div>
 							
 							
 							<div class="form-group">
@@ -168,7 +237,7 @@
 												<tr>
 												 	<td>
 												 		 <label><input type="radio" name="statutPers" id="statutPers" class="radio-inline"
-										    				 th:field="*{statutPers}" value="Vacataire" checked="checked"/>Vacataire&nbsp;</label>
+										    				 th:field="*{statutPers}" value="VACATAIRE" checked="checked"/>Vacataire&nbsp;</label>
 												 	</td>
 												 	<td>
 												 		 <label><input type="radio" name="statutPers" id="statutPers" class="radio-inline"
@@ -178,38 +247,54 @@
 												<tr>
 												 	<td>
 												 		 <label><input type="radio" name="statutPers" id="statutPers" class="radio-inline"
-										      				th:field="*{statutPers}" value="Fonctionnaire"/>Fonctionnaire</label>
+										      				th:field="*{statutPers}" value="FONCTIONNAIRE"/>Fonctionnaire</label>
 												 	</td>
 												 	<td>
 												 		 <label><input type="radio" name="statutPers" id="statutPers" class="radio-inline"
-										      				th:field="*{statutPers}" value="Permanent"/>Permanent</label>
+										      				th:field="*{statutPers}" value="PERMANENT"/>Permanent</label>
 												 	</td>
 												</tr>
 											</tbody>
 										</table>
 										
-										<!-- <span class="radio">
-										    <label><input type="radio" name="statutPers" id="statutPers" class="radio-inline"
-										    				 th:field="*{statutPers}" value="Vacataire" checked="checked"/>Vacataire&nbsp;&nbsp;&nbsp;&nbsp;</label>
-										    <label><input type="radio" name="statutPers" id="statutPers" class="radio-inline"
-										      				th:field="*{statutPers}" value="ECI"/>ECI</label>
-										     <label><input type="radio" name="statutPers" id="statutPers" class="radio-inline"
-										      				th:field="*{statutPers}" value="Fonctionnaire"/>Fonctionnaire</label>
-										      <label><input type="radio" name="statutPers" id="statutPers" class="radio-inline"
-										      				th:field="*{statutPers}" value="Permanent"/>Permanent</label>
-										 </span> -->
 								</div>
 								<div th:if="${#fields.hasErrors('statutPers')}"
 									th:errors="*{statutPers}" class="redcolor">erreur statutPers</div>
 								
 								<div class="form-group">
-									<label for="gradePers"> Grade: <span
-										class="redcolor">*</span></label> <input type="text" name="gradePers"
+									<label for="gradePers" th:inline="text"> [[#{enregpers.label_grade}]] :</label> 
+									<input type="text" name="gradePers"
 										id="gradePers" class="form-control" th:value="*{gradePers}" th:field="*{gradePers}"
 										placeholder="PLEG" />
 								</div>
 								<div th:if="${#fields.hasErrors('gradePers')}"
 									th:errors="*{gradePers}" class="redcolor">erreur Grade</div>
+								
+								<div class="form-group">
+									<label for="fonctionPers" th:inline="text"> [[#{enregpers.label_fonction}]]: <span
+										class="redcolor">*</span></label> 
+									
+									<select class="form-control" id="fonctionPers" name="fonctionPers" th:field="*{fonctionPers}">
+								        <option value="CENSEUR">CENSEUR</option>
+								        <option value="SG">SG</option>
+								        <option value="ENSEIGNANT">ENSEIGNANT</option>
+								        <option value="INTENDANT">INTENDANT</option>
+								        <option value="SECRETAIRE">SECRETAIRE</option>
+								        <option value="SURVEILLANT">SURVEILLANT</option>
+								        <option value="VEILLEUR">VEILLEUR</option>
+								        <option value="PARENT">PARENT</option>
+								        <option value="AUTRES">AUTRES</option>
+								     </select>
+							</div>
+								
+								<div class="form-group">
+									<label for="quotaHorairePers" th:inline="text"> [[#{enregpers.label_quotaHoraire}]] : 
+										</label> <input type="text" name="quotaHorairePers"
+										id="quotaHorairePers" class="form-control" th:value="*{quotaHorairePers}" th:field="*{quotaHorairePers}"
+										placeholder="" />
+								</div>
+								<div th:if="${#fields.hasErrors('quotaHorairePers')}"
+									th:errors="*{quotaHorairePers}" class="redcolor">erreur de quotaHorairePers</div>
 									
 								<div class="form-group">
 									<label for="diplomePers" th:inline="text"> [[#{enregpers.label_diplome}]]: <span
@@ -221,14 +306,43 @@
 									th:errors="*{diplomePers}" class="redcolor">erreur de diplome</div>
 									
 							   	<div class="form-group">
-									<label for="specialiteProf" th:inline="text"> [[#{enregpers.label_specialite}]] : <span
-										class="redcolor">*</span></label> <input type="text" name="specialiteProf"
+									<label for="specialiteProf" th:inline="text"> [[#{enregpers.label_specialite}]] : 
+										</label> <input type="text" name="specialiteProf"
 										id="specialiteProf" class="form-control" th:value="*{specialiteProf}" th:field="*{specialiteProf}"
 										placeholder="" />
 								</div>
 								<div th:if="${#fields.hasErrors('specialiteProf')}"
 									th:errors="*{specialiteProf}" class="redcolor">erreur de specialité</div>
 								
+								<div class="form-group">
+								<label for="dateentreeFPPers" th:inline="text"> [[#{enregpers.label_dateentreeFP}]]: 
+									</label> <input type="date" name="dateentreeFPPers"
+									id="dateentreeFPPers" class="form-control" th:value="*{dateentreeFPPers}" th:field="*{dateentreeFPPers}"
+									placeholder="Date de naissance(année-mois-jour)" min="1960-01-01" max="2000-01-01" />
+								</div>
+								<div th:if="${#fields.hasErrors('dateentreeFPPers')}"
+										th:errors="*{dateentreeFPPers}" class="redcolor">Erreur de date de dateentreeFPPers
+								</div>
+							
+							<div class="form-group">
+								<label for="datePSPers" th:inline="text"> [[#{enregpers.label_datePS}]]: 
+									</label> <input type="date" name="datePSPers"
+									id="datePSPers" class="form-control" th:value="*{datePSPers}" th:field="*{datePSPers}"
+									placeholder="Date de naissance(année-mois-jour)" min="1960-01-01" max="2000-01-01" />
+							</div>
+							<div th:if="${#fields.hasErrors('datePSPers')}"
+									th:errors="*{datePSPers}" class="redcolor">Erreur de date de datePSPers
+							</div>
+							
+							<div class="form-group">
+								<label for="etabDAttache" th:inline="text"> [[#{enregpers.label_etabDAttache}]]: 
+									</label> <input type="text" name="etabDAttache"
+									id="etabDAttache" class="form-control" th:value="*{etabDAttache}" th:field="*{etabDAttache}"
+									placeholder="etabDAttache" />
+							</div>
+							<div th:if="${#fields.hasErrors('etabDAttache')}"
+								th:errors="*{etabDAttache}" class="redcolor">Erreur de etabDAttache</div>
+							
 								
 								<div class="form-group">
 									<label for="numeroPers"><!--  Numéro d'ordre dans la fonction: <span
@@ -288,14 +402,24 @@
 								</div>
 								<div th:if="${#fields.hasErrors('quartierPers')}"
 									th:errors="*{quartierPers}" class="redcolor">erreur de quartierPers</div>
-								
+							
+							<div class="form-group">
+								<label for="observations"  th:inline="text"> [[#{enregpers.label_observation}]] :</label> <textarea name="observations"
+									id="observations" class="form-control" th:value="*{observations}" th:field="*{observations}"
+									placeholder="Vos observations et remarques" cols="10" rows="3"></textarea>
+							</div>
+							<div th:if="${#fields.hasErrors('observations')}"
+									th:errors="*{observations}" class="redcolor">Erreur d'observation
+							</div>
 								
 							</fieldset>
 							<fieldset>
 								<legend class="text-primary" th:inline="text">[[#{enregpers.legend_infologin}]]</legend>
 								
 								<div class="form-group">
-									<label for="username" th:inline="text">[[#{enregpers.label_username}]] : </label> <input type="text" name="username"
+									<label for="username" th:inline="text">[[#{enregpers.label_username}]] : </label> 
+									<span class="redcolor">*</span>
+									<input type="text" name="username"
 										id="username" class="form-control" th:value="*{username}" th:field="*{username}"
 										placeholder="Login de connexion" />
 										<!-- <a href="#" th:href="@{/logesco/users/chefetab/getenPersonnels(username=*{username})}" class="pull-right">
@@ -306,7 +430,9 @@
 							
 							
 								<div class="form-group">
-								<label for="password" th:inline="text">[[#{enregpers.label_password}]] : </label> <input type="password" name="password"
+								<label for="password" th:inline="text">[[#{enregpers.label_password}]] : </label> 
+								<span class="redcolor">*</span>
+								<input type="password" name="password"
 									id="password" class="form-control" th:value="*{password}" th:field="*{password}"
 									placeholder="Mot de passe de connexion" />
 								</div>
@@ -329,40 +455,41 @@
 										<table class="table table-bordered">
 											<tbody>
 												<tr>
-												 	<!-- <td>
-												 		<label><input type="radio" name="roleCode" id="roleCode" class="radio-inline"
-											    				 th:field="*{roleCode}" value="1" checked="checked"/>Censeur et enseignant</label>
-												 	</td> -->
-											      	<td>
+												 	<td>
 											      		<label><input type="radio" name="roleCode" id="roleCode" class="radio-inline"
-											      				th:field="*{roleCode}" value="2"/>Censeur</label>  <!-- uniquement -->
+											      				th:field="*{roleCode}" value="1"/>Censeur</label>  <!-- uniquement -->
 											      	</td>
-											      	<!-- <td>
-												 		<label><input type="radio" name="roleCode" id="roleCode" class="radio-inline"
-											      				th:field="*{roleCode}" value="3"/>SG et enseignant</label>
-												 	</td> -->
 											      	<td>
 											      		<label><input type="radio" name="roleCode" id="roleCode" class="radio-inline"
-											      				th:field="*{roleCode}" value="4"/>SG</label>
+											      				th:field="*{roleCode}" value="2"/>SG</label>
+											      	</td>
+											      	<td>
+												 		<label><input type="radio" name="roleCode" id="roleCode" class="radio-inline"
+											      				th:field="*{roleCode}" value="3"/>Enseignant</label>
+												 	</td>
+												 	<td>
+											      		<label><input type="radio" name="roleCode" id="roleCode" class="radio-inline"
+											      				th:field="*{roleCode}" value="4"/>Intendant</label>
 											      	</td>
 										      	</tr>
+										      	
 										      	<tr>
-												 	<!-- <td>
+											      	<td>
 												 		<label><input type="radio" name="roleCode" id="roleCode" class="radio-inline"
-											      				th:field="*{roleCode}" value="5"/>Intendant et enseignant</label>
-												 	</td> -->
+											      				th:field="*{roleCode}" value="5"/>Sécretaire</label>
+												 	</td>
 											      	<td>
 											      		<label><input type="radio" name="roleCode" id="roleCode" class="radio-inline"
-											      				th:field="*{roleCode}" value="6"/>Intendant</label>
+											      				th:field="*{roleCode}" value="6"/>Surveillant</label>
 											      	</td>
 											      	<td>
-												 		<label><input type="radio" name="roleCode" id="roleCode" class="radio-inline"
-											      				th:field="*{roleCode}" value="7"/>Enseignant</label>
-												 	</td>
-											      	<!-- <td>
-											      		<span th:if="${#fields.hasErrors('roleCode')}"
-															th:errors="*{roleCode}" class="redcolor">Erreur de roleCode</span>
-											      	</td> -->
+											      		<label><input type="radio" name="roleCode" id="roleCode" class="radio-inline"
+											      				th:field="*{roleCode}" value="7"/>Veilleur</label>
+											      	</td>
+											      	<td>
+											      		<label><input type="radio" name="roleCode" id="roleCode" class="radio-inline"
+											      				th:field="*{roleCode}" value="8"/>Autres</label>
+											      	</td>
 										      	</tr>
 											</tbody>
 										</table>      

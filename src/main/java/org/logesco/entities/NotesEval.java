@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 
@@ -38,6 +39,7 @@ public class NotesEval implements Serializable {
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private Date dateenregnoteEval;
 	@NotNull
+	@DecimalMin(value="0")
 	private double valeurnoteEval;
 	
 	/******************************************

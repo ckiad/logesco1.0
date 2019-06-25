@@ -35,7 +35,8 @@ public interface OperationsRepository extends JpaRepository<Operations, Long> {
 			+ " ORDER BY op.dateOperation ASC")
 	public List<Operations> findAllOperationEntreDate(@Param("datemin") Date datemin, @Param("datemax") Date datemax);
 	
-	@Query("SELECT op FROM Operations op WHERE op.compteinscription.eleveProprietaire.idEleves=:idEleves")
+	@Query("SELECT op FROM Operations op WHERE op.compteinscription.eleveProprietaire.idEleves=:idEleves "
+			+ " ORDER BY op.dateOperation ASC")
 	public List<Operations> findAllOperationEleve(@Param("idEleves") long idEleves);
 	
 	@Query("SELECT op FROM Operations op WHERE op.compteinscription.eleveProprietaire.idEleves=:idEleves "

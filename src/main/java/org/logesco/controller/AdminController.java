@@ -292,6 +292,21 @@ public class AdminController {
 			updateProviseurForm.setStatutPers(proviseur.getStatutPers());
 			updateProviseurForm.setUsername(proviseur.getUsername());
 			updateProviseurForm.setVillePers(proviseur.getVillePers());
+			
+			/*
+			 * Traitement des nouveaux champs
+			 */
+			updateProviseurForm.setSitmatriPers(proviseur.getSitmatriPers());
+			updateProviseurForm.setMatriculePers(proviseur.getMatriculePers());
+			updateProviseurForm.setDeptoriginePers(proviseur.getDeptoriginePers());
+			updateProviseurForm.setRegionoriginePers(proviseur.getRegionoriginePers());
+			updateProviseurForm.setFonctionPers(proviseur.getFonctionPers());
+			updateProviseurForm.setQuotaHorairePers(proviseur.getQuotaHorairePers());
+			updateProviseurForm.setDateentreeFPPers(proviseur.getDateentreeFPPers());
+			updateProviseurForm.setDatePSPers(proviseur.getDatePSPers());
+			updateProviseurForm.setObservations(proviseur.getObservations());
+			updateProviseurForm.setEtabDAttache(proviseur.getEtabDAttache());
+			
 		}
 		
 		return "admin/updateProviseur";
@@ -453,6 +468,8 @@ public class AdminController {
 	UpdateSectionsForm updateSectionsForm, Long idSections,
 	Model model, HttpServletRequest request){
 		
+		//System.out.println();
+		//System.out.println("Debut de getupdateSections");
 		this.constructModelUpdateSections(model);
 		
 		/*
@@ -468,7 +485,7 @@ public class AdminController {
 		
 		if(idSections!=null){
 			Sections sectionAModif=adminService. getSectionsById(idSections);
-			
+			//System.out.println("On veut modifier une sections");
 			updateSectionsForm.setCodeSections(sectionAModif.getCodeSections());
 			updateSectionsForm.setCodeSections_en(sectionAModif.getCodeSections_en());
 			updateSectionsForm.setIntituleSections(sectionAModif.getIntituleSections());
@@ -477,7 +494,7 @@ public class AdminController {
 			
 			updateSectionsForm.setCodeSectionsAModif(sectionAModif.getCodeSections());
 		}
-		
+		//System.out.println("fin de getupdateSections et lancement de la page updateSections");
 		return "admin/updateSections";
 	}
 	
@@ -1107,10 +1124,84 @@ public class AdminController {
 		return "admin/updateRoles";
 	}
 	
+	@GetMapping(path="/getUpdateRolesUsers")
+	public String getaddRolesToUsers(Model model, HttpServletRequest request, 
+	@RequestParam(name="numPage", defaultValue="0") int numPage, 
+	@RequestParam(name="taillePage", defaultValue="10") int taillePage){
+		
+		List<Utilisateurs> listofUsers = adminService.findAllUsers();
+		List<Roles> listofRoles = adminService.findAllRoles("ADMIN");
+		
+		model.addAttribute("listofUsers", listofUsers);
+		
+		Page<Utilisateurs> pageofUtilisateurs=
+				adminService.findPageUtilisateurs(numPage, taillePage);
+		
+		if(pageofUtilisateurs.getContent().size()!=0){
+			/*List<Utilisateurs> listofUsers = new ArrayList<Utilisateurs>();
+			for(Utilisateurs user: pageofUtilisateurs.getContent()){
+				for(UtilisateursRoles userRole: user.getListofusersRoles()){
+					if(userRole.getRoleAssocie().getRole().equalsIgnoreCase("ADMIN")==false){
+						listofUsers.add(user);
+					}
+				}
+			}*/
+			model.addAttribute("pageofUsers", pageofUtilisateurs.getContent());
+			int[] listofPagesUtilisateurs=new int[pageofUtilisateurs.getTotalPages()];
+			
+			model.addAttribute("listofPagesUtilisateurs", listofPagesUtilisateurs);
+			
+			model.addAttribute("pageCourante", numPage);
+		}
+		
+		model.addAttribute("listofRoles", listofRoles);
+		
+		return "admin/updateRolesUsers";
+	}
 	
 	
-	
-	
+	@GetMapping(path="/updateRolesUsers")
+	public String updateRolesUsers(Model model, HttpServletRequest request, 
+			@RequestParam(name="idUsers", defaultValue="0") Long idUsers, 
+			@RequestParam(name="roles", defaultValue="0") String roles, 
+			@RequestParam(name="choixaction", defaultValue="1") String choixaction, 
+		@RequestParam(name="numPage", defaultValue="0") int numPage, 
+		@RequestParam(name="taillePage", defaultValue="10") int taillePage){
+		
+		Utilisateurs user = this.adminService.getUsers(idUsers);
+		Roles role = adminService.findRoles(roles);
+		if(user == null || role == null) {
+			
+		}
+		
+		if(choixaction.equalsIgnoreCase("1")==true){
+			int ret = adminService.ajouterRoleUser(idUsers, roles);
+			if(ret == 1){
+				return "redirect:/logesco/admin/getUpdateRolesUsers?updateRoleUserASuccess"
+						+ "&&numPage="+numPage
+						+ "&&taillePage="+taillePage;
+			}
+			else{
+				return "redirect:/logesco/admin/getUpdateRolesUsers?updateRoleUserError"
+						+ "&&numPage="+numPage
+						+ "&&taillePage="+taillePage;
+			}
+		}
+		else{
+			int ret = adminService.retirerRoleUser(idUsers, roles);
+			if(ret == 1){
+				return "redirect:/logesco/admin/getUpdateRolesUsers?updateRoleUserRSuccess"
+						+ "&&numPage="+numPage
+						+ "&&taillePage="+taillePage;
+			}
+			else{
+				return "redirect:/logesco/admin/getUpdateRolesUsers?updateRoleUserError"
+						+ "&&numPage="+numPage
+						+ "&&taillePage="+taillePage;
+			}
+		}
+		
+	}
 	
 	
 	
@@ -1455,6 +1546,7 @@ public class AdminController {
 		//System.err.println("ICI AU DEBUT DE postupdateProviseur");
 		
 		if (bindingResult.hasErrors()) {
+			System.err.println("les erreurs "+bindingResult.getFieldErrors());
 			return "admin/updateProviseur";
 		}
 		/*
@@ -1489,6 +1581,30 @@ public class AdminController {
 		proviseur.setUsername(updateProviseurForm.getUsername());
 		proviseur.setVillePers(updateProviseurForm.getVillePers());
 		
+		/*
+		 * Traitement des nouveaux champs
+		 */
+		proviseur.setSitmatriPers(updateProviseurForm.getSitmatriPers());
+		proviseur.setMatriculePers(updateProviseurForm.getMatriculePers());
+		proviseur.setDeptoriginePers(updateProviseurForm.getDeptoriginePers());
+		proviseur.setRegionoriginePers(updateProviseurForm.getRegionoriginePers());
+		proviseur.setFonctionPers(updateProviseurForm.getFonctionPers());
+		proviseur.setQuotaHorairePers(updateProviseurForm.getQuotaHorairePers());
+		try{
+			String dsfppers=df.format(updateProviseurForm.getDateentreeFPPers());
+			Date dfppers=df.parse(dsfppers);
+			proviseur.setDateentreeFPPers(dfppers);
+			String dspspers=df.format(updateProviseurForm.getDatePSPers());
+			Date dpspers=df.parse(dspspers);
+			proviseur.setDatePSPers(dpspers);
+		}
+		catch(Exception e){
+			
+		}
+		proviseur.setObservations(updateProviseurForm.getObservations());
+		proviseur.setFonctionPers(updateProviseurForm.getFonctionPers());
+		proviseur.setEtabDAttache(updateProviseurForm.getEtabDAttache());
+		
 		//System.err.println("TOUJOURS PAS DERREUR ON SETPHOTOPERS");
 		if(!(filephotoPers.isEmpty())){
 			proviseur.setPhotoPers(filephotoPers.getOriginalFilename());
@@ -1498,12 +1614,21 @@ public class AdminController {
 		
 		Long idProviseur=adminService.saveProviseur(proviseur);
 		
-		if(idProviseur.longValue()==-1) return "redirect:/logesco/admin/getupdateProviseur?updateproviseurerrorNumerocni";
+		if(idProviseur.longValue()==-1) return "redirect:/logesco/admin/getupdateProviseur?updateproviseurerrorNumerocniOUMatricule";
 		
 		if(idProviseur.longValue()==-2) return "redirect:/logesco/admin/getupdateProviseur?"
 				+ "updateproviseurerrorNomsPrenomsDatenaiss";
 		
 		if(idProviseur.longValue()==-3) return "redirect:/logesco/admin/getupdateProviseur?updateproviseurerrorUsername";
+		
+		if(idProviseur.longValue()==-4) return "redirect:/logesco/admin/getupdateProviseur?"
+				+ "updateproviseurerrorSpecialite";
+		
+		if(idProviseur.longValue()==-5) return "redirect:/logesco/admin/getupdateProviseur?"
+				+ "updateproviseurerrorMatricule";
+		
+		if(idProviseur.longValue()==-6) return "redirect:/logesco/admin/getupdateProviseur?"
+		+ "updateproviseurerrorGrade";
 		
 		//System.err.println("TOUJOURS PAS DERREUR ON UPLOAD PHOTOPROVISEUR");
 		if(!(filephotoPers.isEmpty())){
@@ -1612,6 +1737,7 @@ public class AdminController {
 			Niveaux niveau=new Niveaux();
 			niveau.setCodeNiveaux(updateNiveauxForm.getCodeNiveaux());
 			niveau.setNumeroOrdreNiveaux(updateNiveauxForm.getNumeroOrdreNiveaux());
+			niveau.setCodeNiveaux_en(updateNiveauxForm.getCodeNiveaux_en());
 			//System.err.println("RECUPERATION DU CYCLE SAISI POUR LE NIVEAU");
 			Cycles cycle=adminService.getCyclesByCodeCycles(updateNiveauxForm.getCodeCycles());
 			if(cycle!=null) niveau.setCycle(cycle);
@@ -1619,11 +1745,12 @@ public class AdminController {
 			Niveaux niveauSup=adminService.getNiveauxByCodeNiveaux(
 						updateNiveauxForm.getCodeNiveauxSup());
 			
-			if(niveauSup!=null)/*//System.err.println("NIVEAUX SUP TROUVE EST "+
-					niveauSup.toString()+" POUR LE CODE "+
-					updateNiveauxForm.getCodeNiveauxSup());*/
-			
-			niveau.setNiveau(niveauSup);
+			if (niveauSup!=null){
+				niveau.setNiveau(niveauSup);
+			}
+			else{
+				niveau.setNiveau(null);
+			}
 				
 			//System.err.println("AUCUNE ERREUR JUSQUICI ON PEUT DONC SAVE LE NIVEAUX");
 			int reponseSaveNiveau=4;
@@ -1633,6 +1760,8 @@ public class AdminController {
 					+ "updateniveauxerrorNumeroOrdre";
 			if(reponseSaveNiveau==-1) return "redirect:/logesco/admin/getupdateNiveaux?"
 					+ "updateniveauxerrorCode";
+			if(reponseSaveNiveau==-2) return "redirect:/logesco/admin/getupdateNiveaux?"
+			+ "updateniveauxerrorNiveausup";
 			//System.err.println("ON A ENREGISTRER LE niveau ET IL FAUT DONC RETOURNER");
 		}
 		
@@ -1656,6 +1785,8 @@ public class AdminController {
 				return "redirect:/logesco/admin/getupdateNiveaux?updateniveauxerrormodif";
 			if(repServeur==-1) 
 				return "redirect:/logesco/admin/getupdateNiveaux?updateniveauxerrorCode";
+			if(repServeur==-2) 
+				return "redirect:/logesco/admin/getupdateNiveaux?updateniveauxerrorNiveausup";
 		
 		}
 		
@@ -1672,10 +1803,10 @@ public class AdminController {
 			BindingResult bindingResult, Model model, 
 			HttpServletRequest request, HttpServletResponse response) 
 					throws ParseException, Exception{
-		//System.err.println("DEBUT DE POSTUPDATESECTION");
+		//System.out.println("DEBUT DE POSTUPDATESECTION");
 		
 		if (bindingResult.hasErrors()) {
-			//System.err.println("ERREUR DE REMPLISSAGE DU FORMULAIRE "+bindingResult.getFieldError());
+			//System.out.println("ERREUR DE REMPLISSAGE DU FORMULAIRE "+bindingResult.getFieldError());
 			
 			this.constructModelUpdateSections(model);
 			return "admin/updateSections";
@@ -1684,8 +1815,10 @@ public class AdminController {
 		if(updateSectionsForm.getEnregOrmodif().equals("enreg")){
 			Sections sections=new Sections();
 			sections.setCodeSections(updateSectionsForm.getCodeSections());
+			sections.setCodeSections_en(updateSectionsForm.getCodeSections_en());
 			sections.setIntituleSections(updateSectionsForm.getIntituleSections());
-			
+			sections.setIntituleSections_en(updateSectionsForm.getIntituleSections_en());
+			//System.out.println("dans POSTUPDATESECTION on lance la fonction saveSections");
 			int reponseSaveSection=4;
 			reponseSaveSection=adminService.saveSections(sections);
 			if(reponseSaveSection==0) return "redirect:/logesco/admin/getupdateSections?"

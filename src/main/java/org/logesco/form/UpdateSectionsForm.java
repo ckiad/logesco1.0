@@ -19,8 +19,6 @@ public class UpdateSectionsForm {
 	@NotEmpty
 	private String intituleSections;
 	
-	@NotNull
-	@NotEmpty
 	private String codeSectionsAModif;
 	
 	@NotNull

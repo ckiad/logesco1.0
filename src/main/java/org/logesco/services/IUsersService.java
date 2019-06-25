@@ -9,11 +9,19 @@ import java.util.List;
 import java.util.Map;
 
 import org.logesco.entities.*;
+import org.logesco.modeles.BulletinAnnuelBean;
+import org.logesco.modeles.BulletinSequenceBean;
+import org.logesco.modeles.BulletinTrimAnnuelBean;
+import org.logesco.modeles.BulletinTrimestreBean;
 import org.logesco.modeles.EleveBean;
 import org.logesco.modeles.EleveBean2;
 import org.logesco.modeles.EleveInsolvableBean;
+import org.logesco.modeles.ErrorBean;
 import org.logesco.modeles.FicheConseilClasseBean;
+import org.logesco.modeles.FicheRecapAbsenceClasseBean;
 import org.logesco.modeles.FicheRecapAbsenceCycleBean;
+import org.logesco.modeles.FicheRecapAbsenceNiveauBean;
+import org.logesco.modeles.FicheScolariteparClasseBean;
 import org.logesco.modeles.OperationBean;
 import org.logesco.modeles.PV_NoteBean;
 import org.logesco.modeles.PV_SequenceBean;
@@ -67,6 +75,13 @@ public interface IUsersService {
 	 * @return
 	 */
 	public Personnels findPersonnel(String numcniPers);
+	
+	/***
+	 * Retourne le Personnels dont le matricule est passe en paramètre null s'il n'existe pas
+	 * @param numcniPers
+	 * @return
+	 */
+	public Personnels findPersonnelAvecMatricule(String matriculePers);
 
 	/***
 	 * Retourne le Personnels dont le idUsers est passe en paramètre null s'il n'existe pas
@@ -233,6 +248,19 @@ public interface IUsersService {
 	 ******************************************************************************************************/
 	public Long saveEnseignants(Enseignants enseignants);
 	
+	/**
+	 * Enregistrer un personnel d'appui dans la base de donnée 
+	 * Retourne l'id du enseignant enregistré ou mis a jour
+	 * 
+	 * 
+	 *Cette méthode retourne
+	 *					l'id du personnel d'appui enregistrer si tout s'est bien passe
+	 *					-1 si pour  l'enregistrement la contrainte sur le numerocni est violé
+	 *					-2 si pour  l'enregistrement la contrainte sur le triplet noms prenoms datenaiss est violé
+	 *					-3 si pour  l'enregistrement la contrainte sur le username est violé
+	 ******************************************************************************************************/
+	public Long savePersonnelsDAppui(PersonnelsDAppui personnels);
+	
 	/*********************************************************************************
 	 * Cette methode permettra d'enregistrer une liste d'enseignant construite à partir d'un fichier
 	 * excel. Cette méthode retourne
@@ -284,14 +312,23 @@ public interface IUsersService {
 	 * Retourne le code correspondant aux roles joue par un utilisateur vis a vis du système
 	 * Elle prend en paramètre l'utilisateur dont on veut le code associé à ses roles
 	 * codeRole				=1 si c'est un Censeurs
-	 * 					=2 si c'est Censeurs et Enseignant
-	 * 					=3 si c'est SG
-	 * 					=4 si c'est SG et Enseignant
-	 * 					=5 si c'est Intendant
-	 * 					=6 si c'est Intendant et Enseignant
-	 * 					=7 si c'est Enseignant
+	 * 					=2 si SG
+	 * 					=3 si c'est ENSEIGNANT
+	 * 					=4 si c'est INTENDANT
+	 * 					=5 si c'est SECRETAIRE
+	 * 					=6 si c'est SURVEILLANT
+	 * 					=7 si c'est VEILLEUR
+	 * 					=7 si c'est AUTRES
 	 */
 	public int getcodeUsersRole(Utilisateurs users);
+	
+	/***********************************************************
+	 * Cette methode retourne la liste des rôles d'un utilisateur
+	 * vis à vis du système
+	 * @param users
+	 * @return
+	 */
+	public List<String> getListRolesUser(Utilisateurs users);
 
 	/********************************************
 	 * Supprimer tous les rôles qui sont attribués à un utilisateur
@@ -412,6 +449,20 @@ public interface IUsersService {
 	 * @return
 	 */
 	public List<Enseignants> findAllEnseignants();
+	
+	/*********************
+	 * Retourne la liste de tous les personnels d'appui page par page classe par ordre alphabetique des noms et prenoms
+	 * et par ordre descendant des datenaisse 
+	 * 		retourne null si aucun n'existe
+	 */
+	public Page<PersonnelsDAppui> findAllPersonnelsDAppui(int numPage, int taillePage);
+
+	/************************
+	 * Retourne la liste de tous les personnels d'appui enregistrés et null si aucun n'est encore enregistrés dans la base de donnée
+	 * Il s'agit des personnels qui ont comme statut tout sauf proviseur, censeur, sg et intendant
+	 * @return
+	 */
+	public List<PersonnelsDAppui> findAllPersonnelsDAppui();
 
 	/*********************
 	 * Retourne la liste de tous les utilisateurs enregistré dans la base de données et qui n'ont pas le rôle admin
@@ -701,14 +752,10 @@ public interface IUsersService {
 	/****************************************************************************************
 	 * Methode qui enregistre le versement de la scolarite d'un élève
 	 * Cette méthode retourne 
-	 * 2  si le versement s'est bien effectué et que l'état d'inscription de l'élève passe desormais à inscrit.
-	 * 1  si le versement s'est bien effectué et que l'état d'inscription de l'élève passe désormais à en cours
-	 * 0  si le versement s'est bien effectué et que l'état d'inscription de l'élève ne doit pas changé. Ici c'est 
-	 * 	dans le cas où il va rester à non inscrit donc le montant de sa scolarité reste inchangé car rien ne 
-	 * s'est passé
+	 * Long: c'est l'identifiant de l'operation qui vient de se réaliser sur le compte de l'élève
 	 * -1 si il ya une erreur quelconque
 	 ******************************************************************************************/
-	public int enregVersementSco(Long idEleveConcerne, double montantAVerser);
+	public Long enregVersementSco(Long idEleveConcerne, double montantAVerser);
 	
 	/***********************************************************************************************
 	 * Cette methode retourne l'identifiant de la dernière opération sur un compteInscription
@@ -833,6 +880,13 @@ public interface IUsersService {
 	 ************************************************************/
 	public List<Classes> findAllClasse();
 	
+	/********************************************************************************************************
+	 * Retourne la liste de toutes les classes ENRGISTREES et qui ne sont pas vide ie qui ont des eleves
+	 * Elle retourne une liste null si aucune classe n'est enregistré en bd. Elle va retourner les classes dans 
+	 * l'ordre croissant des niveau. Car
+	 ********************************************************************************************************/
+	public List<Classes> findAllClasseNonVide();
+	
 	/************************************************************
 	 * Retourne la liste de tous les cycles ENRGISTREES
 	 * Elle retourne une liste null si aucun cycle n'est enregistré en bd
@@ -858,6 +912,11 @@ public interface IUsersService {
 	 * Methode qui retourne la liste de tous les niveaux enregistrés dans l'établissement par l'admin
 	 */
 	public List<Niveaux> findAllNiveaux();
+	
+	/****************************************************************
+	 * Retourne le niveau dont l'identifiant est passé en parametre
+	 ****************************************************************/
+	public Niveaux findNiveaux(Long idNiveaux);
 
 	/************************************
 	 * Methode qui retourne la liste de toutes les séquences 
@@ -1315,6 +1374,18 @@ public interface IUsersService {
 	//public Collection<BulletinSequenceBean> generateCollectionofBulletinSequence_opt(Long idClasse, Long idSequence);
 	public Map<String, Object> generateCollectionofBulletinSequence_opt(Long idClasse, Long idSequence);
 	
+	/*************************************************************************************
+	 * Cette methode retourne une collection qui va contenir un seul bulletin séquentiel. 
+	 * Il s'agit du bulletin de l'élève dont l'id est passe en parametre. La classe qui passe en
+	 * paramètre nous permettra de se rassurer simplement que l'élève se trouve dans la classe
+	 * indiquée.
+	 * @param idEleve
+	 * @param idClasse
+	 * @param idSequence
+	 * @return
+	 */
+	public Collection<BulletinSequenceBean> generate1BulletinSequence(Long idEleve, Long idClasse, Long idSequence);
+	
 	/*********************************************************************************************************
 	 * Cette methode retourne un dictionnaire qui aura n+1 clé où les n premières cles est associe chacune 
 	 * à la liste des élèves ayant eu la sanction i. En effet, si on a 5 niveau de severite dans les sanctions alors
@@ -1507,6 +1578,8 @@ public interface IUsersService {
 	 */
 	public Collection<PersonnelBean> generateCollectionofCenseurBean();
 	
+	public Collection<ErrorBean> generateCollectionofErrorBean(String error_msg);
+	
 	/**********************************************************************
 	 * Cette methode retourne la liste des membres du personnel
 	 * ayant la fonction SG dans l'établissement. 
@@ -1528,6 +1601,27 @@ public interface IUsersService {
 	 */
 	public Collection<PersonnelBean> generateCollectionofIntendantBean();
 	
+	/**********************************************************************
+	 * Cette methode retourne la liste des personnel d'appui dans l'établissement. 
+	 * @return
+	 */
+	public Collection<PersonnelBean> generateCollectionofPersonnelDAppuiBean();
+	
+	/*********************************************************************************************
+	 * Cette methode retourne la liste de tous les personnels  enregistré dans le système avec le statut
+	 * passe en parametre
+	 * @return
+	 */
+	public Collection<PersonnelBean> generateCollectionofPersonnelDeStatutBean(String statutPers);
+	
+	/*********************************************************************************************
+	 * Cette methode retourne la liste de tous les proffesseurs  enregistré dans le système avec le statut
+	 * passe en parametre
+	 * @return
+	 */
+	public Collection<PersonnelBean> generateCollectionofProffesseursDeStatutBean(String statutPers);
+	
+	
 	/*******************************************************************************************
 	 * Cette methode calcule et génère tous les bulletins trimestriel d'une classe pour affichage. Il ne les 
 	 * enregistre pas en base de données. Donc en fait toutes les classes prévues pour enregistrer les 
@@ -1543,6 +1637,17 @@ public interface IUsersService {
 	 public Map<String, Object> generateCollectionofBulletinTrimestre_opt(Long idClasse, 
 				Long idTrimestre);
 	
+	 /*********************************************************************************************************
+	  * Cette methode retourne le bulletin d'un eleve dans un trimestre. l'identifiant de l'élève et du trimestre
+	  * sont passe en paramètre. 
+	  * @param idEleve
+	  * @param idClasse
+	  * @param idTrimestre
+	  * @return
+	  */
+	 public Collection<BulletinTrimestreBean> generate1BulletinTrimestre(Long idEleve, Long idClasse, 
+			 Long idTrimestre);
+	 
 
 	/*******************************************************************************************
 	 * Cette methode calcule et génère tous les bulletins annuels d'une classe pour affichage. Il ne les 
@@ -1552,7 +1657,7 @@ public interface IUsersService {
 	 * heures d'absences, les noms des enseignants, le titulaire de la classe et autres.
 	 * Cette fonction ci est quel peut plus optimisée
 	 * @param idClasse
-	 * @param idTrimestre
+	 * @param idAnnee
 	 * @return
 	 */
 	/*public Collection<BulletinAnnuelBean> generateCollectionofBulletinAnnee(Long idClasse,
@@ -1560,10 +1665,41 @@ public interface IUsersService {
 	public  Map<String, Object> generateCollectionofBulletinAnnee(Long idClasse,
 			Long idAnnee);
 	
+	/***********************************************************************************************************
+	 * Cette methode retourne le bulletin Annuel de l'élève dont l'id est passe en parametre pour le compte
+	 * de l'année dont l'id  est passe en paramètre
+	 * @param idEleve
+	 * @param idClasse
+	 * @param idAnnee
+	 * @return
+	 */
+	 public Collection<BulletinAnnuelBean> generate1BulletinAnnuel(Long idEleve, Long idClasse, 
+			 Long idAnnee);
+	 
+	
+	/******************************************************************************************************
+	 * Cette methode retourne la liste des bulletins trimestriels de tous les eleves contenus dans la classe dont 
+	 * l'identifiant est passé en paramètre. Pour chaque bulletin trimestriel, on aura dessus un rapport annuel
+	 * montrant l'incidence de la moyenne trimestriel sur la moyenne annuel. 
+	 * @param idClasse
+	 * @param idTrimestre
+	 * @return
+	 */
 	/*public Collection<BulletinTrimAnnuelBean> generateCollectionofBulletinTrimAnnee(Long idClasse,
 	Long idAnnee);*/
 	public  Map<String, Object> generateCollectionofBulletinTrimAnnee(Long idClasse,
-		Long idAnnee);
+		Long idTrimestre);
+	
+	/**********************************************************************************************************
+	 * Cette methode retourne le bulletin trimestriel d'un eleve avec son  rapport annuel. 
+	 * @param idEleve
+	 * @param idClasse
+	 * @param idTrimestre
+	 * @return
+	 */
+	public Collection<BulletinTrimAnnuelBean> generate1BulletinTrimAnnuel(Long idEleve, Long idClasse, 
+			Long idTrimestre);
+	 
 	
 	public double getValeurNotesFinaleEleve(Long idEleve, Long idCours, Long idSequence);
 	
@@ -1728,6 +1864,16 @@ public interface IUsersService {
 	 */
 	public List<Decision> findListAllDecision();
 	
+	/*************************************************************************************************
+	 * Cette methode retourne la liste des niveaux contenant les classes dans lesquelles on peut 
+	 * placer un élève après un conseil de classe annuel. Il s'agit d'abord du niveau contenant la 
+	 * classe prise en parametre mais aussi du niveau imediatement supérieur à celui dans lequel se 
+	 * trouve la classe prise en paramètre. 
+	 * @param classe
+	 * @return
+	 */
+	public List<Niveaux> findListNiveauSup(Classes classe);
+	
 	/*************************************************************************************
 	 * Cette methode retourne la decision du conseil de classe d'un élève pendant une 
 	 * periode donnee (sequence, trimestre ou annee). Si aucune n'est encore enregistrée, 
@@ -1788,11 +1934,12 @@ public interface IUsersService {
 	
 	/***********************************************************************************************************
 	 * Cette methode enregistre en BD la décision prise pendant le conseil de classe annuel pour un élève
-	 * 
+	 * Elle enregistre du même coup la future classe dans laquelle l'élève sera enregistrer lors des migrations
 	 * 
 	 * @param idElevesConcerne
 	 * @param idAnneeActive
 	 * @param idsanctionTravAssocie
+	 * @param idClasseFuturAssocie
 	 * @param idDecisionAssocie
 	 * @return
 	 * 
@@ -1801,7 +1948,7 @@ public interface IUsersService {
 	 * 
 	 */
 	public int saveDecisionConseilAn(Long idElevesConcerne, Long idAnneeActive, 
-			Long idsanctionTravAssocie, Long idDecisionAssocie);
+			Long idsanctionTravAssocie, Long idClasseFuturAssocie, Long idDecisionAssocie);
 	
 	/********************************************************************************************
 	 * Retourne le nombre d'heure d'absence justifie dans une classe entre deux dates pour un 
@@ -1974,7 +2121,7 @@ public interface IUsersService {
 	
 	/*********************************************************************************************************
 	 * cette methode retourne le rapport des absences par sexe et le total pour un cycle passe en paramètre.
-	 * Si le cylce est null alors on va retourner celui de tous les cycles enregistre en BD. 
+	 * Si le cycle est null alors on va retourner celui de tous les cycles enregistre en BD. 
 	 * 
 	 * Par rapport des absences, on entend le nombre d'heure d'absence Non justfié / Total des heures d'absence
 	 * Pour les eleve de sexe masculin d'un cycle et ceux du sexe féminn du meme cycle. 
@@ -1995,7 +2142,7 @@ public interface IUsersService {
 	
 	/*********************************************************************************************************
 	 * cette methode retourne le rapport des absences par sexe et le total pour un cycle passe en paramètre.
-	 * Si le cylce est null alors on va retourner celui de tous les cycles enregistre en BD. 
+	 * Si le cycle est null alors on va retourner celui de tous les cycles enregistre en BD. 
 	 * 
 	 * Par rapport des absences, on entend le nombre d'heure d'absence Non justfié / Total des heures d'absence
 	 * Pour les eleve de sexe masculin d'un cycle et ceux du sexe féminn du meme cycle. 
@@ -2016,6 +2163,101 @@ public interface IUsersService {
 			Trimestres periode);
 	public Collection<FicheRecapAbsenceCycleBean> generateListFicheRecapAbsenceCycleAnBean(Cycles cycle, 
 			Annee periode);
+	
+	
+	/*********************************************************************************************************
+	 * cette methode retourne le rapport des absences par sexe et le total pour un niveau passe en paramètre.
+	 * Si le niveau est null alors on va retourner celui de tous les niveaux enregistre en BD. 
+	 * 
+	 * Par rapport des absences, on entend le nombre d'heure d'absence Non justfié / Total des heures d'absence
+	 * Pour les eleves de sexe masculin d'un niveau et ceux du sexe féminn du meme niveau. 
+	 * 
+	 * Donc pour chaque élève du niveau, on va rechercher tous les rapports d'absence enregistré dans l'intervalle
+	 * de date précisé
+	 * 
+	 * Et pour avoir tous les élèves du niveau, il faut d'abord récuperer toutes les classes du niveau puis 
+	 * pour chaque classe tous les élèves.
+	 * 
+	 * @param niveau
+	 * @param datemin
+	 * @param datemax
+	 * @return
+	 */
+	public Collection<FicheRecapAbsenceNiveauBean> generateListFicheRecapAbsenceNiveauBean(Niveaux niveau, 
+			Date datemin, Date datemax);
+	
+	/***********************************************************************************************************
+	 * cette methode retourne le rapport des absences par sexe et le total pour un niveau passe en paramètre.
+	 * Si le niveau est null alors on va retourner celui de tous les niveaux enregistre en BD. 
+	 * 
+	 * Par rapport des absences, on entend le nombre d'heure d'absence Non justfié / Total des heures d'absence
+	 * Pour les eleve de sexe masculin d'un niveau et ceux du sexe féminn du meme niveau. 
+	 * 
+	 * Donc pour chaque élève du niveau, on va rechercher tous les rapports d'absence enregistré dans la 
+	 * periode specifie en paramètre
+	 * 
+	 * Et pour avoir tous les élèves du niveau, il faut d'abord récuperer toutes les classes et 
+	 * enfin pour chaque classe tous les élèves.
+	 * @param niveau
+	 * @param periode
+	 * @return
+	 */
+	public Collection<FicheRecapAbsenceNiveauBean> generateListFicheRecapAbsenceNiveauSeqBean(Niveaux niveau, 
+			Sequences periode);
+	public Collection<FicheRecapAbsenceNiveauBean> generateListFicheRecapAbsenceNiveauTrimBean(Niveaux niveau, 
+			Trimestres periode);
+	public Collection<FicheRecapAbsenceNiveauBean> generateListFicheRecapAbsenceNiveauAnBean(Niveaux niveau, 
+			Annee periode);
+	
+	
+	/************************************************************************************************************
+	 * cette methode retourne le rapport des absences par sexe et le total pour une classe passe en paramètre.
+	 * Si la classe est null alors on va retourner celui de toutes les classes enregistre en BD. 
+	 * 
+	 * Par rapport des absences, on entend le nombre d'heure d'absence Non justfié / Total des heures d'absence
+	 * Pour les eleves de sexe masculin d'une classe et ceux du sexe féminin du meme niveau. 
+	 * 
+	 * Donc pour chaque élève de la classe, on va rechercher tous les rapports d'absence enregistré dans l'intervalle
+	 * de date précisé
+	 * 
+	 * @param classe
+	 * @param datemin
+	 * @param datemax
+	 * @return
+	 */
+	public Collection<FicheRecapAbsenceClasseBean> generateListFicheRecapAbsenceClasseBean(Classes classe, 
+			Date datemin, Date datemax);
+	
+	/************************************************************************************************************
+	 * cette methode retourne le rapport des absences par sexe et le total pour une classe passe en paramètre.
+	 * Si la classe est null alors on va retourner celui de toutes les classes enregistre en BD. 
+	 * 
+	 * Par rapport des absences, on entend le nombre d'heure d'absence Non justfié / Total des heures d'absence
+	 * Pour les eleve de sexe masculin d'une classe et ceux du sexe féminn de la même classe. 
+	 * 
+	 * Donc pour chaque élève de la classe, on va rechercher tous les rapports d'absence enregistré dans la 
+	 * periode specifie en paramètre
+	 * 
+	 * @param classe
+	 * @param periode
+	 * @return
+	 */
+	public Collection<FicheRecapAbsenceClasseBean> generateListFicheRecapAbsenceClasseSeqBean(Classes classe, 
+			Sequences periode);
+	public Collection<FicheRecapAbsenceClasseBean> generateListFicheRecapAbsenceClasseTrimBean(Classes classe, 
+			Trimestres periode);
+	public Collection<FicheRecapAbsenceClasseBean> generateListFicheRecapAbsenceClasseAnBean(Classes classe, 
+			Annee periode);
+	
+	
+	/*********************************************************************************************
+	 * Cette methode permet de retourner la liste des classes enregistrer avec les montant de scolarte s'il
+	 * sont deja defini
+	 * @return
+	 */
+	public Collection<FicheScolariteparClasseBean> generateListFicheScolariteparClasseBean();
+	
+	
 	
 	
 	/******************************************************

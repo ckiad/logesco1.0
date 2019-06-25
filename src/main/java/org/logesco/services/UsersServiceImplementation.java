@@ -136,6 +136,9 @@ public class UsersServiceImplementation implements IUsersService {
 	@Autowired
 	private IdentOperationRepository	 identOpRepository;
 	
+	@Autowired
+	private PersonnelsDAppuiRepository	 personnelsDAppuiRepository;
+	
 	private UtilitairesBulletins ub;
 	
 	//private static Logger log = LogescoApplication.log;
@@ -222,6 +225,11 @@ public class UsersServiceImplementation implements IUsersService {
 	@Override
 	public Personnels findPersonnel(String numcniPers){
 		return persRepository.findByNumcniPers(numcniPers);
+	}
+	
+	@Override
+	public Personnels findPersonnelAvecMatricule(String matriculePers){
+		return persRepository.findByMatriculePers(matriculePers);
 	}
 
 	@Override
@@ -334,6 +342,20 @@ public class UsersServiceImplementation implements IUsersService {
 			profAModif.setStatutPers(proffesseurs.getStatutPers());
 			profAModif.setUsername(proffesseurs.getUsername());
 			profAModif.setVillePers(proffesseurs.getVillePers());
+			
+			/*
+			 * Traitement des nouveaux champs
+			 */
+			profAModif.setSitmatriPers(proffesseurs.getSitmatriPers());
+			profAModif.setMatriculePers(proffesseurs.getMatriculePers());
+			profAModif.setDeptoriginePers(proffesseurs.getDeptoriginePers());
+			profAModif.setRegionoriginePers(proffesseurs.getRegionoriginePers());
+			profAModif.setFonctionPers(proffesseurs.getFonctionPers());
+			profAModif.setQuotaHorairePers(proffesseurs.getQuotaHorairePers());
+			profAModif.setDateentreeFPPers(proffesseurs.getDateentreeFPPers());
+			profAModif.setDatePSPers(proffesseurs.getDatePSPers());
+			profAModif.setObservations(proffesseurs.getObservations());
+			profAModif.setEtabDAttache(proffesseurs.getEtabDAttache());
 
 
 
@@ -353,47 +375,85 @@ public class UsersServiceImplementation implements IUsersService {
 		//Pour encoder les mots de passe
 		Pbkdf2PasswordEncoder p=new Pbkdf2PasswordEncoder();
 
-		System.err.println("Nous voici a l'execution   TOUT DEBUTE 1111");
+		//System.err.println("Nous voici a l'execution   TOUT DEBUTE 1111");
 		/*
 		 * Est ce que quelqu'un existe en bd avec le meme numerocni?
 		 */
 		Personnels persExistantAvecNumcni=this.findPersonnel(censeur.getNumcniPers());
 		if(persExistantAvecNumcni!=null) {
-			System.err.println("Voici persExistantAvecNumcni  "+persExistantAvecNumcni.toString());
+			//System.err.println("Voici persExistantAvecNumcni  "+persExistantAvecNumcni.toString());
 			return new Long(-1);
 		}
-		System.err.println("Nous voici a l'execution   2222");
-
+		
+		/*
+		 * Est ce que quelqun a le meme matricule
+		 */
+		Personnels persExistantAvecMatricule = this.findPersonnelAvecMatricule(censeur.getMatriculePers());
+		if(persExistantAvecMatricule!=null) {
+			//System.err.println("Voici persExistantAvecNumcni  "+persExistantAvecNumcni.toString());
+			return new Long(-1);
+		}
+		
 		/*
 		 * Est ce que quelqu'un existe en bd avec le meme triplet noms, prenoms datenaiss
 		 */
 		Personnels persExistantAvectriplet=this.findPersonnel(censeur.getNomsPers(), censeur.getPrenomsPers(), 
 				censeur.getDatenaissPers());
 		if(persExistantAvectriplet!=null) {
-			System.err.println("Voici persExistantAvecNumcni  "+persExistantAvectriplet.toString());
+			//System.err.println("Voici persExistantAvecNumcni  "+persExistantAvectriplet.toString());
 			return new Long(-2);
 		}
-		System.err.println("Nous voici a l'execution   3333");
+		//System.err.println("Nous voici a l'execution   3333");
 
 		/*
 		 * Est ce qu'un utilisateur existe donc avec le même username
 		 */
 		Utilisateurs usersExistAvecUsername=this.getUsers(censeur.getUsername());
 		if(usersExistAvecUsername!=null) {
-			System.err.println("Voici usersExistAvecUsername  "+usersExistAvecUsername.toString());
+			//System.err.println("Voici usersExistAvecUsername  "+usersExistAvecUsername.toString());
 			return new Long(-3);
 		}
-		System.err.println("Nous voici a l'execution   4444");
+		//System.err.println("Nous voici a l'execution   4444");
 
 		/*
 		 * Est ce qu'un censeur existe avec le même numéro ?
 		 */
 		Censeurs censeurExistAvecNumero=this.findCenseur(censeur.getNumeroCens());
 		if(censeurExistAvecNumero!=null) {
-			System.err.println("Voici censeurExistAvecNumero  "+censeurExistAvecNumero.toString());
+			//System.err.println("Voici censeurExistAvecNumero  "+censeurExistAvecNumero.toString());
 			return new Long(-4);
 		}
-		System.err.println("Nous voici a l'execution   5555");
+		//System.err.println("Nous voici a l'execution   5555");
+		
+		if(censeur.getStatutPers().equalsIgnoreCase("FONCTIONNAIRE")==true){
+			if(censeur.getFonctionPers().equalsIgnoreCase("CENSEUR")==true||
+				censeur.getFonctionPers().equalsIgnoreCase("SG")==true||
+				censeur.getFonctionPers().equalsIgnoreCase("INTENDANT")==true||
+				censeur.getFonctionPers().equalsIgnoreCase("ENSEIGNANT")==true){
+				if(censeur.getMatriculePers().length()<=0){
+					return new Long(-6);
+				}
+			}
+		}
+		
+		if(censeur.getFonctionPers().equalsIgnoreCase("CENSEUR")==true||
+				censeur.getFonctionPers().equalsIgnoreCase("SG")==true||
+						censeur.getFonctionPers().equalsIgnoreCase("ENSEIGNANT")==true){
+			if(censeur.getSpecialiteProf().length()<=0){
+				return new Long(-5);
+			}
+		}
+		
+		if(censeur.getStatutPers().equalsIgnoreCase("VACATAIRE")==false){
+			if(censeur.getFonctionPers().equalsIgnoreCase("CENSEUR")==true||
+				censeur.getFonctionPers().equalsIgnoreCase("SG")==true||
+				censeur.getFonctionPers().equalsIgnoreCase("INTENDANT")==true||
+				censeur.getFonctionPers().equalsIgnoreCase("ENSEIGNANT")==true){
+				if(censeur.getGradePers().length()<=0){
+					return new Long(-7);
+				}
+			}
+		}
 
 		/*
 		 * Ici on peut donc effectuer l'enregistrement sans souci car toutes les contraintes sont vérifié
@@ -405,12 +465,12 @@ public class UsersServiceImplementation implements IUsersService {
 
 		//en enregistre le censeur dans la bd
 		Censeurs censeurEnreg=censeurRepository.save(censeur);
-		System.err.println("Nous voici a l'execution   6666");
+		//System.err.println("Nous voici a l'execution   6666");
 		/*
 		 * On recupere les rôle jouer dans la bd sachant qu'il a d'abord le rôle CENSEUR
 		 */
 		Roles roles1=rolesRepository.findByRole("CENSEUR");
-		if(roles1==null) return new Long(-5);
+		if(roles1==null) return new Long(-8);
 		UtilisateursRoles usersroles=new UtilisateursRoles();
 		usersroles.setUsers((Utilisateurs)censeurEnreg);
 		usersroles.setRoleAssocie(roles1);
@@ -418,7 +478,7 @@ public class UsersServiceImplementation implements IUsersService {
 
 		usersrolesRepository.save(usersroles);
 
-		if(roleCode==1){
+		/*if(roleCode==1){
 			//Alors il a le role censeur et enseignant
 			Roles roles2=rolesRepository.findByRole("ENSEIGNANT");
 			if(roles2==null) return new Long(-6);
@@ -430,7 +490,7 @@ public class UsersServiceImplementation implements IUsersService {
 
 			usersrolesRepository.save(usersroles1);
 		}
-		System.err.println("Nous voici a l'execution   9999");
+		System.err.println("Nous voici a l'execution   9999");*/
 
 		return censeurEnreg.getIdUsers();
 	}
@@ -444,7 +504,7 @@ public class UsersServiceImplementation implements IUsersService {
 			System.out.println("usersService enreg cens :"+cens.getNomsPers());
 			int roleCode = 2;
 			Long val = this.saveCenseurs(cens, roleCode);
-			System.out.println("valretour usersService enreg cens :"+val);
+			//System.out.println("valretour usersService enreg cens :"+val);
 			if(val.longValue() == -1){
 				SimpleDateFormat spd1 = new SimpleDateFormat("yyyy-MM-dd");
 				String erreur = "Numéro CNI déjà utilisé :"+cens.getNomsPers()+" "+cens.getPrenomsPers()
@@ -494,7 +554,16 @@ public class UsersServiceImplementation implements IUsersService {
 		 */
 		Personnels persExistantAvecNumcni=this.findPersonnel(sg.getNumcniPers());
 		if(persExistantAvecNumcni!=null) {
-			////System.err.println("Voici persExistantAvecNumcni  "+persExistantAvecNumcni.toString());
+			//////System.err.println("Voici persExistantAvecNumcni  "+persExistantAvecNumcni.toString());
+			return new Long(-1);
+		}
+		
+		/*
+		 * Est ce que quelqun a le meme matricule
+		 */
+		Personnels persExistantAvecMatricule = this.findPersonnelAvecMatricule(sg.getMatriculePers());
+		if(persExistantAvecMatricule!=null) {
+			//System.err.println("Voici persExistantAvecNumcni  "+persExistantAvecNumcni.toString());
 			return new Long(-1);
 		}
 
@@ -504,7 +573,7 @@ public class UsersServiceImplementation implements IUsersService {
 		Personnels persExistantAvectriplet=this.findPersonnel(sg.getNomsPers(), sg.getPrenomsPers(), 
 				sg.getDatenaissPers());
 		if(persExistantAvectriplet!=null) {
-			////System.err.println("Voici persExistantAvecNumcni  "+persExistantAvectriplet.toString());
+			//////System.err.println("Voici persExistantAvecNumcni  "+persExistantAvectriplet.toString());
 			return new Long(-2);
 		}
 
@@ -513,7 +582,7 @@ public class UsersServiceImplementation implements IUsersService {
 		 */
 		Utilisateurs usersExistAvecUsername=this.getUsers(sg.getUsername());
 		if(usersExistAvecUsername!=null) {
-			////System.err.println("Voici usersExistAvecUsername  "+usersExistAvecUsername.toString());
+			//////System.err.println("Voici usersExistAvecUsername  "+usersExistAvecUsername.toString());
 			return new Long(-3);
 		}
 
@@ -522,10 +591,41 @@ public class UsersServiceImplementation implements IUsersService {
 		 */
 		SG sgExistAvecNumero=this.findSG(sg.getNumeroSG());
 		if(sgExistAvecNumero!=null) {
-			//System.err.println("Voici censeurExistAvecNumero  "+sgExistAvecNumero.toString());
+			////System.err.println("Voici censeurExistAvecNumero  "+sgExistAvecNumero.toString());
 			return new Long(-4);
 		}
 
+		if(sg.getStatutPers().equalsIgnoreCase("FONCTIONNAIRE")==true){
+			if(sg.getFonctionPers().equalsIgnoreCase("CENSEUR")==true||
+					sg.getFonctionPers().equalsIgnoreCase("SG")==true||
+					sg.getFonctionPers().equalsIgnoreCase("INTENDANT")==true||
+					sg.getFonctionPers().equalsIgnoreCase("ENSEIGNANT")==true){
+				if(sg.getMatriculePers().length()<=0){
+					return new Long(-6);
+				}
+			}
+		}
+		
+		if(sg.getFonctionPers().equalsIgnoreCase("CENSEUR")==true||
+				sg.getFonctionPers().equalsIgnoreCase("SG")==true||
+				sg.getFonctionPers().equalsIgnoreCase("ENSEIGNANT")==true){
+			if(sg.getSpecialiteProf().length()<=0){
+				return new Long(-5);
+			}
+		}
+		
+		
+		if(sg.getStatutPers().equalsIgnoreCase("VACATAIRE")==false){
+			if(sg.getFonctionPers().equalsIgnoreCase("CENSEUR")==true||
+				sg.getFonctionPers().equalsIgnoreCase("SG")==true||
+				sg.getFonctionPers().equalsIgnoreCase("INTENDANT")==true||
+				sg.getFonctionPers().equalsIgnoreCase("ENSEIGNANT")==true){
+				if(sg.getGradePers().length()<=0){
+					return new Long(-7);
+				}
+			}
+		}
+		
 		/*
 		 * Ici on peut donc effectuer l'enregistrement sans souci car toutes les contraintes sont vérifiées
 		 * Pour cela il faut déjà encoder le mot de passe et recuperer les rôles dans la base de données
@@ -540,14 +640,14 @@ public class UsersServiceImplementation implements IUsersService {
 		 * On recupere les rôle jouer dans la bd sachant qu'il a d'abord le rôle CENSEUR
 		 */
 		Roles roles1=rolesRepository.findByRole("SG");
-		if(roles1==null) return new Long(-5);
+		if(roles1==null) return new Long(-8);
 		UtilisateursRoles usersroles=new UtilisateursRoles();
 		usersroles.setUsers((Utilisateurs)sgEnreg);
 		usersroles.setRoleAssocie(roles1);
 
 		usersrolesRepository.save(usersroles);
 
-		if(roleCode==3){
+		/*if(roleCode==3){
 			//Alors il a le role censeur et enseignant
 			Roles roles2=rolesRepository.findByRole("ENSEIGNANT");
 			if(roles2==null) return new Long(-6);
@@ -557,7 +657,7 @@ public class UsersServiceImplementation implements IUsersService {
 			usersroles1.setRoleAssocie(roles2);
 
 			usersrolesRepository.save(usersroles1);
-		}
+		}*/
 
 		return sgEnreg.getIdUsers();
 	}
@@ -568,7 +668,7 @@ public class UsersServiceImplementation implements IUsersService {
 		 */
 		List<String> listofError= new ArrayList<String>();
 		for(SG sg : listofsg){
-			System.out.println("usersService enreg SG:"+sg.getNomsPers());
+			//System.out.println("usersService enreg SG:"+sg.getNomsPers());
 			int roleCode = 4;
 			Long val = this.saveSG(sg, roleCode);
 			if(val.longValue() == -1){
@@ -620,17 +720,26 @@ public class UsersServiceImplementation implements IUsersService {
 		 */
 		Personnels persExistantAvecNumcni=this.findPersonnel(intendant.getNumcniPers());
 		if(persExistantAvecNumcni!=null) {
-			//System.err.println("Voici persExistantAvecNumcni  "+persExistantAvecNumcni.toString());
+			////System.err.println("Voici persExistantAvecNumcni  "+persExistantAvecNumcni.toString());
 			return new Long(-1);
 		}
 
+		/*
+		 * Est ce que quelqun a le meme matricule
+		 */
+		Personnels persExistantAvecMatricule = this.findPersonnelAvecMatricule(intendant.getMatriculePers());
+		if(persExistantAvecMatricule!=null) {
+			//System.err.println("Voici persExistantAvecNumcni  "+persExistantAvecNumcni.toString());
+			return new Long(-1);
+		}
+		
 		/*
 		 * Est ce que quelqu'un existe en bd avec le meme triplet noms, prenoms datenaiss
 		 */
 		Personnels persExistantAvectriplet=this.findPersonnel(intendant.getNomsPers(), intendant.getPrenomsPers(), 
 				intendant.getDatenaissPers());
 		if(persExistantAvectriplet!=null) {
-			//System.err.println("Voici persExistantAvecNumcni  "+persExistantAvectriplet.toString());
+			////System.err.println("Voici persExistantAvecNumcni  "+persExistantAvectriplet.toString());
 			return new Long(-2);
 		}
 
@@ -639,7 +748,7 @@ public class UsersServiceImplementation implements IUsersService {
 		 */
 		Utilisateurs usersExistAvecUsername=this.getUsers(intendant.getUsername());
 		if(usersExistAvecUsername!=null) {
-			//System.err.println("Voici usersExistAvecUsername  "+usersExistAvecUsername.toString());
+			////System.err.println("Voici usersExistAvecUsername  "+usersExistAvecUsername.toString());
 			return new Long(-3);
 		}
 
@@ -648,10 +757,41 @@ public class UsersServiceImplementation implements IUsersService {
 		 */
 		Intendant intendantExistAvecNumero=this.findIntendant(intendant.getNumeroInt());
 		if(intendantExistAvecNumero!=null) {
-			//System.err.println("Voici censeurExistAvecNumero  "+intendantExistAvecNumero.toString());
+			////System.err.println("Voici censeurExistAvecNumero  "+intendantExistAvecNumero.toString());
 			return new Long(-4);
 		}
+		
+		if(intendant.getStatutPers().equalsIgnoreCase("FONCTIONNAIRE")==true){
+			if(intendant.getFonctionPers().equalsIgnoreCase("CENSEUR")==true||
+					intendant.getFonctionPers().equalsIgnoreCase("SG")==true||
+					intendant.getFonctionPers().equalsIgnoreCase("INTENDANT")==true||
+					intendant.getFonctionPers().equalsIgnoreCase("ENSEIGNANT")==true){
+				if(intendant.getMatriculePers().length()<=0){
+					return new Long(-6);
+				}
+			}
+		}
 
+		if(intendant.getFonctionPers().equalsIgnoreCase("CENSEUR")==true||
+				intendant.getFonctionPers().equalsIgnoreCase("SG")==true||
+				intendant.getFonctionPers().equalsIgnoreCase("ENSEIGNANT")==true){
+			if(intendant.getSpecialiteProf().length()<=0){
+				return new Long(-5);
+			}
+		}
+		
+		if(intendant.getStatutPers().equalsIgnoreCase("VACATAIRE")==false){
+			if(intendant.getFonctionPers().equalsIgnoreCase("CENSEUR")==true||
+				intendant.getFonctionPers().equalsIgnoreCase("SG")==true||
+				intendant.getFonctionPers().equalsIgnoreCase("INTENDANT")==true||
+				intendant.getFonctionPers().equalsIgnoreCase("ENSEIGNANT")==true){
+				if(intendant.getGradePers().length()<=0){
+					return new Long(-7);
+				}
+			}
+		}
+		
+		
 		/*
 		 * Ici on peut donc effectuer l'enregistrement sans souci car toutes les contraintes sont vérifiées
 		 * Pour cela il faut déjà encoder le mot de passe et recuperer les rôles dans la base de données
@@ -667,14 +807,14 @@ public class UsersServiceImplementation implements IUsersService {
 		 * On recupere les rôle jouer dans la bd sachant qu'il a d'abord le rôle CENSEUR
 		 */
 		Roles roles1=rolesRepository.findByRole("INTENDANT");
-		if(roles1==null) return new Long(-5);
+		if(roles1==null) return new Long(-8);
 		UtilisateursRoles usersroles=new UtilisateursRoles();
 		usersroles.setUsers((Utilisateurs)intendantEnreg);
 		usersroles.setRoleAssocie(roles1);
 
 		usersrolesRepository.save(usersroles);
 
-		if(roleCode==5){
+		/*if(roleCode==5){
 			//Alors il a le role censeur et enseignant
 			Roles roles2=rolesRepository.findByRole("ENSEIGNANT");
 			if(roles2==null) return new Long(-6);
@@ -684,12 +824,11 @@ public class UsersServiceImplementation implements IUsersService {
 			usersroles1.setRoleAssocie(roles2);
 
 			usersrolesRepository.save(usersroles1);
-		}
+		}*/
 
 		return intendantEnreg.getIdUsers();
 	}
-
-
+	
 	@Override
 	public int updateNumeroIntendant(Long idUsers, int newNumero){
 		Intendant intendantAModif=this.findIntendant(idUsers);
@@ -716,17 +855,26 @@ public class UsersServiceImplementation implements IUsersService {
 		 */
 		Personnels persExistantAvecNumcni=this.findPersonnel(enseignants.getNumcniPers());
 		if(persExistantAvecNumcni!=null) {
-			//System.err.println("Voici persExistantAvecNumcni  "+persExistantAvecNumcni.toString());
+			////System.err.println("Voici persExistantAvecNumcni  "+persExistantAvecNumcni.toString());
 			return new Long(-1);
 		}
 
+		/*
+		 * Pour le matricule
+		 */
+		Personnels persExistantAvecMatricule=this.findPersonnel(enseignants.getMatriculePers());
+		if(persExistantAvecMatricule!=null) {
+			return new Long(-1);
+		}
+
+		
 		/*
 		 * Est ce que quelqu'un existe en bd avec le meme triplet noms, prenoms datenaiss
 		 */
 		Personnels persExistantAvectriplet=this.findPersonnel(enseignants.getNomsPers(), enseignants.getPrenomsPers(), 
 				enseignants.getDatenaissPers());
 		if(persExistantAvectriplet!=null) {
-			//System.err.println("Voici persExistantAvecNumcni  "+persExistantAvectriplet.toString());
+			////System.err.println("Voici persExistantAvecNumcni  "+persExistantAvectriplet.toString());
 			return new Long(-2);
 		}
 
@@ -735,10 +883,43 @@ public class UsersServiceImplementation implements IUsersService {
 		 */
 		Utilisateurs usersExistAvecUsername=this.getUsers(enseignants.getUsername());
 		if(usersExistAvecUsername!=null) {
-			//System.err.println("Voici usersExistAvecUsername  "+usersExistAvecUsername.toString());
+			////System.err.println("Voici usersExistAvecUsername  "+usersExistAvecUsername.toString());
 			return new Long(-3);
 		}
 
+		if(enseignants.getStatutPers().equalsIgnoreCase("FONCTIONNAIRE")==true){
+			if(enseignants.getFonctionPers().equalsIgnoreCase("PROVISEUR")==true ||
+					enseignants.getFonctionPers().equalsIgnoreCase("CENSEUR")==true||
+					enseignants.getFonctionPers().equalsIgnoreCase("SG")==true||
+					enseignants.getFonctionPers().equalsIgnoreCase("INTENDANT")==true||
+					enseignants.getFonctionPers().equalsIgnoreCase("ENSEIGNANT")==true){
+				if(enseignants.getMatriculePers().length()<=0){
+					return new Long(-5);
+				}
+			}
+		}
+		
+		if(enseignants.getFonctionPers().equalsIgnoreCase("CENSEUR")==true||
+				enseignants.getFonctionPers().equalsIgnoreCase("SG")==true||
+				enseignants.getFonctionPers().equalsIgnoreCase("ENSEIGNANT")==true){
+			if(enseignants.getSpecialiteProf().length()<=0){
+				return new Long(-4);
+			}
+		}
+		
+		if(enseignants.getStatutPers().equalsIgnoreCase("VACATAIRE")==false){
+			if(enseignants.getFonctionPers().equalsIgnoreCase("PROVISEUR")==true ||
+				enseignants.getFonctionPers().equalsIgnoreCase("CENSEUR")==true||
+				enseignants.getFonctionPers().equalsIgnoreCase("SG")==true||
+				enseignants.getFonctionPers().equalsIgnoreCase("INTENDANT")==true||
+				enseignants.getFonctionPers().equalsIgnoreCase("ENSEIGNANT")==true){
+				if(enseignants.getGradePers().length()<=0){
+					return new Long(-6);
+				}
+			}
+		}
+		
+		
 
 
 		/*
@@ -765,13 +946,72 @@ public class UsersServiceImplementation implements IUsersService {
 		return enseignantsEnreg.getIdUsers();
 	}
 	
+	public Long savePersonnelsDAppui(PersonnelsDAppui personnels){
+		//Pour encoder les mots de passe
+				Pbkdf2PasswordEncoder p=new Pbkdf2PasswordEncoder();
+
+				/*
+				 * Est ce que quelqu'un existe en bd avec le meme numerocni?
+				 */
+				Personnels persExistantAvecNumcni=this.findPersonnel(personnels.getNumcniPers());
+				if(persExistantAvecNumcni!=null) {
+					////System.err.println("Voici persExistantAvecNumcni  "+persExistantAvecNumcni.toString());
+					return new Long(-1);
+				}
+				
+				
+				/*
+				 * Est ce que quelqu'un existe en bd avec le meme triplet noms, prenoms datenaiss
+				 */
+				Personnels persExistantAvectriplet=this.findPersonnel(personnels.getNomsPers(), personnels.getPrenomsPers(), 
+						personnels.getDatenaissPers());
+				if(persExistantAvectriplet!=null) {
+					////System.err.println("Voici persExistantAvecNumcni  "+persExistantAvectriplet.toString());
+					return new Long(-2);
+				}
+
+				/*
+				 * Est ce qu'un utilisateur existe donc avec le même username
+				 */
+				Utilisateurs usersExistAvecUsername=this.getUsers(personnels.getUsername());
+				if(usersExistAvecUsername!=null) {
+					////System.err.println("Voici usersExistAvecUsername  "+usersExistAvecUsername.toString());
+					return new Long(-3);
+				}
+
+
+
+				/*
+				 * Ici on peut donc effectuer l'enregistrement sans souci car toutes les contraintes sont vérifiées
+				 * Pour cela il faut déjà encoder le mot de passe et recuperer les rôles dans la base de données
+				 * afin de créer les UtilisateursRoles
+				 */
+				//On encode donc le mot de passe
+				personnels.setPassword(p.encode(personnels.getPassword()));
+
+				//en enregistre le censeur dans la bd
+				PersonnelsDAppui personnelsEnreg=personnelsDAppuiRepository.save(personnels);
+				/*
+				 * On recupere les rôle jouer dans la bd sachant qu'il a d'abord le rôle CENSEUR
+				 */
+				Roles roles1=rolesRepository.findByRole("AUTRES");
+				if(roles1==null) return new Long(-6);
+				UtilisateursRoles usersroles=new UtilisateursRoles();
+				usersroles.setUsers((Utilisateurs)personnelsEnreg);
+				usersroles.setRoleAssocie(roles1);
+
+				usersrolesRepository.save(usersroles);
+
+				return personnelsEnreg.getIdUsers();
+	}
+	
 	public List<String> saveListEnseignants(List<Enseignants> listofenseignants){
 		/*
 		 * On enregistre les sg qui viennent d'une liste donc on va les attribuer le rôle 
 		 */
 		List<String> listofError= new ArrayList<String>();
 		for(Enseignants ens : listofenseignants){
-			System.out.println("usersService enreg :"+ens.getNomsPers());
+			//System.out.println("usersService enreg :"+ens.getNomsPers());
 			Long val = this.saveEnseignants(ens);
 			if(val.longValue() == -1){
 				SimpleDateFormat spd1 = new SimpleDateFormat("yyyy-MM-dd");
@@ -845,64 +1085,54 @@ public class UsersServiceImplementation implements IUsersService {
 
 	@Override
 	public int getcodeUsersRole(Utilisateurs users) {
-		//System.err.println("debut de getcodeUsersRole ");
+		////System.err.println("debut de getcodeUsersRole ");
 		List<UtilisateursRoles> listofUsersRoles=(List<UtilisateursRoles>) users.getListofusersRoles();
-		//System.err.println("listofUsersRoles "+listofUsersRoles.size());
-		int codeRole=0;
-		int containsRoles=0;
+		////System.err.println("listofUsersRoles "+listofUsersRoles.size());
+		int codeRole=8;
 
 		for(UtilisateursRoles usersRoles : listofUsersRoles){
-			if(usersRoles.getRoleAssocie().getRole().equals(new String("CENSEUR"))) containsRoles=1;
-			//System.err.println("usersRoles "+usersRoles.getRoleAssocie().getRole()+" containsRoles == "+containsRoles);
-		}
-
-		for(UtilisateursRoles usersRoles : listofUsersRoles){
-			if(usersRoles.getRoleAssocie().getRole().equals(new String("SG"))) containsRoles=2;
+			if(usersRoles.getRoleAssocie().getRole().equals(new String("CENSEUR"))) codeRole=1;
+			
 		}
 
 		for(UtilisateursRoles usersRoles : listofUsersRoles){
-			if(usersRoles.getRoleAssocie().getRole().equals(new String("INTENDANT"))) containsRoles=3;
+			if(usersRoles.getRoleAssocie().getRole().equals(new String("SG"))) codeRole=2;
 		}
 
-		if(containsRoles==1){//donc il est censeur
-			int ensrole=0;
-			for(UtilisateursRoles usersRoles : listofUsersRoles){
-				//lorsque le si est verifie alors il est en plus enseignant; selon les code on doit avoir 1 comme code
-				if(usersRoles.getRoleAssocie().getRole().equals(new String("ENSEIGNANT"))) ensrole=1;
-				//System.err.println("A t'il enseignant comme role en plus de censeur? "+" ensrole == "+ensrole);
-			}
-			if(ensrole==0) codeRole=2;//role censeur uniquement
-			if(ensrole==1) codeRole=1;//role censeur et ennseignant
+		for(UtilisateursRoles usersRoles : listofUsersRoles){
+			if(usersRoles.getRoleAssocie().getRole().equals(new String("ENSEIGNANT"))) codeRole=3;
+		}
+		
+		for(UtilisateursRoles usersRoles : listofUsersRoles){
+			if(usersRoles.getRoleAssocie().getRole().equals(new String("INTENDANT"))) codeRole=4;
 		}
 
-		if(containsRoles==2){//donc il est SG
-			int ensrole=0;
-			for(UtilisateursRoles usersRoles : listofUsersRoles){
-				//en plus de SG si le if est verifie alors il est en plus enseignant donc 3 comme code
-				if(usersRoles.getRoleAssocie().getRole().equals(new String("ENSEIGNANT"))) ensrole=1;
-				//System.err.println("A t'il enseignant comme role en plus de sg? "+" ensrole == "+ensrole);
-			}
-			if(ensrole==0) codeRole=4;//role SG uniquement
-			if(ensrole==1) codeRole=3;//role SG et ennseignant
+		for(UtilisateursRoles usersRoles : listofUsersRoles){
+			if(usersRoles.getRoleAssocie().getRole().equals(new String("SECRETAIRE"))) codeRole=5;
 		}
-
-		if(containsRoles==3){//donc il est d'abord Intendant
-			int ensrole=0;
-			for(UtilisateursRoles usersRoles : listofUsersRoles){
-				if(usersRoles.getRoleAssocie().getRole().equals(new String("ENSEIGNANT"))) ensrole=1;
-				//System.err.println("A t'il enseignant comme role en plus de intendant? "+" ensrole == "+ensrole);
-			}
-			if(ensrole==0) codeRole=6;//role Intendant uniquement
-			if(ensrole==1) codeRole=5;//role Intendant et ennseignant
+		
+		for(UtilisateursRoles usersRoles : listofUsersRoles){
+			if(usersRoles.getRoleAssocie().getRole().equals(new String("SURVEILLANT"))) codeRole=6;
 		}
-
-		if((containsRoles!=1)&&(containsRoles!=2)&&(containsRoles!=3)){//ni censeur ni sg ni intendant
-			for(UtilisateursRoles usersRoles : listofUsersRoles){
-				if(usersRoles.getRoleAssocie().getRole().equals(new String("ENSEIGNANT"))) codeRole=7;//donc juste role Enseignant
-			}
+		
+		for(UtilisateursRoles usersRoles : listofUsersRoles){
+			if(usersRoles.getRoleAssocie().getRole().equals(new String("VEILLEUR"))) codeRole=7;
+		}
+	
+		for(UtilisateursRoles usersRoles : listofUsersRoles){
+			if(usersRoles.getRoleAssocie().getRole().equals(new String("AUTRES"))) codeRole=8;
 		}
 
 		return codeRole;
+	}
+	
+	public List<String> getListRolesUser(Utilisateurs users){
+		List<String> listofRoleUser = new ArrayList<String>();
+		List<UtilisateursRoles> listofUsersRoles=(List<UtilisateursRoles>) users.getListofusersRoles();
+		for(UtilisateursRoles usersRoles : listofUsersRoles){
+			listofRoleUser.add(usersRoles.getRoleAssocie().getRole());
+		}
+		return listofRoleUser;
 	}
 
 	@Override
@@ -1030,6 +1260,17 @@ public class UsersServiceImplementation implements IUsersService {
 	public List<Enseignants> findAllEnseignants(){
 		return enseignantRepository.findAllByOrderByNomsPersAscPrenomsPersAscDatenaissPersDesc();
 	}
+	
+	@Override
+	public Page<PersonnelsDAppui> findAllPersonnelsDAppui(int numPage, int taillePage){
+		return personnelsDAppuiRepository.findAllByOrderByNomsPersAscPrenomsPersAscDatenaissPersDesc(
+				new PageRequest(numPage, taillePage));
+	}
+	
+	@Override
+	public List<PersonnelsDAppui> findAllPersonnelsDAppui(){
+		return personnelsDAppuiRepository.findAllByOrderByNomsPersAscPrenomsPersAscDatenaissPersDesc();
+	}
 
 	@Override
 	public List<Utilisateurs> findAllUtilisateurs(){
@@ -1060,7 +1301,7 @@ public class UsersServiceImplementation implements IUsersService {
 		for(UtilisateursRoles usersRoles : listofRoles){
 			usersrolesRepository.delete(usersRoles);
 		}
-		//System.err.println("******************** On a supprimer les usersRoles associe censeurs**********************");
+		////System.err.println("******************** On a supprimer les usersRoles associe censeurs**********************");
 
 		Censeurs censeurAssocie=this.findCenseurs(idUsers);
 		SG sgAssocie=this.findSG(idUsers);
@@ -1070,7 +1311,7 @@ public class UsersServiceImplementation implements IUsersService {
 			//alors c'est un censeur qu'on veut supprimer
 			/*log.log(Level.DEBUG, "suppression du censeur "+idUsers);*/
 			censeurRepository.delete(censeurAssocie);
-			//System.err.println("******************** On a supprimer le censeur associe **********************");
+			////System.err.println("******************** On a supprimer le censeur associe **********************");
 
 			return 1;
 		}
@@ -1078,19 +1319,19 @@ public class UsersServiceImplementation implements IUsersService {
 			//alors c'est un sg qu'on veut supprimer
 			/*log.log(Level.DEBUG, "suppression du SG "+idUsers);*/
 			sgRepository.delete(sgAssocie);
-			//System.err.println("******************** On a supprimer le sg associe **********************");
+			////System.err.println("******************** On a supprimer le sg associe **********************");
 			return 1;
 		}
 		else if(intendantAssocie!=null){
 			intendantRepository.delete(intendantAssocie);
 			/*log.log(Level.DEBUG, "suppression de l'intendant "+idUsers);*/
-			//System.err.println("******************** On a supprimer le intendant associe **********************");
+			////System.err.println("******************** On a supprimer le intendant associe **********************");
 			return 1;
 		}
 		else if(enseignantAssocie!=null){
 			enseignantRepository.delete(enseignantAssocie);
 			/*log.log(Level.DEBUG, "suppression de l'enseignant "+idUsers);*/
-			//System.err.println("******************** On a supprimer le enseignant associe **********************");
+			////System.err.println("******************** On a supprimer le enseignant associe **********************");
 			return 1;
 		}
 		/*log.log(Level.DEBUG, "fin de l'exécution de deleteUsers "+idUsers);*/
@@ -1144,7 +1385,7 @@ public class UsersServiceImplementation implements IUsersService {
 			return classeRechercher;
 		}
 		catch(Exception e){
-			//System.err.println("Ici dans findClasses EXCEPTION "+e.getMessage());
+			////System.err.println("Ici dans findClasses EXCEPTION "+e.getMessage());
 			return null;
 		}
 	}
@@ -1158,7 +1399,7 @@ public class UsersServiceImplementation implements IUsersService {
 			return classeRechercher;
 		}
 		catch(Exception e){
-			//System.err.println("Ici dans findClasses avec codeClasse EXCEPTION "+e.getMessage());
+			////System.err.println("Ici dans findClasses avec codeClasse EXCEPTION "+e.getMessage());
 			return null;
 		}
 	}
@@ -1206,7 +1447,7 @@ public class UsersServiceImplementation implements IUsersService {
 		if(classe!=null){
 			double pourcentage = critere * 0.01;
 			double montantMin = classe.getMontantScolarite() * pourcentage;
-			/*System.err.println("montantMin "+montantMin+"() classe.getMontantScolarite()"+classe.getMontantScolarite()+""
+			/*//System.err.println("montantMin "+montantMin+"() classe.getMontantScolarite()"+classe.getMontantScolarite()+""
 					+ " critere "+critere + " pourcentage "+pourcentage);*/
 			List<Eleves> listofEleveClasse=(List<Eleves>)classe.getListofEleves();
 
@@ -1244,11 +1485,11 @@ public class UsersServiceImplementation implements IUsersService {
 		if(elv==null) return null;
 		Sequences seq = this.findSequences(idSequence);
 		int numero = elv.getNumero(seq);
-		//System.err.println("numero precedent "+numero);
+		////System.err.println("numero precedent "+numero);
 		int pos = numero+1;
-		//System.err.println("position suivant "+pos);
+		////System.err.println("position suivant "+pos);
 		List<Eleves> listofEleveRegulierInSeq = (List<Eleves>) elv.getClasse().getListofEleves();
-		//System.err.println("taille liste  "+listofEleveRegulierInSeq.size());
+		////System.err.println("taille liste  "+listofEleveRegulierInSeq.size());
 		Eleves elvSvt = this.findEleveDansListe(listofEleveRegulierInSeq, pos);
 		
 		return elvSvt;
@@ -1272,7 +1513,7 @@ public class UsersServiceImplementation implements IUsersService {
 	@Override
 	public Long saveEleves(Eleves eleve, Long idClasse){
 
-		//System.err.println("le nom de la photos est "+eleve.getPhotoEleves());
+		////System.err.println("le nom de la photos est "+eleve.getPhotoEleves());
 
 		/*
 		 * Est ce que le triplet noms prenoms datenaissance sera unique
@@ -1285,9 +1526,10 @@ public class UsersServiceImplementation implements IUsersService {
 		 */
 		Eleves elevesExistMatricule=this.findEleves(eleve.getMatriculeEleves());
 		if(elevesExistMatricule!=null) {
-			System.err.println("l'eleve "+elevesExistMatricule.getNomsEleves()+" a deja le matricule "
+			
+			/*System.err.println("l'eleve "+elevesExistMatricule.getNomsEleves()+" a deja le matricule "
 					+ "qui est entrain d'être utilisé pour enregistré un autre. son identifiant est "+elevesExistMatricule.getIdEleves()
-					+" ce matricule est d'ailleurs "+elevesExistMatricule.getMatriculeEleves());
+					+" ce matricule est d'ailleurs "+elevesExistMatricule.getMatriculeEleves());*/
 			return new Long(-1);
 		}
 
@@ -1308,12 +1550,21 @@ public class UsersServiceImplementation implements IUsersService {
 		 * Une fois la classe trouvée on doit enregistrée un compte pour cet élève en bd et l'indique
 		 */
 		CompteInscription compteEleve = new CompteInscription(new Double(0));
-		compteinscriptionRepository.save(compteEleve);
+		CompteInscription cptEleveCree = compteinscriptionRepository.save(compteEleve);
 		eleve.setCompteInscription(compteEleve);
 		/*
 		 * Puis on enregistre l'élève lui même
 		 */
 		Eleves eleveEnreg=elevesRepository.save(eleve);
+		
+		/*****************
+		 * Enfin il faut mettre à jour le proprietaire du compte pour que la relation soient bidirectionnelle
+		 * entre eleve et compteInscription
+		 */
+		cptEleveCree.setEleveProprietaire(eleveEnreg);
+		compteinscriptionRepository.save(cptEleveCree);
+		
+		
 
 		return eleveEnreg.getIdEleves();
 	}
@@ -1322,7 +1573,7 @@ public class UsersServiceImplementation implements IUsersService {
 		List<String> listofError= new ArrayList<String>();
 		for(Eleves eleve : listofeleve){
 			Long val = this.saveEleves(eleve, idClasse);
-			//System.out.println("enreg de eleve "+eleve.getNomsEleves()+" matricule "+eleve.getMatriculeEleves()+" == "+val);
+			////System.out.println("enreg de eleve "+eleve.getNomsEleves()+" matricule "+eleve.getMatriculeEleves()+" == "+val);
 			if(val.longValue()==0){
 				//Le triplet noms prenoms datenaiss n'est pas unique donc erreur a signaler
 				SimpleDateFormat spd1 = new SimpleDateFormat("yyyy-MM-dd");
@@ -1469,10 +1720,12 @@ public class UsersServiceImplementation implements IUsersService {
 
 
 	@Override
-	public int enregVersementSco(Long idEleveConcerne, double montantAVerser) {
-		//System.err.println("debut de enregVersementSco ");
-		
-		if(montantAVerser < 0) montantAVerser *= -1;
+	public Long enregVersementSco(Long idEleveConcerne, double montantAVerser) {
+		////System.err.println("debut de enregVersementSco ");
+		/****************
+		 * Si le montant est negatif c'est qu'on effectue un retrait
+		 */
+		//if(montantAVerser < 0) montantAVerser *= -1;
 		/*
 		 * Rechercher l'élève dont on a l'id
 		 * Recuperer son compte associe
@@ -1481,11 +1734,11 @@ public class UsersServiceImplementation implements IUsersService {
 		 * Si ce montant est supérieur à 0 alors on change son etat en le plaçant à en cours
 		 * Donc par défaut cet etat reste à non inscrit
 		 */
-		//System.err.println("recherche de l'élève");
+		////System.err.println("recherche de l'élève");
 		Eleves eleveConcerne = this.findEleves(idEleveConcerne);
 
 		if(eleveConcerne==null){
-			return -1;
+			return new Long(-1);
 		}
 
 		double montantdejaverse = eleveConcerne.getCompteInscription().getMontant();
@@ -1493,9 +1746,10 @@ public class UsersServiceImplementation implements IUsersService {
 		/*
 		 * Il faut se rassurer que le nouveau montant ne sera pas supérieur au montant de la scolarité de la classe concerne
 		 */
-		if(nouveauMontant <= eleveConcerne.getClasse().getMontantScolarite()){
+		if(nouveauMontant <= eleveConcerne.getClasse().getMontantScolarite() && nouveauMontant>=0){
 			eleveConcerne.getCompteInscription().setMontant(nouveauMontant);
 
+			//System.out.println("enregistrement du nouveau montant");
 			compteinscriptionRepository.save(eleveConcerne.getCompteInscription());
 
 			/*
@@ -1508,25 +1762,27 @@ public class UsersServiceImplementation implements IUsersService {
 			operation.setMontantOperation(montantAVerser);
 			operation.setTypeOperation("versement");
 			
-			
+			//System.out.println("enregistrement de l'opération");
 
-			operationsRepository.save(operation);
+			Operations op_realise = operationsRepository.save(operation);
+			//System.out.println("enregistrement de l'opération effectivement effectue");
 
 			if(nouveauMontant >= eleveConcerne.getClasse().getMontantScolarite()) {
 				eleveConcerne.setEtatInscEleves("inscrit");
 				elevesRepository.save(eleveConcerne);
-				return 2;
+				return op_realise.getIdOperation();
 			}
 			if(nouveauMontant >= 0) {
 				eleveConcerne.setEtatInscEleves("en cours");
 				elevesRepository.save(eleveConcerne);
-				return 1;
+				return op_realise.getIdOperation();
 			}
+			//System.out.println("Mise à jour de l'élève effectivement effectue");
 		}
 		else{
-			return -2;
+			return new Long(-2);
 		}
-		return 0;
+		return new Long(0);
 	}
 
 
@@ -1650,7 +1906,23 @@ public class UsersServiceImplementation implements IUsersService {
 	public List<Classes> findAllClasse() {
 		return classesRepository.findAll();
 	}
+	
+	@Override
+	public List<Classes> findAllClasseNonVide(){
+		List<Niveaux> listofNiveaux = this.findAllNiveaux();
+		List<Classes> listofClasseNonVide = new ArrayList<Classes>();
+		for(Niveaux niv : listofNiveaux){
+			for(Classes classe : niv.getListofClasses()){
+				if(classe.getListofEleves().size()>0){
+					listofClasseNonVide.add(classe);
+				}
+			}
+		}
+		return listofClasseNonVide;
+	}
 
+	
+	
 	@Override
 	public List<Cycles> findAllCycle(){
 		return cycleRepository.findAllByOrderByNumeroOrdreCyclesAsc();
@@ -1667,6 +1939,10 @@ public class UsersServiceImplementation implements IUsersService {
 		return cycleRepository.findOne(idCycle);
 	}
 
+	@Override
+	public Niveaux findNiveaux(Long idNiveaux){
+		return niveauxRepository.findOne(idNiveaux);
+	}
 
 	@Override
 	public List<Niveaux> findAllNiveaux() {
@@ -1761,18 +2037,18 @@ public class UsersServiceImplementation implements IUsersService {
 
 	@Override
 	public List<Niveaux> findAllNiveauxDirigesEns(Long idUsers){
-		//System.err.println("======================================== ");
+		////System.err.println("======================================== ");
 		List<Niveaux> listofAllNiveauxDirigesEns = new ArrayList<Niveaux>();
 		List<Niveaux> listofAllNiveaux = this.findAllNiveaux();
-		//System.err.println("listofAllNiveaux.size "+listofAllNiveaux.size());
+		////System.err.println("listofAllNiveaux.size "+listofAllNiveaux.size());
 		for(Niveaux niv : listofAllNiveaux){
 			List<Classes> listofClassesNiv = (List<Classes>) niv.getListofClasses();
-			//System.err.println("listofClassesNiv.size "+listofClassesNiv.size());
+			////System.err.println("listofClassesNiv.size "+listofClassesNiv.size());
 			for(Classes classe : listofClassesNiv){
-				//System.err.println("est ce que classessss est null  "+classe.getIdClasses());
+				////System.err.println("est ce que classessss est null  "+classe.getIdClasses());
 				if(classe.getProffesseur() != null){
-					//System.err.println("est ce que classessss.getProffesseur() est null?  "+classe.getProffesseur().getDiplomePers());
-					//System.err.println("classe.getProffesseur()== "+classe.getProffesseur().getIdUsers()+"   idUsers=="+idUsers);
+					////System.err.println("est ce que classessss.getProffesseur() est null?  "+classe.getProffesseur().getDiplomePers());
+					////System.err.println("classe.getProffesseur()== "+classe.getProffesseur().getIdUsers()+"   idUsers=="+idUsers);
 					if(classe.getProffesseur().getIdUsers().longValue() == idUsers.longValue()){
 						/*
 						 * Il faut juste verifier que le niveau n'est pas deja dans la liste resultat qu'il faut retourner
@@ -1789,7 +2065,7 @@ public class UsersServiceImplementation implements IUsersService {
 				}
 			}
 		}
-		//System.err.println("listofAllNiveauxDirigesEns==  "+listofAllNiveauxDirigesEns.size());
+		////System.err.println("listofAllNiveauxDirigesEns==  "+listofAllNiveauxDirigesEns.size());
 		return listofAllNiveauxDirigesEns;
 	}
 
@@ -2048,7 +2324,7 @@ public class UsersServiceImplementation implements IUsersService {
 				+ "setTitulaireClasse "+idClasseConcerne+" idProf "+idProfTitulaire);*/
 
 		if((classeConcerne == null) || (profTitulaire == null)) return -1;
-		//System.err.println("la classe "+classeConcerne.getIdClasses() + " sera dirige par "+profTitulaire.getNomsPers());
+		////System.err.println("la classe "+classeConcerne.getIdClasses() + " sera dirige par "+profTitulaire.getNomsPers());
 		/*
 		 * Il faut vérifier l'existance du rôle TITULAIRE avant de faire les mise à jour
 		 */
@@ -2056,7 +2332,7 @@ public class UsersServiceImplementation implements IUsersService {
 		Roles role=this.findRoles("TITULAIRE");
 
 		if(role == null) return 0;
-		//System.err.println(" l'enseignant  "+profTitulaire.getNomsPers()+" aura donc un role de plus qui est "+role.getRole());
+		////System.err.println(" l'enseignant  "+profTitulaire.getNomsPers()+" aura donc un role de plus qui est "+role.getRole());
 
 		/*
 		 * Il faut recuperer s'il existe l'ancien titulaire de la classe. 
@@ -2068,7 +2344,7 @@ public class UsersServiceImplementation implements IUsersService {
 		
 		int rep = this.saveUsersRoles(profTitulaire.getIdUsers(), role.getRole());
 
-		//System.err.println(" on enregistre donc ce role comme etant un role du user");
+		////System.err.println(" on enregistre donc ce role comme etant un role du user");
 		if(rep != 1) return -1;
 
 		classeConcerne.setProffesseur(profTitulaire);
@@ -2223,7 +2499,7 @@ public class UsersServiceImplementation implements IUsersService {
 				eval.setSequence(seqEval);
 				eval.setTypeEval(typeEval);
 
-				//System.err.println("eval.getProportion cc ds");
+				////System.err.println("eval.getProportion cc ds");
 				evalRepository.save(eval);
 				ret = 1;
 			}
@@ -2233,7 +2509,7 @@ public class UsersServiceImplementation implements IUsersService {
 		}
 		else{
 
-			//System.err.println("eval.getProportion  "+proportionEval+" evalId "+evalDeTypeExist.getIdEval().longValue());
+			////System.err.println("eval.getProportion  "+proportionEval+" evalId "+evalDeTypeExist.getIdEval().longValue());
 			if(proportionEval > 0 && proportionEval < 100){
 				evalDeTypeExist.setProportionEval(proportionEval);
 
@@ -2281,14 +2557,16 @@ public class UsersServiceImplementation implements IUsersService {
 		int newproportionEval_associe = 0;
 		Evaluations evalConcerne = this.findEvaluations(idEval);
 		if(evalConcerne == null) {
-			System.err.println("yyyyyyyyyyyyyyyyy evalConcerne non trouve au "
+			/*
+			 * System.System.err.println("yyyyyyyyyyyyyyyyy evalConcerne non trouve au "
 					+ " moment du changement de proportion d'évaluation dans updateProportionEvaluation");
+			*/
 			return -1;
 		}
 		if(new_proportion<=100){
 			newproportionEval_associe = 100 - new_proportion;
 			String typeEval_associe = evalConcerne.getTypeEval().equalsIgnoreCase("CC")==true?"DS":"CC";
-			System.err.println("le type d'évaluation associe est "+typeEval_associe);
+			//System.err.println("le type d'évaluation associe est "+typeEval_associe);
 			
 			Evaluations evalDeTypeAssocieExist = this.findEvaluations(evalConcerne.getCours().getIdCours(), 
 					evalConcerne.getSequence().getIdPeriodes(), typeEval_associe);
@@ -2634,7 +2912,7 @@ public class UsersServiceImplementation implements IUsersService {
 				suffixe = ""+next_numero;
 			}
 			matricule = prefixe+suffixe;
-			System.err.println("prefixe "+prefixe+" suffixe "+suffixe);
+			//System.err.println("prefixe "+prefixe+" suffixe "+suffixe);
 			return matricule;
 			
 			
@@ -2664,7 +2942,7 @@ public class UsersServiceImplementation implements IUsersService {
 				suffixe = ""+numero;
 			}
 			matricule = prefixe+suffixe;
-			System.err.println("prefixe "+prefixe+" suffixe "+suffixe);
+			//System.err.println("prefixe "+prefixe+" suffixe "+suffixe);
 			return matricule;
 			
 		}
@@ -2786,8 +3064,8 @@ public class UsersServiceImplementation implements IUsersService {
 	public Collection<PV_TrimestreBean> generatePVTrimestre(Long idClasse,	Long idCours, 
 			Long idTrimestre){
 		
-		System.out.println("Lancement de la methode generatePVTrimestre "
-				+ "avec idClasse="+idClasse+" idCours="+idCours+"idTrimestre="+idTrimestre);
+		/*System.out.println("Lancement de la methode generatePVTrimestre "
+				+ "avec idClasse="+idClasse+" idCours="+idCours+"idTrimestre="+idTrimestre);*/
 		
 		Classes classe = this.findClasses(idClasse);
 		
@@ -3008,8 +3286,15 @@ public class UsersServiceImplementation implements IUsersService {
 			
 			String classeString = classeConcerne.getCodeClasses()+
 					classeConcerne.getSpecialite().getCodeSpecialite()+classeConcerne.getNumeroClasses();
-			String profPrincipal = classeConcerne.getProffesseur().getNomsPers()+" "+
+			/*****************************************************
+			 * Il faut verifier si le proffesseur principal n'a pas encore ete specifie pour la classe
+			 * Si c'est le cas alors il faut placer le vide devant car aucun prof principal n'existe
+			 */
+			String profPrincipal ="";
+			if(classeConcerne.getProffesseur()!=null){
+				profPrincipal = classeConcerne.getProffesseur().getNomsPers()+" "+
 					classeConcerne.getProffesseur().getPrenomsPers();
+			}
 			
 			
 			int effectifTotalClasse =ub.geteffectifEleve(classeConcerne);
@@ -3317,10 +3602,10 @@ public class UsersServiceImplementation implements IUsersService {
 				 * A traduire en fonction de la langue de la classe
 				 */
 				if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
-					bulletinSeq.setNom_g1("Scientifique");
+					bulletinSeq.setNom_g1("SCIENTIFIQUE");
 				}
 				else{
-					bulletinSeq.setNom_g1("Scientific");
+					bulletinSeq.setNom_g1("SCIENCES");
 				}
 				
 				double total_coef_g1 = ligneSequentielGroupeCoursScientifique.getTotalCoefElevePourGroupeCours();
@@ -3342,7 +3627,7 @@ public class UsersServiceImplementation implements IUsersService {
 				double valeurMoyPremierGrpCours1 = ub.getValeurMoyennePremierPourGrpDansSeq(
 						listofElevesClasse, listofCoursScientifique, sequenceConcerne);
 				
-				if(valeurMoyDernierGrpCours1>0 && valeurMoyPremierGrpCours1>0){
+				if(valeurMoyDernierGrpCours1>=0 && valeurMoyPremierGrpCours1>0){
 					totalextreme_g1 = "["+valeurMoyDernierGrpCours1+" ; "+
 							valeurMoyPremierGrpCours1+"]";
 				}
@@ -3387,10 +3672,10 @@ public class UsersServiceImplementation implements IUsersService {
 						ub.getLigneSequentielGroupeCours(eleve, listofCoursLitteraire, sequenceConcerne);
 				
 				if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
-					bulletinSeq.setNom_g2("Litteraire");
+					bulletinSeq.setNom_g2("LITTERAIRES");
 				}
 				else{
-					bulletinSeq.setNom_g2("Arts");
+					bulletinSeq.setNom_g2("ARTS");
 				}
 				
 				double total_coef_g2 = ligneSequentielGroupeCoursLitteraire.getTotalCoefElevePourGroupeCours();
@@ -3411,7 +3696,7 @@ public class UsersServiceImplementation implements IUsersService {
 				double valeurMoyPremierGrpCours2 = ub.getValeurMoyennePremierPourGrpDansSeq(
 						listofElevesClasse, listofCoursLitteraire, sequenceConcerne);
 				
-				if(valeurMoyDernierGrpCours2>0 && valeurMoyPremierGrpCours2>0){
+				if(valeurMoyDernierGrpCours2>=0 && valeurMoyPremierGrpCours2>0){
 					totalextreme_g2 = "["+valeurMoyDernierGrpCours2+" ; "+
 							valeurMoyPremierGrpCours2+"]";
 				}
@@ -3458,10 +3743,10 @@ public class UsersServiceImplementation implements IUsersService {
 						ub.getLigneSequentielGroupeCours(eleve, listofCoursDivers, sequenceConcerne);
 				
 				if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
-					bulletinSeq.setNom_g3("Divers");
+					bulletinSeq.setNom_g3("DIVERS");
 				}
 				else{
-					bulletinSeq.setNom_g3("Others");
+					bulletinSeq.setNom_g3("OTHERS");
 				}
 				
 				double total_coef_g3 = ligneSequentielGroupeCoursDivers.getTotalCoefElevePourGroupeCours();
@@ -3482,7 +3767,7 @@ public class UsersServiceImplementation implements IUsersService {
 				double valeurMoyPremierGrpCours3 = ub.getValeurMoyennePremierPourGrpDansSeq(
 						listofElevesClasse, listofCoursDivers, sequenceConcerne);
 				
-				if(valeurMoyDernierGrpCours3>0 && valeurMoyPremierGrpCours3>0){
+				if(valeurMoyDernierGrpCours3>=0 && valeurMoyPremierGrpCours3>0){
 					totalextreme_g3 = "["+valeurMoyDernierGrpCours3+" ; "+
 							valeurMoyPremierGrpCours3+"]";
 				}
@@ -3541,9 +3826,19 @@ public class UsersServiceImplementation implements IUsersService {
 					RapportSequentielCours rapportSequentielCours = ub.getRapportSequentielCours(
 							classeConcerne, cours, sequenceConcerne);
 					
+					String matiere = ub.subString(cours.getIntituleCours(), 25);
+					matiere = matiere + ":";
+					String codeMat = ub.subString(cours.getCodeCours(), 8);
+					matiere = matiere + codeMat;
 					
-					mGrp1SeqBean.setMatiere_g1(cours.getCodeCours());
-					mGrp1SeqBean.setProf_g1(cours.getProffesseur().getNomsPers());
+					String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 25);
+					
+					String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+					nomProf = ub.subString(nomProf, 20);
+					
+					mGrp1SeqBean.setMatiere_g1(matiere);
+					mGrp1SeqBean.setMatiere_g1_2emelang(matiere_2emelang);
+					mGrp1SeqBean.setProf_g1(nomProf);
 					
 					double note_seq_g1 = ub.getValeurNotesFinaleEleve(eleve, cours, sequenceConcerne);
 					
@@ -3559,7 +3854,7 @@ public class UsersServiceImplementation implements IUsersService {
 					double noteDernierCours = rapportSequentielCours.getValeurNoteDernier();
 					double notePremierCours = rapportSequentielCours.getValeurNotePremier();
 					
-					if(noteDernierCours>0 && notePremierCours>0){
+					if(noteDernierCours>=0 && notePremierCours>0){
 						extreme_g1 = "["+noteDernierCours+" ; "+ notePremierCours+"]";
 						mGrp1SeqBean.setExtreme_g1(extreme_g1);
 					}
@@ -3584,7 +3879,7 @@ public class UsersServiceImplementation implements IUsersService {
 					double pourcentage_g1 = ub.getTauxReussiteCoursSeq(classeConcerne, cours, sequenceConcerne);
 					
 					if(pourcentage_g1>=0){
-						mGrp1SeqBean.setPourcentage_g1(pourcentage_g1);
+						mGrp1SeqBean.setPourcentage_g1(pourcentage_g1+" %");
 					}
 					
 					String appreciationNote = ub.calculAppreciation(note_seq_g1,lang);
@@ -3620,9 +3915,22 @@ public class UsersServiceImplementation implements IUsersService {
 					RapportSequentielCours rapportSequentielCours = ub.getRapportSequentielCours(
 							classeConcerne, cours, sequenceConcerne);
 		
+					
+					String matiere = ub.subString(cours.getIntituleCours(), 25);
+					matiere = matiere + ":";
+					String codeMat = ub.subString(cours.getCodeCours(), 8);
+					matiere = matiere + codeMat;
+					
+					String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 25);
+					
+					String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+					nomProf = ub.subString(nomProf, 20);
+					
+					mGrp2SeqBean.setMatiere_g2(matiere);
+					mGrp2SeqBean.setMatiere_g2_2emelang(matiere_2emelang);
+					mGrp2SeqBean.setProf_g2(nomProf);
+					
 		
-					mGrp2SeqBean.setMatiere_g2(cours.getCodeCours());
-					mGrp2SeqBean.setProf_g2(cours.getProffesseur().getNomsPers());
 					
 					double note_seq_g2 = ub.getValeurNotesFinaleEleve(eleve, cours, sequenceConcerne);
 					
@@ -3639,7 +3947,7 @@ public class UsersServiceImplementation implements IUsersService {
 					double noteDernierCours = rapportSequentielCours.getValeurNoteDernier();
 					double notePremierCours = rapportSequentielCours.getValeurNotePremier();
 					
-					if(noteDernierCours>0 && notePremierCours>0){
+					if(noteDernierCours>=0 && notePremierCours>0){
 						extreme_g2 = "["+noteDernierCours+" ; "+ notePremierCours+"]";
 						mGrp2SeqBean.setExtreme_g2(extreme_g2);
 					}
@@ -3665,7 +3973,7 @@ public class UsersServiceImplementation implements IUsersService {
 					double pourcentage_g2 = ub.getTauxReussiteCoursSeq(classeConcerne, cours, sequenceConcerne);
 					
 					if(pourcentage_g2>=0){
-						mGrp2SeqBean.setPourcentage_g2(pourcentage_g2);
+						mGrp2SeqBean.setPourcentage_g2(pourcentage_g2+" %");
 					}
 		
 					String appreciationNote = ub.calculAppreciation(note_seq_g2,lang);
@@ -3698,9 +4006,21 @@ public class UsersServiceImplementation implements IUsersService {
 					RapportSequentielCours rapportSequentielCours = ub.getRapportSequentielCours(
 							classeConcerne, cours, sequenceConcerne);
 		
+					String matiere = ub.subString(cours.getIntituleCours(), 25);
+					matiere = matiere + ":";
+					String codeMat = ub.subString(cours.getCodeCours(), 8);
+					matiere = matiere + codeMat;
+					
+					String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 25);
+					
+					String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+					nomProf = ub.subString(nomProf, 20);
+					
+					mGrp3SeqBean.setMatiere_g3(matiere);
+					mGrp3SeqBean.setMatiere_g3_2emelang(matiere_2emelang);
+					mGrp3SeqBean.setProf_g3(nomProf);
 		
-					mGrp3SeqBean.setMatiere_g3(cours.getCodeCours());
-					mGrp3SeqBean.setProf_g3(cours.getProffesseur().getNomsPers());
+					
 					
 					double note_seq_g3 = ub.getValeurNotesFinaleEleve(eleve, cours, sequenceConcerne);
 					
@@ -3717,7 +4037,7 @@ public class UsersServiceImplementation implements IUsersService {
 					double noteDernierCours = rapportSequentielCours.getValeurNoteDernier();
 					double notePremierCours = rapportSequentielCours.getValeurNotePremier();
 					
-					if(noteDernierCours>0 && notePremierCours>0){
+					if(noteDernierCours>=0 && notePremierCours>0){
 						extreme_g3 = "["+noteDernierCours+" ; "+ notePremierCours+"]";
 						mGrp3SeqBean.setExtreme_g3(extreme_g3);
 					}
@@ -3743,7 +4063,7 @@ public class UsersServiceImplementation implements IUsersService {
 					double pourcentage_g3 = ub.getTauxReussiteCoursSeq(classeConcerne, cours, sequenceConcerne);
 					
 					if(pourcentage_g3>=0){
-						mGrp3SeqBean.setPourcentage_g3(pourcentage_g3);
+						mGrp3SeqBean.setPourcentage_g3(pourcentage_g3+" %");
 					}
 		
 					String appreciationNote = ub.calculAppreciation(note_seq_g3,lang);
@@ -3762,9 +4082,11 @@ public class UsersServiceImplementation implements IUsersService {
 				
 				long finforTime = System.currentTimeMillis();
 				collectionofBulletionSequence_opt.add(bulletinSeq);
+				
 				System.err.println("bulletin "+numBull+" de  "+ eleve.getNomsEleves()+
 						" de la sequence "+sequenceConcerne.getNumeroSeq()+
 						"  ajouter avec succes en "+(finforTime-startTimeFor));
+				
 				numBull++;
 				
 				
@@ -3793,6 +4115,899 @@ public class UsersServiceImplementation implements IUsersService {
 		return donnee;
 	
 	}
+	
+	
+	public Collection<BulletinSequenceBean> generate1BulletinSequence(Long idEleve, Long idClasse, 
+			Long idSequence){
+		List<BulletinSequenceBean> collectionofBulletinSeq = new ArrayList<BulletinSequenceBean>();
+
+
+		// long startTime = System.currentTimeMillis();
+		 
+		 Etablissement etablissementConcerne = this.getEtablissement();
+		 String villeEtab = "";
+		 if(etablissementConcerne != null) villeEtab = etablissementConcerne.getVilleEtab();
+		 
+		 Classes classeConcerne = this.findClasses(idClasse);
+		 Annee anneeScolaire = this.findAnneeActive();
+		 Sequences sequenceConcerne = this.findSequences(idSequence);
+		 Eleves eleveConcerne = this.findEleves(idEleve);
+		 
+		
+		 if((classeConcerne==null) || (sequenceConcerne==null) || (eleveConcerne==null)) {
+			//System.err.println("les données de calcul du bean bulletin sont errone donc rien n'est possible ");
+			return null;
+		 }
+		 
+		 String lang="";
+		 if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+			 lang="fr";
+		 }
+		 else{
+			 lang="en";
+		 }
+
+	
+			
+			List<Cours> listofCoursEvalue = ub.getListOfCoursEvalueDansSequence(classeConcerne, 
+					sequenceConcerne);
+			
+			/*
+			 * Etablissons ensuite la liste des 3 groupes de cours(scientifique, littéraire et divers dans la 
+			 * section général)
+			 */
+			
+			List<Cours> listofCoursScientifique = ub.getListofCoursScientifiqueDansClasse(classeConcerne);
+			
+			List<Cours> listofCoursLitteraire = ub.getListofCoursLitteraireDansClasse(classeConcerne);
+			
+			List<Cours> listofCoursDivers = ub.getListofCoursDiversDansClasse(classeConcerne);
+			
+			
+			/*
+			 * Donnée du bulletin qui ne doivent pas être recalcule à chaque tour de boucle sur les élèves
+			 * car elles ne dépendent pas d'un seul élève et son identique pour tous les bulletins d'une classe 
+			 * dans une séquence
+			 */
+			List<Eleves> listofElevesClasse = (List<Eleves>) classeConcerne.getListofEleves();
+			
+			List<Eleves> listofEleveRegulier = ub.getListofEleveRegulier(classeConcerne, sequenceConcerne);
+			
+			RapportSequentielClasse rapportSequentielClasse = ub.getRapportSequentielClasse(classeConcerne, 
+					listofEleveRegulier, sequenceConcerne);
+			double moyenne_premier_classe = 0.0;
+			double moyenne_dernier_classe = 0.0;
+			int nbre_moyenne_classeSeq = 0;
+			double tauxReussite = 0.0;
+			double moyenne_general = 0.0;
+			
+			moyenne_premier_classe = rapportSequentielClasse.getValeurMoyennePremierDansSeq();
+				
+			moyenne_dernier_classe = rapportSequentielClasse.getValeurMoyenneDernierDansSeq();
+				
+			nbre_moyenne_classeSeq = rapportSequentielClasse.getNbreMoyennePourSeq();
+				
+			tauxReussite = rapportSequentielClasse.getTauxReussiteSequentiel();
+				
+			moyenne_general = rapportSequentielClasse.getMoyenneGeneralSequence();
+			
+			
+			
+			String classeString = classeConcerne.getCodeClasses()+
+					classeConcerne.getSpecialite().getCodeSpecialite()+classeConcerne.getNumeroClasses();
+			/*****************************************************
+			 * Il faut verifier si le proffesseur principal n'a pas encore ete specifie pour la classe
+			 * Si c'est le cas alors il faut placer le vide devant car aucun prof principal n'existe
+			 */
+			String profPrincipal ="";
+			if(classeConcerne.getProffesseur()!=null){
+				profPrincipal = classeConcerne.getProffesseur().getNomsPers()+" "+
+					classeConcerne.getProffesseur().getPrenomsPers();
+			}
+			
+			
+			int effectifTotalClasse =ub.geteffectifEleve(classeConcerne);
+			
+			int effectifRegulierClasseSeq = ub.geteffectifEleveRegulier(classeConcerne, sequenceConcerne);
+			
+			
+			int numBull = 1;
+			
+			/*
+			 * On va appeler une méthode qui retourne une Map<idCours, List<Eleves>>
+			 * Chaque entrée de la Map a comme cle l'id d'un cours passant dans la classe et 
+			 * comme valeur la liste des élèves rangés dans l'ordre décroissant des notes obtenues 
+			 * dans la séquence considérée. Pour que le trie des élèves ne soit pas fait pour chaque 
+			 * élève dans le but de trouver son rang.
+			 */
+			Map<Long, List<Eleves>> mapCoursEleves = 
+					ub.getMapCoursElevesOrdreDecroissantSequence(classeConcerne, sequenceConcerne);
+			
+			/*
+			 * On va appeler une méthode qui retourne la liste des élèves classés dans l'ordre décroissant 
+			 * des moyenne obtenu Séquentiellement. Pour que le trie ne soit pas fait sur chaque élève 
+			 * traité dans le but de trouver son rang.
+			 */
+			List<Eleves> listofElevesOrdreDecroissantMoyenneSequentiel = (List<Eleves>) 
+					UtilitairesBulletins.getMoyenneSequentielOrdreDecroissant_static(classeConcerne, sequenceConcerne);
+
+			for(Eleves eleve : listofElevesClasse){
+				if(eleve.getIdEleves()==eleveConcerne.getIdEleves()){
+					long startTimeFor = System.currentTimeMillis();
+					
+					BulletinSequenceBean bulletinSeq = new BulletinSequenceBean();
+					/*
+					 * Initialisons les premieres donnees du bulletin sequentiel
+					 */
+					/****
+					 * Information d'entete du bulletin
+					 */
+					bulletinSeq.setMinistere_fr(etablissementConcerne.getMinisteretuteleEtab());
+					bulletinSeq.setMinistere_en(etablissementConcerne.getMinisteretuteleanglaisEtab());
+					bulletinSeq.setDelegation_en(etablissementConcerne.getDeleguationdeptuteleanglaisEtab());
+					bulletinSeq.setDelegation_fr(etablissementConcerne.getDeleguationdeptuteleEtab());
+					bulletinSeq.setEtablissement_en(etablissementConcerne.getNomsanglaisEtab());
+					bulletinSeq.setEtablissement_fr(etablissementConcerne.getNomsEtab());
+					bulletinSeq.setAdresse("BP "+etablissementConcerne.getBpEtab()+"/"+
+							etablissementConcerne.getNumtel1Etab()+"/"+etablissementConcerne.getEmailEtab());
+					bulletinSeq.setDevise_en(etablissementConcerne.getDeviseanglaisEtab());
+					bulletinSeq.setDevise_fr(etablissementConcerne.getDeviseEtab());
+					
+					if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+						bulletinSeq.setTitre_bulletin("Bulletin de note de la séquence "+sequenceConcerne.getNumeroSeq());
+					}
+					else{
+						bulletinSeq.setTitre_bulletin("Report card of sequence "+sequenceConcerne.getNumeroSeq());
+					}
+					bulletinSeq.setAnnee_scolaire_en("School year "+anneeScolaire.getIntituleAnnee());
+					bulletinSeq.setAnnee_scolaire_fr("Année scolaire "+anneeScolaire.getIntituleAnnee());
+					
+					/*****
+					 * Pour le chargement des photos: Si une photos n'est pas dispo il y aura une exception 
+					 * puisque Jasper ne pourra pas trouver l'image. Donc il faut un moyen de ne rien fixé 
+					 * à setPhoto lorsque l'image n'est pas dispo. Pour vérifier que l'image n'est pas dispo
+					 * on va essayer de charger le fichier correspondant avec la classe File de java.io
+					 */
+					File f=new File(photoElevesDir+eleve.getIdEleves());
+					//System.err.println("est ce que le fichier existe "+f.exists());
+					
+					if(f.exists()==true){
+						bulletinSeq.setPhoto(photoElevesDir+eleve.getIdEleves()); 
+					}
+					
+					
+					/***************
+					 * Information personnel de l'élève
+					 */
+					bulletinSeq.setNumero(" "+eleve.getNumero(listofElevesClasse));
+					bulletinSeq.setSexe(eleve.getSexeEleves());
+					bulletinSeq.setNom_eleve(" "+eleve.getNomsEleves().toUpperCase());
+					bulletinSeq.setPrenom_eleve(eleve.getPrenomsEleves().toUpperCase());
+					SimpleDateFormat spd = new SimpleDateFormat("dd/MM/yyyy");
+					bulletinSeq.setDate_naissance_eleve(spd.format(eleve.getDatenaissEleves()));
+					bulletinSeq.setLieu_naissance_eleve(eleve.getLieunaissEleves());
+					bulletinSeq.setMatricule_eleve(eleve.getMatriculeEleves());
+					bulletinSeq.setRedoublant(eleve.getRedoublant());
+					bulletinSeq.setClasse_eleve(classeString);
+					bulletinSeq.setProf_principal(profPrincipal);
+					bulletinSeq.setEffectif_classe(effectifTotalClasse);
+					bulletinSeq.setEffectif_presente(effectifRegulierClasseSeq);
+					
+					/********
+					 * Informations sur les labels d'entete des notes séquentiels
+					 */
+					bulletinSeq.setLabel_seq_x_coef("Note*Coef");
+					bulletinSeq.setLabel_sequence("Note Seq"+sequenceConcerne.getNumeroSeq());
+					
+					/***********
+					 * Information sur les totaux séquentiels
+					 */
+					
+					double total_coef = ub.getSommeCoefCoursComposeD(eleve, sequenceConcerne);
+					double t_coef = 1.0*total_coef;
+					bulletinSeq.setTotal_coef(t_coef);
+					
+					double total_points = ub.getTotalPointsSequentiel(eleve, sequenceConcerne);
+					
+					if(total_points>0){
+						bulletinSeq.setTotal_points(total_points);
+					}
+					
+					/***********
+					 * Informations sur les resultats sequentiels de l'eleve
+					 */
+					bulletinSeq.setResult_tt_coef(total_coef);
+					
+					if(total_points>0){
+						bulletinSeq.setResult_tt_points(total_points);
+					}
+					
+					
+					
+					//Cette methode donne un rang a tout le monde meme ceux qui n'ont compose qu'un seul cours
+					
+					 int rang = ub.getRangSequentielEleveAuMoinsUneNote(eleve, 
+							 listofElevesOrdreDecroissantMoyenneSequentiel);
+					
+					if(rang>0){
+						bulletinSeq.setResult_rang_seq(rang+"e");
+					}
+					
+					
+					/***************************************************
+					 * Informations sur le profil  de la classe dans la séquence
+					 */
+					if(moyenne_premier_classe>0){
+						bulletinSeq.setMoy_premier(moyenne_premier_classe);
+					}
+					if(moyenne_dernier_classe>0){
+						bulletinSeq.setMoy_dernier(moyenne_dernier_classe);
+					}
+					bulletinSeq.setNbre_moyennes(nbre_moyenne_classeSeq);
+					if(tauxReussite>0){
+						bulletinSeq.setTaux_reussite(tauxReussite);
+					}
+					if(moyenne_general>0){
+						bulletinSeq.setMoy_gen_classe(moyenne_general);
+					}
+					
+					
+					/***********************
+					 * Informations sur la conduite sequentiel de l'élève
+					 */
+					//List<RapportDAbsence> listofRabs = eleve.getListRapportDAbsenceSeq(idSequence);
+					
+					bulletinSeq.setAbsence_J(eleve.getNbreHeureAbsenceJustifie(idSequence));
+					bulletinSeq.setAbsence_NJ(eleve.getNbreHeureAbsenceNonJustifie(idSequence));
+					
+					/*
+					 * On doit prendre si elle existe les 03 sanctions ayant le niveau de sévérité
+					 * le plus élevée parmi toutes les sanctions obtenus par l'élève pendant la période.
+					 * 			 */
+					bulletinSeq.setRapport_disc1("");
+					bulletinSeq.setRapport_disc2("");
+					bulletinSeq.setRapport_disc3("");
+					List<RapportDisciplinaire> listofRDiscEleve = eleve.getListRapportDisciplinaireSeq_DESC(idSequence);
+					
+					if(listofRDiscEleve != null){
+						if(listofRDiscEleve.size()>0) {
+							RapportDisciplinaire rdisc = listofRDiscEleve.get(0);
+							String rdisc_chaine = "";
+							rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+							//On peut donc fixer rapport_disc1
+							bulletinSeq.setRapport_disc1(rdisc_chaine);
+						}
+						
+						/*
+						 * On ne fait pas de else car il faut encore reprendre le test et au cas ou ca marche 
+						 * on va set rapport_disc2
+						 */
+						if(listofRDiscEleve.size()>1) {
+	
+							RapportDisciplinaire rdisc = listofRDiscEleve.get(1);
+							String rdisc_chaine = "";
+							rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+							//On peut donc fixer rapport_disc1
+							bulletinSeq.setRapport_disc2(rdisc_chaine);
+						
+						}
+						
+						if(listofRDiscEleve.size()>2) {
+	
+							RapportDisciplinaire rdisc = listofRDiscEleve.get(2);
+							String rdisc_chaine = "";
+							rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+							
+							//On peut donc fixer rapport_disc1
+							bulletinSeq.setRapport_disc3(rdisc_chaine);
+											
+						}
+						
+					}
+					
+					/**************************
+					 * Informations sur le rappel de la moyenne et du rang sequentiel
+					 */
+					if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+						bulletinSeq.setRappel_1("Séquence "+sequenceConcerne.getNumeroSeq());
+					}
+					else{
+						bulletinSeq.setRappel_1("Sequence "+sequenceConcerne.getNumeroSeq());
+					}
+					
+					double moy_seq = ub.getMoyenneSequentiel(eleve, sequenceConcerne);
+					
+					if(moy_seq>0){
+						bulletinSeq.setR_moy_1(moy_seq);
+					}
+					
+					if(rang>0){
+						bulletinSeq.setR_rang_1(rang+"e");
+					}
+					else{
+						bulletinSeq.setR_rang_1("");
+					}
+					
+					
+					/****************************
+					 * Informations sur l'appreciation du travail de l'élève
+					 */
+					/*
+					 * A traduire en fonction de la langue de la classe
+					 */
+					bulletinSeq.setTableau_hon("");
+					bulletinSeq.setTableau_enc("");
+					bulletinSeq.setTableau_fel("");
+					String appreciation = ub.calculAppreciation(moy_seq,lang);
+					bulletinSeq.setAppreciation(appreciation);
+					
+					/*
+					 * On doit chercher la decision de conseil dans la periode sachant qu'on a une seule decision de 
+					 * conseil dans une période donnée (que ce soit séquence, trimestre ou année)
+					 */
+					DecisionConseil decConseil = eleve.getDecisionConseilPeriode(sequenceConcerne.getIdPeriodes());
+					bulletinSeq.setDistinction("");
+					bulletinSeq.setDecision_conseil("");
+					if(decConseil !=null){
+						/*******************************
+						 * Informations sur les distinctions octroyées  dans la séquence
+						 */
+						String distinction="";
+						distinction = decConseil.getSanctionTravDecisionConseilStringIntitule(lang);
+						bulletinSeq.setDistinction(distinction);
+						
+						/*******************************
+						 * Informations sur les decision du conseil de classe dans la séquence
+						 * en fait il s'agit de préciser les sanctions disciplinaire infligées à un élève lors du conseil
+						 * de classe.
+						 */
+						String decision="";
+						decision += decConseil.getSanctionDiscDecisionConseilString(lang);
+						/*distinction = decConseil.getSanctionTravDecisionConseilString(lang);
+						decision+=distinction;*/
+						bulletinSeq.setDecision_conseil(decision);
+					}
+					
+					
+					
+					List<Cours> listofCoursEffortAFournir = ub.getListofCoursDansOrdreEffortAFournir(eleve, listofCoursEvalue, 
+							sequenceConcerne);
+					bulletinSeq.setEffort_matiere1("");
+					bulletinSeq.setEffort_matiere2("");
+					bulletinSeq.setEffort_matiere3("");
+					if(listofCoursEffortAFournir.size()>0) {
+						String codeCours = listofCoursEffortAFournir.get(0).getCodeCours();
+						bulletinSeq.setEffort_matiere1(codeCours);
+					}
+					
+					
+					if(listofCoursEffortAFournir.size()>1) {
+						String codeCours = listofCoursEffortAFournir.get(1).getCodeCours();
+						bulletinSeq.setEffort_matiere2(codeCours);
+					}
+					
+					if(listofCoursEffortAFournir.size()>2) {
+						String codeCours = listofCoursEffortAFournir.get(2).getCodeCours();
+						bulletinSeq.setEffort_matiere3(codeCours);
+					}
+					
+					
+					
+					/*****************************
+					 * Information sur l'espace VISA du bulletin
+					 */
+					bulletinSeq.setVille(villeEtab);
+					
+					/****************
+					 * Informations lie au sommaire de chaque groupe
+					 * Groupe des matieres scientifique (Groupe1) dans la séquence
+					 * cccccccccccccccccccccccccc
+					 */
+					
+					LigneSequentielGroupeCours ligneSequentielGroupeCoursScientifique = 
+							ub.getLigneSequentielGroupeCours(eleve, listofCoursScientifique, sequenceConcerne);
+					
+					/*
+					 * A traduire en fonction de la langue de la classe
+					 */
+					if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+						bulletinSeq.setNom_g1("SCIENTIFIQUE");
+					}
+					else{
+						bulletinSeq.setNom_g1("SCIENCES");
+					}
+					
+					double total_coef_g1 = ligneSequentielGroupeCoursScientifique.getTotalCoefElevePourGroupeCours();
+					
+					
+					bulletinSeq.setTotal_coef_g1(total_coef_g1);
+					
+					double total_g1 = ligneSequentielGroupeCoursScientifique.getTotalNoteSeqElevePourGroupeCours();
+					
+					if(total_g1>0){
+						bulletinSeq.setTotal_g1(total_g1);
+					}
+					
+					String totalextreme_g1 = "";
+					
+					double valeurMoyDernierGrpCours1 = ub.getValeurMoyenneDernierPourGrpDansSeq(
+							listofElevesClasse, listofCoursScientifique, sequenceConcerne);
+					
+					double valeurMoyPremierGrpCours1 = ub.getValeurMoyennePremierPourGrpDansSeq(
+							listofElevesClasse, listofCoursScientifique, sequenceConcerne);
+					
+					if(valeurMoyDernierGrpCours1>=0 && valeurMoyPremierGrpCours1>0){
+						totalextreme_g1 = "["+valeurMoyDernierGrpCours1+" ; "+
+								valeurMoyPremierGrpCours1+"]";
+					}
+					bulletinSeq.setTotal_extreme_g1(totalextreme_g1);
+					
+					int r1 = ub.getRangMoyenneSeqElevePourGroupe(classeConcerne, listofCoursScientifique, 
+							sequenceConcerne, eleve);
+					
+					if(r1>0){
+						bulletinSeq.setTotal_rang_g1(r1+"e");
+					}
+					
+					
+					double moy_gen_grp1 = ub.getMoyenneGeneralPourGroupeCours(classeConcerne, 
+							listofCoursScientifique, sequenceConcerne);
+					
+					if(moy_gen_grp1>0){
+						bulletinSeq.setMg_classe_g1(moy_gen_grp1);
+					}
+					
+					double total_pourcentage_g1 = ub.getTauxReussitePourGroupeCours(classeConcerne, 
+							listofCoursScientifique, sequenceConcerne);
+					
+					if(total_pourcentage_g1>=0){
+						bulletinSeq.setTotal_pourcentage_g1(total_pourcentage_g1);
+					}
+					
+					double moyenne_g1 = ligneSequentielGroupeCoursScientifique.
+							getMoyenneSeqElevePourGroupeCours();
+					if(moyenne_g1>0){
+						bulletinSeq.setMoyenne_g1(moyenne_g1);
+					}
+					
+					/****************
+					 * Informations lie au sommaire de chaque groupe
+					 * Groupe des matieres litteraire (Groupe2) dans la séquence
+					 */
+					
+					
+					
+					LigneSequentielGroupeCours ligneSequentielGroupeCoursLitteraire = 
+							ub.getLigneSequentielGroupeCours(eleve, listofCoursLitteraire, sequenceConcerne);
+					
+					if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+						bulletinSeq.setNom_g2("LITTERAIRES");
+					}
+					else{
+						bulletinSeq.setNom_g2("ARTS");
+					}
+					
+					double total_coef_g2 = ligneSequentielGroupeCoursLitteraire.getTotalCoefElevePourGroupeCours();
+					
+					bulletinSeq.setTotal_coef_g2(total_coef_g2);
+					
+					double total_g2 = ligneSequentielGroupeCoursLitteraire.getTotalNoteSeqElevePourGroupeCours();
+					
+					if(total_g2>0){
+						bulletinSeq.setTotal_g2(total_g2);
+					}
+					
+					String totalextreme_g2 = "";
+					
+					double valeurMoyDernierGrpCours2 = ub.getValeurMoyenneDernierPourGrpDansSeq(
+							listofElevesClasse, listofCoursLitteraire, sequenceConcerne);
+					
+					double valeurMoyPremierGrpCours2 = ub.getValeurMoyennePremierPourGrpDansSeq(
+							listofElevesClasse, listofCoursLitteraire, sequenceConcerne);
+					
+					if(valeurMoyDernierGrpCours2>=0 && valeurMoyPremierGrpCours2>0){
+						totalextreme_g2 = "["+valeurMoyDernierGrpCours2+" ; "+
+								valeurMoyPremierGrpCours2+"]";
+					}
+					bulletinSeq.setTotal_extreme_g2(totalextreme_g2);
+					
+					
+					int r2 = ub.getRangMoyenneSeqElevePourGroupe(classeConcerne, listofCoursLitteraire, 
+							sequenceConcerne, eleve);
+					if(r2>0){
+						bulletinSeq.setTotal_rang_g2(r2+"e");
+					}	
+					
+					double moy_gen_grp2 = ub.getMoyenneGeneralPourGroupeCours(classeConcerne, 
+							listofCoursLitteraire, sequenceConcerne);
+					
+					if(moy_gen_grp2>0){
+						bulletinSeq.setMg_classe_g2(moy_gen_grp2);
+					}
+					
+					
+					double total_pourcentage_g2 = ub.getTauxReussitePourGroupeCours(classeConcerne, 
+							listofCoursLitteraire, sequenceConcerne);
+					
+					
+					
+					if(total_pourcentage_g2>=0){
+						bulletinSeq.setTotal_pourcentage_g2(total_pourcentage_g2);
+					}
+					
+					double moyenne_g2 = ligneSequentielGroupeCoursLitteraire.
+							getMoyenneSeqElevePourGroupeCours();
+					
+					
+					if(moyenne_g2>0){
+						bulletinSeq.setMoyenne_g2(moyenne_g2);
+					}
+					
+					/****************
+					 * Informations lie au sommaire de chaque groupe
+					 * Groupe des matieres Divers (Groupe3) dans la séquence
+					 */
+									
+					LigneSequentielGroupeCours ligneSequentielGroupeCoursDivers = 
+							ub.getLigneSequentielGroupeCours(eleve, listofCoursDivers, sequenceConcerne);
+					
+					if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+						bulletinSeq.setNom_g3("DIVERS");
+					}
+					else{
+						bulletinSeq.setNom_g3("OTHERS");
+					}
+					
+					double total_coef_g3 = ligneSequentielGroupeCoursDivers.getTotalCoefElevePourGroupeCours();
+					
+					bulletinSeq.setTotal_coef_g3(total_coef_g3);
+					
+					double total_g3 = ligneSequentielGroupeCoursDivers.getTotalNoteSeqElevePourGroupeCours();
+					
+					if(total_g3>0){
+						bulletinSeq.setTotal_g3(total_g3);
+					}
+					
+					String totalextreme_g3 = "";
+					
+					double valeurMoyDernierGrpCours3 = ub.getValeurMoyenneDernierPourGrpDansSeq(
+							listofElevesClasse, listofCoursLitteraire, sequenceConcerne);
+					
+					double valeurMoyPremierGrpCours3 = ub.getValeurMoyennePremierPourGrpDansSeq(
+							listofElevesClasse, listofCoursDivers, sequenceConcerne);
+					
+					if(valeurMoyDernierGrpCours3>=0 && valeurMoyPremierGrpCours3>0){
+						totalextreme_g3 = "["+valeurMoyDernierGrpCours3+" ; "+
+								valeurMoyPremierGrpCours3+"]";
+					}
+					bulletinSeq.setTotal_extreme_g3(totalextreme_g3);
+					
+					
+					int r3 = ub.getRangMoyenneSeqElevePourGroupe(classeConcerne, listofCoursDivers, 
+							sequenceConcerne, eleve);
+					if(r3>0){
+						bulletinSeq.setTotal_rang_g3(r3+"e");
+					}
+					
+					
+					double moy_gen_grp3 = ub.getMoyenneGeneralPourGroupeCours(classeConcerne, 
+							listofCoursDivers, sequenceConcerne);
+					
+					if(moy_gen_grp3>0){
+						bulletinSeq.setMg_classe_g3(moy_gen_grp3);
+					}
+					
+					
+					double total_pourcentage_g3 = ub.getTauxReussitePourGroupeCours(classeConcerne, 
+							listofCoursDivers, sequenceConcerne);
+					
+					if(total_pourcentage_g3>=0){
+						bulletinSeq.setTotal_pourcentage_g3(total_pourcentage_g3);
+					}
+					
+					double moyenne_g3 = ligneSequentielGroupeCoursDivers.
+							getMoyenneSeqElevePourGroupeCours();
+					
+					if(moyenne_g3>0){
+						bulletinSeq.setMoyenne_g3(moyenne_g3);
+					}
+					
+					t_coef = total_coef_g1+total_coef_g2+total_coef_g3;
+					
+					bulletinSeq.setTotal_coef(t_coef);
+					
+					/************************************
+					 * Listes alimentant les sous rapport: les rapports sur les groupes des matières 
+					 **********/
+					
+					
+					List<MatiereGroupe1SequenceBean> listofCoursScientifiqueSequenceBean 
+								= new ArrayList<MatiereGroupe1SequenceBean>(); 
+					
+					int rc1 = 0;
+					//Gestion des cours scientifique
+					for(Cours cours : listofCoursScientifique){
+						
+						//long debutforCoursTime = System.currentTimeMillis();
+						
+						MatiereGroupe1SequenceBean mGrp1SeqBean = new MatiereGroupe1SequenceBean();
+							
+						RapportSequentielCours rapportSequentielCours = ub.getRapportSequentielCours(
+								classeConcerne, cours, sequenceConcerne);
+						
+						String matiere = ub.subString(cours.getIntituleCours(), 25);
+						matiere = matiere + ":";
+						String codeMat = ub.subString(cours.getCodeCours(), 8);
+						matiere = matiere + codeMat;
+						
+						String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 25);
+						
+						String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+						nomProf = ub.subString(nomProf, 20);
+						
+						mGrp1SeqBean.setMatiere_g1(matiere);
+						mGrp1SeqBean.setMatiere_g1_2emelang(matiere_2emelang);
+						mGrp1SeqBean.setProf_g1(nomProf);
+						
+						double note_seq_g1 = ub.getValeurNotesFinaleEleve(eleve, cours, sequenceConcerne);
+						
+						if(note_seq_g1>0){
+							mGrp1SeqBean.setNote_seq_g1(note_seq_g1);
+						}
+						double total_seq_g1 = note_seq_g1*cours.getCoefCours();
+						if(total_seq_g1>0){
+							mGrp1SeqBean.setTotal_seq_g1(total_seq_g1);
+						}
+						mGrp1SeqBean.setCoef_g1(cours.getCoefCours());
+						String extreme_g1 = "";
+						double noteDernierCours = rapportSequentielCours.getValeurNoteDernier();
+						double notePremierCours = rapportSequentielCours.getValeurNotePremier();
+						
+						if(noteDernierCours>=0 && notePremierCours>0){
+							extreme_g1 = "["+noteDernierCours+" ; "+ notePremierCours+"]";
+							mGrp1SeqBean.setExtreme_g1(extreme_g1);
+						}
+						
+						List<Eleves> listofEleveOrdreDecroissantPourCours = mapCoursEleves.get(cours.getIdCours());
+						
+						rc1 = ub.getRangNoteSequentielElevePourCours_opt(eleve, 
+								listofEleveOrdreDecroissantPourCours);
+						if(rc1>0){
+							mGrp1SeqBean.setRang_g1(rc1+"e");
+						}
+						
+						
+						double moy_classe_g1 = ub.getMoyenneGeneralCoursSeq(classeConcerne, cours, 
+								sequenceConcerne);
+						
+						if(moy_classe_g1>0){
+							mGrp1SeqBean.setMoy_classe_g1(moy_classe_g1);
+						}
+						
+						
+						double pourcentage_g1 = ub.getTauxReussiteCoursSeq(classeConcerne, cours, sequenceConcerne);
+						
+						if(pourcentage_g1>=0){
+							mGrp1SeqBean.setPourcentage_g1(pourcentage_g1+" %");
+						}
+						
+						String appreciationNote = ub.calculAppreciation(note_seq_g1,lang);
+						mGrp1SeqBean.setAppreciation_g1(appreciationNote);
+						
+						//On ajoute la ligne de cours dans le groupe correspondant
+						listofCoursScientifiqueSequenceBean.add(mGrp1SeqBean);
+						
+					}//fin du for sur les cours scientifique qui passe dans la classe
+					
+					//On place la liste des matieres scientifique construit
+					bulletinSeq.setMatieresGroupe1Sequence(listofCoursScientifiqueSequenceBean);
+					
+				
+					List<MatiereGroupe2SequenceBean> listofCoursLitteraireSequenceBean 
+								= new ArrayList<MatiereGroupe2SequenceBean>();
+					
+					
+					//Gestion des cours litteraire
+					
+					
+					int rc2 = 0;
+					//Gestion des cours litteraire
+					for(Cours cours : listofCoursLitteraire){
+			
+						
+						//long debutforCoursTime = System.currentTimeMillis();
+						
+						MatiereGroupe2SequenceBean mGrp2SeqBean = new MatiereGroupe2SequenceBean();
+			
+			
+						
+						RapportSequentielCours rapportSequentielCours = ub.getRapportSequentielCours(
+								classeConcerne, cours, sequenceConcerne);
+			
+						
+						String matiere = ub.subString(cours.getIntituleCours(), 25);
+						matiere = matiere + ":";
+						String codeMat = ub.subString(cours.getCodeCours(), 8);
+						matiere = matiere + codeMat;
+						
+						String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 25);
+						
+						String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+						nomProf = ub.subString(nomProf, 20);
+						
+						mGrp2SeqBean.setMatiere_g2(matiere);
+						mGrp2SeqBean.setMatiere_g2_2emelang(matiere_2emelang);
+						mGrp2SeqBean.setProf_g2(nomProf);
+						
+			
+						
+						double note_seq_g2 = ub.getValeurNotesFinaleEleve(eleve, cours, sequenceConcerne);
+						
+						if(note_seq_g2>0){
+							mGrp2SeqBean.setNote_seq_g2(note_seq_g2);
+						}
+						double total_seq_g2 = note_seq_g2*cours.getCoefCours();
+						if(total_seq_g2>0){
+							mGrp2SeqBean.setTotal_seq_g2(total_seq_g2);
+						}
+						
+						mGrp2SeqBean.setCoef_g2(cours.getCoefCours());
+						String extreme_g2 = "";
+						double noteDernierCours = rapportSequentielCours.getValeurNoteDernier();
+						double notePremierCours = rapportSequentielCours.getValeurNotePremier();
+						
+						if(noteDernierCours>=0 && notePremierCours>0){
+							extreme_g2 = "["+noteDernierCours+" ; "+ notePremierCours+"]";
+							mGrp2SeqBean.setExtreme_g2(extreme_g2);
+						}
+			
+						List<Eleves> listofEleveOrdreDecroissantPourCours = mapCoursEleves.get(cours.getIdCours());
+						
+						rc2 = ub.getRangNoteSequentielElevePourCours_opt(eleve, 
+								listofEleveOrdreDecroissantPourCours);
+						
+						if(rc2>0){
+							mGrp2SeqBean.setRang_g2(rc2+"e");
+						}
+			
+						
+						double moy_classe_g2 = ub.getMoyenneGeneralCoursSeq(classeConcerne, cours, 
+								sequenceConcerne);
+						
+						if(moy_classe_g2>0){
+							mGrp2SeqBean.setMoy_classe_g2(moy_classe_g2);
+						}
+			
+						
+						double pourcentage_g2 = ub.getTauxReussiteCoursSeq(classeConcerne, cours, sequenceConcerne);
+						
+						if(pourcentage_g2>=0){
+							mGrp2SeqBean.setPourcentage_g2(pourcentage_g2+" %");
+						}
+			
+						String appreciationNote = ub.calculAppreciation(note_seq_g2,lang);
+						mGrp2SeqBean.setAppreciation_g2(appreciationNote);
+						
+						//On ajoute la ligne de cours dans le groupe correspondant
+						listofCoursLitteraireSequenceBean.add(mGrp2SeqBean);
+			
+					}//fin du for sur les cours litteraire qui passe dans la classe			
+					
+					
+					//On place la liste des matieres litteraire construit
+					bulletinSeq.setMatieresGroupe2Sequence(listofCoursLitteraireSequenceBean);
+					
+				
+					List<MatiereGroupe3SequenceBean> listofCoursDiversSequenceBean 
+								= new ArrayList<MatiereGroupe3SequenceBean>();//Construire a partir de listofCoursDivers
+			
+					
+					//Gestion des cours Divers
+					
+					int rc3 = 0;
+					for(Cours cours : listofCoursDivers){
+			
+						//long debutforCoursTime = System.currentTimeMillis();
+						
+						MatiereGroupe3SequenceBean mGrp3SeqBean = new MatiereGroupe3SequenceBean();
+			
+			
+						RapportSequentielCours rapportSequentielCours = ub.getRapportSequentielCours(
+								classeConcerne, cours, sequenceConcerne);
+			
+						String matiere = ub.subString(cours.getIntituleCours(), 25);
+						matiere = matiere + ":";
+						String codeMat = ub.subString(cours.getCodeCours(), 8);
+						matiere = matiere + codeMat;
+						
+						String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 25);
+						
+						String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+						nomProf = ub.subString(nomProf, 20);
+						
+						mGrp3SeqBean.setMatiere_g3(matiere);
+						mGrp3SeqBean.setMatiere_g3_2emelang(matiere_2emelang);
+						mGrp3SeqBean.setProf_g3(nomProf);
+			
+						
+						
+						double note_seq_g3 = ub.getValeurNotesFinaleEleve(eleve, cours, sequenceConcerne);
+						
+						if(note_seq_g3>0){
+							mGrp3SeqBean.setNote_seq_g3(note_seq_g3);
+						}
+						double total_seq_g3 = note_seq_g3*cours.getCoefCours();
+						if(total_seq_g3>0){
+							mGrp3SeqBean.setTotal_seq_g3(total_seq_g3);
+						}
+						
+						mGrp3SeqBean.setCoef_g3(cours.getCoefCours());
+						String extreme_g3 = "";
+						double noteDernierCours = rapportSequentielCours.getValeurNoteDernier();
+						double notePremierCours = rapportSequentielCours.getValeurNotePremier();
+						
+						if(noteDernierCours>=0 && notePremierCours>0){
+							extreme_g3 = "["+noteDernierCours+" ; "+ notePremierCours+"]";
+							mGrp3SeqBean.setExtreme_g3(extreme_g3);
+						}
+			
+						List<Eleves> listofEleveOrdreDecroissantPourCours = mapCoursEleves.get(cours.getIdCours());
+						
+						rc3 = ub.getRangNoteSequentielElevePourCours_opt(eleve, 
+								listofEleveOrdreDecroissantPourCours);
+						
+						if(rc3>0){
+							mGrp3SeqBean.setRang_g3(rc3+"e");
+						}
+			
+						
+						double moy_classe_g3 = ub.getMoyenneGeneralCoursSeq(classeConcerne, cours, 
+								sequenceConcerne);
+						
+						if(moy_classe_g3>0){
+							mGrp3SeqBean.setMoy_classe_g3(moy_classe_g3);
+						}
+			
+						
+						double pourcentage_g3 = ub.getTauxReussiteCoursSeq(classeConcerne, cours, sequenceConcerne);
+						
+						if(pourcentage_g3>=0){
+							mGrp3SeqBean.setPourcentage_g3(pourcentage_g3+" %");
+						}
+			
+						String appreciationNote = ub.calculAppreciation(note_seq_g3,lang);
+						mGrp3SeqBean.setAppreciation_g3(appreciationNote);
+						
+						//On ajoute la ligne de cours dans le groupe correspondant
+						listofCoursDiversSequenceBean.add(mGrp3SeqBean);
+			
+					}//fin du for sur les cours Divers qui passe dans la classe	
+					
+					
+					
+					//On place la liste des matieres divers construit
+					bulletinSeq.setMatieresGroupe3Sequence(listofCoursDiversSequenceBean);
+					
+					
+					long finforTime = System.currentTimeMillis();
+					
+					collectionofBulletinSeq.add(bulletinSeq);
+					
+					System.err.println("bulletin "+numBull+" de  "+ eleve.getNomsEleves()+
+							" de la sequence "+sequenceConcerne.getNumeroSeq()+
+							"  ajouter avec succes en "+(finforTime-startTimeFor));
+					
+					numBull++;
+				}
+			}
+		
+		 
+		 
+		
+		return collectionofBulletinSeq;
+	}
+	
+	
 	
 	@Override
 	public List<Eleves> getListEleveSanctionDiscSeq(Classes classe, SanctionDisciplinaire sanctionDisc, 
@@ -3916,8 +5131,13 @@ public class UsersServiceImplementation implements IUsersService {
 			String titre_fiche = "CLASS COUNCIL OF SEQUENCE: "+sequence.getNumeroSeq();
 			ficheCC.setTitre_fiche(titre_fiche);
 		}
-		String profPrincipal = " "+classe.getProffesseur().getNomsPers()+" "+classe.getProffesseur().getPrenomsPers();
-		profPrincipal=profPrincipal.toUpperCase();
+		
+		String profPrincipal = "";
+		if(classe.getProffesseur()!=null){
+			profPrincipal = " "+classe.getProffesseur().getNomsPers()+" "+classe.getProffesseur().getPrenomsPers();
+			profPrincipal=profPrincipal.toUpperCase();
+		}
+		
 		ficheCC.setEnseignant(profPrincipal);
 		String nonClasse = classe.getCodeClasses()+classe.getSpecialite().getCodeSpecialite()+
 				classe.getNumeroClasses();		
@@ -4744,8 +5964,12 @@ public class UsersServiceImplementation implements IUsersService {
 			
 			String classeString = classeConcerne.getCodeClasses()+
 					classeConcerne.getSpecialite().getCodeSpecialite()+classeConcerne.getNumeroClasses();
-			String profPrincipal = classeConcerne.getProffesseur().getNomsPers()+" "+
+			
+			String profPrincipal ="";
+			if(classeConcerne.getProffesseur()!=null){
+				profPrincipal = classeConcerne.getProffesseur().getNomsPers()+" "+
 					classeConcerne.getProffesseur().getPrenomsPers();
+			}
 			
 			
 			int effectifTotalClasse =ub.geteffectifEleve(classeConcerne);
@@ -4876,6 +6100,11 @@ public class UsersServiceImplementation implements IUsersService {
 					bulletinTrim.setTotal_points(total_points);
 				}
 				
+				if(total_coef>0){
+					double moy_trim = ub.getMoyenneTrimestriel(eleve, trimestreConcerne);
+					if(moy_trim>=0)	bulletinTrim.setResult_moy_trim(moy_trim);
+				}
+				
 				/***********
 				 * Informations sur les resultats trimestriels de l'eleve
 				 */
@@ -4895,6 +6124,7 @@ public class UsersServiceImplementation implements IUsersService {
 				 
 				if(rang>0){
 					bulletinTrim.setResult_rang_trim(rang+"e");
+					bulletinTrim.setR_rang_trim(rang+"e");
 				}
 				else{
 					bulletinTrim.setResult_rang_trim("");
@@ -5031,10 +6261,10 @@ public class UsersServiceImplementation implements IUsersService {
 					else{
 						
 						if(lang.equalsIgnoreCase("fr")==true){
-							bulletinTrim.setRappel_2("Sequence "+seq.getNumeroSeq());
+							bulletinTrim.setRappel_2("Séquence "+seq.getNumeroSeq());
 						}
 						else{
-							bulletinTrim.setRappel_2("Séquence "+seq.getNumeroSeq());
+							bulletinTrim.setRappel_2("Sequence "+seq.getNumeroSeq());
 						}
 						
 						double moy_seq = ub.getMoyenneSequentiel(eleve, seq);
@@ -5052,6 +6282,7 @@ public class UsersServiceImplementation implements IUsersService {
 							bulletinTrim.setR_rang_2("");
 						}
 					}
+					
 				}//fin du for sur les sequences
 				
 				
@@ -5061,6 +6292,15 @@ public class UsersServiceImplementation implements IUsersService {
 				 * Informations sur l'appreciation du travail de l'élève
 				 */
 				double moy_trim = ub.getMoyenneTrimestriel(eleve, trimestreConcerne);
+				
+				if(lang.equalsIgnoreCase("fr")==true){
+					bulletinTrim.setRappel_3("Trimestre "+trimestreConcerne.getNumeroTrim());
+				}
+				else{
+					bulletinTrim.setRappel_3("Term "+trimestreConcerne.getNumeroTrim());
+				}
+				
+				if(moy_trim>=0) bulletinTrim.setR_moy_trim(moy_trim);
 				
 				bulletinTrim.setTableau_hon("");
 				bulletinTrim.setTableau_enc("");
@@ -5163,7 +6403,7 @@ public class UsersServiceImplementation implements IUsersService {
 				double valeurMoyPremierGrpCours1 = ub.getValeurMoyennePremierPourGrpDansTrim(
 						listofElevesClasse, listofCoursScientifique, trimestreConcerne);
 				
-				if(valeurMoyDernierGrpCours1>0 && valeurMoyPremierGrpCours1>0){
+				if(valeurMoyDernierGrpCours1>=0 && valeurMoyPremierGrpCours1>0){
 					totalextreme_g1 = "["+valeurMoyDernierGrpCours1+" ; "+
 							valeurMoyPremierGrpCours1+"]";
 				}
@@ -5190,7 +6430,7 @@ public class UsersServiceImplementation implements IUsersService {
 					bulletinTrim.setTotal_pourcentage_g1(total_pourcentage_g1);
 				}
 				
-				System.out.println("total_pourcentage_g1total_pourcentage_g1 "+total_pourcentage_g1);
+				
 				
 				double moyenne_g1 = ligneTrimestrielGroupeCoursScientifique.
 						getMoyenneTrimElevePourGroupeCours();
@@ -5333,7 +6573,7 @@ public class UsersServiceImplementation implements IUsersService {
 					bulletinTrim.setTotal_pourcentage_g3(total_pourcentage_g3);
 				}
 				
-				System.out.println("total_pourcentage_g3total_pourcentage_g3 "+total_pourcentage_g1);
+				
 				
 				double moyenne_g3 = ligneTrimestrielGroupeCoursDivers.
 						getMoyenneTrimElevePourGroupeCours();
@@ -5367,9 +6607,19 @@ public class UsersServiceImplementation implements IUsersService {
 					RapportTrimestrielCours rapportTrimestrielCours = ub.getRapportTrimestrielCours(
 							classeConcerne, cours, trimestreConcerne);
 					
+					String matiere = ub.subString(cours.getIntituleCours(), 15);
+					matiere = matiere + ":";
+					String codeMat = ub.subString(cours.getCodeCours(), 5);
+					matiere = matiere + codeMat;
 					
-					mGrp1TrimBean.setMatiere_g1(cours.getCodeCours());
-					mGrp1TrimBean.setProf_g1(cours.getProffesseur().getNomsPers());
+					String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 14);
+					
+					String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+					nomProf = ub.subString(nomProf, 15);
+					
+					mGrp1TrimBean.setMatiere_g1(matiere);
+					mGrp1TrimBean.setMatiere_g1_2emelang(matiere_2emelang);
+					mGrp1TrimBean.setProf_g1(nomProf);
 					
 					double soenoteTrim = 0;
 					int nbreNoteDansTrimPourCours = 0;
@@ -5412,7 +6662,7 @@ public class UsersServiceImplementation implements IUsersService {
 					double noteTrimDernierCours = rapportTrimestrielCours.getValeurNoteDernier();
 					double noteTrimPremierCours = rapportTrimestrielCours.getValeurNotePremier();
 					
-					if(noteTrimDernierCours>0 && noteTrimPremierCours>0){
+					if(noteTrimDernierCours>=0 && noteTrimPremierCours>0){
 						extreme_g1 = "["+noteTrimDernierCours+" ; "+ noteTrimPremierCours+"]";
 						mGrp1TrimBean.setExtreme_g1(extreme_g1);
 					}
@@ -5474,9 +6724,20 @@ public class UsersServiceImplementation implements IUsersService {
 					RapportTrimestrielCours rapportTrimestrielCours = ub.getRapportTrimestrielCours(
 							classeConcerne, cours, trimestreConcerne);
 					
+					String matiere = ub.subString(cours.getIntituleCours(), 14);
+					matiere = matiere + ":";
+					String codeMat = ub.subString(cours.getCodeCours(), 5);
+					matiere = matiere + codeMat;
+					
+					String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 14);
+					
+					String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+					nomProf = ub.subString(nomProf, 15);
 
-					mGrp2TrimBean.setMatiere_g2(cours.getCodeCours());
-					mGrp2TrimBean.setProf_g2(cours.getProffesseur().getNomsPers());
+					
+					mGrp2TrimBean.setMatiere_g2(matiere);
+					mGrp2TrimBean.setMatiere_g2_2emelang(matiere_2emelang);
+					mGrp2TrimBean.setProf_g2(nomProf);
 					
 					double soenoteTrim = 0;
 					int nbreNoteDansTrimPourCours = 0;
@@ -5523,7 +6784,7 @@ public class UsersServiceImplementation implements IUsersService {
 					double noteTrimDernierCours = rapportTrimestrielCours.getValeurNoteDernier();
 					double noteTrimPremierCours = rapportTrimestrielCours.getValeurNotePremier();
 					
-					if(noteTrimDernierCours>0 && noteTrimPremierCours>0){
+					if(noteTrimDernierCours>=0 && noteTrimPremierCours>0){
 						extreme_g2 = "["+noteTrimDernierCours+" ; "+ noteTrimPremierCours+"]";
 						mGrp2TrimBean.setExtreme_g2(extreme_g2);
 					}
@@ -5592,9 +6853,21 @@ public class UsersServiceImplementation implements IUsersService {
 				RapportTrimestrielCours rapportTrimestrielCours = ub.getRapportTrimestrielCours(
 						classeConcerne, cours, trimestreConcerne);
 				
+				String matiere = ub.subString(cours.getIntituleCours(), 14);
+				matiere = matiere + ":";
+				String codeMat = ub.subString(cours.getCodeCours(), 5);
+				matiere = matiere + codeMat;
+				
+				String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 14);
+				
+				String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+				nomProf = ub.subString(nomProf, 15);
 
-				mGrp3TrimBean.setMatiere_g3(cours.getCodeCours());
-				mGrp3TrimBean.setProf_g3(cours.getProffesseur().getNomsPers());
+				
+				mGrp3TrimBean.setMatiere_g3(matiere);
+				mGrp3TrimBean.setMatiere_g3_2emelang(matiere_2emelang);
+				mGrp3TrimBean.setProf_g3(nomProf);
+				
 				
 				double soenoteTrim = 0;
 				int nbreNoteDansTrimPourCours = 0;
@@ -5636,7 +6909,7 @@ public class UsersServiceImplementation implements IUsersService {
 				double noteTrimDernierCours = rapportTrimestrielCours.getValeurNoteDernier();
 				double noteTrimPremierCours = rapportTrimestrielCours.getValeurNotePremier();
 				
-				if(noteTrimDernierCours>0 && noteTrimPremierCours>0){
+				if(noteTrimDernierCours>=0 && noteTrimPremierCours>0){
 					extreme_g3 = "["+noteTrimDernierCours+" ; "+ noteTrimPremierCours+"]";
 					mGrp3TrimBean.setExtreme_g3(extreme_g3);
 				}
@@ -5724,6 +6997,1092 @@ public class UsersServiceImplementation implements IUsersService {
 	}
 
 	
+	@Override
+	public Collection<BulletinTrimestreBean> generate1BulletinTrimestre(Long idEleve, Long idClasse, 
+			 Long idTrimestre){
+		List<BulletinTrimestreBean> collectionofBulletinTrim = new ArrayList<BulletinTrimestreBean>();
+		
+		Etablissement etablissementConcerne = this.getEtablissement();
+		 String villeEtab = "";
+		 if(etablissementConcerne != null) villeEtab = etablissementConcerne.getVilleEtab();
+		 
+		 Classes classeConcerne = this.findClasses(idClasse);
+		 Annee anneeScolaire = this.findAnneeActive();
+		 Trimestres trimestreConcerne = this.findTrimestres(idTrimestre);
+		 Eleves eleveConcerne = this.findEleves(idEleve);
+		
+		 if((classeConcerne==null) || (trimestreConcerne==null) || (eleveConcerne==null)) {
+			//System.err.println("les données de calcul du bean bulletin sont errone donc rien n'est possible ");
+			return null;
+		 }
+		 String lang="";
+		 if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+			 lang="fr";
+		 }
+		 else{
+			 lang="en";
+		 }
+		 
+		 /*
+			 * Ici on est sur que la classe est bel et bien retrouver. On doit faire le bulletin de tous les élèves de la classe.
+			 * mais si un élève n'est pas régulier son bulletin devient particulier
+			 */
+			List<Eleves>  listofEleveClasse = (List<Eleves>) classeConcerne.getListofEleves();
+			
+			List<Cours> listofCoursEvalueTrim = ub.getListOfCoursEvalueDansTrimestre(classeConcerne, 
+					trimestreConcerne);
+			
+			/*
+			 * Etablissons ensuite la liste des 3 groupes de cours(scientifique, littéraire et divers dans la 
+			 * section général)
+			 */
+			
+			List<Cours> listofCoursScientifique = ub.getListofCoursScientifiqueDansClasse(classeConcerne);
+			
+			List<Cours> listofCoursLitteraire = ub.getListofCoursLitteraireDansClasse(classeConcerne);
+			
+			List<Cours> listofCoursDivers = ub.getListofCoursDiversDansClasse(classeConcerne);
+			
+			/*
+			 * Donnée du bulletin qui ne doivent pas être recalcule à chaque tour de boucle sur les élèves
+			 * car elles ne dépendent pas de l'élève et son identique pour tous les bulletins d'une classe 
+			 * dans un trimestre
+			 */
+			List<Eleves> listofElevesClasse = (List<Eleves>) classeConcerne.getListofEleves();
+			
+			List<Eleves> listofEleveRegulier = ub.getListofEleveRegulierTrimestre(classeConcerne, trimestreConcerne);
+			
+			
+			
+			RapportTrimestrielClasse rapportTrimestrielClasse = ub.getRapportTrimestrielClasse(classeConcerne, 
+					listofEleveRegulier, trimestreConcerne);
+			
+			double moyenne_premier_classe=0;
+			double moyenne_dernier_classe =0;
+			double tauxReussite=0;
+			double moyenne_general = 0;
+			int nbre_moyenne_classeSeq = 0;
+		
+			moyenne_premier_classe = rapportTrimestrielClasse.getValeurMoyennePremierDansTrim();
+			moyenne_dernier_classe = rapportTrimestrielClasse.getValeurMoyenneDernierDansTrim();
+			nbre_moyenne_classeSeq = rapportTrimestrielClasse.getNbreMoyennePourTrim();
+			tauxReussite = rapportTrimestrielClasse.getTauxReussiteTrimestriel();
+			moyenne_general = rapportTrimestrielClasse.getMoyenneGeneralTrimestre();
+			
+			String classeString = classeConcerne.getCodeClasses()+
+					classeConcerne.getSpecialite().getCodeSpecialite()+classeConcerne.getNumeroClasses();
+			
+			String profPrincipal ="";
+			if(classeConcerne.getProffesseur()!=null){
+				profPrincipal = classeConcerne.getProffesseur().getNomsPers()+" "+
+					classeConcerne.getProffesseur().getPrenomsPers();
+			}
+			
+			
+			int effectifTotalClasse =ub.geteffectifEleve(classeConcerne);
+			
+			int effectifRegulierClasseTrim = ub.geteffectifEleveRegulierTrimestre(classeConcerne, trimestreConcerne);
+			
+			
+			int numBull = 1;
+
+			/*
+			 * On va appeler une méthode qui retourne une Map<idCours, List<Eleves>>
+			 * Chaque entrée de la Map a comme cle l'id d'un cours passant dans la classe et 
+			 * comme valeur la liste des élèves rangés dans l'ordre décroissant des notes obtenues 
+			 * dans le trimestre considéré
+			 */
+			Map<Long, List<Eleves>> mapCoursEleves = 
+					ub.getMapCoursElevesOrdreDecroissantTrimestre(classeConcerne, trimestreConcerne);
+			
+			/*
+			 * On va appeler une méthode qui retourne la liste des élèves classés dans l'ordre décroissant 
+			 * des moyenne obtenu Trimestriellement
+			 */
+			List<Eleves> listofElevesOrdreDecroissantMoyenneTrimestriel = (List<Eleves>) 
+					UtilitairesBulletins.getMoyenneTrimestrielOrdreDecroissant1(classeConcerne, trimestreConcerne);
+			
+			/*
+			 * On va mettre dans cette Map la liste des élèves classés dans l'ordre décroissant des 
+			 * moyennes obtenu pour chaque séquence dans le trimestre
+			 */
+			Map<Long,List<Eleves>> mapofElevesOrdreDecroissantMoyenneSequentiel = new 
+					HashMap<Long, List<Eleves>>();
+			
+			for(Sequences seq : trimestreConcerne.getListofsequence()){
+				
+				List<Eleves> listofElevesOrdreDecroissantMoyenneSeq = (List<Eleves>) 
+						ub.getMoyenneSequentielOrdreDecroissant1(classeConcerne, seq);
+				
+				mapofElevesOrdreDecroissantMoyenneSequentiel.put(seq.getIdPeriodes(),
+						listofElevesOrdreDecroissantMoyenneSeq);
+				
+			}
+			
+			for(Eleves eleve : listofEleveClasse){
+				if(eleve.getIdEleves() == eleveConcerne.getIdEleves()){
+					long startTimeFor = System.currentTimeMillis();
+					
+					BulletinTrimestreBean bulletinTrim = new BulletinTrimestreBean();
+					/*
+					 * Initialisons les premieres donnees du bulletin trimestriel
+					 */
+					/****
+					 * Information d'entete du bulletin
+					 */
+					bulletinTrim.setMinistere_fr(etablissementConcerne.getMinisteretuteleEtab());
+					bulletinTrim.setMinistere_en(etablissementConcerne.getMinisteretuteleanglaisEtab());
+					bulletinTrim.setDelegation_en(etablissementConcerne.getDeleguationdeptuteleanglaisEtab());
+					bulletinTrim.setDelegation_fr(etablissementConcerne.getDeleguationdeptuteleEtab());
+					bulletinTrim.setEtablissement_en(etablissementConcerne.getNomsanglaisEtab());
+					bulletinTrim.setEtablissement_fr(etablissementConcerne.getNomsEtab());
+					bulletinTrim.setAdresse("BP "+etablissementConcerne.getBpEtab()+"/"+
+							etablissementConcerne.getNumtel1Etab()+"/"+etablissementConcerne.getEmailEtab());
+					bulletinTrim.setDevise_en(etablissementConcerne.getDeviseanglaisEtab());
+					bulletinTrim.setDevise_fr(etablissementConcerne.getDeviseEtab());
+					if(lang.equalsIgnoreCase("fr")==true){
+						bulletinTrim.setTitre_bulletin("Bulletin de note du trimestre "+trimestreConcerne.getNumeroTrim());
+					}
+					else{
+						bulletinTrim.setTitre_bulletin("Report card of term "+trimestreConcerne.getNumeroTrim());
+					}
+					bulletinTrim.setAnnee_scolaire_en("School year "+anneeScolaire.getIntituleAnnee());
+					bulletinTrim.setAnnee_scolaire_fr("Année scolaire "+anneeScolaire.getIntituleAnnee());
+					
+					
+					/***************
+					 * Information personnel de l'élève
+					 */
+					bulletinTrim.setNumero(" "+eleve.getNumero(listofElevesClasse));
+					bulletinTrim.setSexe(eleve.getSexeEleves());
+					bulletinTrim.setNom_eleve(" "+eleve.getNomsEleves().toUpperCase());
+					bulletinTrim.setPrenom_eleve(eleve.getPrenomsEleves().toUpperCase());
+					SimpleDateFormat spd = new SimpleDateFormat("dd/MM/yyyy");
+					bulletinTrim.setDate_naissance_eleve(spd.format(eleve.getDatenaissEleves()));
+					bulletinTrim.setLieu_naissance_eleve(eleve.getLieunaissEleves());
+					bulletinTrim.setMatricule_eleve(eleve.getMatriculeEleves());
+					bulletinTrim.setRedoublant(eleve.getRedoublant());
+					bulletinTrim.setClasse_eleve(classeString);
+					bulletinTrim.setProf_principal(profPrincipal);
+					bulletinTrim.setEffectif_classe(effectifTotalClasse);
+					bulletinTrim.setEffectif_presente(effectifRegulierClasseTrim);
+					
+					/*****
+					 * Pour le chargement des photos: Si une photos n'est pas dispo il y aura une exception 
+					 * puisque Jasper ne pourra pas trouver l'image. Donc il faut un moyen de ne rien fixé 
+					 * à setPhoto lorsque l'image n'est pas dispo. Pour vérifier que l'image n'est pas dispo
+					 * on va essayer de charger le fichier correspondant avec la classe File de java.io
+					 */
+					File f=new File(photoElevesDir+eleve.getIdEleves());
+					//System.err.println("est ce que le fichier existe "+f.exists());
+					
+					if(f.exists()==true){
+						bulletinTrim.setPhoto(photoElevesDir+eleve.getIdEleves()); 
+					}
+					
+					/********
+					 * Informations sur les labels d'entete des notes du bulletin trimestriel
+					 */
+					for(Sequences seq : trimestreConcerne.getListofsequence()){
+						if(seq.getNumeroSeq()%2==1){
+							bulletinTrim.setLabel_note_1("N S"+seq.getNumeroSeq());
+						}
+						else{
+							bulletinTrim.setLabel_note_2("N S"+seq.getNumeroSeq());
+						}
+					}
+					
+					bulletinTrim.setLabel_trimestre("N T"+trimestreConcerne.getNumeroTrim());
+					bulletinTrim.setLabel_trim_x_coef("N T"+trimestreConcerne.getNumeroTrim()+"*Coef");
+			
+					/***********
+					 * Information sur les totaux trimestriels
+					 */
+					
+					double total_coef = ub.getSommeCoefCoursComposeTrimestre(eleve, trimestreConcerne);
+					bulletinTrim.setTotal_coef(total_coef);
+					
+					double total_points = ub.getTotalPointsTrimestriel(eleve, trimestreConcerne);
+					
+					if(total_points>0){
+						bulletinTrim.setTotal_points(total_points);
+					}
+					
+					if(total_coef>0){
+						double moy_trim = ub.getMoyenneTrimestriel(eleve, trimestreConcerne);
+						if(moy_trim>=0)	bulletinTrim.setResult_moy_trim(moy_trim);
+					}
+					
+					/***********
+					 * Informations sur les resultats trimestriels de l'eleve
+					 */
+					bulletinTrim.setResult_tt_coef(total_coef);
+					
+					if(total_points>0){
+						bulletinTrim.setResult_tt_points(total_points);
+					}
+					
+					//Cette methode donne un rang a tout le monde meme ceux qui n'ont compose qu'un seul cours
+					
+					/*int rang = this.getRangTrimestrielEleveAuMoinsUneNote(classeConcerne, trimestreConcerne, 
+							eleve);*/
+					 
+					 int rang = ub.getRangTrimestrielEleveAuMoinsUneNote(eleve, 
+							 listofElevesOrdreDecroissantMoyenneTrimestriel);
+					 
+					if(rang>0){
+						bulletinTrim.setResult_rang_trim(rang+"e");
+						bulletinTrim.setR_rang_trim(rang+"e");
+					}
+					else{
+						bulletinTrim.setResult_rang_trim("");
+					}
+					
+					
+					/*************************************************
+					 * Informations sur le profil de la classe dans le trimestre
+					 */
+					if(moyenne_premier_classe>0){
+						bulletinTrim.setMoy_premier(moyenne_premier_classe);
+					}
+					if(moyenne_dernier_classe>0){
+						bulletinTrim.setMoy_dernier(moyenne_dernier_classe);
+					}
+					bulletinTrim.setNbre_moyennes(nbre_moyenne_classeSeq);
+					if(tauxReussite>0){
+						bulletinTrim.setTaux_reussite(tauxReussite);
+					}
+					if(moyenne_general>0){
+						bulletinTrim.setMoy_gen_classe(moyenne_general);
+					}
+					
+					
+					/***********************
+					 * Informations sur la conduite trimestriel de l'élève
+					 */
+					int nhaj = 0;
+					int nhanj = 0;
+					
+					/*for(Sequences seq : trimestreConcerne.getListofsequence()){
+						RapportDAbsence rabs = eleve.getRapportDAbsenceSeq(seq.getIdPeriodes());
+						if(rabs!=null){
+							nhaj = nhaj + rabs.getNbreheureJustifie();
+							nhanj = nhanj + rabs.getNbreheureNJustifie();
+							nhc = nhc + rabs.getConsigne();
+							nje = nje + rabs.getJourExclusion();
+						}
+					}*/
+					
+					nhanj = eleve.getNbreHeureAbsenceNonJustifieTrim(trimestreConcerne);
+					nhaj = eleve.getNbreHeureAbsenceJustifieTrim(trimestreConcerne);
+					
+					bulletinTrim.setAbsence_NJ(nhanj);
+					bulletinTrim.setAbsence_J(nhaj);
+					bulletinTrim.setConsigne("");
+					bulletinTrim.setExclusion("");
+					bulletinTrim.setAvertissement("");
+					bulletinTrim.setBlame_conduite("");
+					
+					/************************
+					 * On doit rechercher les sanctions disciplinaire obtenu dans la periode(trimestre)
+					 * dans leur ordre decroissant de sévérité et dans l'ordre décroissant des dates ou elles ont 
+					 * ete infligées. On va commencer de la séquence paire vers la séquence impair à chercher
+					 * Il est important de noter qu'il s'agit des sanctions déjà exécutées pendant la période. 
+					 */
+					bulletinTrim.setRapport_disc1("");
+					bulletinTrim.setRapport_disc2("");
+					bulletinTrim.setRapport_disc3("");
+					for(Sequences seq : trimestreConcerne.getListofsequence_DESC()){
+						List<RapportDisciplinaire> listofRDiscEleveSeq = eleve.getListRapportDisciplinaireSeq_DESC(seq.getIdPeriodes());
+						
+						if(listofRDiscEleveSeq != null){
+							if(listofRDiscEleveSeq.size()>0) {
+								RapportDisciplinaire rdisc = listofRDiscEleveSeq.get(0);
+								String rdisc_chaine = "";
+								rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+								//On peut donc fixer rapport_disc1
+								bulletinTrim.setRapport_disc1(rdisc_chaine);
+							}
+							
+							/*
+							 * On ne fait pas de else car il faut encore reprendre le test et au cas ou ca marche 
+							 * on va set rapport_disc2
+							 */
+							if(listofRDiscEleveSeq.size()>1) {
+	
+								RapportDisciplinaire rdisc = listofRDiscEleveSeq.get(1);
+								String rdisc_chaine = "";
+								rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+								//On peut donc fixer rapport_disc1
+								bulletinTrim.setRapport_disc2(rdisc_chaine);
+							
+							}
+							
+							if(listofRDiscEleveSeq.size()>2) {
+	
+								RapportDisciplinaire rdisc = listofRDiscEleveSeq.get(2);
+								String rdisc_chaine = "";
+								rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+								
+								//On peut donc fixer rapport_disc1
+								bulletinTrim.setRapport_disc3(rdisc_chaine);
+												
+							}
+							
+						}
+						
+					}
+					
+					/**************************
+					 * Informations sur le rappel de la moyenne et du rang trimestriel
+					 */
+					
+					for(Sequences seq : trimestreConcerne.getListofsequence()){
+						
+						List<Eleves> listofElevesOrdreDecroissantMoyenneSeq = 
+								mapofElevesOrdreDecroissantMoyenneSequentiel.get(seq.getIdPeriodes());
+						
+						if(seq.getNumeroSeq()%2==1){
+							if(lang.equalsIgnoreCase("fr")==true){
+								bulletinTrim.setRappel_1("Séquence "+seq.getNumeroSeq());
+							}
+							else{
+								bulletinTrim.setRappel_1("Sequence "+seq.getNumeroSeq());
+							}
+							
+							double moy_seq = ub.getMoyenneSequentiel(eleve, seq);
+							
+							if(moy_seq>0){
+								bulletinTrim.setR_moy_1(moy_seq);
+							}
+							
+							int rangseq = ub.getRangSequentielEleveAuMoinsUneNote(eleve, 
+									listofElevesOrdreDecroissantMoyenneSeq);
+							
+							if(rangseq>0){
+								bulletinTrim.setR_rang_1(rangseq+"e");
+							}
+							else{
+								bulletinTrim.setR_rang_1("");
+							}
+						}
+						else{
+							
+							if(lang.equalsIgnoreCase("fr")==true){
+								bulletinTrim.setRappel_2("Séquence "+seq.getNumeroSeq());
+							}
+							else{
+								bulletinTrim.setRappel_2("Sequence "+seq.getNumeroSeq());
+							}
+							
+							double moy_seq = ub.getMoyenneSequentiel(eleve, seq);
+							
+							if(moy_seq>0){
+								bulletinTrim.setR_moy_2(moy_seq);
+							}
+							int rangseq = ub.getRangSequentielEleveAuMoinsUneNote(eleve, 
+									listofElevesOrdreDecroissantMoyenneSeq);
+							
+							if(rangseq>0){
+								bulletinTrim.setR_rang_2(rangseq+"e");
+							}
+							else{
+								bulletinTrim.setR_rang_2("");
+							}
+						}
+						
+					}//fin du for sur les sequences
+					
+					
+					
+					
+					/****************************
+					 * Informations sur l'appreciation du travail de l'élève
+					 */
+					double moy_trim = ub.getMoyenneTrimestriel(eleve, trimestreConcerne);
+					
+					if(lang.equalsIgnoreCase("fr")==true){
+						bulletinTrim.setRappel_3("Trimestre "+trimestreConcerne.getNumeroTrim());
+					}
+					else{
+						bulletinTrim.setRappel_3("Term "+trimestreConcerne.getNumeroTrim());
+					}
+					
+					if(moy_trim>=0)	bulletinTrim.setR_moy_trim(moy_trim);
+					
+					bulletinTrim.setTableau_hon("");
+					bulletinTrim.setTableau_enc("");
+					bulletinTrim.setTableau_fel("");
+					String appreciation = ub.calculAppreciation(moy_trim,lang);
+					bulletinTrim.setAppreciation(appreciation);
+	
+					
+					/*
+					 * On doit chercher la decision de conseil dans la periode sachant qu'on a une seule decision de 
+					 * conseil dans une période donnée (que ce soit séquence, trimestre ou année)
+					 */
+					DecisionConseil decConseil = eleve.getDecisionConseilPeriode(trimestreConcerne.getIdPeriodes());
+					bulletinTrim.setDistinction("");
+					bulletinTrim.setDecision_conseil("");
+					if(decConseil !=null){
+						/*******************************
+						 * Informations sur les distinctions octroyées  dans la séquence
+						 */
+						String distinction="";
+						distinction = decConseil.getSanctionTravDecisionConseilStringIntitule(lang);
+						bulletinTrim.setDistinction(distinction);
+						
+						/*******************************
+						 * Informations sur les decision du conseil de classe dans la séquence
+						 * en fait il s'agit de préciser les sanctions disciplinaire infligées à un élève lors du conseil
+						 * de classe.
+						 */
+						String decision="";
+						decision += decConseil.getSanctionDiscDecisionConseilString(lang);
+						/*distinction = decConseil.getSanctionTravDecisionConseilString(lang);
+						decision+=distinction;*/
+						bulletinTrim.setDecision_conseil(decision);
+					}
+					
+					
+					
+					List<Cours> listofCoursEffortAFournir = 
+							ub.getListofCoursDansOrdreEffortAFournirTrimestre(eleve, listofCoursEvalueTrim, 
+							trimestreConcerne);
+					bulletinTrim.setEffort_matiere1("");
+					bulletinTrim.setEffort_matiere2("");
+					bulletinTrim.setEffort_matiere3("");
+					if(listofCoursEffortAFournir.size()>0) {
+						String codeCours = listofCoursEffortAFournir.get(0).getCodeCours();
+						bulletinTrim.setEffort_matiere1(codeCours);
+					}
+					
+					
+					if(listofCoursEffortAFournir.size()>1) {
+						String codeCours = listofCoursEffortAFournir.get(1).getCodeCours();
+						bulletinTrim.setEffort_matiere2(codeCours);
+					}
+					
+					if(listofCoursEffortAFournir.size()>2) {
+						String codeCours = listofCoursEffortAFournir.get(2).getCodeCours();
+						bulletinTrim.setEffort_matiere3(codeCours);
+					}
+					
+					
+					
+					/*****************************
+					 * Information sur l'espace VISA du bulletin
+					 */
+					bulletinTrim.setVille(villeEtab);
+					
+					
+					/****************
+					 * Informations lie au sommaire de chaque groupe
+					 * Groupe des matieres scientifique (Groupe1) dans le trimestre
+					 * cccccccccccccccccccccccccc
+					 */
+					
+					LigneTrimestrielGroupeCours ligneTrimestrielGroupeCoursScientifique = 
+							ub.getLigneTrimestrielGroupeCours(eleve, listofCoursScientifique, trimestreConcerne);
+					
+					if(lang.equalsIgnoreCase("fr")==true){
+						bulletinTrim.setNom_g1("Scientifique");
+					}
+					else{
+						bulletinTrim.setNom_g1("Scientific");
+					}
+					
+					double total_coef_g1 = ligneTrimestrielGroupeCoursScientifique.getTotalCoefElevePourGroupeCours();
+					
+					bulletinTrim.setTotal_coef_g1(total_coef_g1);
+					//System.err.println("total_coef_g1 == "+total_coef_g1);
+					
+					double total_g1 = ligneTrimestrielGroupeCoursScientifique.getTotalNoteTrimElevePourGroupeCours();
+					
+					if(total_g1>0){
+						bulletinTrim.setTotal_g1(total_g1);
+					}
+					
+					String totalextreme_g1 = "";
+					
+					double valeurMoyDernierGrpCours1 = ub.getValeurMoyenneDernierPourGrpDansTrim(
+							listofElevesClasse, listofCoursScientifique, trimestreConcerne);
+					
+					double valeurMoyPremierGrpCours1 = ub.getValeurMoyennePremierPourGrpDansTrim(
+							listofElevesClasse, listofCoursScientifique, trimestreConcerne);
+					
+					if(valeurMoyDernierGrpCours1>=0 && valeurMoyPremierGrpCours1>0){
+						totalextreme_g1 = "["+valeurMoyDernierGrpCours1+" ; "+
+								valeurMoyPremierGrpCours1+"]";
+					}
+					bulletinTrim.setTotal_extreme_g1(totalextreme_g1);
+					
+					int r1 = ub.getRangMoyenneTrimElevePourGroupe(classeConcerne, listofCoursScientifique, 
+							trimestreConcerne, eleve);
+					
+					if(r1>0){
+						bulletinTrim.setTotal_rang_g1(r1+"e");
+					}
+					
+					
+					double moy_gen_grp1 = ub.getMoyenneGeneralPourGroupeCoursTrim(classeConcerne, 
+							listofCoursScientifique, trimestreConcerne);
+					if(moy_gen_grp1>0){
+						bulletinTrim.setMg_classe_g1(moy_gen_grp1);
+					}
+					
+					double total_pourcentage_g1 = ub.getTauxReussitePourGroupeCoursTrim(classeConcerne, 
+							listofCoursScientifique, trimestreConcerne);
+					
+					if(total_pourcentage_g1>=0){
+						bulletinTrim.setTotal_pourcentage_g1(total_pourcentage_g1);
+					}
+					
+					
+					
+					double moyenne_g1 = ligneTrimestrielGroupeCoursScientifique.
+							getMoyenneTrimElevePourGroupeCours();
+					
+					if(moyenne_g1>0){
+						bulletinTrim.setMoyenne_g1(moyenne_g1);
+					}
+			
+					
+					
+					/****************
+					 * Informations lie au sommaire de chaque groupe
+					 * Groupe des matieres Litteraire (Groupe2) dans le trimestre
+					 * lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+					 */
+					
+					LigneTrimestrielGroupeCours ligneTrimestrielGroupeCoursLitteraire = 
+							ub.getLigneTrimestrielGroupeCours(eleve, listofCoursLitteraire, trimestreConcerne);
+			
+					if(lang.equalsIgnoreCase("fr")==true){
+						bulletinTrim.setNom_g2("Litteraire");
+					}
+					else{
+						bulletinTrim.setNom_g2("Arts");
+					}
+					
+					double total_coef_g2 = ligneTrimestrielGroupeCoursLitteraire.getTotalCoefElevePourGroupeCours();
+					
+					bulletinTrim.setTotal_coef_g2(total_coef_g2);
+					
+					double total_g2 = ligneTrimestrielGroupeCoursLitteraire.getTotalNoteTrimElevePourGroupeCours();
+					
+					if(total_g2>0){
+						bulletinTrim.setTotal_g2(total_g2);
+					}
+					
+					String totalextreme_g2 = "";
+					
+					double valeurMoyDernierGrpCours2 = ub.getValeurMoyenneDernierPourGrpDansTrim(
+							listofElevesClasse, listofCoursLitteraire, trimestreConcerne);
+					
+					double valeurMoyPremierGrpCours2 = ub.getValeurMoyennePremierPourGrpDansTrim(
+							listofElevesClasse, listofCoursLitteraire, trimestreConcerne);
+					
+					if(valeurMoyDernierGrpCours2>0 && valeurMoyPremierGrpCours2>0){
+						totalextreme_g2 = "["+valeurMoyDernierGrpCours2+" ; "+
+								valeurMoyPremierGrpCours2+"]";
+					}
+					bulletinTrim.setTotal_extreme_g2(totalextreme_g2);
+					
+					int r2 = ub.getRangMoyenneTrimElevePourGroupe(classeConcerne, listofCoursLitteraire, 
+							trimestreConcerne, eleve);
+					
+					if(r2>0){
+						bulletinTrim.setTotal_rang_g2(r2+"e");
+					}
+					
+					
+					double moy_gen_grp2 = ub.getMoyenneGeneralPourGroupeCoursTrim(classeConcerne, 
+							listofCoursLitteraire, trimestreConcerne);
+					
+					if(moy_gen_grp2>0){
+						bulletinTrim.setMg_classe_g2(moy_gen_grp2);
+					}
+					
+					double total_pourcentage_g2 = ub.getTauxReussitePourGroupeCoursTrim(classeConcerne, 
+							listofCoursLitteraire, trimestreConcerne);
+					
+					if(total_pourcentage_g2>=0){
+						bulletinTrim.setTotal_pourcentage_g2(total_pourcentage_g2);
+					}
+					
+					double moyenne_g2 = ligneTrimestrielGroupeCoursLitteraire.
+							getMoyenneTrimElevePourGroupeCours();
+					
+					if(moyenne_g2>0){
+						bulletinTrim.setMoyenne_g2(moyenne_g2);
+					}
+			
+					
+	
+					/****************
+					 * Informations lie au sommaire de chaque groupe
+					 * Groupe des matieres Divers (Groupe3) dans le trimestre
+					 * ddddddddddddddddddddddddddddddddddd
+					 */
+					
+					LigneTrimestrielGroupeCours ligneTrimestrielGroupeCoursDivers = 
+							ub.getLigneTrimestrielGroupeCours(eleve, listofCoursDivers, trimestreConcerne);
+			
+					if(lang.equalsIgnoreCase("fr")==true){
+						bulletinTrim.setNom_g3("Divers");
+					}
+					else{
+						bulletinTrim.setNom_g3("Orthers");
+					}
+					
+					double total_coef_g3 = ligneTrimestrielGroupeCoursDivers.getTotalCoefElevePourGroupeCours();
+					
+					bulletinTrim.setTotal_coef_g3(total_coef_g3);
+					
+					double total_g3 = ligneTrimestrielGroupeCoursDivers.getTotalNoteTrimElevePourGroupeCours();
+					
+					if(total_g3>0){
+						bulletinTrim.setTotal_g3(total_g3);
+					}
+					
+					String totalextreme_g3 = "";
+					
+					double valeurMoyDernierGrpCours3 = ub.getValeurMoyenneDernierPourGrpDansTrim(
+							listofElevesClasse, listofCoursDivers, trimestreConcerne);
+					
+					double valeurMoyPremierGrpCours3 = ub.getValeurMoyennePremierPourGrpDansTrim(
+							listofElevesClasse, listofCoursDivers, trimestreConcerne);
+					
+					if(valeurMoyDernierGrpCours3>0 && valeurMoyPremierGrpCours3>0){
+						totalextreme_g3 = "["+valeurMoyDernierGrpCours3+" ; "+
+								valeurMoyPremierGrpCours3+"]";
+					}
+					bulletinTrim.setTotal_extreme_g3(totalextreme_g3);
+					
+					int r3 = ub.getRangMoyenneTrimElevePourGroupe(classeConcerne, listofCoursDivers, 
+							trimestreConcerne, eleve);
+					
+					if(r3>0){
+						bulletinTrim.setTotal_rang_g3(r3+"e");
+					}
+					
+					
+					double moy_gen_grp3 = ub.getMoyenneGeneralPourGroupeCoursTrim(classeConcerne, 
+							listofCoursDivers, trimestreConcerne);
+					
+					if(moy_gen_grp3>0){
+						bulletinTrim.setMg_classe_g3(moy_gen_grp3);
+					}
+					
+					double total_pourcentage_g3 = ub.getTauxReussitePourGroupeCoursTrim(classeConcerne, 
+							listofCoursDivers, trimestreConcerne);
+					if(total_pourcentage_g3>=0){
+						bulletinTrim.setTotal_pourcentage_g3(total_pourcentage_g3);
+					}
+					
+					
+					
+					double moyenne_g3 = ligneTrimestrielGroupeCoursDivers.
+							getMoyenneTrimElevePourGroupeCours();
+					
+					if(moyenne_g3>0){
+						bulletinTrim.setMoyenne_g3(moyenne_g3);
+					}
+					
+	
+					/************************************
+					 * Listes alimentant les sous rapport: les rapports sur les groupes des matières 
+					 **********/
+					
+					
+					List<MatiereGroupe1TrimestreBean> listofCoursScientifiqueTrimestreBean 
+								= new ArrayList<MatiereGroupe1TrimestreBean>(); 
+					
+					int rc1 = 0;
+					/***
+					 * debut du for sur les cours scientifique
+					 * Gestion des cours scientifique
+					 */
+					for(Cours cours : listofCoursScientifique){
+						
+						//long debutforCoursTime = System.currentTimeMillis();
+						
+						MatiereGroupe1TrimestreBean mGrp1TrimBean = new MatiereGroupe1TrimestreBean();
+						
+						
+						
+						RapportTrimestrielCours rapportTrimestrielCours = ub.getRapportTrimestrielCours(
+								classeConcerne, cours, trimestreConcerne);
+						
+						String matiere = ub.subString(cours.getIntituleCours(), 15);
+						matiere = matiere + ":";
+						String codeMat = ub.subString(cours.getCodeCours(), 5);
+						matiere = matiere + codeMat;
+						
+						String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 14);
+						
+						String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+						nomProf = ub.subString(nomProf, 15);
+						
+						mGrp1TrimBean.setMatiere_g1(matiere);
+						mGrp1TrimBean.setMatiere_g1_2emelang(matiere_2emelang);
+						mGrp1TrimBean.setProf_g1(nomProf);
+						
+						double soenoteTrim = 0;
+						int nbreNoteDansTrimPourCours = 0;
+						
+						for(Sequences seq : trimestreConcerne.getListofsequence()){
+							if(seq.getNumeroSeq()%2==1){
+								double note_seq_g1 = ub.getValeurNotesFinaleEleve(eleve, cours, seq);
+								
+								if(note_seq_g1>0){
+									mGrp1TrimBean.setNote_1_g1(note_seq_g1);
+									soenoteTrim = soenoteTrim + note_seq_g1;
+									nbreNoteDansTrimPourCours +=1; 
+								}
+							}
+							else{
+								double note_seq_g2 = ub.getValeurNotesFinaleEleve(eleve, cours, seq);
+								
+								if(note_seq_g2>0){
+									mGrp1TrimBean.setNote_2_g1(note_seq_g2);
+									soenoteTrim = soenoteTrim + note_seq_g2;
+									nbreNoteDansTrimPourCours +=1; 
+								}
+							}
+						}
+						
+						
+						double noteCoursTrim = 0;
+						if(nbreNoteDansTrimPourCours>0){
+							noteCoursTrim = soenoteTrim/nbreNoteDansTrimPourCours;
+							
+							mGrp1TrimBean.setNote_trim_g1(noteCoursTrim);
+							double total_trim_g1 = noteCoursTrim*cours.getCoefCours();
+							mGrp1TrimBean.setTotal_trim_g1(total_trim_g1);
+							//System.out.println("Calculss "+noteCoursTrim+" * "+cours.getCoefCours()+" = "+total_trim_g1);
+						}
+						
+						mGrp1TrimBean.setCoef_g1(cours.getCoefCours());
+						
+						String extreme_g1 = "";
+						double noteTrimDernierCours = rapportTrimestrielCours.getValeurNoteDernier();
+						double noteTrimPremierCours = rapportTrimestrielCours.getValeurNotePremier();
+						
+						if(noteTrimDernierCours>=0 && noteTrimPremierCours>0){
+							extreme_g1 = "["+noteTrimDernierCours+" ; "+ noteTrimPremierCours+"]";
+							mGrp1TrimBean.setExtreme_g1(extreme_g1);
+						}
+						
+						List<Eleves> listofEleveOrdreDecroissantPourCours = mapCoursEleves.get(cours.getIdCours());
+						
+						rc1 = ub.getRangNoteTrimestrielElevePourCours_opt(eleve, 
+								listofEleveOrdreDecroissantPourCours);
+						
+						if(rc1>0){
+							mGrp1TrimBean.setRang_g1(rc1+"e");
+						}
+						
+						
+						double moy_classe_g1 = ub.getMoyenneGeneralCoursTrim(classeConcerne, 
+								cours, trimestreConcerne);
+						
+						if(moy_classe_g1>0){
+							mGrp1TrimBean.setMoy_classe_g1(moy_classe_g1);
+						}
+						
+						
+						double pourcentage_g1 = ub.getTauxReussiteCoursTrim(classeConcerne, 
+								cours, trimestreConcerne);
+						if(pourcentage_g1>=0){
+							mGrp1TrimBean.setPourcentage_g1(pourcentage_g1);
+						}
+						
+						String appreciationNote = ub.calculAppreciation(noteCoursTrim,lang);
+						mGrp1TrimBean.setAppreciation_g1(appreciationNote);
+						
+						//On ajoute la ligne de cours dans le groupe correspondant
+						listofCoursScientifiqueTrimestreBean.add(mGrp1TrimBean);
+						
+					}
+					/****
+						fin du for sur les cours scientifique qui passe dans la classe
+					*****/
+					
+					//On place la liste des matieres scientifique construit
+					bulletinTrim.setMatieresGroupe1Trimestre(listofCoursScientifiqueTrimestreBean);
+					
+					
+					List<MatiereGroupe2TrimestreBean> listofCoursLitteraireTrimestreBean 
+					= new ArrayList<MatiereGroupe2TrimestreBean>(); 
+		
+					int rc2 = 0;
+					/***
+					 * debut du for sur les cours Litteraire
+					 * Gestion des cours Litteraire
+					 */
+					for(Cours cours : listofCoursLitteraire){
+						//long debutforCoursTime = System.currentTimeMillis();
+						
+						MatiereGroupe2TrimestreBean mGrp2TrimBean = new MatiereGroupe2TrimestreBean();
+						
+						
+						
+						RapportTrimestrielCours rapportTrimestrielCours = ub.getRapportTrimestrielCours(
+								classeConcerne, cours, trimestreConcerne);
+						
+						String matiere = ub.subString(cours.getIntituleCours(), 14);
+						matiere = matiere + ":";
+						String codeMat = ub.subString(cours.getCodeCours(), 5);
+						matiere = matiere + codeMat;
+						
+						String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 14);
+						
+						String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+						nomProf = ub.subString(nomProf, 15);
+	
+						
+						mGrp2TrimBean.setMatiere_g2(matiere);
+						mGrp2TrimBean.setMatiere_g2_2emelang(matiere_2emelang);
+						mGrp2TrimBean.setProf_g2(nomProf);
+						
+						double soenoteTrim = 0;
+						int nbreNoteDansTrimPourCours = 0;
+						
+	
+						for(Sequences seq : trimestreConcerne.getListofsequence()){
+							if(seq.getNumeroSeq()%2==1){
+								double note_seq_g1 = ub.getValeurNotesFinaleEleve(eleve, cours, seq);
+								
+								if(note_seq_g1>0){
+									mGrp2TrimBean.setNote_1_g2(note_seq_g1);
+									soenoteTrim = soenoteTrim + note_seq_g1;
+									/*System.out.println(cours.getCodeCours()+" seq "+seq.getNumeroSeq()+" "+"note_seq_g1 = "+note_seq_g1+" "
+											+ "et somme = "+soenoteTrim);*/
+									nbreNoteDansTrimPourCours +=1; 
+								}
+							}
+							else{
+								double note_seq_g2 = ub.getValeurNotesFinaleEleve(eleve, cours, seq);
+								
+								if(note_seq_g2>0){
+									mGrp2TrimBean.setNote_2_g2(note_seq_g2);
+									
+									soenoteTrim = soenoteTrim + note_seq_g2;
+									/*System.out.println(cours.getCodeCours()+" seq "+seq.getNumeroSeq()+" note_seq_g2 = "+note_seq_g2+" "
+											+ "et somme = "+soenoteTrim);*/
+									nbreNoteDansTrimPourCours +=1; 
+								}
+							}
+						}
+						
+						double noteCoursTrim = 0;
+						if(nbreNoteDansTrimPourCours>0){
+							noteCoursTrim = soenoteTrim/nbreNoteDansTrimPourCours;
+							
+							mGrp2TrimBean.setNote_trim_g2(noteCoursTrim);
+							double total_trim_g2 = noteCoursTrim*cours.getCoefCours();
+							mGrp2TrimBean.setTotal_trim_g2(total_trim_g2);
+							//System.out.println("Calculss "+cours.getCodeCours()+" "+noteCoursTrim+" * "+cours.getCoefCours()+" = "+total_trim_g2);
+						}
+						
+						mGrp2TrimBean.setCoef_g2(cours.getCoefCours());
+						String extreme_g2 = "";
+						double noteTrimDernierCours = rapportTrimestrielCours.getValeurNoteDernier();
+						double noteTrimPremierCours = rapportTrimestrielCours.getValeurNotePremier();
+						
+						if(noteTrimDernierCours>=0 && noteTrimPremierCours>0){
+							extreme_g2 = "["+noteTrimDernierCours+" ; "+ noteTrimPremierCours+"]";
+							mGrp2TrimBean.setExtreme_g2(extreme_g2);
+						}
+						
+						
+						List<Eleves> listofEleveOrdreDecroissantPourCours = mapCoursEleves.get(cours.getIdCours());
+						
+						rc2 = ub.getRangNoteTrimestrielElevePourCours_opt(eleve, 
+								listofEleveOrdreDecroissantPourCours);
+						
+						if(rc2>0){
+							mGrp2TrimBean.setRang_g2(rc2+"e");
+						}
+						
+						
+						double moy_classe_g2 = ub.getMoyenneGeneralCoursTrim(classeConcerne, 
+								cours, trimestreConcerne);
+						
+						if(moy_classe_g2>0){
+							mGrp2TrimBean.setMoy_classe_g2(moy_classe_g2);
+						}
+						
+						
+						double pourcentage_g2 = ub.getTauxReussiteCoursTrim(classeConcerne, 
+								cours, trimestreConcerne);
+						
+						if(pourcentage_g2>=0){
+							mGrp2TrimBean.setPourcentage_g2(pourcentage_g2);
+						}
+						
+						String appreciationNote = ub.calculAppreciation(noteCoursTrim,lang);
+						mGrp2TrimBean.setAppreciation_g2(appreciationNote);
+						
+	
+						//On ajoute la ligne de cours dans le groupe correspondant
+						listofCoursLitteraireTrimestreBean.add(mGrp2TrimBean);
+						
+						
+					}
+					/****
+						fin du for sur les cours litteraire qui passe dans la classe
+					 *****/
+				
+				//On place la liste des matieres scientifique construit
+				bulletinTrim.setMatieresGroupe2Trimestre(listofCoursLitteraireTrimestreBean);
+				
+					
+			
+				
+	
+				List<MatiereGroupe3TrimestreBean> listofCoursDiversTrimestreBean 
+				= new ArrayList<MatiereGroupe3TrimestreBean>(); 
+	
+				int rc3 = 0;
+				/***
+				 * debut du for sur les cours Divers
+				 * Gestion des cours Divers
+				 */
+				for(Cours cours : listofCoursDivers){
+					//long debutforCoursTime = System.currentTimeMillis();
+					
+					MatiereGroupe3TrimestreBean mGrp3TrimBean = new MatiereGroupe3TrimestreBean();
+					
+					
+					
+					RapportTrimestrielCours rapportTrimestrielCours = ub.getRapportTrimestrielCours(
+							classeConcerne, cours, trimestreConcerne);
+					
+					String matiere = ub.subString(cours.getIntituleCours(), 14);
+					matiere = matiere + ":";
+					String codeMat = ub.subString(cours.getCodeCours(), 5);
+					matiere = matiere + codeMat;
+					
+					String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 14);
+					
+					String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+					nomProf = ub.subString(nomProf, 15);
+	
+					
+					mGrp3TrimBean.setMatiere_g3(matiere);
+					mGrp3TrimBean.setMatiere_g3_2emelang(matiere_2emelang);
+					mGrp3TrimBean.setProf_g3(nomProf);
+					
+					
+					double soenoteTrim = 0;
+					int nbreNoteDansTrimPourCours = 0;
+					
+	
+					for(Sequences seq : trimestreConcerne.getListofsequence()){
+						if(seq.getNumeroSeq()%2==1){
+							double note_seq_g1 = ub.getValeurNotesFinaleEleve(eleve, cours, seq);
+							
+							if(note_seq_g1>0){
+								mGrp3TrimBean.setNote_1_g3(note_seq_g1);
+								soenoteTrim = soenoteTrim + note_seq_g1;
+								nbreNoteDansTrimPourCours +=1; 
+							}
+						}
+						else{
+							double note_seq_g2 = ub.getValeurNotesFinaleEleve(eleve, cours, seq);
+							
+							if(note_seq_g2>0){
+								mGrp3TrimBean.setNote_2_g3(note_seq_g2);
+								soenoteTrim = soenoteTrim + note_seq_g2;
+								nbreNoteDansTrimPourCours +=1; 
+							}
+						}
+					}
+					
+					double noteCoursTrim = 0;
+					if(nbreNoteDansTrimPourCours>0){
+						noteCoursTrim = soenoteTrim/nbreNoteDansTrimPourCours;
+						
+						mGrp3TrimBean.setNote_trim_g3(noteCoursTrim);
+						double total_trim_g3 = noteCoursTrim*cours.getCoefCours();
+						mGrp3TrimBean.setTotal_trim_g3(total_trim_g3);
+						//System.out.println("Calculss "+noteCoursTrim+" * "+cours.getCoefCours()+" = "+total_trim_g3);
+					}
+					
+					mGrp3TrimBean.setCoef_g3(cours.getCoefCours());
+					String extreme_g3 = "";
+					double noteTrimDernierCours = rapportTrimestrielCours.getValeurNoteDernier();
+					double noteTrimPremierCours = rapportTrimestrielCours.getValeurNotePremier();
+					
+					if(noteTrimDernierCours>=0 && noteTrimPremierCours>0){
+						extreme_g3 = "["+noteTrimDernierCours+" ; "+ noteTrimPremierCours+"]";
+						mGrp3TrimBean.setExtreme_g3(extreme_g3);
+					}
+					
+					
+					List<Eleves> listofEleveOrdreDecroissantPourCours = mapCoursEleves.get(cours.getIdCours());
+					
+					rc3 = ub.getRangNoteTrimestrielElevePourCours_opt(eleve, 
+							listofEleveOrdreDecroissantPourCours);
+					
+					if(rc3>0){
+						mGrp3TrimBean.setRang_g3(rc3+"e");
+					}
+					
+					
+					double moy_classe_g3 = ub.getMoyenneGeneralCoursTrim(classeConcerne, 
+							cours, trimestreConcerne);
+					
+					if(moy_classe_g3>0){
+						mGrp3TrimBean.setMoy_classe_g3(moy_classe_g3);
+					}
+					
+					
+					double pourcentage_g3 = ub.getTauxReussiteCoursTrim(classeConcerne, 
+							cours, trimestreConcerne);
+					
+					if(pourcentage_g3>=0){
+						mGrp3TrimBean.setPourcentage_g3(pourcentage_g3);
+					}
+					
+					String appreciationNote = ub.calculAppreciation(noteCoursTrim,lang);
+					mGrp3TrimBean.setAppreciation_g3(appreciationNote);
+					
+	
+					//On ajoute la ligne de cours dans le groupe correspondant
+					listofCoursDiversTrimestreBean.add(mGrp3TrimBean);
+					
+					
+				}
+				/****
+					fin du for sur les cours Divers qui passe dans la classe
+				 *****/
+			
+			//On place la liste des matieres scientifique construit
+			bulletinTrim.setMatieresGroupe3Trimestre(listofCoursDiversTrimestreBean);
+			
+			/*double moy_trimm = this.getMoyenneTrimestriel(eleve, trimestreConcerne);
+			System.err.println("moy_trimm de "+eleve.getNomsEleves()+" est de "+moy_trimm);*/
+					
+					
+					
+					long finforTime = System.currentTimeMillis();
+					collectionofBulletinTrim.add(bulletinTrim);
+					System.err.println("bulletin "+numBull+" de  "+ eleve.getNomsEleves()+
+							" dans le trimestre "+trimestreConcerne.getNumeroTrim()+
+							"  ajouter avec succes en "+(finforTime-startTimeFor));
+					numBull++;
+					
+				}
+			
+			}
+
+		return collectionofBulletinTrim;
+	}
+	
 
 	@Override
 	public Map<String, Object> generateCollectionofBulletinTrimAnnee(Long idClasse, Long idTrimestre) {
@@ -5807,8 +8166,12 @@ public class UsersServiceImplementation implements IUsersService {
 			double moyenne_general = rapportTrimestrielClasse.getMoyenneGeneralTrimestre();
 			String classeString = classeConcerne.getCodeClasses()+
 					classeConcerne.getSpecialite().getCodeSpecialite()+classeConcerne.getNumeroClasses();
-			String profPrincipal = classeConcerne.getProffesseur().getNomsPers()+" "+
+			
+			String profPrincipal ="";
+			if(classeConcerne.getProffesseur()!=null){
+				profPrincipal = classeConcerne.getProffesseur().getNomsPers()+" "+
 					classeConcerne.getProffesseur().getPrenomsPers();
+			}
 			
 			
 			int effectifTotalClasse =	ub.geteffectifEleve(classeConcerne);
@@ -5989,7 +8352,7 @@ public class UsersServiceImplementation implements IUsersService {
 				
 				double r_moy_an = moy_an;
 				
-				if(r_moy_an>0) bulletinTrimAn.setR_moy_an(r_moy_an);
+				if(r_moy_an>=0) bulletinTrimAn.setR_moy_an(r_moy_an);
 				
 				int rang_an = ub.getRangAnnuelEleveAuMoinsUneNote(eleve, listofElevesOrdreDecroissantAnnee);
 				if(rang_an>0) bulletinTrimAn.setRang_an(rang_an+"e");
@@ -6063,7 +8426,7 @@ public class UsersServiceImplementation implements IUsersService {
 					bulletinTrimAn.setRappel_4("");
 					bulletinTrimAn.setRappel_5("");
 					double r_moy_3 = ub.getMoyenneTrimestriel(eleve, trimestre1);
-					bulletinTrimAn.setR_moy_3(r_moy_3);
+					if(r_moy_3>=0)	bulletinTrimAn.setR_moy_3(r_moy_3);
 					
 					if(rang1>0){
 						bulletinTrimAn.setR_rang_3(rang1+"e");
@@ -6080,7 +8443,7 @@ public class UsersServiceImplementation implements IUsersService {
 						bulletinTrimAn.setRappel_3("Term 1");
 					}
 					double r_moy_3 = ub.getMoyenneTrimestriel(eleve, trimestre1);
-					bulletinTrimAn.setR_moy_3(r_moy_3);
+					if(r_moy_3>=0)	bulletinTrimAn.setR_moy_3(r_moy_3);
 					
 					if(rang1>0){
 						bulletinTrimAn.setR_rang_3(rang1+"e");
@@ -6096,7 +8459,7 @@ public class UsersServiceImplementation implements IUsersService {
 						bulletinTrimAn.setRappel_4("Term 2");
 					}
 					double r_moy_4 = ub.getMoyenneTrimestriel(eleve, trimestre2);
-					bulletinTrimAn.setR_moy_4(r_moy_4);
+					if(r_moy_4>=0) bulletinTrimAn.setR_moy_4(r_moy_4);
 					
 					if(rang2>0){
 						bulletinTrimAn.setR_rang_4(rang2+"e");
@@ -6115,7 +8478,7 @@ public class UsersServiceImplementation implements IUsersService {
 						bulletinTrimAn.setRappel_3("Term 1");
 					}
 					double r_moy_3 = ub.getMoyenneTrimestriel(eleve, trimestre1);
-					bulletinTrimAn.setR_moy_3(r_moy_3);
+					if(r_moy_3>=0)	bulletinTrimAn.setR_moy_3(r_moy_3);
 					
 					if(rang1>0){
 						bulletinTrimAn.setR_rang_3(rang1+"e");
@@ -6131,7 +8494,7 @@ public class UsersServiceImplementation implements IUsersService {
 						bulletinTrimAn.setRappel_4("Term 2");
 					}
 					double r_moy_4 = ub.getMoyenneTrimestriel(eleve, trimestre2);
-					bulletinTrimAn.setR_moy_4(r_moy_4);
+					if(r_moy_4>=0) bulletinTrimAn.setR_moy_4(r_moy_4);
 					
 					if(rang2>0){
 						bulletinTrimAn.setR_rang_4(rang2+"e");
@@ -6147,7 +8510,7 @@ public class UsersServiceImplementation implements IUsersService {
 						bulletinTrimAn.setRappel_5("term 3");
 					}
 					double r_moy_5 = ub.getMoyenneTrimestriel(eleve, trimestre3);
-					bulletinTrimAn.setR_moy_5(r_moy_5);
+					if(r_moy_5>=0) bulletinTrimAn.setR_moy_5(r_moy_5);
 					
 					if(rang3>0){
 						bulletinTrimAn.setR_rang_5(rang3+"e");
@@ -6406,7 +8769,7 @@ public class UsersServiceImplementation implements IUsersService {
 				
 				double valeurMoyPremierGrpCours1 = ub.getValeurMoyennePremierPourGrpDansTrim(
 						listofElevesClasse, listofCoursScientifique, trimestreConcerne);
-				if(valeurMoyDernierGrpCours1>0 && valeurMoyPremierGrpCours1>0){
+				if(valeurMoyDernierGrpCours1>=0 && valeurMoyPremierGrpCours1>0){
 					totalextreme_g1 = "["+valeurMoyDernierGrpCours1+" ; "+
 							valeurMoyPremierGrpCours1+"]";
 				}
@@ -6471,7 +8834,7 @@ public class UsersServiceImplementation implements IUsersService {
 				
 				double valeurMoyPremierGrpCours2 = ub.getValeurMoyennePremierPourGrpDansTrim(
 						listofElevesClasse, listofCoursLitteraire, trimestreConcerne);
-				if(valeurMoyDernierGrpCours2>0 && valeurMoyPremierGrpCours2>0){
+				if(valeurMoyDernierGrpCours2>=0 && valeurMoyPremierGrpCours2>0){
 					totalextreme_g2 = "["+valeurMoyDernierGrpCours2+" ; "+
 							valeurMoyPremierGrpCours2+"]";
 				}
@@ -6536,7 +8899,7 @@ public class UsersServiceImplementation implements IUsersService {
 				
 				double valeurMoyPremierGrpCours3 = ub.getValeurMoyennePremierPourGrpDansTrim(
 						listofElevesClasse, listofCoursDivers, trimestreConcerne);
-				if(valeurMoyDernierGrpCours3>0 && valeurMoyPremierGrpCours3>0){
+				if(valeurMoyDernierGrpCours3>=0 && valeurMoyPremierGrpCours3>0){
 					totalextreme_g3 = "["+valeurMoyDernierGrpCours3+" ; "+
 							valeurMoyPremierGrpCours3+"]";
 				}
@@ -6585,16 +8948,27 @@ public class UsersServiceImplementation implements IUsersService {
 					
 					//long debutforCoursTime = System.currentTimeMillis();
 					
-					MatiereGroupe1TrimAnnuelBean mGrp1TrimBean = new MatiereGroupe1TrimAnnuelBean();
+					MatiereGroupe1TrimAnnuelBean mGrp1TrimAnBean = new MatiereGroupe1TrimAnnuelBean();
 					
 					
 					
 					RapportTrimestrielCours rapportTrimestrielCours = ub.getRapportTrimestrielCours(
 							classeConcerne, cours, trimestreConcerne);
 					
+					String matiere = ub.subString(cours.getIntituleCours(), 17);
+					matiere = matiere + ":";
+					String codeMat = ub.subString(cours.getCodeCours(), 8);
+					matiere = matiere + codeMat;
 					
-					mGrp1TrimBean.setMatiere_g1(cours.getCodeCours());
-					mGrp1TrimBean.setProf_g1(cours.getProffesseur().getNomsPers());
+					String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 17);
+					
+					String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+					nomProf = ub.subString(nomProf, 15);
+					
+					mGrp1TrimAnBean.setMatiere_g1(matiere);
+					mGrp1TrimAnBean.setMatiere_g1_2emelang(matiere_2emelang);
+					mGrp1TrimAnBean.setProf_g1(cours.getProffesseur().getNomsPers());
+					
 					
 					double soenoteTrim = 0;
 					int nbreNoteDansTrimPourCours = 0;
@@ -6603,7 +8977,7 @@ public class UsersServiceImplementation implements IUsersService {
 						if(seq.getNumeroSeq()%2==1){
 							double note_seq_g1 = ub.getValeurNotesFinaleEleve(eleve, cours, seq);
 							if(note_seq_g1>0){
-								mGrp1TrimBean.setNote_1_g1(note_seq_g1);
+								mGrp1TrimAnBean.setNote_1_g1(note_seq_g1);
 								soenoteTrim = soenoteTrim + note_seq_g1;
 								nbreNoteDansTrimPourCours +=1; 
 							}
@@ -6611,7 +8985,7 @@ public class UsersServiceImplementation implements IUsersService {
 						else{
 							double note_seq_g2 = ub.getValeurNotesFinaleEleve(eleve, cours, seq);
 							if(note_seq_g2>0){
-								mGrp1TrimBean.setNote_2_g1(note_seq_g2);
+								mGrp1TrimAnBean.setNote_2_g1(note_seq_g2);
 								soenoteTrim = soenoteTrim + note_seq_g2;
 								nbreNoteDansTrimPourCours +=1; 
 							}
@@ -6622,19 +8996,19 @@ public class UsersServiceImplementation implements IUsersService {
 					double noteCoursTrim = 0;
 					if(nbreNoteDansTrimPourCours>0){
 						noteCoursTrim = soenoteTrim/nbreNoteDansTrimPourCours;
-						mGrp1TrimBean.setNote_trim_g1(noteCoursTrim);
+						mGrp1TrimAnBean.setNote_trim_g1(noteCoursTrim);
 						double total_trim_g1 = noteCoursTrim*cours.getCoefCours();
-						mGrp1TrimBean.setTotal_trim_g1(total_trim_g1);
+						mGrp1TrimAnBean.setTotal_trim_g1(total_trim_g1);
 					}
 					
-					mGrp1TrimBean.setCoef_g1(cours.getCoefCours());
+					mGrp1TrimAnBean.setCoef_g1(cours.getCoefCours());
 					
 					String extreme_g1 = "";
 					double noteTrimDernierCours = rapportTrimestrielCours.getValeurNoteDernier();
 					double noteTrimPremierCours = rapportTrimestrielCours.getValeurNotePremier();
-					if(noteTrimDernierCours>0 && noteTrimPremierCours>0){
+					if(noteTrimDernierCours>=0 && noteTrimPremierCours>0){
 						extreme_g1 = "["+noteTrimDernierCours+" ; "+ noteTrimPremierCours+"]";
-						mGrp1TrimBean.setExtreme_g1(extreme_g1);
+						mGrp1TrimAnBean.setExtreme_g1(extreme_g1);
 					}
 					
 					List<Eleves> listofEleveOrdreDecroissantPourCours = mapCoursEleves.get(cours.getIdCours());
@@ -6643,28 +9017,28 @@ public class UsersServiceImplementation implements IUsersService {
 							listofEleveOrdreDecroissantPourCours);
 					
 					if(rc1>0){
-						mGrp1TrimBean.setRang_g1(rc1+"e");
+						mGrp1TrimAnBean.setRang_g1(rc1+"e");
 					}
 					
 					
 					double moy_classe_g1 = ub.getMoyenneGeneralCoursTrim(classeConcerne, 
 							cours, trimestreConcerne);
 					if(moy_classe_g1>0){
-						mGrp1TrimBean.setMoy_classe_g1(moy_classe_g1);
+						mGrp1TrimAnBean.setMoy_classe_g1(moy_classe_g1);
 					}
 					
 					
 					double pourcentage_g1 = ub.getTauxReussiteCoursTrim(classeConcerne, 
 							cours, trimestreConcerne);
 					if(pourcentage_g1>=0){
-						mGrp1TrimBean.setPourcentage_g1(pourcentage_g1);
+						mGrp1TrimAnBean.setPourcentage_g1(pourcentage_g1);
 					}
 					
 					String appreciationNote = ub.calculAppreciation(noteCoursTrim,lang);
-					mGrp1TrimBean.setAppreciation_g1(appreciationNote);
+					mGrp1TrimAnBean.setAppreciation_g1(appreciationNote);
 					
 					//On ajoute la ligne de cours dans le groupe correspondant
-					listofCoursScientifiqueTrimAnnuelBean.add(mGrp1TrimBean);
+					listofCoursScientifiqueTrimAnnuelBean.add(mGrp1TrimAnBean);
 					
 				}
 				/****
@@ -6687,16 +9061,26 @@ public class UsersServiceImplementation implements IUsersService {
 				for(Cours cours : listofCoursLitteraire){
 					//long debutforCoursTime = System.currentTimeMillis();
 					
-					MatiereGroupe2TrimAnnuelBean mGrp2TrimBean = new MatiereGroupe2TrimAnnuelBean();
+					MatiereGroupe2TrimAnnuelBean mGrp2TrimAnBean = new MatiereGroupe2TrimAnnuelBean();
 					
 					
 					
 					RapportTrimestrielCours rapportTrimestrielCours = ub.getRapportTrimestrielCours(
 							classeConcerne, cours, trimestreConcerne);
+				
+					String matiere = ub.subString(cours.getIntituleCours(), 17);
+					matiere = matiere + ":";
+					String codeMat = ub.subString(cours.getCodeCours(), 8);
+					matiere = matiere + codeMat;
 					
+					String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 17);
+					
+					String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+					nomProf = ub.subString(nomProf, 15);
 
-					mGrp2TrimBean.setMatiere_g2(cours.getCodeCours());
-					mGrp2TrimBean.setProf_g2(cours.getProffesseur().getNomsPers());
+					mGrp2TrimAnBean.setMatiere_g2(matiere);
+					mGrp2TrimAnBean.setMatiere_g2_2emelang(matiere_2emelang);
+					mGrp2TrimAnBean.setProf_g2(nomProf);
 					
 					double soenoteTrim = 0;
 					int nbreNoteDansTrimPourCours = 0;
@@ -6706,7 +9090,7 @@ public class UsersServiceImplementation implements IUsersService {
 						if(seq.getNumeroSeq()%2==1){
 							double note_seq_g1 = ub.getValeurNotesFinaleEleve(eleve, cours, seq);
 							if(note_seq_g1>0){
-								mGrp2TrimBean.setNote_1_g2(note_seq_g1);
+								mGrp2TrimAnBean.setNote_1_g2(note_seq_g1);
 								soenoteTrim = soenoteTrim + note_seq_g1;
 								nbreNoteDansTrimPourCours +=1; 
 							}
@@ -6714,7 +9098,7 @@ public class UsersServiceImplementation implements IUsersService {
 						else{
 							double note_seq_g2 = ub.getValeurNotesFinaleEleve(eleve, cours, seq);
 							if(note_seq_g2>0){
-								mGrp2TrimBean.setNote_2_g2(note_seq_g2);
+								mGrp2TrimAnBean.setNote_2_g2(note_seq_g2);
 								soenoteTrim = soenoteTrim + note_seq_g2;
 								nbreNoteDansTrimPourCours +=1; 
 							}
@@ -6724,18 +9108,18 @@ public class UsersServiceImplementation implements IUsersService {
 					double noteCoursTrim = 0;
 					if(nbreNoteDansTrimPourCours>0){
 						noteCoursTrim = soenoteTrim/nbreNoteDansTrimPourCours;
-						mGrp2TrimBean.setNote_trim_g2(noteCoursTrim);
+						mGrp2TrimAnBean.setNote_trim_g2(noteCoursTrim);
 						double total_trim_g2 = noteCoursTrim*cours.getCoefCours();
-						mGrp2TrimBean.setTotal_trim_g2(total_trim_g2);
+						mGrp2TrimAnBean.setTotal_trim_g2(total_trim_g2);
 					}
 					
-					mGrp2TrimBean.setCoef_g2(cours.getCoefCours());
+					mGrp2TrimAnBean.setCoef_g2(cours.getCoefCours());
 					String extreme_g2 = "";
 					double noteTrimDernierCours = rapportTrimestrielCours.getValeurNoteDernier();
 					double noteTrimPremierCours = rapportTrimestrielCours.getValeurNotePremier();
-					if(noteTrimDernierCours>0 && noteTrimPremierCours>0){
+					if(noteTrimDernierCours>=0 && noteTrimPremierCours>0){
 						extreme_g2 = "["+noteTrimDernierCours+" ; "+ noteTrimPremierCours+"]";
-						mGrp2TrimBean.setExtreme_g2(extreme_g2);
+						mGrp2TrimAnBean.setExtreme_g2(extreme_g2);
 					}
 					
 					
@@ -6745,29 +9129,29 @@ public class UsersServiceImplementation implements IUsersService {
 							listofEleveOrdreDecroissantPourCours);
 					
 					if(rc2>0){
-						mGrp2TrimBean.setRang_g2(rc2+"e");
+						mGrp2TrimAnBean.setRang_g2(rc2+"e");
 					}
 					
 					
 					double moy_classe_g2 = ub.getMoyenneGeneralCoursTrim(classeConcerne, 
 							cours, trimestreConcerne);
 					if(moy_classe_g2>0){
-						mGrp2TrimBean.setMoy_classe_g2(moy_classe_g2);
+						mGrp2TrimAnBean.setMoy_classe_g2(moy_classe_g2);
 					}
 					
 					
 					double pourcentage_g2 = ub.getTauxReussiteCoursTrim(classeConcerne, 
 							cours, trimestreConcerne);
 					if(pourcentage_g2>=0){
-						mGrp2TrimBean.setPourcentage_g2(pourcentage_g2);
+						mGrp2TrimAnBean.setPourcentage_g2(pourcentage_g2);
 					}
 					
 					String appreciationNote = ub.calculAppreciation(noteCoursTrim,lang);
-					mGrp2TrimBean.setAppreciation_g2(appreciationNote);
+					mGrp2TrimAnBean.setAppreciation_g2(appreciationNote);
 					
 
 					//On ajoute la ligne de cours dans le groupe correspondant
-					listofCoursLitteraireTrimAnnuelBean.add(mGrp2TrimBean);
+					listofCoursLitteraireTrimAnnuelBean.add(mGrp2TrimAnBean);
 					
 					
 				}
@@ -6793,16 +9177,26 @@ public class UsersServiceImplementation implements IUsersService {
 			for(Cours cours : listofCoursDivers){
 				//long debutforCoursTime = System.currentTimeMillis();
 				
-				MatiereGroupe3TrimAnnuelBean mGrp3TrimBean = new MatiereGroupe3TrimAnnuelBean();
+				MatiereGroupe3TrimAnnuelBean mGrp3TrimAnBean = new MatiereGroupe3TrimAnnuelBean();
 				
 				
 				
 				RapportTrimestrielCours rapportTrimestrielCours = ub.getRapportTrimestrielCours(
 						classeConcerne, cours, trimestreConcerne);
 				
+				String matiere = ub.subString(cours.getIntituleCours(), 17);
+				matiere = matiere + ":";
+				String codeMat = ub.subString(cours.getCodeCours(), 8);
+				matiere = matiere + codeMat;
+				
+				String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 17);
+				
+				String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+				nomProf = ub.subString(nomProf, 15);
 
-				mGrp3TrimBean.setMatiere_g3(cours.getCodeCours());
-				mGrp3TrimBean.setProf_g3(cours.getProffesseur().getNomsPers());
+				mGrp3TrimAnBean.setMatiere_g3(matiere);
+				mGrp3TrimAnBean.setMatiere_g3_2emelang(matiere_2emelang);
+				mGrp3TrimAnBean.setProf_g3(nomProf);
 				
 				double soenoteTrim = 0;
 				int nbreNoteDansTrimPourCours = 0;
@@ -6812,7 +9206,7 @@ public class UsersServiceImplementation implements IUsersService {
 					if(seq.getNumeroSeq()%2==1){
 						double note_seq_g1 = ub.getValeurNotesFinaleEleve(eleve, cours, seq);
 						if(note_seq_g1>0){
-							mGrp3TrimBean.setNote_1_g3(note_seq_g1);
+							mGrp3TrimAnBean.setNote_1_g3(note_seq_g1);
 							soenoteTrim = soenoteTrim + note_seq_g1;
 							nbreNoteDansTrimPourCours +=1; 
 						}
@@ -6820,7 +9214,7 @@ public class UsersServiceImplementation implements IUsersService {
 					else{
 						double note_seq_g2 = ub.getValeurNotesFinaleEleve(eleve, cours, seq);
 						if(note_seq_g2>0){
-							mGrp3TrimBean.setNote_2_g3(note_seq_g2);
+							mGrp3TrimAnBean.setNote_2_g3(note_seq_g2);
 							soenoteTrim = soenoteTrim + note_seq_g2;
 							nbreNoteDansTrimPourCours +=1; 
 						}
@@ -6830,18 +9224,18 @@ public class UsersServiceImplementation implements IUsersService {
 				double noteCoursTrim = 0;
 				if(nbreNoteDansTrimPourCours>0){
 					noteCoursTrim = soenoteTrim/nbreNoteDansTrimPourCours;
-					mGrp3TrimBean.setNote_trim_g3(noteCoursTrim);
+					mGrp3TrimAnBean.setNote_trim_g3(noteCoursTrim);
 					double total_trim_g3 = noteCoursTrim*cours.getCoefCours();
-					mGrp3TrimBean.setTotal_trim_g3(total_trim_g3);
+					mGrp3TrimAnBean.setTotal_trim_g3(total_trim_g3);
 				}
 				
-				mGrp3TrimBean.setCoef_g3(cours.getCoefCours());
+				mGrp3TrimAnBean.setCoef_g3(cours.getCoefCours());
 				String extreme_g3 = "";
 				double noteTrimDernierCours = rapportTrimestrielCours.getValeurNoteDernier();
 				double noteTrimPremierCours = rapportTrimestrielCours.getValeurNotePremier();
-				if(noteTrimDernierCours>0 && noteTrimPremierCours>0){
+				if(noteTrimDernierCours>=0 && noteTrimPremierCours>0){
 					extreme_g3 = "["+noteTrimDernierCours+" ; "+ noteTrimPremierCours+"]";
-					mGrp3TrimBean.setExtreme_g3(extreme_g3);
+					mGrp3TrimAnBean.setExtreme_g3(extreme_g3);
 				}
 				
 				
@@ -6851,29 +9245,29 @@ public class UsersServiceImplementation implements IUsersService {
 						listofEleveOrdreDecroissantPourCours);
 				
 				if(rc3>0){
-					mGrp3TrimBean.setRang_g3(rc3+"e");
+					mGrp3TrimAnBean.setRang_g3(rc3+"e");
 				}
 				
 				
 				double moy_classe_g3 = ub.getMoyenneGeneralCoursTrim(classeConcerne, 
 						cours, trimestreConcerne);
 				if(moy_classe_g3>0){
-					mGrp3TrimBean.setMoy_classe_g3(moy_classe_g3);
+					mGrp3TrimAnBean.setMoy_classe_g3(moy_classe_g3);
 				}
 				
 				
 				double pourcentage_g3 = ub.getTauxReussiteCoursTrim(classeConcerne, 
 						cours, trimestreConcerne);
 				if(pourcentage_g3>=0){
-					mGrp3TrimBean.setPourcentage_g3(pourcentage_g3);
+					mGrp3TrimAnBean.setPourcentage_g3(pourcentage_g3);
 				}
 				
 				String appreciationNote = ub.calculAppreciation(noteCoursTrim,lang);
-				mGrp3TrimBean.setAppreciation_g3(appreciationNote);
+				mGrp3TrimAnBean.setAppreciation_g3(appreciationNote);
 				
 
 				//On ajoute la ligne de cours dans le groupe correspondant
-				listofCoursDiversTrimAnnuelBean.add(mGrp3TrimBean);
+				listofCoursDiversTrimAnnuelBean.add(mGrp3TrimAnBean);
 				
 				
 			}
@@ -6929,6 +9323,1222 @@ public class UsersServiceImplementation implements IUsersService {
 		return donnee;
 	}
 
+	
+	public Collection<BulletinTrimAnnuelBean> generate1BulletinTrimAnnuel(Long idEleve, Long idClasse, 
+			Long idTrimestre){
+		
+
+		// TODO Auto-generated method stub
+		
+		 Etablissement etablissementConcerne = this.getEtablissement();
+		 String villeEtab = "";
+		 if(etablissementConcerne != null) villeEtab = etablissementConcerne.getVilleEtab();
+		 
+		 Classes classeConcerne = this.findClasses(idClasse);
+		 Annee anneeScolaire = this.findAnneeActive();
+		 Trimestres trimestreConcerne = this.findTrimestres(idTrimestre);
+		 Eleves eleveConcerne = this.findEleves(idEleve);
+			
+		 List<BulletinTrimAnnuelBean> collectionofBulletionTrimAnnuel = 
+				 new ArrayList<BulletinTrimAnnuelBean>();
+		
+		 if((classeConcerne==null) || (trimestreConcerne==null) || (eleveConcerne==null)) {
+			//System.err.println("les données de calcul du bean bulletin sont errone donc rien n'est possible ");
+			return null;
+		 }
+		 
+		String lang="";
+		 if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+			 lang="fr";
+		 }
+		 else{
+			 lang="en";
+		 }
+		 
+		 /*
+			 * Ici on est sur que la classe est bel et bien retrouver. On doit faire le bulletin de tous les élèves de la classe.
+			 * mais si un élève n'est pas régulier son bulletin devient particulier
+			 */
+			List<Eleves>  listofEleveClasse = (List<Eleves>) classeConcerne.getListofEleves();
+			
+			List<Cours> listofCoursEvalueTrim = ub.getListOfCoursEvalueDansTrimestre(classeConcerne, 
+					trimestreConcerne);
+			
+			/*
+			 * Etablissons ensuite la liste des 3 groupes de cours(scientifique, littéraire et divers dans la 
+			 * section général)
+			 */
+			
+			List<Cours> listofCoursScientifique = ub.getListofCoursScientifiqueDansClasse(classeConcerne);
+			
+			List<Cours> listofCoursLitteraire = ub.getListofCoursLitteraireDansClasse(classeConcerne);
+			
+			List<Cours> listofCoursDivers = ub.getListofCoursDiversDansClasse(classeConcerne);
+
+
+			/*
+			 * Donnée du bulletin qui ne doivent pas être recalcule à chaque tour de boucle sur les élèves
+			 * car elles ne dépendent pas de l'élève et son identique pour tous les bulletins d'une classe 
+			 * dans un trimestre
+			 */
+			List<Eleves> listofElevesClasse = (List<Eleves>) classeConcerne.getListofEleves();
+			
+			List<Eleves> listofEleveRegulier = ub.getListofEleveRegulierTrimestre(classeConcerne, trimestreConcerne);
+			
+			
+			
+			RapportTrimestrielClasse rapportTrimestrielClasse = ub.getRapportTrimestrielClasse(classeConcerne, 
+					listofEleveRegulier, trimestreConcerne);
+			
+			RapportAnnuelClasse rapportAnnuelClasse = ub.getRapportAnnuelClasse(classeConcerne, 
+					listofEleveRegulier, anneeScolaire);
+			
+			double moyenne_premier_classe = rapportTrimestrielClasse.getValeurMoyennePremierDansTrim();
+			
+			double moyenne_dernier_classe = rapportTrimestrielClasse.getValeurMoyenneDernierDansTrim();
+			
+			int nbre_moyenne_classeSeq = rapportTrimestrielClasse.getNbreMoyennePourTrim();
+			
+			double tauxReussite = rapportTrimestrielClasse.getTauxReussiteTrimestriel();
+			
+			double moyenne_general = rapportTrimestrielClasse.getMoyenneGeneralTrimestre();
+			String classeString = classeConcerne.getCodeClasses()+
+					classeConcerne.getSpecialite().getCodeSpecialite()+classeConcerne.getNumeroClasses();
+			
+			String profPrincipal ="";
+			if(classeConcerne.getProffesseur()!=null){
+				profPrincipal = classeConcerne.getProffesseur().getNomsPers()+" "+
+					classeConcerne.getProffesseur().getPrenomsPers();
+			}
+			
+			
+			int effectifTotalClasse =	ub.geteffectifEleve(classeConcerne);
+			
+			int effectifRegulierClasseTrim = ub.geteffectifEleveRegulierTrimestre(classeConcerne, trimestreConcerne);
+			
+			double t_reussite_an=0.0;
+			double moy_gen_classe_an=0.0;
+			
+			int numBull = 1;
+
+			/*
+			 * On va appeler une méthode qui retourne une Map<idCours, List<Eleves>>
+			 * Chaque entrée de la Map a comme cle l'id d'un cours passant dans la classe et 
+			 * comme valeur la liste des élèves rangés dans l'ordre décroissant des notes obtenues 
+			 * dans le trimestre considéré
+			 */
+			Map<Long, List<Eleves>> mapCoursEleves = 
+					ub.getMapCoursElevesOrdreDecroissantTrimestre(classeConcerne, trimestreConcerne);
+			
+			/*
+			 * On va appeler une méthode qui retourne la liste des élèves classés dans l'ordre décroissant 
+			 * des moyenne obtenu Trimestriellement
+			 */
+			List<Eleves> listofElevesOrdreDecroissantMoyenneTrimestriel = (List<Eleves>) 
+					UtilitairesBulletins.getMoyenneTrimestrielOrdreDecroissant1(classeConcerne, trimestreConcerne);
+			
+			
+			
+			List<Eleves> listofElevesOrdreDecroissantAnnee = (List<Eleves>) 
+					UtilitairesBulletins.getMoyenneAnnuelOrdreDecroissant1(classeConcerne, anneeScolaire);
+			
+			
+			/*
+			 * On va mettre dans cette Map la liste des élèves classés dans l'ordre décroissant des 
+			 * moyennes obtenu pour chaque séquence dans le trimestre
+			 */
+			Map<Long,List<Eleves>> mapofElevesOrdreDecroissantMoyenneSequentiel = new 
+					HashMap<Long, List<Eleves>>();
+
+			for(Sequences seq : trimestreConcerne.getListofsequence()){
+				
+				List<Eleves> listofElevesOrdreDecroissantMoyenneSeq = (List<Eleves>) 
+						ub.getMoyenneSequentielOrdreDecroissant1(classeConcerne, seq);
+				
+				mapofElevesOrdreDecroissantMoyenneSequentiel.put(seq.getIdPeriodes(),
+						listofElevesOrdreDecroissantMoyenneSeq);
+				
+			}
+
+			for(Eleves eleve : listofEleveClasse){
+				if(eleve.getIdEleves() == eleveConcerne.getIdEleves()){
+					long startTimeFor = System.currentTimeMillis();
+					
+					BulletinTrimAnnuelBean bulletinTrimAn = new BulletinTrimAnnuelBean();
+					/*
+					 * Initialisons les premieres donnees du bulletin trimestriel
+					 */
+					/****
+					 * Information d'entete du bulletin
+					 */
+					bulletinTrimAn.setMinistere_fr(etablissementConcerne.getMinisteretuteleEtab());
+					bulletinTrimAn.setMinistere_en(etablissementConcerne.getMinisteretuteleanglaisEtab());
+					bulletinTrimAn.setDelegation_en(etablissementConcerne.getDeleguationdeptuteleanglaisEtab());
+					bulletinTrimAn.setDelegation_fr(etablissementConcerne.getDeleguationdeptuteleEtab());
+					bulletinTrimAn.setEtablissement_en(etablissementConcerne.getNomsanglaisEtab());
+					bulletinTrimAn.setEtablissement_fr(etablissementConcerne.getNomsEtab());
+					bulletinTrimAn.setAdresse("BP "+etablissementConcerne.getBpEtab()+"/"+
+							etablissementConcerne.getNumtel1Etab()+"/"+etablissementConcerne.getEmailEtab());
+					bulletinTrimAn.setDevise_en(etablissementConcerne.getDeviseanglaisEtab());
+					bulletinTrimAn.setDevise_fr(etablissementConcerne.getDeviseEtab());
+					if(lang.equalsIgnoreCase("fr")==true){
+						bulletinTrimAn.setTitre_bulletin("Bulletin de note du trimestre "+trimestreConcerne.getNumeroTrim());
+					}
+					else{
+						bulletinTrimAn.setTitre_bulletin("Report card of term "+trimestreConcerne.getNumeroTrim());
+					}
+					bulletinTrimAn.setAnnee_scolaire_en("School year "+anneeScolaire.getIntituleAnnee());
+					bulletinTrimAn.setAnnee_scolaire_fr("Année scolaire "+anneeScolaire.getIntituleAnnee());
+					
+					
+					/***************
+					 * Information personnel de l'élève
+					 */
+					bulletinTrimAn.setNumero(" "+eleve.getNumero(listofElevesClasse));
+					bulletinTrimAn.setSexe(eleve.getSexeEleves());
+					bulletinTrimAn.setNom_eleve(" "+eleve.getNomsEleves().toUpperCase());
+					bulletinTrimAn.setPrenom_eleve(eleve.getPrenomsEleves().toUpperCase());
+					SimpleDateFormat spd = new SimpleDateFormat("dd/MM/yyyy");
+					bulletinTrimAn.setDate_naissance_eleve(spd.format(eleve.getDatenaissEleves()));
+					bulletinTrimAn.setLieu_naissance_eleve(eleve.getLieunaissEleves());
+					bulletinTrimAn.setMatricule_eleve(eleve.getMatriculeEleves());
+					bulletinTrimAn.setRedoublant(eleve.getRedoublant());
+					bulletinTrimAn.setClasse_eleve(classeString);
+					bulletinTrimAn.setProf_principal(profPrincipal);
+					bulletinTrimAn.setEffectif_classe(effectifTotalClasse);
+					bulletinTrimAn.setEffectif_presente(effectifRegulierClasseTrim);
+					
+					/*****
+					 * Pour le chargement des photos: Si une photos n'est pas dispo il y aura une exception 
+					 * puisque Jasper ne pourra pas trouver l'image. Donc il faut un moyen de ne rien fixé 
+					 * à setPhoto lorsque l'image n'est pas dispo. Pour vérifier que l'image n'est pas dispo
+					 * on va essayer de charger le fichier correspondant avec la classe File de java.io
+					 */
+					File f=new File(photoElevesDir+eleve.getIdEleves());
+					//System.err.println("est ce que le fichier existe "+f.exists());
+					
+					if(f.exists()==true){
+						bulletinTrimAn.setPhoto(photoElevesDir+eleve.getIdEleves()); 
+					}
+	
+	
+					/********
+					 * Informations sur les labels d'entete des notes du bulletin trimestriel
+					 */
+					for(Sequences seq : trimestreConcerne.getListofsequence()){
+						if(seq.getNumeroSeq()%2==1){
+							bulletinTrimAn.setLabel_note_1("N S"+seq.getNumeroSeq());
+						}
+						else{
+							bulletinTrimAn.setLabel_note_2("N S"+seq.getNumeroSeq());
+						}
+					}
+					
+	
+					bulletinTrimAn.setLabel_trimestre("N T"+trimestreConcerne.getNumeroTrim());
+					bulletinTrimAn.setLabel_trim_x_coef("N T"+trimestreConcerne.getNumeroTrim()+"*Coef");
+			
+					/***********
+					 * Information sur les totaux trimestriels
+					 */
+					
+					double total_coef = ub.getSommeCoefCoursComposeTrimestre(eleve, trimestreConcerne);
+					bulletinTrimAn.setTotal_coef(total_coef);
+					
+					double total_points = ub.getTotalPointsTrimestriel(eleve, trimestreConcerne);
+					if(total_points>0){
+						bulletinTrimAn.setTotal_points(total_points);
+					}
+					
+					/***********
+					 * Informations sur les resultats trimestriels de l'eleve
+					 */
+					bulletinTrimAn.setResult_tt_coef(total_coef);
+					
+					if(total_points>0){
+						bulletinTrimAn.setResult_tt_points(total_points);
+					}
+					
+					
+				
+					//Cette methode donne un rang a tout le monde meme ceux qui n'ont compose qu'un seul cours
+					
+					/*int rang = this.getRangTrimestrielEleveAuMoinsUneNote(classeConcerne, trimestreConcerne, 
+							eleve);*/
+					 
+					 int rang = ub.getRangTrimestrielEleveAuMoinsUneNote(eleve, 
+							 listofElevesOrdreDecroissantMoyenneTrimestriel);
+					 
+					if(rang>0){
+						bulletinTrimAn.setResult_rang_trim(rang+"e");
+					}
+					else{
+						bulletinTrimAn.setResult_rang_trim("");
+					}
+					
+					/********************************
+					 * Info sur le resultat annuel a ce stade de l'élève
+					 */
+					if(lang.equalsIgnoreCase("fr")==true){
+						bulletinTrimAn.setRappel_an("Résultat annuel");
+					}
+					else{
+						bulletinTrimAn.setRappel_an("Annual result");
+					}
+					double moy_an = ub.getMoyenneAnnuel(eleve, anneeScolaire);
+					
+					if(moy_an>0)	bulletinTrimAn.setMoy_an(moy_an);
+					
+					double r_moy_an = moy_an;
+					
+					if(r_moy_an>=0) bulletinTrimAn.setR_moy_an(r_moy_an);
+					
+					int rang_an = ub.getRangAnnuelEleveAuMoinsUneNote(eleve, listofElevesOrdreDecroissantAnnee);
+					if(rang_an>0) bulletinTrimAn.setRang_an(rang_an+"e");
+					
+					int r_rang_an = rang_an;
+					if(r_rang_an>0) bulletinTrimAn.setR_rang_an(r_rang_an+"e");
+					
+					
+					t_reussite_an = rapportAnnuelClasse.getTauxReussiteAnnuel();
+					bulletinTrimAn.setT_reussite_an(t_reussite_an);
+					
+					moy_gen_classe_an = rapportAnnuelClasse.getMoyenneGeneralAnnuel();
+					bulletinTrimAn.setMoy_gen_classe_an(moy_gen_classe_an);
+				
+					
+					/*
+					 * On doit faire cette liste des élèves pour tous les autres trimestres
+					 * en fonction du numero de trimestre demande
+					 */
+					List<Eleves> listofElevesOrdreDecroissantMoyenneTrimestriel_1=null;
+					List<Eleves> listofElevesOrdreDecroissantMoyenneTrimestriel_2=null;
+					List<Eleves> listofElevesOrdreDecroissantMoyenneTrimestriel_3=null;
+					
+					Trimestres trimestre1=null;
+					Trimestres trimestre2=null;
+					Trimestres trimestre3=null;
+					
+					int rang1=0;
+					int rang2=0;
+					int rang3=0;
+					
+					for(Trimestres trim : anneeScolaire.getListoftrimestre()){
+						if(trim.getNumeroTrim()==1){
+							listofElevesOrdreDecroissantMoyenneTrimestriel_1 = (List<Eleves>) 
+									UtilitairesBulletins.getMoyenneTrimestrielOrdreDecroissant1(classeConcerne, trim);
+							 
+							rang1 = ub.getRangTrimestrielEleveAuMoinsUneNote(eleve, 
+									 listofElevesOrdreDecroissantMoyenneTrimestriel_1);
+							
+							trimestre1 = trim;
+						}
+						else if(trim.getNumeroTrim()==2){
+							listofElevesOrdreDecroissantMoyenneTrimestriel_2 = (List<Eleves>) 
+									UtilitairesBulletins.getMoyenneTrimestrielOrdreDecroissant1(classeConcerne, trim);
+							
+							rang2 = ub.getRangTrimestrielEleveAuMoinsUneNote(eleve, 
+									 listofElevesOrdreDecroissantMoyenneTrimestriel_2);
+							
+							trimestre2 = trim;
+						}
+						else if(trim.getNumeroTrim()==3){
+							listofElevesOrdreDecroissantMoyenneTrimestriel_3 = (List<Eleves>) 
+									UtilitairesBulletins.getMoyenneTrimestrielOrdreDecroissant1(classeConcerne, trim);
+							
+							rang3 = ub.getRangTrimestrielEleveAuMoinsUneNote(eleve, 
+									 listofElevesOrdreDecroissantMoyenneTrimestriel_3);
+							
+							trimestre3 = trim;
+						}
+					}
+					
+					
+					
+					if(trimestreConcerne.getNumeroTrim()==1){
+						if(lang.equalsIgnoreCase("fr")==true){
+						bulletinTrimAn.setRappel_3("Trimestre1");
+						}
+						else{
+							bulletinTrimAn.setRappel_3("Term 1");
+						}
+						bulletinTrimAn.setRappel_4("");
+						bulletinTrimAn.setRappel_5("");
+						double r_moy_3 = ub.getMoyenneTrimestriel(eleve, trimestre1);
+						if(r_moy_3>=0) bulletinTrimAn.setR_moy_3(r_moy_3);
+						
+						if(rang1>0){
+							bulletinTrimAn.setR_rang_3(rang1+"e");
+						}
+						else{
+							bulletinTrimAn.setR_rang_3("");
+						}
+					}
+					else if(trimestreConcerne.getNumeroTrim()==2){
+						if(lang.equalsIgnoreCase("fr")==true){
+							bulletinTrimAn.setRappel_3("Trimestre1");
+						}
+						else{
+							bulletinTrimAn.setRappel_3("Term 1");
+						}
+						double r_moy_3 = ub.getMoyenneTrimestriel(eleve, trimestre1);
+						if(r_moy_3>=0) bulletinTrimAn.setR_moy_3(r_moy_3);
+						
+						if(rang1>0){
+							bulletinTrimAn.setR_rang_3(rang1+"e");
+						}
+						else{
+							bulletinTrimAn.setR_rang_3("");
+						}
+						
+						if(lang.equalsIgnoreCase("fr")==true){
+							bulletinTrimAn.setRappel_4("Trimestre2");
+						}
+						else{
+							bulletinTrimAn.setRappel_4("Term 2");
+						}
+						double r_moy_4 = ub.getMoyenneTrimestriel(eleve, trimestre2);
+						if(r_moy_4>=0) bulletinTrimAn.setR_moy_4(r_moy_4);
+						
+						if(rang2>0){
+							bulletinTrimAn.setR_rang_4(rang2+"e");
+						}
+						else{
+							bulletinTrimAn.setR_rang_4("");
+						}
+						bulletinTrimAn.setRappel_5("");
+						
+					}
+					else if(trimestreConcerne.getNumeroTrim()==3){
+						if(lang.equalsIgnoreCase("fr")==true){
+							bulletinTrimAn.setRappel_3("Trimestre1");
+						}
+						else{
+							bulletinTrimAn.setRappel_3("Term 1");
+						}
+						double r_moy_3 = ub.getMoyenneTrimestriel(eleve, trimestre1);
+						if(r_moy_3>=0) bulletinTrimAn.setR_moy_3(r_moy_3);
+						
+						if(rang1>0){
+							bulletinTrimAn.setR_rang_3(rang1+"e");
+						}
+						else{
+							bulletinTrimAn.setR_rang_3("");
+						}
+						
+						if(lang.equalsIgnoreCase("fr")==true){
+							bulletinTrimAn.setRappel_4("Trimestre2");
+						}
+						else{
+							bulletinTrimAn.setRappel_4("Term 2");
+						}
+						double r_moy_4 = ub.getMoyenneTrimestriel(eleve, trimestre2);
+						if(r_moy_4>=0) bulletinTrimAn.setR_moy_4(r_moy_4);
+						
+						if(rang2>0){
+							bulletinTrimAn.setR_rang_4(rang2+"e");
+						}
+						else{
+							bulletinTrimAn.setR_rang_4("");
+						}
+						
+						if(lang.equalsIgnoreCase("fr")==true){
+							bulletinTrimAn.setRappel_5("Trimestre3");
+						}
+						else{
+							bulletinTrimAn.setRappel_5("term 3");
+						}
+						double r_moy_5 = ub.getMoyenneTrimestriel(eleve, trimestre3);
+						if(r_moy_5>=0) bulletinTrimAn.setR_moy_5(r_moy_5);
+						
+						if(rang3>0){
+							bulletinTrimAn.setR_rang_5(rang3+"e");
+						}
+						else{
+							bulletinTrimAn.setR_rang_5("");
+						}
+						
+					}
+					
+					
+					
+					/*************************************************
+					 * Informations sur le profil de la classe dans le trimestre
+					 */
+					if(moyenne_premier_classe>0){
+						bulletinTrimAn.setMoy_premier(moyenne_premier_classe);
+					}
+					if(moyenne_dernier_classe>0){
+						bulletinTrimAn.setMoy_dernier(moyenne_dernier_classe);
+					}
+					
+					bulletinTrimAn.setNbre_moyennes(nbre_moyenne_classeSeq);
+					if(tauxReussite>0){
+						bulletinTrimAn.setTaux_reussite(tauxReussite);
+					}
+					if(moyenne_general>0){
+						bulletinTrimAn.setMoy_gen_classe(moyenne_general);
+					}
+					
+	
+					/***********************
+					 * Informations sur la conduite trimestriel de l'élève
+					 */
+					int nhaj = 0;
+					int nhanj = 0;
+					int nhc = 0;
+					int nje = 0;
+					
+				
+					
+					nhanj = eleve.getNbreHeureAbsenceNonJustifieTrim(trimestreConcerne);
+					nhaj = eleve.getNbreHeureAbsenceJustifieTrim(trimestreConcerne);
+					
+					bulletinTrimAn.setAbsence_NJ(nhanj);
+					bulletinTrimAn.setAbsence_J(nhaj);
+					bulletinTrimAn.setConsigne(nhc+"h");
+					bulletinTrimAn.setExclusion(nje+" J");
+					bulletinTrimAn.setAvertissement("");
+					bulletinTrimAn.setBlame_conduite("");
+					
+					/************************
+					 * On doit rechercher les sanctions disciplinaire obtenu dans la periode(annee)
+					 * dans leur ordre decroissant de sévérité et dans l'ordre décroissant des dates ou elles ont 
+					 * ete infligées. On va commencer du trimestre de plus grand numero vers celui de plus petit et
+					 *  de la séquence paire vers la séquence impair de chaque trimestre à chercher
+					 */
+					bulletinTrimAn.setRapport_disc1("");
+					bulletinTrimAn.setRapport_disc2("");
+					bulletinTrimAn.setRapport_disc3("");
+					for(Trimestres trim : anneeScolaire.getListoftrimestre_DESC()){
+							for(Sequences seq : trim.getListofsequence_DESC()){
+								List<RapportDisciplinaire> listofRDiscEleveSeq = eleve.getListRapportDisciplinaireSeq_DESC(seq.getIdPeriodes());
+								
+								if(listofRDiscEleveSeq != null){
+									if(listofRDiscEleveSeq.size()>0) {
+										RapportDisciplinaire rdisc = listofRDiscEleveSeq.get(0);
+										String rdisc_chaine = "";
+										rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+										//On peut donc fixer rapport_disc1
+										bulletinTrimAn.setRapport_disc1(rdisc_chaine);
+									}
+									
+									/*
+									 * On ne fait pas de else car il faut encore reprendre le test et au cas ou ca marche 
+									 * on va set rapport_disc2
+									 */
+									if(listofRDiscEleveSeq.size()>1) {
+			
+										RapportDisciplinaire rdisc = listofRDiscEleveSeq.get(1);
+										String rdisc_chaine = "";
+										rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+										//On peut donc fixer rapport_disc1
+										bulletinTrimAn.setRapport_disc2(rdisc_chaine);
+									
+									}
+									
+									if(listofRDiscEleveSeq.size()>2) {
+			
+										RapportDisciplinaire rdisc = listofRDiscEleveSeq.get(2);
+										String rdisc_chaine = "";
+										rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+										
+										//On peut donc fixer rapport_disc1
+										bulletinTrimAn.setRapport_disc3(rdisc_chaine);
+														
+									}
+									
+							}
+						}
+					}
+					
+					
+					/**************************
+					 * Informations sur le rappel de la moyenne et du rang trimestriel
+					 */
+	
+					for(Sequences seq : trimestreConcerne.getListofsequence()){
+						
+						List<Eleves> listofElevesOrdreDecroissantMoyenneSeq = 
+								mapofElevesOrdreDecroissantMoyenneSequentiel.get(seq.getIdPeriodes());
+						
+						if(seq.getNumeroSeq()%2==1){
+							if(lang.equalsIgnoreCase("fr")==true){
+								bulletinTrimAn.setRappel_1("Séquence "+seq.getNumeroSeq());
+							}
+							else{
+								bulletinTrimAn.setRappel_1("Sequence "+seq.getNumeroSeq());
+							}
+							
+							double moy_seq = ub.getMoyenneSequentiel(eleve, seq);
+							if(moy_seq>0){
+								bulletinTrimAn.setR_moy_1(moy_seq);
+							}
+							
+							int rangseq = ub.getRangSequentielEleveAuMoinsUneNote(eleve, 
+									listofElevesOrdreDecroissantMoyenneSeq);
+							
+							if(rangseq>0){
+								bulletinTrimAn.setR_rang_1(rangseq+"e");
+							}
+							else{
+								bulletinTrimAn.setR_rang_1("");
+							}
+						}
+						else{
+							if(lang.equalsIgnoreCase("fr")==true){
+								bulletinTrimAn.setRappel_2("Séquence "+seq.getNumeroSeq());
+							}
+							else{
+								bulletinTrimAn.setRappel_2("Sequence "+seq.getNumeroSeq());
+							}
+							double moy_seq = ub.getMoyenneSequentiel(eleve, seq);
+							if(moy_seq>0){
+								bulletinTrimAn.setR_moy_2(moy_seq);
+							}
+							int rangseq = ub.getRangSequentielEleveAuMoinsUneNote(eleve, 
+									listofElevesOrdreDecroissantMoyenneSeq);
+							
+							if(rangseq>0){
+								bulletinTrimAn.setR_rang_2(rangseq+"e");
+							}
+							else{
+								bulletinTrimAn.setR_rang_2("");
+							}
+						}
+					}//fin du for sur les sequences
+	
+					/****************************
+					 * Informations sur l'appreciation du travail de l'élève
+					 */
+					double moy_trim = ub.getMoyenneTrimestriel(eleve, trimestreConcerne);
+					bulletinTrimAn.setTableau_hon("");
+					bulletinTrimAn.setTableau_enc("");
+					bulletinTrimAn.setTableau_fel("");
+					String appreciation = ub.calculAppreciation(moy_trim,lang);
+					bulletinTrimAn.setAppreciation(appreciation);
+					/*
+					 * On doit chercher la decision de conseil dans la periode sachant qu'on a une seule decision de 
+					 * conseil dans une période donnée (que ce soit séquence, trimestre ou année)
+					 */
+					DecisionConseil decConseil = eleve.getDecisionConseilPeriode(anneeScolaire.getIdPeriodes());
+					bulletinTrimAn.setDistinction("");
+					bulletinTrimAn.setDecision_conseil("");
+					if(decConseil !=null){
+						/*******************************
+						 * Informations sur les distinctions octroyées  dans la séquence
+						 */
+						String distinction="";
+						distinction = decConseil.getSanctionTravDecisionConseilStringIntitule(lang);
+						bulletinTrimAn.setDistinction(distinction);
+						
+						/*******************************
+						 * Informations sur les decision du conseil de classe dans la séquence
+						 * en fait il s'agit de préciser les sanctions disciplinaire infligées à un élève lors du conseil
+						 * de classe. Et ici c'est le conseil de classe annuel donc la decision finale
+						 */
+						String decision="";
+						decision += decConseil.getDecisionDecisionConseilString(lang);
+						/*distinction = decConseil.getSanctionTravDecisionConseilString(lang);
+						decision+=distinction;*/
+						bulletinTrimAn.setDecision_conseil(decision);
+					}
+					
+					
+					
+					List<Cours> listofCoursEffortAFournir = 
+							ub.getListofCoursDansOrdreEffortAFournirTrimestre(eleve, listofCoursEvalueTrim, 
+							trimestreConcerne);
+					bulletinTrimAn.setEffort_matiere1("");
+					bulletinTrimAn.setEffort_matiere2("");
+					bulletinTrimAn.setEffort_matiere3("");
+					if(listofCoursEffortAFournir.size()>0) {
+						String codeCours = listofCoursEffortAFournir.get(0).getCodeCours();
+						bulletinTrimAn.setEffort_matiere1(codeCours);
+					}
+					
+					
+					if(listofCoursEffortAFournir.size()>1) {
+						String codeCours = listofCoursEffortAFournir.get(1).getCodeCours();
+						bulletinTrimAn.setEffort_matiere2(codeCours);
+					}
+					
+					if(listofCoursEffortAFournir.size()>2) {
+						String codeCours = listofCoursEffortAFournir.get(2).getCodeCours();
+						bulletinTrimAn.setEffort_matiere3(codeCours);
+					}
+					
+					
+					
+					/*****************************
+					 * Information sur l'espace VISA du bulletin
+					 */
+					bulletinTrimAn.setVille(villeEtab);
+					
+					/****************
+					 * Informations lie au sommaire de chaque groupe
+					 * Groupe des matieres scientifique (Groupe1) dans le trimestre
+					 * cccccccccccccccccccccccccc
+					 */
+					
+					LigneTrimestrielGroupeCours ligneTrimestrielGroupeCoursScientifique = 
+							ub.getLigneTrimestrielGroupeCours(eleve, listofCoursScientifique, trimestreConcerne);
+			
+					if(lang.equalsIgnoreCase("fr")==true){
+						bulletinTrimAn.setNom_g1("Scientifique");
+					}
+					else{
+						bulletinTrimAn.setNom_g1("Scientific");
+					}
+					
+					double total_coef_g1 = ligneTrimestrielGroupeCoursScientifique.getTotalCoefElevePourGroupeCours();
+					
+					bulletinTrimAn.setTotal_coef_g1(total_coef_g1);
+					//System.err.println("total_coef_g1 == "+total_coef_g1);
+					
+					double total_g1 = ligneTrimestrielGroupeCoursScientifique.getTotalNoteTrimElevePourGroupeCours();
+					if(total_g1>0){
+						bulletinTrimAn.setTotal_g1(total_g1);
+					}
+					
+					String totalextreme_g1 = "";
+					
+					double valeurMoyDernierGrpCours1 = ub.getValeurMoyenneDernierPourGrpDansTrim(
+							listofElevesClasse, listofCoursScientifique, trimestreConcerne);
+					
+					double valeurMoyPremierGrpCours1 = ub.getValeurMoyennePremierPourGrpDansTrim(
+							listofElevesClasse, listofCoursScientifique, trimestreConcerne);
+					if(valeurMoyDernierGrpCours1>=0 && valeurMoyPremierGrpCours1>0){
+						totalextreme_g1 = "["+valeurMoyDernierGrpCours1+" ; "+
+								valeurMoyPremierGrpCours1+"]";
+					}
+					bulletinTrimAn.setTotal_extreme_g1(totalextreme_g1);
+					
+					int r1 = ub.getRangMoyenneTrimElevePourGroupe(classeConcerne, listofCoursScientifique, 
+							trimestreConcerne, eleve);
+					
+					if(r1>0){
+						bulletinTrimAn.setTotal_rang_g1(r1+"e");
+					}
+					
+					
+					double moy_gen_grp1 = ub.getMoyenneGeneralPourGroupeCoursTrim(classeConcerne, 
+							listofCoursScientifique, trimestreConcerne);
+					if(moy_gen_grp1>0){
+						bulletinTrimAn.setMg_classe_g1(moy_gen_grp1);
+					}
+					
+					double total_pourcentage_g1 = ub.getTauxReussitePourGroupeCoursTrim(classeConcerne, 
+							listofCoursScientifique, trimestreConcerne);
+					if(total_pourcentage_g1>=0){
+						bulletinTrimAn.setTotal_pourcentage_g1(total_pourcentage_g1);
+					}
+					
+					double moyenne_g1 = ligneTrimestrielGroupeCoursScientifique.
+							getMoyenneTrimElevePourGroupeCours();
+					if(moyenne_g1>0){
+						bulletinTrimAn.setMoyenne_g1(moyenne_g1);
+					}
+	
+	
+					/****************
+					 * Informations lie au sommaire de chaque groupe
+					 * Groupe des matieres Litteraire (Groupe2) dans le trimestre
+					 * lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+					 */
+					
+					LigneTrimestrielGroupeCours ligneTrimestrielGroupeCoursLitteraire = 
+							ub.getLigneTrimestrielGroupeCours(eleve, listofCoursLitteraire, trimestreConcerne);
+			
+					if(lang.equalsIgnoreCase("fr")==true){
+						bulletinTrimAn.setNom_g2("Litteraire");
+					}
+					else{
+						bulletinTrimAn.setNom_g2("Arts");
+					}
+					
+					double total_coef_g2 = ligneTrimestrielGroupeCoursLitteraire.getTotalCoefElevePourGroupeCours();
+					
+					bulletinTrimAn.setTotal_coef_g2(total_coef_g2);
+					
+					double total_g2 = ligneTrimestrielGroupeCoursLitteraire.getTotalNoteTrimElevePourGroupeCours();
+					if(total_g2>0){
+						bulletinTrimAn.setTotal_g2(total_g2);
+					}
+					
+					String totalextreme_g2 = "";
+					
+					double valeurMoyDernierGrpCours2 = ub.getValeurMoyenneDernierPourGrpDansTrim(
+							listofElevesClasse, listofCoursLitteraire, trimestreConcerne);
+					
+					double valeurMoyPremierGrpCours2 = ub.getValeurMoyennePremierPourGrpDansTrim(
+							listofElevesClasse, listofCoursLitteraire, trimestreConcerne);
+					if(valeurMoyDernierGrpCours2>=0 && valeurMoyPremierGrpCours2>0){
+						totalextreme_g2 = "["+valeurMoyDernierGrpCours2+" ; "+
+								valeurMoyPremierGrpCours2+"]";
+					}
+					bulletinTrimAn.setTotal_extreme_g2(totalextreme_g2);
+					
+					int r2 = ub.getRangMoyenneTrimElevePourGroupe(classeConcerne, listofCoursLitteraire, 
+							trimestreConcerne, eleve);
+					
+					if(r2>0){
+						bulletinTrimAn.setTotal_rang_g2(r2+"e");
+					}
+					
+					
+					double moy_gen_grp2 = ub.getMoyenneGeneralPourGroupeCoursTrim(classeConcerne, 
+							listofCoursLitteraire, trimestreConcerne);
+					if(moy_gen_grp2>0){
+						bulletinTrimAn.setMg_classe_g2(moy_gen_grp2);
+					}
+					
+					double total_pourcentage_g2 = ub.getTauxReussitePourGroupeCoursTrim(classeConcerne, 
+							listofCoursLitteraire, trimestreConcerne);
+					if(total_pourcentage_g2>=0){
+						bulletinTrimAn.setTotal_pourcentage_g2(total_pourcentage_g2);
+					}
+					
+					double moyenne_g2 = ligneTrimestrielGroupeCoursLitteraire.
+							getMoyenneTrimElevePourGroupeCours();
+					if(moyenne_g2>0){
+						bulletinTrimAn.setMoyenne_g2(moyenne_g2);
+					}
+			
+					
+	
+					/****************
+					 * Informations lie au sommaire de chaque groupe
+					 * Groupe des matieres Divers (Groupe3) dans le trimestre
+					 * ddddddddddddddddddddddddddddddddddd
+					 */
+					
+					LigneTrimestrielGroupeCours ligneTrimestrielGroupeCoursDivers = 
+							ub.getLigneTrimestrielGroupeCours(eleve, listofCoursDivers, trimestreConcerne);
+			
+					if(lang.equalsIgnoreCase("fr")==true){
+						bulletinTrimAn.setNom_g3("Divers");
+					}
+					else{
+						bulletinTrimAn.setNom_g3("Others");
+					}
+					double total_coef_g3 = ligneTrimestrielGroupeCoursDivers.getTotalCoefElevePourGroupeCours();
+					
+					bulletinTrimAn.setTotal_coef_g3(total_coef_g3);
+					
+					double total_g3 = ligneTrimestrielGroupeCoursDivers.getTotalNoteTrimElevePourGroupeCours();
+					if(total_g3>0){
+						bulletinTrimAn.setTotal_g3(total_g3);
+					}
+					
+					String totalextreme_g3 = "";
+					
+					double valeurMoyDernierGrpCours3 = ub.getValeurMoyenneDernierPourGrpDansTrim(
+							listofElevesClasse, listofCoursDivers, trimestreConcerne);
+					
+					double valeurMoyPremierGrpCours3 = ub.getValeurMoyennePremierPourGrpDansTrim(
+							listofElevesClasse, listofCoursDivers, trimestreConcerne);
+					if(valeurMoyDernierGrpCours3>=0 && valeurMoyPremierGrpCours3>0){
+						totalextreme_g3 = "["+valeurMoyDernierGrpCours3+" ; "+
+								valeurMoyPremierGrpCours3+"]";
+					}
+					bulletinTrimAn.setTotal_extreme_g3(totalextreme_g3);
+					
+					int r3 = ub.getRangMoyenneTrimElevePourGroupe(classeConcerne, listofCoursDivers, 
+							trimestreConcerne, eleve);
+					
+					if(r3>0){
+						bulletinTrimAn.setTotal_rang_g3(r3+"e");
+					}
+					
+					
+					double moy_gen_grp3 = ub.getMoyenneGeneralPourGroupeCoursTrim(classeConcerne, 
+							listofCoursDivers, trimestreConcerne);
+					if(moy_gen_grp3>0){
+						bulletinTrimAn.setMg_classe_g3(moy_gen_grp3);
+					}
+					
+					double total_pourcentage_g3 = ub.getTauxReussitePourGroupeCoursTrim(classeConcerne, 
+							listofCoursDivers, trimestreConcerne);
+					if(total_pourcentage_g3>=0){
+						bulletinTrimAn.setTotal_pourcentage_g3(total_pourcentage_g3);
+					}
+					
+					double moyenne_g3 = ligneTrimestrielGroupeCoursDivers.
+							getMoyenneTrimElevePourGroupeCours();
+					if(moyenne_g3>0){
+						bulletinTrimAn.setMoyenne_g3(moyenne_g3);
+					}
+					
+	
+					/************************************
+					 * Listes alimentant les sous rapport: les rapports sur les groupes des matières 
+					 **********/
+	
+					List<MatiereGroupe1TrimAnnuelBean> listofCoursScientifiqueTrimAnnuelBean 
+							= new ArrayList<MatiereGroupe1TrimAnnuelBean>(); 
+		
+					int rc1 = 0;
+					/***
+					 * debut du for sur les cours scientifique
+					 * Gestion des cours scientifique
+					 */
+					for(Cours cours : listofCoursScientifique){
+						
+						//long debutforCoursTime = System.currentTimeMillis();
+						
+						MatiereGroupe1TrimAnnuelBean mGrp1TrimAnBean = new MatiereGroupe1TrimAnnuelBean();
+						
+						
+						
+						RapportTrimestrielCours rapportTrimestrielCours = ub.getRapportTrimestrielCours(
+								classeConcerne, cours, trimestreConcerne);
+						
+						String matiere = ub.subString(cours.getIntituleCours(), 17);
+						matiere = matiere + ":";
+						String codeMat = ub.subString(cours.getCodeCours(), 8);
+						matiere = matiere + codeMat;
+						
+						String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 17);
+						
+						String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+						nomProf = ub.subString(nomProf, 15);
+						
+						mGrp1TrimAnBean.setMatiere_g1(matiere);
+						mGrp1TrimAnBean.setMatiere_g1_2emelang(matiere_2emelang);
+						mGrp1TrimAnBean.setProf_g1(cours.getProffesseur().getNomsPers());
+						
+						
+						double soenoteTrim = 0;
+						int nbreNoteDansTrimPourCours = 0;
+						
+						for(Sequences seq : trimestreConcerne.getListofsequence()){
+							if(seq.getNumeroSeq()%2==1){
+								double note_seq_g1 = ub.getValeurNotesFinaleEleve(eleve, cours, seq);
+								if(note_seq_g1>0){
+									mGrp1TrimAnBean.setNote_1_g1(note_seq_g1);
+									soenoteTrim = soenoteTrim + note_seq_g1;
+									nbreNoteDansTrimPourCours +=1; 
+								}
+							}
+							else{
+								double note_seq_g2 = ub.getValeurNotesFinaleEleve(eleve, cours, seq);
+								if(note_seq_g2>0){
+									mGrp1TrimAnBean.setNote_2_g1(note_seq_g2);
+									soenoteTrim = soenoteTrim + note_seq_g2;
+									nbreNoteDansTrimPourCours +=1; 
+								}
+							}
+						}
+						
+						
+						double noteCoursTrim = 0;
+						if(nbreNoteDansTrimPourCours>0){
+							noteCoursTrim = soenoteTrim/nbreNoteDansTrimPourCours;
+							mGrp1TrimAnBean.setNote_trim_g1(noteCoursTrim);
+							double total_trim_g1 = noteCoursTrim*cours.getCoefCours();
+							mGrp1TrimAnBean.setTotal_trim_g1(total_trim_g1);
+						}
+						
+						mGrp1TrimAnBean.setCoef_g1(cours.getCoefCours());
+						
+						String extreme_g1 = "";
+						double noteTrimDernierCours = rapportTrimestrielCours.getValeurNoteDernier();
+						double noteTrimPremierCours = rapportTrimestrielCours.getValeurNotePremier();
+						if(noteTrimDernierCours>=0 && noteTrimPremierCours>0){
+							extreme_g1 = "["+noteTrimDernierCours+" ; "+ noteTrimPremierCours+"]";
+							mGrp1TrimAnBean.setExtreme_g1(extreme_g1);
+						}
+						
+						List<Eleves> listofEleveOrdreDecroissantPourCours = mapCoursEleves.get(cours.getIdCours());
+						
+						rc1 = ub.getRangNoteTrimestrielElevePourCours_opt(eleve, 
+								listofEleveOrdreDecroissantPourCours);
+						
+						if(rc1>0){
+							mGrp1TrimAnBean.setRang_g1(rc1+"e");
+						}
+						
+						
+						double moy_classe_g1 = ub.getMoyenneGeneralCoursTrim(classeConcerne, 
+								cours, trimestreConcerne);
+						if(moy_classe_g1>0){
+							mGrp1TrimAnBean.setMoy_classe_g1(moy_classe_g1);
+						}
+						
+						
+						double pourcentage_g1 = ub.getTauxReussiteCoursTrim(classeConcerne, 
+								cours, trimestreConcerne);
+						if(pourcentage_g1>=0){
+							mGrp1TrimAnBean.setPourcentage_g1(pourcentage_g1);
+						}
+						
+						String appreciationNote = ub.calculAppreciation(noteCoursTrim,lang);
+						mGrp1TrimAnBean.setAppreciation_g1(appreciationNote);
+						
+						//On ajoute la ligne de cours dans le groupe correspondant
+						listofCoursScientifiqueTrimAnnuelBean.add(mGrp1TrimAnBean);
+						
+					}
+					/****
+						fin du for sur les cours scientifique qui passe dans la classe
+					*****/
+					
+					//On place la liste des matieres scientifique construit
+					bulletinTrimAn.setMatieresGroupe1TrimAnnuel(listofCoursScientifiqueTrimAnnuelBean);
+					
+					
+					List<MatiereGroupe2TrimAnnuelBean> listofCoursLitteraireTrimAnnuelBean 
+							= new ArrayList<MatiereGroupe2TrimAnnuelBean>(); 
+				
+					int rc2 = 0;
+					/***
+					 * debut du for sur les cours Litteraire
+					 * Gestion des cours Litteraire
+					 */
+	
+					for(Cours cours : listofCoursLitteraire){
+						//long debutforCoursTime = System.currentTimeMillis();
+						
+						MatiereGroupe2TrimAnnuelBean mGrp2TrimAnBean = new MatiereGroupe2TrimAnnuelBean();
+						
+						
+						
+						RapportTrimestrielCours rapportTrimestrielCours = ub.getRapportTrimestrielCours(
+								classeConcerne, cours, trimestreConcerne);
+					
+						String matiere = ub.subString(cours.getIntituleCours(), 17);
+						matiere = matiere + ":";
+						String codeMat = ub.subString(cours.getCodeCours(), 8);
+						matiere = matiere + codeMat;
+						
+						String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 17);
+						
+						String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+						nomProf = ub.subString(nomProf, 15);
+	
+						mGrp2TrimAnBean.setMatiere_g2(matiere);
+						mGrp2TrimAnBean.setMatiere_g2_2emelang(matiere_2emelang);
+						mGrp2TrimAnBean.setProf_g2(nomProf);
+						
+						double soenoteTrim = 0;
+						int nbreNoteDansTrimPourCours = 0;
+						
+	
+						for(Sequences seq : trimestreConcerne.getListofsequence()){
+							if(seq.getNumeroSeq()%2==1){
+								double note_seq_g1 = ub.getValeurNotesFinaleEleve(eleve, cours, seq);
+								if(note_seq_g1>0){
+									mGrp2TrimAnBean.setNote_1_g2(note_seq_g1);
+									soenoteTrim = soenoteTrim + note_seq_g1;
+									nbreNoteDansTrimPourCours +=1; 
+								}
+							}
+							else{
+								double note_seq_g2 = ub.getValeurNotesFinaleEleve(eleve, cours, seq);
+								if(note_seq_g2>0){
+									mGrp2TrimAnBean.setNote_2_g2(note_seq_g2);
+									soenoteTrim = soenoteTrim + note_seq_g2;
+									nbreNoteDansTrimPourCours +=1; 
+								}
+							}
+						}
+						
+						double noteCoursTrim = 0;
+						if(nbreNoteDansTrimPourCours>0){
+							noteCoursTrim = soenoteTrim/nbreNoteDansTrimPourCours;
+							mGrp2TrimAnBean.setNote_trim_g2(noteCoursTrim);
+							double total_trim_g2 = noteCoursTrim*cours.getCoefCours();
+							mGrp2TrimAnBean.setTotal_trim_g2(total_trim_g2);
+						}
+						
+						mGrp2TrimAnBean.setCoef_g2(cours.getCoefCours());
+						String extreme_g2 = "";
+						double noteTrimDernierCours = rapportTrimestrielCours.getValeurNoteDernier();
+						double noteTrimPremierCours = rapportTrimestrielCours.getValeurNotePremier();
+						if(noteTrimDernierCours>=0 && noteTrimPremierCours>0){
+							extreme_g2 = "["+noteTrimDernierCours+" ; "+ noteTrimPremierCours+"]";
+							mGrp2TrimAnBean.setExtreme_g2(extreme_g2);
+						}
+						
+						
+						List<Eleves> listofEleveOrdreDecroissantPourCours = mapCoursEleves.get(cours.getIdCours());
+						
+						rc2 = ub.getRangNoteTrimestrielElevePourCours_opt(eleve, 
+								listofEleveOrdreDecroissantPourCours);
+						
+						if(rc2>0){
+							mGrp2TrimAnBean.setRang_g2(rc2+"e");
+						}
+						
+						
+						double moy_classe_g2 = ub.getMoyenneGeneralCoursTrim(classeConcerne, 
+								cours, trimestreConcerne);
+						if(moy_classe_g2>0){
+							mGrp2TrimAnBean.setMoy_classe_g2(moy_classe_g2);
+						}
+						
+						
+						double pourcentage_g2 = ub.getTauxReussiteCoursTrim(classeConcerne, 
+								cours, trimestreConcerne);
+						if(pourcentage_g2>=0){
+							mGrp2TrimAnBean.setPourcentage_g2(pourcentage_g2);
+						}
+						
+						String appreciationNote = ub.calculAppreciation(noteCoursTrim,lang);
+						mGrp2TrimAnBean.setAppreciation_g2(appreciationNote);
+						
+	
+						//On ajoute la ligne de cours dans le groupe correspondant
+						listofCoursLitteraireTrimAnnuelBean.add(mGrp2TrimAnBean);
+						
+						
+					}
+					/****
+						fin du for sur les cours litteraire qui passe dans la classe
+					 *****/
+				
+				//On place la liste des matieres scientifique construit
+					bulletinTrimAn.setMatieresGroupe2TrimAnnuel(listofCoursLitteraireTrimAnnuelBean);
+				
+					
+			
+				
+	
+				List<MatiereGroupe3TrimAnnuelBean> listofCoursDiversTrimAnnuelBean 
+						= new ArrayList<MatiereGroupe3TrimAnnuelBean>(); 
+	
+				int rc3 = 0;
+				/***
+				 * debut du for sur les cours Divers
+				 * Gestion des cours Divers
+				 */
+				for(Cours cours : listofCoursDivers){
+					//long debutforCoursTime = System.currentTimeMillis();
+					
+					MatiereGroupe3TrimAnnuelBean mGrp3TrimAnBean = new MatiereGroupe3TrimAnnuelBean();
+					
+					
+					
+					RapportTrimestrielCours rapportTrimestrielCours = ub.getRapportTrimestrielCours(
+							classeConcerne, cours, trimestreConcerne);
+					
+					String matiere = ub.subString(cours.getIntituleCours(), 17);
+					matiere = matiere + ":";
+					String codeMat = ub.subString(cours.getCodeCours(), 8);
+					matiere = matiere + codeMat;
+					
+					String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 17);
+					
+					String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+					nomProf = ub.subString(nomProf, 15);
+	
+					mGrp3TrimAnBean.setMatiere_g3(matiere);
+					mGrp3TrimAnBean.setMatiere_g3_2emelang(matiere_2emelang);
+					mGrp3TrimAnBean.setProf_g3(nomProf);
+					
+					double soenoteTrim = 0;
+					int nbreNoteDansTrimPourCours = 0;
+					
+	
+					for(Sequences seq : trimestreConcerne.getListofsequence()){
+						if(seq.getNumeroSeq()%2==1){
+							double note_seq_g1 = ub.getValeurNotesFinaleEleve(eleve, cours, seq);
+							if(note_seq_g1>0){
+								mGrp3TrimAnBean.setNote_1_g3(note_seq_g1);
+								soenoteTrim = soenoteTrim + note_seq_g1;
+								nbreNoteDansTrimPourCours +=1; 
+							}
+						}
+						else{
+							double note_seq_g2 = ub.getValeurNotesFinaleEleve(eleve, cours, seq);
+							if(note_seq_g2>0){
+								mGrp3TrimAnBean.setNote_2_g3(note_seq_g2);
+								soenoteTrim = soenoteTrim + note_seq_g2;
+								nbreNoteDansTrimPourCours +=1; 
+							}
+						}
+					}
+					
+					double noteCoursTrim = 0;
+					if(nbreNoteDansTrimPourCours>0){
+						noteCoursTrim = soenoteTrim/nbreNoteDansTrimPourCours;
+						mGrp3TrimAnBean.setNote_trim_g3(noteCoursTrim);
+						double total_trim_g3 = noteCoursTrim*cours.getCoefCours();
+						mGrp3TrimAnBean.setTotal_trim_g3(total_trim_g3);
+					}
+					
+					mGrp3TrimAnBean.setCoef_g3(cours.getCoefCours());
+					String extreme_g3 = "";
+					double noteTrimDernierCours = rapportTrimestrielCours.getValeurNoteDernier();
+					double noteTrimPremierCours = rapportTrimestrielCours.getValeurNotePremier();
+					if(noteTrimDernierCours>=0 && noteTrimPremierCours>0){
+						extreme_g3 = "["+noteTrimDernierCours+" ; "+ noteTrimPremierCours+"]";
+						mGrp3TrimAnBean.setExtreme_g3(extreme_g3);
+					}
+					
+					
+					List<Eleves> listofEleveOrdreDecroissantPourCours = mapCoursEleves.get(cours.getIdCours());
+					
+					rc3 = ub.getRangNoteTrimestrielElevePourCours_opt(eleve, 
+							listofEleveOrdreDecroissantPourCours);
+					
+					if(rc3>0){
+						mGrp3TrimAnBean.setRang_g3(rc3+"e");
+					}
+					
+					
+					double moy_classe_g3 = ub.getMoyenneGeneralCoursTrim(classeConcerne, 
+							cours, trimestreConcerne);
+					if(moy_classe_g3>0){
+						mGrp3TrimAnBean.setMoy_classe_g3(moy_classe_g3);
+					}
+					
+					
+					double pourcentage_g3 = ub.getTauxReussiteCoursTrim(classeConcerne, 
+							cours, trimestreConcerne);
+					if(pourcentage_g3>=0){
+						mGrp3TrimAnBean.setPourcentage_g3(pourcentage_g3);
+					}
+					
+					String appreciationNote = ub.calculAppreciation(noteCoursTrim,lang);
+					mGrp3TrimAnBean.setAppreciation_g3(appreciationNote);
+					
+	
+					//On ajoute la ligne de cours dans le groupe correspondant
+					listofCoursDiversTrimAnnuelBean.add(mGrp3TrimAnBean);
+					
+					
+				}
+				/****
+					fin du for sur les cours Divers qui passe dans la classe
+				 *****/
+			
+			//On place la liste des matieres scientifique construit
+				bulletinTrimAn.setMatieresGroupe3TrimAnnuel(listofCoursDiversTrimAnnuelBean);
+			
+	
+					
+					
+					
+					long finforTime = System.currentTimeMillis();
+					collectionofBulletionTrimAnnuel.add(bulletinTrimAn);
+					System.err.println("bulletin "+numBull+" de  "+ eleve.getNomsEleves()+
+							" dans le trimestre "+trimestreConcerne.getNumeroTrim()+
+							"  ajouter avec succes en "+(finforTime-startTimeFor));
+					numBull++;
+				}
+			}//fin du for sur les eleves pour les Bulletins sequentiels
+
+
+			
+			
+		 
+		return collectionofBulletionTrimAnnuel;
+	
+		
+	}
+	
 
 	@Override
 	public List<Eleves> getListEleveSanctionDiscTrim(Classes classe, SanctionDisciplinaire sanctionDisc, 
@@ -7052,8 +10662,12 @@ public class UsersServiceImplementation implements IUsersService {
 			ficheCC.setTitre_fiche(titre_fiche);
 		}
 		
-		String profPrincipal = " "+classe.getProffesseur().getNomsPers()+" "+classe.getProffesseur().getPrenomsPers();
-		profPrincipal=profPrincipal.toUpperCase();
+		String profPrincipal = "";
+		if(classe.getProffesseur()!=null){
+			profPrincipal = " "+classe.getProffesseur().getNomsPers()+" "+classe.getProffesseur().getPrenomsPers();
+			profPrincipal=profPrincipal.toUpperCase();
+		}
+		
 		ficheCC.setEnseignant(profPrincipal);
 		String nonClasse = classe.getCodeClasses()+classe.getSpecialite().getCodeSpecialite()+
 				classe.getNumeroClasses();		
@@ -7879,8 +11493,12 @@ public class UsersServiceImplementation implements IUsersService {
 			double moyenne_general = rapportAnnuelClasse.getMoyenneGeneralAnnuel();
 			String classeString = classeConcerne.getCodeClasses()+
 					classeConcerne.getSpecialite().getCodeSpecialite()+classeConcerne.getNumeroClasses();
-			String profPrincipal = classeConcerne.getProffesseur().getNomsPers()+" "+
+			
+			String profPrincipal ="";
+			if(classeConcerne.getProffesseur()!=null){
+				profPrincipal = classeConcerne.getProffesseur().getNomsPers()+" "+
 					classeConcerne.getProffesseur().getPrenomsPers();
+			}
 			
 			
 			int effectifTotalClasse =	ub.geteffectifEleve(classeConcerne);
@@ -8032,9 +11650,11 @@ public class UsersServiceImplementation implements IUsersService {
 				int rang = ub.getRangAnnuelEleveAuMoinsUneNote(eleve,listofElevesOrdreDecroissantAnnee);
 				if(rang>0){
 					bulletinAn.setResult_rang_ann(rang+"e");
+					bulletinAn.setR_rang_an(rang+"e");
 				}
 				else{
 					bulletinAn.setResult_rang_ann("");
+					bulletinAn.setR_rang_an("");
 				}
 
 
@@ -8210,6 +11830,15 @@ public class UsersServiceImplementation implements IUsersService {
 				 * Informations sur l'appreciation du travail de l'élève
 				 */
 				double moy_an = ub.getMoyenneAnnuel(eleve, anneeScolaire);
+				
+				if(moy_an>=0) bulletinAn.setR_moy_an(moy_an);
+				if(lang.equalsIgnoreCase("fr")==true){
+					bulletinAn.setRappel_4("Année");
+				}
+				else{
+					bulletinAn.setRappel_4("Year ");
+				}
+				
 				bulletinAn.setTableau_hon("");
 				bulletinAn.setTableau_enc("");
 				bulletinAn.setTableau_fel("");
@@ -8504,9 +12133,19 @@ public class UsersServiceImplementation implements IUsersService {
 					RapportAnnuelCours rapportAnnuelCours = ub.getRapportAnnuelCours(
 							classeConcerne, cours, anneeScolaire);
 					
+					String matiere = ub.subString(cours.getIntituleCours(), 17);
+					matiere = matiere + ":";
+					String codeMat = ub.subString(cours.getCodeCours(), 5);
+					matiere = matiere + codeMat;
 					
-					mGrp1AnBean.setMatiere_g1(cours.getCodeCours());
-					mGrp1AnBean.setProf_g1(cours.getProffesseur().getNomsPers());
+					String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 17);
+					
+					String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+					nomProf = ub.subString(nomProf, 15);
+					
+					mGrp1AnBean.setMatiere_g1(matiere);
+					mGrp1AnBean.setMatiere_g1_2emelang(matiere_2emelang);
+					mGrp1AnBean.setProf_g1(nomProf);
 					
 					double soenoteAn = 0;
 					int nbreNoteDansAnPourCours = 0;
@@ -8616,9 +12255,21 @@ public class UsersServiceImplementation implements IUsersService {
 					RapportAnnuelCours rapportAnnuelCours = ub.getRapportAnnuelCours(
 							classeConcerne, cours, anneeScolaire);
 					
+					String matiere = ub.subString(cours.getIntituleCours(), 17);
+					matiere = matiere + ":";
+					String codeMat = ub.subString(cours.getCodeCours(), 5);
+					matiere = matiere + codeMat;
+					
+					String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 17);
+					
+					String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+					nomProf = ub.subString(nomProf, 15);
 					
 					mGrp2AnBean.setMatiere_g2(cours.getCodeCours());
-					mGrp2AnBean.setProf_g2(cours.getProffesseur().getNomsPers());
+					
+					mGrp2AnBean.setMatiere_g2(matiere);
+					mGrp2AnBean.setMatiere_g2_2emelang(matiere_2emelang);
+					mGrp2AnBean.setProf_g2(nomProf);
 					
 					double soenoteAn = 0;
 					int nbreNoteDansAnPourCours = 0;
@@ -8728,9 +12379,19 @@ public class UsersServiceImplementation implements IUsersService {
 					RapportAnnuelCours rapportAnnuelCours = ub.getRapportAnnuelCours(
 							classeConcerne, cours, anneeScolaire);
 					
+					String matiere = ub.subString(cours.getIntituleCours(), 17);
+					matiere = matiere + ":";
+					String codeMat = ub.subString(cours.getCodeCours(), 5);
+					matiere = matiere + codeMat;
 					
-					mGrp3AnBean.setMatiere_g3(cours.getCodeCours());
-					mGrp3AnBean.setProf_g3(cours.getProffesseur().getNomsPers());
+					String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 17);
+					
+					String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+					nomProf = ub.subString(nomProf, 15);
+					
+					mGrp3AnBean.setMatiere_g3(matiere);
+					mGrp3AnBean.setMatiere_g3_2emelang(matiere_2emelang);
+					mGrp3AnBean.setProf_g3(nomProf);
 					
 					double soenoteAn = 0;
 					int nbreNoteDansAnPourCours = 0;
@@ -8848,6 +12509,1085 @@ public class UsersServiceImplementation implements IUsersService {
 		return donnee;
 		//return collectionofBulletionAnnuel;
 	}
+	
+	@Override
+	 public Collection<BulletinAnnuelBean> generate1BulletinAnnuel(Long idEleve, Long idClasse, 
+			 Long idAnnee){
+
+		Etablissement etablissementConcerne = this.getEtablissement();
+		 String villeEtab = "";
+		 if(etablissementConcerne != null) villeEtab = etablissementConcerne.getVilleEtab();
+		 
+		 Classes classeConcerne = this.findClasses(idClasse);
+		 Annee anneeScolaire = this.findAnneeActive();
+		 Eleves eleveConcerne = this.findEleves(idEleve);
+			
+		 List<BulletinAnnuelBean> collectionofBulletionAnnuel = new ArrayList<BulletinAnnuelBean>();
+		
+		 if((classeConcerne==null) || (anneeScolaire==null) || (eleveConcerne==null)) {
+			//System.err.println("les données de calcul du bean bulletin sont errone donc rien n'est possible ");
+			return null;
+		 }
+		 
+		 String lang="";
+		 if(classeConcerne.getLangueClasses().equalsIgnoreCase("fr")==true){
+			 lang ="fr";
+		 }
+		 else{
+			 lang="en";
+		 }
+		 
+		 /*
+			 * Ici on est sur que la classe est bel et bien retrouver. On doit faire le bulletin de tous les élèves de la classe.
+			 * mais si un élève n'est pas régulier son bulletin devient particulier
+			 */
+			List<Eleves>  listofEleveClasse = (List<Eleves>) classeConcerne.getListofEleves();
+			
+			List<Cours> listofCoursEvalueAn = ub.getListOfCoursEvalueDansAnnee(classeConcerne, 
+					anneeScolaire);
+			
+			/*
+			 * Etablissons ensuite la liste des 3 groupes de cours(scientifique, littéraire et divers dans la section général)
+			 * Cette liste de cours doit etre extraite des cours evalue
+			 */
+			
+			List<Cours> listofCoursScientifique = ub.getListofCoursScientifiqueDansClasse(classeConcerne);
+			
+			List<Cours> listofCoursLitteraire = ub.getListofCoursLitteraireDansClasse(classeConcerne);
+			
+			List<Cours> listofCoursDivers = ub.getListofCoursDiversDansClasse(classeConcerne);
+			
+			/*
+			 * Donnée du bulletin qui ne doivent pas être recalcule à chaque tour de boucle sur les élèves
+			 * car elles ne dépendent pas de l'élève et son identique pour tous les bulletins d'une classe 
+			 * dans une année
+			 */
+			List<Eleves> listofElevesClasse = (List<Eleves>) classeConcerne.getListofEleves();
+			
+
+			List<Eleves> listofEleveRegulier = ub.getListofEleveRegulierAnnee(classeConcerne, anneeScolaire);
+			
+
+			RapportAnnuelClasse rapportAnnuelClasse = ub.getRapportAnnuelClasse(classeConcerne, 
+					listofEleveRegulier, anneeScolaire);
+			
+			
+			double moyenne_premier_classe = rapportAnnuelClasse.getValeurMoyennePremierDansAn();
+			
+			double moyenne_dernier_classe = rapportAnnuelClasse.getValeurMoyenneDernierDansAn();
+			
+			int nbre_moyenne_classeSeq = rapportAnnuelClasse.getNbreMoyennePourAn();
+			
+			double tauxReussite = rapportAnnuelClasse.getTauxReussiteAnnuel();
+			
+			double moyenne_general = rapportAnnuelClasse.getMoyenneGeneralAnnuel();
+			String classeString = classeConcerne.getCodeClasses()+
+					classeConcerne.getSpecialite().getCodeSpecialite()+classeConcerne.getNumeroClasses();
+			
+			String profPrincipal ="";
+			if(classeConcerne.getProffesseur()!=null){
+				profPrincipal = classeConcerne.getProffesseur().getNomsPers()+" "+
+					classeConcerne.getProffesseur().getPrenomsPers();
+			}
+			
+			
+			int effectifTotalClasse =	ub.geteffectifEleve(classeConcerne);
+			
+			int effectifRegulierClasseAn = ub.geteffectifEleveRegulierAnnee(classeConcerne, anneeScolaire);
+			
+			
+			int numBull = 1;
+
+			/*
+			 * On va appeler une méthode qui retourne une Map<idCours, List<Eleves>>
+			 * Chaque entrée de la Map a comme cle l'id d'un cours passant dans la classe et 
+			 * comme valeur la liste des élèves rangés dans l'ordre décroissant des notes obtenues 
+			 * dans l'année considéré
+			 */
+			Map<Long, List<Eleves>> mapCoursEleves = 
+					ub.getMapCoursElevesOrdreDecroissantAnnee(classeConcerne, anneeScolaire);
+			
+			/*
+			 * On va appeler une méthode qui retourne la liste des élèves classés dans l'ordre décroissant 
+			 * des moyenne obtenu annuellement
+			 */
+			List<Eleves> listofElevesOrdreDecroissantAnnee = (List<Eleves>) 
+					UtilitairesBulletins.getMoyenneAnnuelOrdreDecroissant1(classeConcerne, anneeScolaire);
+			
+
+			/*
+			 * On va mettre dans cette Map la liste des élèves classés dans l'ordre décroissant des 
+			 * moyennes obtenu pour chaque trimestre de l'année
+			 */
+			Map<Long,List<Eleves>> mapofElevesOrdreDecroissantMoyenneTrimestriel = new 
+					HashMap<Long, List<Eleves>>();
+			
+			for(Trimestres trim : anneeScolaire.getListoftrimestre()){
+				
+				List<Eleves> listofElevesOrdreDecroissantMoyenneTrim = (List<Eleves>) 
+						UtilitairesBulletins.getMoyenneTrimestrielOrdreDecroissant1(classeConcerne, trim);
+				
+				mapofElevesOrdreDecroissantMoyenneTrimestriel.put(trim.getIdPeriodes(),
+						listofElevesOrdreDecroissantMoyenneTrim);
+				
+			}
+			
+			
+			
+			for(Eleves eleve : listofEleveClasse){
+				if(eleve.getIdEleves() == eleveConcerne.getIdEleves()){
+					long startTimeFor = System.currentTimeMillis();
+					
+					BulletinAnnuelBean bulletinAn = new BulletinAnnuelBean();
+					/*
+					 * Initialisons les premieres donnees du bulletin annuel
+					 */
+					/****
+					 * Information d'entete du bulletin
+					 */
+					
+					bulletinAn.setMinistere_fr(etablissementConcerne.getMinisteretuteleEtab());
+					bulletinAn.setMinistere_en(etablissementConcerne.getMinisteretuteleanglaisEtab());
+					bulletinAn.setDelegation_en(etablissementConcerne.getDeleguationdeptuteleanglaisEtab());
+					bulletinAn.setDelegation_fr(etablissementConcerne.getDeleguationdeptuteleEtab());
+					bulletinAn.setEtablissement_en(etablissementConcerne.getNomsanglaisEtab());
+					bulletinAn.setEtablissement_fr(etablissementConcerne.getNomsEtab());
+					bulletinAn.setAdresse("BP "+etablissementConcerne.getBpEtab()+"/"+
+							etablissementConcerne.getNumtel1Etab()+"/"+etablissementConcerne.getEmailEtab());
+					bulletinAn.setDevise_en(etablissementConcerne.getDeviseanglaisEtab());
+					bulletinAn.setDevise_fr(etablissementConcerne.getDeviseEtab());
+					if(lang.equalsIgnoreCase("fr")==true){
+						bulletinAn.setTitre_bulletin("Bulletin de note de l'année scolaire "+
+								anneeScolaire.getIntituleAnnee());
+					}
+					else{
+						bulletinAn.setTitre_bulletin("Report card of school year "+anneeScolaire.getIntituleAnnee());
+					}
+					bulletinAn.setAnnee_scolaire_en("School year "+anneeScolaire.getIntituleAnnee());
+					bulletinAn.setAnnee_scolaire_fr("Année scolaire "+anneeScolaire.getIntituleAnnee());
+					
+					
+					/***************
+					 * Information personnel de l'élève
+					 */
+					bulletinAn.setNumero(" "+eleve.getNumero(listofElevesClasse));
+					bulletinAn.setSexe(eleve.getSexeEleves());
+					bulletinAn.setNom_eleve(eleve.getNomsEleves());
+					bulletinAn.setPrenom_eleve(eleve.getPrenomsEleves());
+					SimpleDateFormat spd = new SimpleDateFormat("dd/MM/yyyy");
+					bulletinAn.setDate_naissance_eleve(spd.format(eleve.getDatenaissEleves()));
+					bulletinAn.setLieu_naissance_eleve(eleve.getLieunaissEleves());
+					bulletinAn.setMatricule_eleve(eleve.getMatriculeEleves());
+					bulletinAn.setRedoublant(eleve.getRedoublant());
+					bulletinAn.setClasse_eleve(classeString);
+					bulletinAn.setProf_principal(profPrincipal);
+					bulletinAn.setEffectif_classe(effectifTotalClasse);
+					bulletinAn.setEffectif_presente(effectifRegulierClasseAn);
+					
+					/*****
+					 * Pour le chargement des photos: Si une photos n'est pas dispo il y aura une exception 
+					 * puisque Jasper ne pourra pas trouver l'image. Donc il faut un moyen de ne rien fixé 
+					 * à setPhoto lorsque l'image n'est pas dispo. Pour vérifier que l'image n'est pas dispo
+					 * on va essayer de charger le fichier correspondant avec la classe File de java.io
+					 */
+					File f=new File(photoElevesDir+eleve.getIdEleves());
+					//System.err.println("est ce que le fichier existe "+f.exists());
+					
+					if(f.exists()==true){
+						bulletinAn.setPhoto(photoElevesDir+eleve.getIdEleves()); 
+					}
+					
+					
+					/********
+					 * Informations sur les labels d'entete des notes du bulletin annuel
+					 */
+					for(Trimestres trim : anneeScolaire.getListoftrimestre()){
+						if(trim.getNumeroTrim()==1){
+							bulletinAn.setLabel_note_1("T"+trim.getNumeroTrim());
+						}
+						else if(trim.getNumeroTrim()==2){
+							bulletinAn.setLabel_note_2("T"+trim.getNumeroTrim());
+						}
+						else if(trim.getNumeroTrim()==3){
+							bulletinAn.setLabel_note_3("T"+trim.getNumeroTrim());
+						}
+					}
+					bulletinAn.setLabel_annuel("N An");
+					bulletinAn.setLabel_ann_x_coef("N An"+"*Coef");
+	
+					/***********
+					 * Information sur les totaux annuels
+					 */
+					
+					double total_coef = ub.getSommeCoefCoursComposeAnnee(eleve, anneeScolaire);
+					bulletinAn.setTotal_coef(total_coef);
+					
+					double total_points = ub.getTotalPointsAnnuel(eleve, anneeScolaire);
+					if(total_points>0){
+						bulletinAn.setTotal_points(total_points);
+					}
+					
+					/***********
+					 * Informations sur les resultats annuels de l'eleve
+					 */
+					bulletinAn.setResult_tt_coef(total_coef);
+					
+					if(total_points>0){
+						bulletinAn.setResult_tt_points(total_points);
+					}
+					
+					
+				
+					int rang = ub.getRangAnnuelEleveAuMoinsUneNote(eleve,listofElevesOrdreDecroissantAnnee);
+					if(rang>0){
+						bulletinAn.setResult_rang_ann(rang+"e");
+						bulletinAn.setR_rang_an(rang+"e");
+					}
+					else{
+						bulletinAn.setResult_rang_ann("");
+						bulletinAn.setR_rang_an("");
+					}
+	
+	
+					
+					/**********************
+					 * Informations sur le profil de la classe dans l'année
+					 */
+					if(moyenne_premier_classe>0){
+						bulletinAn.setMoy_premier(moyenne_premier_classe);
+					}
+					if(moyenne_dernier_classe>0){
+						bulletinAn.setMoy_dernier(moyenne_dernier_classe);
+					}
+					bulletinAn.setNbre_moyennes(nbre_moyenne_classeSeq);
+					if(tauxReussite>0){
+						bulletinAn.setTaux_reussite(tauxReussite);
+					}
+					if(moyenne_general>0){
+						bulletinAn.setMoy_gen_classe(moyenne_general);
+					}
+	
+					/***********************
+					 * Informations sur la conduite annuel de l'élève
+					 */
+					int nhaj = 0;
+					int nhanj = 0;
+					int nhc = 0;
+					int nje = 0;
+					
+					
+					nhanj = eleve.getNbreHeureAbsenceNonJustifieAnnee(anneeScolaire);
+					nhaj = eleve.getNbreHeureAbsenceJustifieAnnee(anneeScolaire);
+					
+					bulletinAn.setAbsence_NJ(nhanj);
+					bulletinAn.setAbsence_J(nhaj);
+					bulletinAn.setConsigne(nhc+"h");
+					bulletinAn.setExclusion(nje+" J");
+					bulletinAn.setAvertissement("");
+					bulletinAn.setBlame_conduite("");
+					
+					/************************
+					 * On doit rechercher les sanctions disciplinaire obtenu dans la periode(annee)
+					 * dans leur ordre decroissant de sévérité et dans l'ordre décroissant des dates ou elles ont 
+					 * ete infligées. On va commencer du trimestre de plus grand numero vers celui de plus petit et
+					 *  de la séquence paire vers la séquence impair de chaque trimestre à chercher
+					 */
+					bulletinAn.setRapport_disc1("");
+					bulletinAn.setRapport_disc2("");
+					bulletinAn.setRapport_disc3("");
+					for(Trimestres trim : anneeScolaire.getListoftrimestre_DESC()){
+							for(Sequences seq : trim.getListofsequence_DESC()){
+								List<RapportDisciplinaire> listofRDiscEleveSeq = eleve.getListRapportDisciplinaireSeq_DESC(seq.getIdPeriodes());
+								
+								if(listofRDiscEleveSeq != null){
+									if(listofRDiscEleveSeq.size()>0) {
+										RapportDisciplinaire rdisc = listofRDiscEleveSeq.get(0);
+										String rdisc_chaine = "";
+										rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+										//On peut donc fixer rapport_disc1
+										bulletinAn.setRapport_disc1(rdisc_chaine);
+									}
+									
+									/*
+									 * On ne fait pas de else car il faut encore reprendre le test et au cas ou ca marche 
+									 * on va set rapport_disc2
+									 */
+									if(listofRDiscEleveSeq.size()>1) {
+			
+										RapportDisciplinaire rdisc = listofRDiscEleveSeq.get(1);
+										String rdisc_chaine = "";
+										rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+										//On peut donc fixer rapport_disc1
+										bulletinAn.setRapport_disc2(rdisc_chaine);
+									
+									}
+									
+									if(listofRDiscEleveSeq.size()>2) {
+			
+										RapportDisciplinaire rdisc = listofRDiscEleveSeq.get(2);
+										String rdisc_chaine = "";
+										rdisc_chaine = rdisc.getRapportDisciplinaireString(lang);
+										
+										//On peut donc fixer rapport_disc1
+										bulletinAn.setRapport_disc3(rdisc_chaine);
+														
+									}
+									
+							}
+						}
+					}
+					
+					
+					/**************************
+					 * Informations sur le rappel de la moyenne et du rang des autres trimestres
+					 */
+					
+					for(Trimestres trim : anneeScolaire.getListoftrimestre()){
+						
+						List<Eleves> listofElevesOrdreDecroissantMoyenneTrimestriel = 
+								mapofElevesOrdreDecroissantMoyenneTrimestriel.get(trim.getIdPeriodes());
+						
+						if(trim.getNumeroTrim() == 1){
+							if(lang.equalsIgnoreCase("fr")==true){
+								bulletinAn.setRappel_1("Trimestre "+trim.getNumeroTrim());
+							}
+							else{
+								bulletinAn.setRappel_1("Term "+trim.getNumeroTrim());
+							}
+							
+							double moy_trim = ub.getMoyenneTrimestriel(eleve, trim);
+							if(moy_trim>0){
+								bulletinAn.setR_moy_1(moy_trim);
+							}
+							
+							int rangtrim = ub.getRangTrimestrielEleveAuMoinsUneNote(eleve, 
+									listofElevesOrdreDecroissantMoyenneTrimestriel);
+							
+							if(rangtrim>0){
+								bulletinAn.setR_rang_1(rangtrim+"e");
+							}
+							else{
+								bulletinAn.setR_rang_1("");
+							}
+						}//trim1
+						else if(trim.getNumeroTrim() == 2){
+							if(lang.equalsIgnoreCase("fr")==true){
+							bulletinAn.setRappel_2("Trimestre"+trim.getNumeroTrim());
+							}
+							else{
+								bulletinAn.setRappel_2("Term "+trim.getNumeroTrim());
+							}
+							double moy_trim = ub.getMoyenneTrimestriel(eleve, trim);
+							if(moy_trim>0){
+								bulletinAn.setR_moy_2(moy_trim);
+							}
+							
+							int rangtrim = ub.getRangTrimestrielEleveAuMoinsUneNote(eleve, 
+									listofElevesOrdreDecroissantMoyenneTrimestriel);
+							
+							if(rangtrim>0){
+								bulletinAn.setR_rang_2(rangtrim+"e");
+							}
+							else{
+								bulletinAn.setR_rang_2("");
+							}
+						}//fin trim2
+						else if(trim.getNumeroTrim() == 3){
+							if(lang.equalsIgnoreCase("fr")==true){
+								bulletinAn.setRappel_3("Trimestre"+trim.getNumeroTrim());
+							}
+							else{
+								bulletinAn.setRappel_3("Term "+trim.getNumeroTrim());
+							}
+							double moy_trim = ub.getMoyenneTrimestriel(eleve, trim);
+							if(moy_trim>0){
+								bulletinAn.setR_moy_3(moy_trim);
+							}
+							
+							int rangtrim = ub.getRangTrimestrielEleveAuMoinsUneNote(eleve, 
+									listofElevesOrdreDecroissantMoyenneTrimestriel);
+							
+							if(rangtrim>0){
+								bulletinAn.setR_rang_3(rangtrim+"e");
+							}
+							else{
+								bulletinAn.setR_rang_3("");
+							}
+						}//fin trim3
+						
+					}//fin du for sur les trim
+					
+					/****************************
+					 * Informations sur l'appreciation du travail de l'élève
+					 */
+					double moy_an = ub.getMoyenneAnnuel(eleve, anneeScolaire);
+					
+					if(moy_an>=0) bulletinAn.setR_moy_an(moy_an);
+					if(lang.equalsIgnoreCase("fr")==true){
+						bulletinAn.setRappel_4("Année");
+					}
+					else{
+						bulletinAn.setRappel_4("Year ");
+					}
+					
+					bulletinAn.setTableau_hon("");
+					bulletinAn.setTableau_enc("");
+					bulletinAn.setTableau_fel("");
+					String appreciation = ub.calculAppreciation(moy_an,lang);
+					bulletinAn.setAppreciation(appreciation);
+					
+					/*
+					 * On doit chercher la decision de conseil dans la periode sachant qu'on a une seule decision de 
+					 * conseil dans une période donnée (que ce soit séquence, trimestre ou année)
+					 */
+					DecisionConseil decConseil = eleve.getDecisionConseilPeriode(anneeScolaire.getIdPeriodes());
+					bulletinAn.setDistinction("");
+					bulletinAn.setDecision_conseil("");
+					if(decConseil !=null){
+						/*******************************
+						 * Informations sur les distinctions octroyées  dans la séquence
+						 */
+						String distinction="";
+						distinction = decConseil.getSanctionTravDecisionConseilStringIntitule(lang);
+						bulletinAn.setDistinction(distinction);
+						
+						/*******************************
+						 * Informations sur les decision du conseil de classe dans la séquence
+						 * en fait il s'agit de préciser les sanctions disciplinaire infligées à un élève lors du conseil
+						 * de classe. Et ici c'est le conseil de classe annuel donc la decision finale
+						 */
+						String decision="";
+						decision += decConseil.getDecisionDecisionConseilString(lang);
+						/*distinction = decConseil.getSanctionTravDecisionConseilString(lang);
+						decision+=distinction;*/
+						bulletinAn.setDecision_conseil(decision);
+					}
+					
+					
+					
+					
+					List<Cours> listofCoursEffortAFournir = 
+							ub.getListofCoursDansOrdreEffortAFournirAnnee(eleve, listofCoursEvalueAn, 
+							anneeScolaire);
+					bulletinAn.setEffort_matiere1("");
+					bulletinAn.setEffort_matiere2("");
+					bulletinAn.setEffort_matiere3("");
+					if(listofCoursEffortAFournir.size()>0) {
+						String codeCours = listofCoursEffortAFournir.get(0).getCodeCours();
+						bulletinAn.setEffort_matiere1(codeCours);
+					}
+					
+					
+					if(listofCoursEffortAFournir.size()>1) {
+						String codeCours = listofCoursEffortAFournir.get(1).getCodeCours();
+						bulletinAn.setEffort_matiere2(codeCours);
+					}
+					
+					if(listofCoursEffortAFournir.size()>2) {
+						String codeCours = listofCoursEffortAFournir.get(2).getCodeCours();
+						bulletinAn.setEffort_matiere3(codeCours);
+					}
+					
+	
+					/*****************************
+					 * Information sur l'espace VISA du bulletin
+					 */
+					bulletinAn.setVille(villeEtab);
+					
+					
+					/****************
+					 * Informations lie au sommaire de chaque groupe
+					 * Groupe des matieres scientifique (Groupe1) dans l'année
+					 * cccccccccccccccccccccccccc
+					 */
+					
+					LigneAnnuelGroupeCours ligneAnnuelGroupeCoursScientifique = 
+							ub.getLigneAnnuelGroupeCours(eleve, listofCoursScientifique, anneeScolaire);
+			
+					if(lang.equalsIgnoreCase("fr")==true){
+						bulletinAn.setNom_g1("Scientifique");
+					}
+					else{
+						bulletinAn.setNom_g1("Scientific");
+					}
+					
+					double total_coef_g1 = ligneAnnuelGroupeCoursScientifique.getTotalCoefElevePourGroupeCours();
+					
+					bulletinAn.setTotal_coef_g1(total_coef_g1);
+					//System.err.println("total_coef_g1 == "+total_coef_g1);
+					
+					double total_g1 = ligneAnnuelGroupeCoursScientifique.getTotalNoteAnElevePourGroupeCours();
+					if(total_g1>0){
+						bulletinAn.setTotal_g1(total_g1);
+					}
+					
+					String totalextreme_g1 = "";
+					
+					double valeurMoyDernierGrpCours1 = ub.getValeurMoyenneDernierPourGrpDansAn(
+							listofElevesClasse, listofCoursScientifique, anneeScolaire);
+					
+					double valeurMoyPremierGrpCours1 = ub.getValeurMoyennePremierPourGrpDansAn(
+							listofElevesClasse, listofCoursScientifique, anneeScolaire);
+					if(valeurMoyDernierGrpCours1>0 && valeurMoyPremierGrpCours1>0){
+						totalextreme_g1 = "["+valeurMoyDernierGrpCours1+" ; "+
+								valeurMoyPremierGrpCours1+"]";
+					}
+					bulletinAn.setTotal_extreme_g1(totalextreme_g1);
+					
+					int r1 = ub.getRangMoyenneAnElevePourGroupe(classeConcerne, listofCoursScientifique, 
+							anneeScolaire, eleve);
+					
+					if(r1>0){
+						bulletinAn.setTotal_rang_g1(r1+"e");
+					}
+					else{
+						bulletinAn.setTotal_rang_g1("");
+					}
+					
+					
+					double moy_gen_grp1 = ub.getMoyenneGeneralPourGroupeCoursAn(classeConcerne, 
+							listofCoursScientifique, anneeScolaire);
+					if(moy_gen_grp1>0){
+						bulletinAn.setMg_classe_g1(moy_gen_grp1);
+					}
+					
+					double total_pourcentage_g1 = ub.getTauxReussitePourGroupeCoursAn(classeConcerne, 
+							listofCoursScientifique, anneeScolaire);
+					if(total_pourcentage_g1>=0){
+						bulletinAn.setTotal_pourcentage_g1(total_pourcentage_g1);
+					}
+					
+					double moyenne_g1 = ligneAnnuelGroupeCoursScientifique.
+							getMoyenneAnElevePourGroupeCours();
+					if(moyenne_g1>0){
+						bulletinAn.setMoyenne_g1(moyenne_g1);
+					}
+			
+	
+					/****************
+					 * Informations lie au sommaire de chaque groupe
+					 * Groupe des matieres Litteraire (Groupe2) dans l'année
+					 * lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+					 */
+					
+					LigneAnnuelGroupeCours ligneAnnuelGroupeCoursLitteraire = 
+							ub.getLigneAnnuelGroupeCours(eleve, listofCoursLitteraire, anneeScolaire);
+			
+					if(lang.equalsIgnoreCase("fr")==true){
+						bulletinAn.setNom_g2("Litteraire");
+					}
+					else{
+						bulletinAn.setNom_g2("Arts");
+					}
+					
+					double total_coef_g2 = ligneAnnuelGroupeCoursLitteraire.getTotalCoefElevePourGroupeCours();
+					
+					bulletinAn.setTotal_coef_g2(total_coef_g2);
+					
+					double total_g2 = ligneAnnuelGroupeCoursLitteraire.getTotalNoteAnElevePourGroupeCours();
+					if(total_g2>0){
+						bulletinAn.setTotal_g2(total_g2);
+					}
+					
+					String totalextreme_g2 = "";
+					
+					double valeurMoyDernierGrpCours2 = ub.getValeurMoyenneDernierPourGrpDansAn(
+							listofElevesClasse, listofCoursLitteraire, anneeScolaire);
+					
+					double valeurMoyPremierGrpCours2 = ub.getValeurMoyennePremierPourGrpDansAn(
+							listofElevesClasse, listofCoursLitteraire, anneeScolaire);
+					if(valeurMoyDernierGrpCours2>0 && valeurMoyPremierGrpCours2>0){
+						totalextreme_g2 = "["+valeurMoyDernierGrpCours2+" ; "+
+								valeurMoyPremierGrpCours2+"]";
+					}
+					bulletinAn.setTotal_extreme_g2(totalextreme_g2);
+					
+					int r2 = ub.getRangMoyenneAnElevePourGroupe(classeConcerne, listofCoursLitteraire, 
+							anneeScolaire, eleve);
+					
+					if(r2>0){
+						bulletinAn.setTotal_rang_g2(r2+"e");
+					}
+					else{
+						bulletinAn.setTotal_rang_g2("");
+					}
+					
+					
+					double moy_gen_grp2 = ub.getMoyenneGeneralPourGroupeCoursAn(classeConcerne, 
+							listofCoursLitteraire, anneeScolaire);
+					if(moy_gen_grp2>0){
+						bulletinAn.setMg_classe_g2(moy_gen_grp2);
+					}
+					
+					double total_pourcentage_g2 = ub.getTauxReussitePourGroupeCoursAn(classeConcerne, 
+							listofCoursLitteraire, anneeScolaire);
+					if(total_pourcentage_g2>=0){
+						bulletinAn.setTotal_pourcentage_g2(total_pourcentage_g2);
+					}
+					
+					double moyenne_g2 = ligneAnnuelGroupeCoursLitteraire.
+							getMoyenneAnElevePourGroupeCours();
+					if(moyenne_g2>0){
+						bulletinAn.setMoyenne_g2(moyenne_g2);
+					}
+	
+					
+	
+					/****************
+					 * Informations lie au sommaire de chaque groupe
+					 * Groupe des matieres Divers (Groupe3) dans l'année
+					 * ddddddddddddddddddddddddddddddddddd
+					 */
+					
+					LigneAnnuelGroupeCours ligneAnnuelGroupeCoursDivers = 
+							ub.getLigneAnnuelGroupeCours(eleve, listofCoursDivers, anneeScolaire);
+			
+					if(lang.equalsIgnoreCase("fr")==true){
+						bulletinAn.setNom_g3("Divers");
+					}
+					else{
+						bulletinAn.setNom_g3("Others");
+					}
+					
+					double total_coef_g3 = ligneAnnuelGroupeCoursDivers.getTotalCoefElevePourGroupeCours();
+					
+					bulletinAn.setTotal_coef_g3(total_coef_g3);
+					
+					double total_g3 = ligneAnnuelGroupeCoursDivers.getTotalNoteAnElevePourGroupeCours();
+					if(total_g3>0){
+						bulletinAn.setTotal_g3(total_g3);
+					}
+					
+					String totalextreme_g3 = "";
+					
+					double valeurMoyDernierGrpCours3 = ub.getValeurMoyenneDernierPourGrpDansAn(
+							listofElevesClasse, listofCoursDivers, anneeScolaire);
+					
+					double valeurMoyPremierGrpCours3 = ub.getValeurMoyennePremierPourGrpDansAn(
+							listofElevesClasse, listofCoursDivers, anneeScolaire);
+					if(valeurMoyDernierGrpCours3>0 && valeurMoyPremierGrpCours3>0){
+						totalextreme_g3 = "["+valeurMoyDernierGrpCours3+" ; "+
+								valeurMoyPremierGrpCours3+"]";
+					}
+					bulletinAn.setTotal_extreme_g3(totalextreme_g3);
+					
+					int r3 = ub.getRangMoyenneAnElevePourGroupe(classeConcerne, listofCoursDivers, 
+							anneeScolaire, eleve);
+					
+					if(r3>0){
+						bulletinAn.setTotal_rang_g3(r3+"e");
+					}
+					else{
+						bulletinAn.setTotal_rang_g3("");
+					}
+					
+					
+					double moy_gen_grp3 = ub.getMoyenneGeneralPourGroupeCoursAn(classeConcerne, 
+							listofCoursDivers, anneeScolaire);
+					if(moy_gen_grp3>0){
+						bulletinAn.setMg_classe_g3(moy_gen_grp3);
+					}
+					
+					double total_pourcentage_g3 = ub.getTauxReussitePourGroupeCoursAn(classeConcerne, 
+							listofCoursDivers, anneeScolaire);
+					if(total_pourcentage_g3>=0){
+						bulletinAn.setTotal_pourcentage_g3(total_pourcentage_g3);
+					}
+					
+					double moyenne_g3 = ligneAnnuelGroupeCoursDivers.
+							getMoyenneAnElevePourGroupeCours();
+					if(moyenne_g3>0){
+						bulletinAn.setMoyenne_g3(moyenne_g3);
+					}
+					
+					/************************************
+					 * Listes alimentant les sous rapports: les rapports sur les groupes des matières 
+					 **********/
+					
+					
+					List<MatiereGroupe1AnnuelBean> listofCoursScientifiqueAnnuelBean 
+								= new ArrayList<MatiereGroupe1AnnuelBean>(); 
+					
+					int rc1 = 0;
+					/***
+					 * debut du for sur les cours scientifique
+					 * Gestion des cours scientifique
+					 */
+					for(Cours cours : listofCoursScientifique){
+						
+						//long debutforCoursTime = System.currentTimeMillis();
+						
+						MatiereGroupe1AnnuelBean mGrp1AnBean = new MatiereGroupe1AnnuelBean();
+						
+						
+						
+						RapportAnnuelCours rapportAnnuelCours = ub.getRapportAnnuelCours(
+								classeConcerne, cours, anneeScolaire);
+						
+						String matiere = ub.subString(cours.getIntituleCours(), 17);
+						matiere = matiere + ":";
+						String codeMat = ub.subString(cours.getCodeCours(), 5);
+						matiere = matiere + codeMat;
+						
+						String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 17);
+						
+						String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+						nomProf = ub.subString(nomProf, 15);
+						
+						mGrp1AnBean.setMatiere_g1(matiere);
+						mGrp1AnBean.setMatiere_g1_2emelang(matiere_2emelang);
+						mGrp1AnBean.setProf_g1(nomProf);
+						
+						double soenoteAn = 0;
+						int nbreNoteDansAnPourCours = 0;
+						
+						for(Trimestres trim : anneeScolaire.getListoftrimestre()){
+							if(trim.getNumeroTrim() == 1){
+								double note_trim_g1 = ub.getValeurNotesFinaleEleveTrimestre(eleve, cours, trim);
+								if(note_trim_g1>0){
+									mGrp1AnBean.setNote_1_g1(note_trim_g1);
+									soenoteAn = soenoteAn + note_trim_g1;
+									nbreNoteDansAnPourCours +=1; 
+								}
+							}
+							else if(trim.getNumeroTrim() == 2){
+								double note_trim_g2 = ub.getValeurNotesFinaleEleveTrimestre(eleve, cours, trim);
+								if(note_trim_g2>0){
+									mGrp1AnBean.setNote_2_g1(note_trim_g2);
+									soenoteAn = soenoteAn + note_trim_g2;
+									nbreNoteDansAnPourCours +=1; 
+								}
+							}
+							else if(trim.getNumeroTrim() == 3){
+								double note_trim_g3 = ub.getValeurNotesFinaleEleveTrimestre(eleve, cours, trim);
+								if(note_trim_g3>0){
+									mGrp1AnBean.setNote_3_g1(note_trim_g3);
+									soenoteAn = soenoteAn + note_trim_g3;
+									nbreNoteDansAnPourCours +=1; 
+								}
+							}
+						}
+						
+						double noteCoursAn = 0;
+						if(nbreNoteDansAnPourCours>0){
+							noteCoursAn = soenoteAn/nbreNoteDansAnPourCours;
+							mGrp1AnBean.setNote_ann_g1(noteCoursAn);
+							double total_ann_g1 = noteCoursAn*cours.getCoefCours();
+							mGrp1AnBean.setTotal_ann_g1(total_ann_g1);
+						}
+						
+						mGrp1AnBean.setCoef_g1(cours.getCoefCours());
+						
+						String extreme_g1 = "";
+						double noteAnDernierCours = rapportAnnuelCours.getValeurNoteDernier();
+						double noteAnPremierCours = rapportAnnuelCours.getValeurNotePremier();
+						if(noteAnDernierCours>0 && noteAnPremierCours>0){
+							extreme_g1 = "["+noteAnDernierCours+" ; "+ noteAnPremierCours+"]";
+							mGrp1AnBean.setExtreme_g1(extreme_g1);
+						}
+						
+						List<Eleves> listofEleveOrdreDecroissantPourCours = mapCoursEleves.get(cours.getIdCours());
+						
+						rc1 = ub.getRangNoteAnnuelElevePourCours(eleve, 
+								listofEleveOrdreDecroissantPourCours);
+						
+						if(rc1>0){
+							mGrp1AnBean.setRang_g1(rc1+"e");
+						}
+						else{
+							mGrp1AnBean.setRang_g1("");
+						}
+						
+						
+						double moy_classe_g1 = ub.getMoyenneGeneralCoursAn(classeConcerne, 
+								cours, anneeScolaire);
+						if(moy_classe_g1>0){
+							mGrp1AnBean.setMoy_classe_g1(moy_classe_g1);
+						}
+						
+						
+						double pourcentage_g1 = ub.getTauxReussiteCoursAn(classeConcerne, 
+								cours, anneeScolaire);
+						if(pourcentage_g1>=0){
+							mGrp1AnBean.setPourcentage_g1(pourcentage_g1);
+						}
+						
+						String appreciationNote = ub.calculAppreciation(noteCoursAn,lang);
+						mGrp1AnBean.setAppreciation_g1(appreciationNote);
+						
+						//On ajoute la ligne de cours dans le groupe correspondant
+						listofCoursScientifiqueAnnuelBean.add(mGrp1AnBean);
+					
+					}//fin du for sur les cours scientifique
+					/****
+						fin du for sur les cours scientifique qui passe dans la classe
+					 *****/
+	
+					//On place la liste des matieres scientifique construit
+					bulletinAn.setMatieresGroupe1Annuel(listofCoursScientifiqueAnnuelBean);
+					
+	
+					List<MatiereGroupe2AnnuelBean> listofCoursLitteraireAnnuelBean 
+								= new ArrayList<MatiereGroupe2AnnuelBean>(); 
+					
+					int rc2 = 0;
+					/***
+					 * debut du for sur les cours Litteraire
+					 * Gestion des cours Litteraire
+					 */
+					for(Cours cours : listofCoursLitteraire){
+						
+						//long debutforCoursTime = System.currentTimeMillis();
+						
+						MatiereGroupe2AnnuelBean mGrp2AnBean = new MatiereGroupe2AnnuelBean();
+						
+						
+						
+						RapportAnnuelCours rapportAnnuelCours = ub.getRapportAnnuelCours(
+								classeConcerne, cours, anneeScolaire);
+						
+						String matiere = ub.subString(cours.getIntituleCours(), 17);
+						matiere = matiere + ":";
+						String codeMat = ub.subString(cours.getCodeCours(), 5);
+						matiere = matiere + codeMat;
+						
+						String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 17);
+						
+						String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+						nomProf = ub.subString(nomProf, 15);
+						
+						mGrp2AnBean.setMatiere_g2(cours.getCodeCours());
+						
+						mGrp2AnBean.setMatiere_g2(matiere);
+						mGrp2AnBean.setMatiere_g2_2emelang(matiere_2emelang);
+						mGrp2AnBean.setProf_g2(nomProf);
+						
+						double soenoteAn = 0;
+						int nbreNoteDansAnPourCours = 0;
+						
+						for(Trimestres trim : anneeScolaire.getListoftrimestre()){
+							if(trim.getNumeroTrim() == 1){
+								double note_trim_g1 = ub.getValeurNotesFinaleEleveTrimestre(eleve, cours, trim);
+								if(note_trim_g1>0){
+									mGrp2AnBean.setNote_1_g2(note_trim_g1);
+									soenoteAn = soenoteAn + note_trim_g1;
+									nbreNoteDansAnPourCours +=1; 
+								}
+							}
+							else if(trim.getNumeroTrim() == 2){
+								double note_trim_g2 = ub.getValeurNotesFinaleEleveTrimestre(eleve, cours, trim);
+								if(note_trim_g2>0){
+									mGrp2AnBean.setNote_2_g2(note_trim_g2);
+									soenoteAn = soenoteAn + note_trim_g2;
+									nbreNoteDansAnPourCours +=1; 
+								}
+							}
+							else if(trim.getNumeroTrim() == 3){
+								double note_trim_g3 = ub.getValeurNotesFinaleEleveTrimestre(eleve, cours, trim);
+								if(note_trim_g3>0){
+									mGrp2AnBean.setNote_3_g2(note_trim_g3);
+									soenoteAn = soenoteAn + note_trim_g3;
+									nbreNoteDansAnPourCours +=1; 
+								}
+							}
+						}
+						
+						double noteCoursAn = 0;
+						if(nbreNoteDansAnPourCours>0){
+							noteCoursAn = soenoteAn/nbreNoteDansAnPourCours;
+							mGrp2AnBean.setNote_ann_g2(noteCoursAn);
+							double total_ann_g2 = noteCoursAn*cours.getCoefCours();
+							mGrp2AnBean.setTotal_ann_g2(total_ann_g2);
+						}
+						
+						mGrp2AnBean.setCoef_g2(cours.getCoefCours());
+						
+						String extreme_g2 = "";
+						double noteAnDernierCours = rapportAnnuelCours.getValeurNoteDernier();
+						double noteAnPremierCours = rapportAnnuelCours.getValeurNotePremier();
+						if(noteAnDernierCours>0 && noteAnPremierCours>0){
+							extreme_g2 = "["+noteAnDernierCours+" ; "+ noteAnPremierCours+"]";
+							mGrp2AnBean.setExtreme_g2(extreme_g2);
+						}
+						
+						List<Eleves> listofEleveOrdreDecroissantPourCours = mapCoursEleves.get(cours.getIdCours());
+						
+						rc2 = ub.getRangNoteAnnuelElevePourCours(eleve, 
+								listofEleveOrdreDecroissantPourCours);
+						
+						if(rc2>0){
+							mGrp2AnBean.setRang_g2(rc2+"e");
+						}
+						else{
+							mGrp2AnBean.setRang_g2("");
+						}
+						
+						
+						double moy_classe_g2 = ub.getMoyenneGeneralCoursAn(classeConcerne, 
+								cours, anneeScolaire);
+						if(moy_classe_g2>0){
+							mGrp2AnBean.setMoy_classe_g2(moy_classe_g2);
+						}
+						
+						
+						double pourcentage_g2 = ub.getTauxReussiteCoursAn(classeConcerne, 
+								cours, anneeScolaire);
+						if(pourcentage_g2>=0){
+							mGrp2AnBean.setPourcentage_g2(pourcentage_g2);
+						}
+						
+						String appreciationNote = ub.calculAppreciation(noteCoursAn,lang);
+						mGrp2AnBean.setAppreciation_g2(appreciationNote);
+						
+						//On ajoute la ligne de cours dans le groupe correspondant
+						listofCoursLitteraireAnnuelBean.add(mGrp2AnBean);
+					
+					}//fin du for sur les cours Litteraire
+					/****
+						fin du for sur les cours Litteraire qui passe dans la classe
+					 *****/
+					
+					//On place la liste des matieres scientifique construit
+					bulletinAn.setMatieresGroupe2Annuel(listofCoursLitteraireAnnuelBean);
+					
+	
+					List<MatiereGroupe3AnnuelBean> listofCoursDiversAnnuelBean 
+								= new ArrayList<MatiereGroupe3AnnuelBean>(); 
+					
+					int rc3 = 0;
+					/***
+					 * debut du for sur les cours Divers
+					 * Gestion des cours Divers
+					 */
+					for(Cours cours : listofCoursDivers){
+						
+						//long debutforCoursTime = System.currentTimeMillis();
+						
+						MatiereGroupe3AnnuelBean mGrp3AnBean = new MatiereGroupe3AnnuelBean();
+						
+						
+						
+						RapportAnnuelCours rapportAnnuelCours = ub.getRapportAnnuelCours(
+								classeConcerne, cours, anneeScolaire);
+						
+						String matiere = ub.subString(cours.getIntituleCours(), 17);
+						matiere = matiere + ":";
+						String codeMat = ub.subString(cours.getCodeCours(), 5);
+						matiere = matiere + codeMat;
+						
+						String matiere_2emelang = ub.subString(cours.getIntitule2langueCours(), 17);
+						
+						String nomProf = cours.getProffesseur().getNomsPers()+" "+cours.getProffesseur().getPrenomsPers();
+						nomProf = ub.subString(nomProf, 15);
+						
+						mGrp3AnBean.setMatiere_g3(matiere);
+						mGrp3AnBean.setMatiere_g3_2emelang(matiere_2emelang);
+						mGrp3AnBean.setProf_g3(nomProf);
+						
+						double soenoteAn = 0;
+						int nbreNoteDansAnPourCours = 0;
+						
+						for(Trimestres trim : anneeScolaire.getListoftrimestre()){
+							if(trim.getNumeroTrim() == 1){
+								double note_trim_g1 = ub.getValeurNotesFinaleEleveTrimestre(eleve, cours, trim);
+								if(note_trim_g1>0){
+									mGrp3AnBean.setNote_1_g3(note_trim_g1);
+									soenoteAn = soenoteAn + note_trim_g1;
+									nbreNoteDansAnPourCours +=1; 
+								}
+							}
+							else if(trim.getNumeroTrim() == 2){
+								double note_trim_g2 = ub.getValeurNotesFinaleEleveTrimestre(eleve, cours, trim);
+								if(note_trim_g2>0){
+									mGrp3AnBean.setNote_2_g3(note_trim_g2);
+									soenoteAn = soenoteAn + note_trim_g2;
+									nbreNoteDansAnPourCours +=1; 
+								}
+							}
+							else if(trim.getNumeroTrim() == 3){
+								double note_trim_g3 = ub.getValeurNotesFinaleEleveTrimestre(eleve, cours, trim);
+								if(note_trim_g3>0){
+									mGrp3AnBean.setNote_3_g3(note_trim_g3);
+									soenoteAn = soenoteAn + note_trim_g3;
+									nbreNoteDansAnPourCours +=1; 
+								}
+							}
+						}
+						
+						double noteCoursAn = 0;
+						if(nbreNoteDansAnPourCours>0){
+							noteCoursAn = soenoteAn/nbreNoteDansAnPourCours;
+							mGrp3AnBean.setNote_ann_g3(noteCoursAn);
+							double total_ann_g3 = noteCoursAn*cours.getCoefCours();
+							mGrp3AnBean.setTotal_ann_g3(total_ann_g3);
+						}
+						
+						mGrp3AnBean.setCoef_g3(cours.getCoefCours());
+						
+						String extreme_g3 = "";
+						double noteAnDernierCours = rapportAnnuelCours.getValeurNoteDernier();
+						double noteAnPremierCours = rapportAnnuelCours.getValeurNotePremier();
+						if(noteAnDernierCours>0 && noteAnPremierCours>0){
+							extreme_g3 = "["+noteAnDernierCours+" ; "+ noteAnPremierCours+"]";
+							mGrp3AnBean.setExtreme_g3(extreme_g3);
+						}
+						
+						List<Eleves> listofEleveOrdreDecroissantPourCours = mapCoursEleves.get(cours.getIdCours());
+						
+						rc3 = ub.getRangNoteAnnuelElevePourCours(eleve, 
+								listofEleveOrdreDecroissantPourCours);
+						
+						if(rc3>0){
+							mGrp3AnBean.setRang_g3(rc3+"e");
+						}
+						else{
+							mGrp3AnBean.setRang_g3(" ");
+						}
+						
+						
+						double moy_classe_g3 = ub.getMoyenneGeneralCoursAn(classeConcerne, 
+								cours, anneeScolaire);
+						if(moy_classe_g3>0){
+							mGrp3AnBean.setMoy_classe_g3(moy_classe_g3);
+						}
+						
+						
+						double pourcentage_g3 = ub.getTauxReussiteCoursAn(classeConcerne, 
+								cours, anneeScolaire);
+						if(pourcentage_g3>=0){
+							mGrp3AnBean.setPourcentage_g3(pourcentage_g3);
+						}
+						
+						String appreciationNote = ub.calculAppreciation(noteCoursAn,lang);
+						mGrp3AnBean.setAppreciation_g3(appreciationNote);
+						
+						//On ajoute la ligne de cours dans le groupe correspondant
+						listofCoursDiversAnnuelBean.add(mGrp3AnBean);
+					
+					}//fin du for sur les cours Divers
+					/****
+						fin du for sur les cours Divers qui passe dans la classe
+					 *****/
+					
+					//On place la liste des matieres scientifique construit
+					bulletinAn.setMatieresGroupe3Annuel(listofCoursDiversAnnuelBean);
+					
+					
+					
+					long finforTime = System.currentTimeMillis();
+					collectionofBulletionAnnuel.add(bulletinAn);
+					System.err.println("bulletin "+numBull+" de  "+ eleve.getNomsEleves()+
+							" dans l'année "+anneeScolaire.getIntituleAnnee()+
+							"  ajouter avec succes en "+(finforTime-startTimeFor));
+					numBull++;				
+				}
+			}//fin du for sur les élèves
+			
+
+		return collectionofBulletionAnnuel;
+	
+	 }
+	
 	
 	@Override
 	public List<Eleves> getListEleveSanctionDiscAnnee(Classes classe, SanctionDisciplinaire sanctionDisc, 
@@ -8970,8 +13710,13 @@ public class UsersServiceImplementation implements IUsersService {
 			String titre_fiche = "CLASS COUNCIL OF YEAR: "+annee.getIntituleAnnee();
 			ficheCC.setTitre_fiche(titre_fiche);
 		}
-		String profPrincipal = " "+classe.getProffesseur().getNomsPers()+" "+classe.getProffesseur().getPrenomsPers();
-		profPrincipal=profPrincipal.toUpperCase();
+		
+		String profPrincipal = "";
+		if(classe.getProffesseur()!=null){
+			profPrincipal = " "+classe.getProffesseur().getNomsPers()+" "+classe.getProffesseur().getPrenomsPers();
+			profPrincipal=profPrincipal.toUpperCase();
+		}
+		
 		ficheCC.setEnseignant(profPrincipal);
 		String nonClasse = classe.getCodeClasses()+classe.getSpecialite().getCodeSpecialite()+
 				classe.getNumeroClasses();		
@@ -9798,7 +14543,17 @@ public class UsersServiceImplementation implements IUsersService {
 				String fonction  = "CHEF D'ETABLISSEMENT";
 				String numtel1 = proviseur.getNumtel1Pers();
 				String numtel2 = proviseur.getNumtel2Pers();
+				if(numtel2.isEmpty()==false){
+					numtel1 +="/";
+					numtel1 +=numtel2;
+				}
 				String adresse = proviseur.getEmailPers();
+				String numero = ""+1;
+				String matricule = proviseur.getMatriculePers();
+				String quotah = proviseur.getQuotaHorairePers()+"";
+				String sitmatri = proviseur.getSitmatriPers();
+				String region = proviseur.getRegionoriginePers();
+				String observation = proviseur.getObservations();
 				
 				PersonnelBean pb = new PersonnelBean();
 				pb.setAdresse(adresse);
@@ -9815,6 +14570,14 @@ public class UsersServiceImplementation implements IUsersService {
 				pb.setNationalite(nationalite);
 				pb.setNumtel1(numtel1);
 				pb.setNumtel2(numtel2);
+				
+				pb.setNumero(numero);
+				pb.setMatricule(matricule);
+				pb.setQuotah(quotah);
+				pb.setSitmatri(sitmatri);
+				pb.setRegion(region);
+				pb.setObservation(observation);
+				
 				listofPersonnelBean.add(pb);
 			}
 		}
@@ -9822,6 +14585,7 @@ public class UsersServiceImplementation implements IUsersService {
 		//On continue avec la liste des censeurs
 		List<Censeurs> listofCenseur = this.findAllCenseurs();
 		if(listofCenseur!=null){
+			int i = 1;
 			for(Censeurs c : listofCenseur){
 				String noms_prenoms = (c.getNomsPers()+"  "+
 						c.getPrenomsPers()).toUpperCase();
@@ -9839,7 +14603,18 @@ public class UsersServiceImplementation implements IUsersService {
 				String fonction  = "CENSEUR";
 				String numtel1 = c.getNumtel1Pers();
 				String numtel2 = c.getNumtel2Pers();
+				if(numtel2.isEmpty()==false){
+					numtel1 +="/";
+					numtel1 +=numtel2;
+				}
 				String adresse = c.getEmailPers();
+				String numero = ""+i;
+				i++;
+				String matricule = c.getMatriculePers();
+				String quotah = c.getQuotaHorairePers()+"";
+				String sitmatri = c.getSitmatriPers();
+				String region = c.getRegionoriginePers();
+				String observation = c.getObservations();
 				
 				PersonnelBean pb = new PersonnelBean();
 				pb.setAdresse(adresse);
@@ -9857,6 +14632,13 @@ public class UsersServiceImplementation implements IUsersService {
 				pb.setNumtel1(numtel1);
 				pb.setNumtel2(numtel2);
 				
+				pb.setNumero(numero);
+				pb.setMatricule(matricule);
+				pb.setQuotah(quotah);
+				pb.setSitmatri(sitmatri);
+				pb.setRegion(region);
+				pb.setObservation(observation);
+				
 				listofPersonnelBean.add(pb);
 			}
 		}
@@ -9864,6 +14646,7 @@ public class UsersServiceImplementation implements IUsersService {
 		//On continue avec la liste des SG
 				List<SG> listofSg = this.findAllSG();
 				if(listofSg!=null){
+					int i = 1;
 					for(SG sg : listofSg){
 						String noms_prenoms = (sg.getNomsPers()+"  "+
 								sg.getPrenomsPers()).toUpperCase();
@@ -9881,7 +14664,18 @@ public class UsersServiceImplementation implements IUsersService {
 						String fonction  = "SG";
 						String numtel1 = sg.getNumtel1Pers();
 						String numtel2 = sg.getNumtel2Pers();
+						if(numtel2.isEmpty()==false){
+							numtel1 +="/";
+							numtel1 +=numtel2;
+						}
 						String adresse = sg.getEmailPers();
+						String numero = ""+i;
+						i++;
+						String matricule = sg.getMatriculePers();
+						String quotah = sg.getQuotaHorairePers()+"";
+						String sitmatri = sg.getSitmatriPers();
+						String region = sg.getRegionoriginePers();
+						String observation = sg.getObservations();
 						
 						PersonnelBean pb = new PersonnelBean();
 						pb.setAdresse(adresse);
@@ -9898,6 +14692,14 @@ public class UsersServiceImplementation implements IUsersService {
 						pb.setNationalite(nationalite);
 						pb.setNumtel1(numtel1);
 						pb.setNumtel2(numtel2);		
+						
+						pb.setNumero(numero);
+						pb.setMatricule(matricule);
+						pb.setQuotah(quotah);
+						pb.setSitmatri(sitmatri);
+						pb.setRegion(region);
+						pb.setObservation(observation);
+						
 						listofPersonnelBean.add(pb);
 					}
 				}
@@ -9905,6 +14707,7 @@ public class UsersServiceImplementation implements IUsersService {
 				//On continue avec la liste des Enseignants
 				List<Enseignants> listofEns = this.findAllEnseignants();
 				if(listofEns!=null){
+					int i = 1;
 					for(Enseignants ens : listofEns){
 						String noms_prenoms = (ens.getNomsPers()+"  "+
 								ens.getPrenomsPers()).toUpperCase();
@@ -9922,7 +14725,18 @@ public class UsersServiceImplementation implements IUsersService {
 						String fonction  = "ENSEIGNANT";
 						String numtel1 = ens.getNumtel1Pers();
 						String numtel2 = ens.getNumtel2Pers();
+						if(numtel2.isEmpty()==false){
+							numtel1 +="/";
+							numtel1 +=numtel2;
+						}
 						String adresse = ens.getEmailPers();
+						String numero = ""+i;
+						i++;
+						String matricule = ens.getMatriculePers();
+						String quotah = ens.getQuotaHorairePers()+"";
+						String sitmatri = ens.getSitmatriPers();
+						String region = ens.getRegionoriginePers();
+						String observation = ens.getObservations();
 						
 						PersonnelBean pb = new PersonnelBean();
 						pb.setAdresse(adresse);
@@ -9940,6 +14754,13 @@ public class UsersServiceImplementation implements IUsersService {
 						pb.setNumtel1(numtel1);
 						pb.setNumtel2(numtel2);
 						
+						pb.setNumero(numero);
+						pb.setMatricule(matricule);
+						pb.setQuotah(quotah);
+						pb.setSitmatri(sitmatri);
+						pb.setRegion(region);
+						pb.setObservation(observation);
+						
 						listofPersonnelBean.add(pb);
 					}
 				}
@@ -9947,6 +14768,7 @@ public class UsersServiceImplementation implements IUsersService {
 				//On continue avec la liste des Enseignants
 				List<Intendant> listofInt = this.findAllIntendant();
 				if(listofInt!=null){
+					int i = 1;
 					for(Intendant intendant : listofInt){
 						String noms_prenoms = (intendant.getNomsPers()+"  "+
 								intendant.getPrenomsPers()).toUpperCase();
@@ -9964,7 +14786,19 @@ public class UsersServiceImplementation implements IUsersService {
 						String fonction  = "INTENDANT";
 						String numtel1 = intendant.getNumtel1Pers();
 						String numtel2 = intendant.getNumtel2Pers();
+						
+						if(numtel2.isEmpty()==false){
+							numtel1 +="/";
+							numtel1 +=numtel2;
+						}
 						String adresse = intendant.getEmailPers();
+						String numero = ""+i;
+						i++;
+						String matricule = intendant.getMatriculePers();
+						String quotah = intendant.getQuotaHorairePers()+"";
+						String sitmatri = intendant.getSitmatriPers();
+						String region = intendant.getRegionoriginePers();
+						String observation = intendant.getObservations();
 						
 						PersonnelBean pb = new PersonnelBean();
 						pb.setAdresse(adresse);
@@ -9981,6 +14815,14 @@ public class UsersServiceImplementation implements IUsersService {
 						pb.setNationalite(nationalite);
 						pb.setNumtel1(numtel1);
 						pb.setNumtel2(numtel2);		
+						
+						pb.setNumero(numero);
+						pb.setMatricule(matricule);
+						pb.setQuotah(quotah);
+						pb.setSitmatri(sitmatri);
+						pb.setRegion(region);
+						pb.setObservation(observation);
+						
 						listofPersonnelBean.add(pb);
 					}
 				}
@@ -9988,12 +14830,15 @@ public class UsersServiceImplementation implements IUsersService {
 		return listofPersonnelBean;
 	}
 	
+	
+	
 
 	@Override
 	public Collection<PersonnelBean> generateCollectionofCenseurBean() {
 		List<PersonnelBean> listofPersonnelBean = new ArrayList<PersonnelBean>();
 				List<Censeurs> listofCenseur = this.findAllCenseurs();
 				if(listofCenseur!=null){
+					int i=1;
 					for(Censeurs c : listofCenseur){
 						String noms_prenoms = (c.getNomsPers()+"  "+
 								c.getPrenomsPers()).toUpperCase();
@@ -10011,7 +14856,18 @@ public class UsersServiceImplementation implements IUsersService {
 						String fonction  = "CENSEUR";
 						String numtel1 = c.getNumtel1Pers();
 						String numtel2 = c.getNumtel2Pers();
+						if(numtel2.isEmpty()==false){
+							numtel1 +="/";
+							numtel1 +=numtel2;
+						}
 						String adresse = c.getEmailPers();
+						String numero = ""+i;
+						i++;
+						String matricule = c.getMatriculePers();
+						String quotah = c.getQuotaHorairePers()+"";
+						String sitmatri = c.getSitmatriPers();
+						String region = c.getRegionoriginePers();
+						String observation = c.getObservations();
 						
 						PersonnelBean pb = new PersonnelBean();
 						pb.setAdresse(adresse);
@@ -10029,11 +14885,20 @@ public class UsersServiceImplementation implements IUsersService {
 						pb.setNumtel1(numtel1);
 						pb.setNumtel2(numtel2);
 						
+						pb.setNumero(numero);
+						pb.setMatricule(matricule);
+						pb.setQuotah(quotah);
+						pb.setSitmatri(sitmatri);
+						pb.setRegion(region);
+						pb.setObservation(observation);
+						
 						listofPersonnelBean.add(pb);
 					}
 				}
 		return listofPersonnelBean;
 	}
+	
+	
 
 
 	@Override
@@ -10041,6 +14906,7 @@ public class UsersServiceImplementation implements IUsersService {
 		List<PersonnelBean> listofPersonnelBean = new ArrayList<PersonnelBean>();
 		List<SG> listofSg = this.findAllSG();
 		if(listofSg!=null){
+			int i = 1;
 			for(SG sg : listofSg){
 				String noms_prenoms = (sg.getNomsPers()+"  "+
 						sg.getPrenomsPers()).toUpperCase();
@@ -10058,7 +14924,18 @@ public class UsersServiceImplementation implements IUsersService {
 				String fonction  = "SG";
 				String numtel1 = sg.getNumtel1Pers();
 				String numtel2 = sg.getNumtel2Pers();
+				if(numtel2.isEmpty()==false){
+					numtel1 +="/";
+					numtel1 +=numtel2;
+				}
 				String adresse = sg.getEmailPers();
+				String numero = ""+i;
+				i++;
+				String matricule = sg.getMatriculePers();
+				String quotah = sg.getQuotaHorairePers()+"";
+				String sitmatri = sg.getSitmatriPers();
+				String region = sg.getRegionoriginePers();
+				String observation = sg.getObservations();
 				
 				PersonnelBean pb = new PersonnelBean();
 				pb.setAdresse(adresse);
@@ -10075,18 +14952,27 @@ public class UsersServiceImplementation implements IUsersService {
 				pb.setNationalite(nationalite);
 				pb.setNumtel1(numtel1);
 				pb.setNumtel2(numtel2);		
+				
+				pb.setNumero(numero);
+				pb.setMatricule(matricule);
+				pb.setQuotah(quotah);
+				pb.setSitmatri(sitmatri);
+				pb.setRegion(region);
+				pb.setObservation(observation);
+				
 				listofPersonnelBean.add(pb);
 			}
 		}
 		return listofPersonnelBean;
 	}
-
+	
 
 	@Override
 	public Collection<PersonnelBean> generateCollectionofEnseignantBean() {
 		List<PersonnelBean> listofPersonnelBean = new ArrayList<PersonnelBean>();
 		List<Enseignants> listofEns = this.findAllEnseignants();
 		if(listofEns!=null){
+			int i = 1;
 			for(Enseignants ens : listofEns){
 				String noms_prenoms = (ens.getNomsPers()+"  "+
 						ens.getPrenomsPers()).toUpperCase();
@@ -10104,7 +14990,18 @@ public class UsersServiceImplementation implements IUsersService {
 				String fonction  = "ENSEIGNANT";
 				String numtel1 = ens.getNumtel1Pers();
 				String numtel2 = ens.getNumtel2Pers();
+				if(numtel2.isEmpty()==false){
+					numtel1 +="/";
+					numtel1 +=numtel2;
+				}
 				String adresse = ens.getEmailPers();
+				String numero = ""+i;
+				i++;
+				String matricule = ens.getMatriculePers();
+				String quotah = ens.getQuotaHorairePers()+"";
+				String sitmatri = ens.getSitmatriPers();
+				String region = ens.getRegionoriginePers();
+				String observation = ens.getObservations();
 				
 				PersonnelBean pb = new PersonnelBean();
 				pb.setAdresse(adresse);
@@ -10122,18 +15019,26 @@ public class UsersServiceImplementation implements IUsersService {
 				pb.setNumtel1(numtel1);
 				pb.setNumtel2(numtel2);
 				
+				pb.setNumero(numero);
+				pb.setMatricule(matricule);
+				pb.setQuotah(quotah);
+				pb.setSitmatri(sitmatri);
+				pb.setRegion(region);
+				pb.setObservation(observation);
+				
 				listofPersonnelBean.add(pb);
 			}
 		}
 		return listofPersonnelBean;
 	}
-
+	
 
 	@Override
 	public Collection<PersonnelBean> generateCollectionofIntendantBean() {
 		List<PersonnelBean> listofPersonnelBean = new ArrayList<PersonnelBean>();
 		List<Intendant> listofInt = this.findAllIntendant();
 		if(listofInt!=null){
+			int i = 1;
 			for(Intendant intendant : listofInt){
 				String noms_prenoms = (intendant.getNomsPers()+"  "+
 						intendant.getPrenomsPers()).toUpperCase();
@@ -10151,7 +15056,18 @@ public class UsersServiceImplementation implements IUsersService {
 				String fonction  = "INTENDANT";
 				String numtel1 = intendant.getNumtel1Pers();
 				String numtel2 = intendant.getNumtel2Pers();
+				if(numtel2.isEmpty()==false){
+					numtel1 +="/";
+					numtel1 +=numtel2;
+				}
 				String adresse = intendant.getEmailPers();
+				String numero = ""+i;
+				i++;
+				String matricule = intendant.getMatriculePers();
+				String quotah = intendant.getQuotaHorairePers()+"";
+				String sitmatri = intendant.getSitmatriPers();
+				String region = intendant.getRegionoriginePers();
+				String observation = intendant.getObservations();
 				
 				PersonnelBean pb = new PersonnelBean();
 				pb.setAdresse(adresse);
@@ -10168,6 +15084,14 @@ public class UsersServiceImplementation implements IUsersService {
 				pb.setNationalite(nationalite);
 				pb.setNumtel1(numtel1);
 				pb.setNumtel2(numtel2);		
+				
+				pb.setNumero(numero);
+				pb.setMatricule(matricule);
+				pb.setQuotah(quotah);
+				pb.setSitmatri(sitmatri);
+				pb.setRegion(region);
+				pb.setObservation(observation);
+				
 				listofPersonnelBean.add(pb);
 			}
 		}
@@ -10175,7 +15099,216 @@ public class UsersServiceImplementation implements IUsersService {
 	}
 	
 	
+	@Override
+	public Collection<PersonnelBean> generateCollectionofPersonnelDAppuiBean(){
+		List<PersonnelsDAppui> listofPersonnelsDAppui = this.findAllPersonnelsDAppui();
+		List<PersonnelBean> listofPersonnelBean = new ArrayList<PersonnelBean>();
+		if(listofPersonnelsDAppui != null){
+			int i = 1;
+			for(PersonnelsDAppui pers : listofPersonnelsDAppui){
 
+				String noms_prenoms = (pers.getNomsPers()+"  "+
+						pers.getPrenomsPers()).toUpperCase();
+				SimpleDateFormat spd = new SimpleDateFormat("dd/MM/yyyy");
+				String date = spd.format(pers.getDatenaissPers());
+				String date_naiss = date;
+				String lieu_naiss = "à "+pers.getLieunaissPers();
+				String numcni = pers.getNumcniPers();
+				String sexe = pers.getSexePers().toLowerCase();
+				String nationalite = pers.getNationalitePers();
+				String grade = pers.getGradePers();
+				String statut = pers.getStatutPers();
+				String diplome = pers.getDiplomePers();
+				String numtel1 = pers.getNumtel1Pers();
+				String numtel2 = pers.getNumtel2Pers();
+				if(numtel2.isEmpty()==false){
+					numtel1 +="/";
+					numtel1 +=numtel2;
+				}
+				String adresse = pers.getEmailPers();
+				String numero = ""+i;
+				i++;
+				String matricule = pers.getMatriculePers();
+				String quotah = pers.getQuotaHorairePers()+"";
+				String sitmatri = pers.getSitmatriPers();
+				String region = pers.getRegionoriginePers();
+				String observation = pers.getObservations();
+				String fonction = pers.getFonctionPers();
+				
+				PersonnelBean pb = new PersonnelBean();
+				pb.setAdresse(adresse);
+				pb.setDate_naiss(date_naiss);
+				pb.setLieu_naiss(lieu_naiss);
+				pb.setDiplome(diplome);
+				pb.setFonction(fonction);
+				pb.setGrade(grade);
+				pb.setStatut(statut);
+				pb.setNoms_prenoms(noms_prenoms);
+				pb.setNumcni(numcni);
+				pb.setSexe(sexe);
+				pb.setNationalite(nationalite);
+				pb.setNumtel1(numtel1);
+				pb.setNumtel2(numtel2);		
+				
+				pb.setNumero(numero);
+				pb.setMatricule(matricule);
+				pb.setQuotah(quotah);
+				pb.setSitmatri(sitmatri);
+				pb.setRegion(region);
+				pb.setObservation(observation);
+				
+				listofPersonnelBean.add(pb);
+			
+			}
+		}
+		return listofPersonnelBean;
+	}
+	
+	@Override
+	public Collection<ErrorBean> generateCollectionofErrorBean(String error_msg){
+		List<ErrorBean> listofErrorBean = new ArrayList<ErrorBean>();
+		ErrorBean eb = new ErrorBean();
+		eb.setError(error_msg);
+		listofErrorBean.add(eb);
+		return listofErrorBean;
+	}
+
+	
+	public Collection<PersonnelBean> generateCollectionofPersonnelDeStatutBean(String statutPers){
+		List<PersonnelBean> listofPersonnelBean = new ArrayList<PersonnelBean>();
+		
+		List<Personnels> listofPersonnels = persRepository.findAll();
+		int i = 1;
+		for(Personnels p : listofPersonnels){
+			if(p.getStatutPers().equalsIgnoreCase(statutPers)==true){
+				PersonnelBean pb = new PersonnelBean();
+				
+				String noms_prenoms = (p.getNomsPers()+"  "+
+						p.getPrenomsPers()).toUpperCase();
+				SimpleDateFormat spd = new SimpleDateFormat("dd/MM/yyyy");
+				String date = spd.format(p.getDatenaissPers());
+				String date_naiss = date;
+				String lieu_naiss = "à "+p.getLieunaissPers();
+				String numcni = p.getNumcniPers();
+				String sexe = p.getSexePers().toLowerCase();
+				String nationalite = p.getNationalitePers();
+				String grade = p.getGradePers();
+				String statut = p.getStatutPers();
+				String diplome = p.getDiplomePers();
+				String numtel1 = p.getNumtel1Pers();
+				String numtel2 = p.getNumtel2Pers();
+				if(numtel2.isEmpty()==false){
+					numtel1 +="/";
+					numtel1 +=numtel2;
+				}
+				String adresse = p.getEmailPers();
+				String numero = ""+i;
+				i++;
+				String matricule = p.getMatriculePers();
+				String quotah = p.getQuotaHorairePers()+"";
+				String sitmatri = p.getSitmatriPers();
+				String region = p.getRegionoriginePers();
+				String observation = p.getObservations();
+				String fonction = p.getFonctionPers();
+				
+				pb.setAdresse(adresse);
+				pb.setDate_naiss(date_naiss);
+				pb.setLieu_naiss(lieu_naiss);
+				pb.setDiplome(diplome);
+				pb.setFonction(fonction);
+				pb.setGrade(grade);
+				pb.setStatut(statut);
+				pb.setNoms_prenoms(noms_prenoms);
+				pb.setNumcni(numcni);
+				pb.setSexe(sexe);
+				pb.setNationalite(nationalite);
+				pb.setNumtel1(numtel1);
+				pb.setNumtel2(numtel2);		
+				
+				pb.setNumero(numero);
+				pb.setMatricule(matricule);
+				pb.setQuotah(quotah);
+				pb.setSitmatri(sitmatri);
+				pb.setRegion(region);
+				pb.setObservation(observation);
+				
+				listofPersonnelBean.add(pb);
+				
+			}
+		}
+		return listofPersonnelBean;
+	}
+	
+	public Collection<PersonnelBean> generateCollectionofProffesseursDeStatutBean(String statutPers){
+
+		List<PersonnelBean> listofPersonnelBean = new ArrayList<PersonnelBean>();
+		
+		List<Proffesseurs> listofPersonnels = proffRepository.findAll();
+		int i = 1;
+		for(Proffesseurs p : listofPersonnels){
+			if(p.getStatutPers().equalsIgnoreCase(statutPers)==true){
+				PersonnelBean pb = new PersonnelBean();
+				
+				String noms_prenoms = (p.getNomsPers()+"  "+
+						p.getPrenomsPers()).toUpperCase();
+				SimpleDateFormat spd = new SimpleDateFormat("dd/MM/yyyy");
+				String date = spd.format(p.getDatenaissPers());
+				String date_naiss = date;
+				String lieu_naiss = "à "+p.getLieunaissPers();
+				String numcni = p.getNumcniPers();
+				String sexe = p.getSexePers().toLowerCase();
+				String nationalite = p.getNationalitePers();
+				String grade = p.getGradePers();
+				String statut = p.getStatutPers();
+				String diplome = p.getDiplomePers();
+				String numtel1 = p.getNumtel1Pers();
+				String numtel2 = p.getNumtel2Pers();
+				if(numtel2.isEmpty()==false){
+					numtel1 +="/";
+					numtel1 +=numtel2;
+				}
+				String adresse = p.getEmailPers();
+				String numero = ""+i;
+				i++;
+				String matricule = p.getMatriculePers();
+				String quotah = p.getQuotaHorairePers()+"";
+				String sitmatri = p.getSitmatriPers();
+				String region = p.getRegionoriginePers();
+				String observation = p.getObservations();
+				String fonction = p.getFonctionPers();
+				String specialite = p.getSpecialiteProf();
+				
+				pb.setAdresse(adresse);
+				pb.setDate_naiss(date_naiss);
+				pb.setLieu_naiss(lieu_naiss);
+				pb.setDiplome(diplome);
+				pb.setFonction(fonction);
+				pb.setGrade(grade);
+				pb.setStatut(statut);
+				pb.setNoms_prenoms(noms_prenoms);
+				pb.setNumcni(numcni);
+				pb.setSexe(sexe);
+				pb.setNationalite(nationalite);
+				pb.setNumtel1(numtel1);
+				pb.setNumtel2(numtel2);
+				pb.setSpecialite(specialite);
+				
+				pb.setNumero(numero);
+				pb.setMatricule(matricule);
+				pb.setQuotah(quotah);
+				pb.setSitmatri(sitmatri);
+				pb.setRegion(region);
+				pb.setObservation(observation);
+				
+				listofPersonnelBean.add(pb);
+				
+			}
+		}
+		return listofPersonnelBean;
+	
+	}
+	
+	
 	/*********************
 	 * Fin des codes des différentes fonction qui entre dans la fabrication et l'édition des bulletins
 	 */
@@ -10338,9 +15471,15 @@ public class UsersServiceImplementation implements IUsersService {
 	@Override
 	public Long getLastOperationOnCompte(Long idEleveConcerne) {
 		List<Operations> listofOperationOnCompte = this.findListAllOperationsEleve(idEleveConcerne);
-		if(listofOperationOnCompte == null) return null;
+		if(listofOperationOnCompte == null) {
+			System.out.println("Aucune operation ne concerne le compte de cet eleve jusqu'a present ");
+			return null;
+		}
+		System.out.println("Il y a au moins une operation dans le  compte  de cet eleve ==== "+listofOperationOnCompte.size());
 		if(listofOperationOnCompte.size()>0){
 			Operations opOnCompte = listofOperationOnCompte.get(0);
+			System.out.println("l'operation recuperer est ===  "+opOnCompte.getIdOperation()+
+					" et son identifiant est  "+opOnCompte.getIdentifiantOperation());
 			return opOnCompte.getIdOperation();
 		}
 		return null;
@@ -11116,6 +16255,18 @@ public class UsersServiceImplementation implements IUsersService {
 		// TODO Auto-generated method stub
 		return decisionRepository.findAllByOrderByCodeDecisionAscIntituleDecisionAsc();
 	}
+	
+	@Override
+	public List<Niveaux> findListNiveauSup(Classes classe){
+		Niveaux niveauClasse = classe.getNiveau();
+		Niveaux niveauSupClasse = classe.getNiveau().getNiveau();
+		
+		List<Niveaux> listofNiveau = new ArrayList<Niveaux>();
+		listofNiveau.add(niveauClasse);
+		if(niveauSupClasse != null) listofNiveau.add(niveauSupClasse);
+		
+		return listofNiveau;
+	}
 
 
 	@Override
@@ -11241,14 +16392,15 @@ public class UsersServiceImplementation implements IUsersService {
 	
 	@Override
 	public int saveDecisionConseilAn(Long idEleves, Long idAnneeActive, 
-			Long idsanctionTravAssocie, Long idDecisionAssocie){
+			Long idsanctionTravAssocie, Long idClasseFuturAssocie,  Long idDecisionAssocie){
 		
 		Eleves eleve = this.findEleves(idEleves);
 		Annee annee = this.findAnnee(idAnneeActive);
 		SanctionTravail sanctionTrav = this.findSanctionTravail(idsanctionTravAssocie);
 		Decision decision = this.findDecision(idDecisionAssocie);
+		Classes futurClasse = this.findClasses(idClasseFuturAssocie);
 		
-		if(eleve == null || annee == null || sanctionTrav == null || decision == null) return 0;
+		if(eleve == null || annee == null || sanctionTrav == null || decision == null || futurClasse == null) return 0;
 		
 		DecisionConseil decConseil = this.findDecisionConseilPeriode(idEleves, idAnneeActive);
 		
@@ -11259,6 +16411,7 @@ public class UsersServiceImplementation implements IUsersService {
 			dc.setPeriodeConcerne(annee);
 			dc.setSanctionDiscAssocie(null);
 			dc.setSanctionTravAssocie(sanctionTrav);
+			dc.setFuturClasse(futurClasse);
 			
 			decisionConseilRepository.save(dc);
 		}
@@ -11268,6 +16421,7 @@ public class UsersServiceImplementation implements IUsersService {
 			decConseil.setPeriodeConcerne(annee);
 			decConseil.setSanctionDiscAssocie(null);
 			decConseil.setSanctionTravAssocie(sanctionTrav);
+			decConseil.setFuturClasse(futurClasse);
 			
 			decisionConseilRepository.save(decConseil);
 		}
@@ -11747,6 +16901,8 @@ public class UsersServiceImplementation implements IUsersService {
 	
 	
 	
+	
+	
 	@Override
 	public Collection<FicheRecapAbsenceCycleBean> generateListFicheRecapAbsenceCycleBean(Cycles cycle, 
 			Date datemin, Date datemax){
@@ -11759,7 +16915,9 @@ public class UsersServiceImplementation implements IUsersService {
 		if(cycle == null){
 			//Alors c'est le rapport complet de tous les cycles
 			
-			
+			/*
+			 * Dans la boucle for on va donc faire le rapport par cycle
+			 */
 			for(Cycles cy : this.findAllCycle()){
 				FicheRecapAbsenceCycleBean fracb = new FicheRecapAbsenceCycleBean();
 				int nbreabsJfeminin_cy = this.getNbreAbsJSexeCycle(cy, datemin, datemax, 0);
@@ -11785,7 +16943,10 @@ public class UsersServiceImplementation implements IUsersService {
 				
 			}
 			
-		
+			/*
+			 * Hors de la boucle for, le cycle etant toujours null on va maintenant faire le total 
+			 * toujours pour tous les cycles puisque cycle est null
+			 */
 			
 			int nbreabsJfeminin = this.getNbreAbsJSexeCycle(cycle, datemin, datemax, 0);
 			int nbreabsNJfeminin = this.getNbreAbsNJSexeCycle(cycle, datemin, datemax, 0);
@@ -12176,6 +17337,916 @@ public class UsersServiceImplementation implements IUsersService {
 	
 	}
 	
+	
+	
+	
+	
+	@Override
+	public Collection<FicheRecapAbsenceNiveauBean> generateListFicheRecapAbsenceNiveauBean(Niveaux niveau, 
+			Date datemin, Date datemax){
+	
+		List<FicheRecapAbsenceNiveauBean> listofFicheRecapAbsenceNiveauBean = 
+				new ArrayList<FicheRecapAbsenceNiveauBean>();
+		
+		String niveau_string = (niveau == null)?"Tous les niveaux \n All levels":(niveau.getCodeNiveaux()+" \n "+niveau.getCodeNiveaux_en());
+		
+		if(niveau == null){
+			//Alors c'est le rapport complet de tous les cycles
+			
+			/*
+			 * Dans la boucle for on va donc faire le rapport par niveau
+			 */
+			for(Niveaux niv : this.findAllNiveaux()){
+
+				FicheRecapAbsenceNiveauBean franb = new FicheRecapAbsenceNiveauBean();
+				int nbreabsJfeminin_niv = this.getNbreAbsJSexeNiveau(niv, datemin, datemax, 0);
+				int nbreabsNJfeminin_niv = this.getNbreAbsNJSexeNiveau(niv, datemin, datemax, 0);
+				
+				int nbreabsJmasculin_niv = this.getNbreAbsJSexeNiveau(niv, datemin, datemax, 1);
+				int nbreabsNJmasculin_niv = this.getNbreAbsNJSexeNiveau(niv, datemin, datemax, 1);
+				
+				String nbreabsfeminin_niv = ""+nbreabsJfeminin_niv+" / "+nbreabsNJfeminin_niv;
+				String nbreabsmasculin_niv = ""+nbreabsJmasculin_niv+" / "+nbreabsNJmasculin_niv;
+				
+				int totalabsNJ_niv = nbreabsNJfeminin_niv+nbreabsNJmasculin_niv;
+				int totalabsJ_niv = nbreabsJfeminin_niv+nbreabsJmasculin_niv;
+				String nbreabstotal_niv = ""+totalabsJ_niv+" / "+totalabsNJ_niv;
+				
+				franb.setNiveau(niveau_string);
+				franb.setNbreabsfeminin(nbreabsfeminin_niv);
+				franb.setNbreabsmasculin(nbreabsmasculin_niv);
+				franb.setNbreabstotal(nbreabstotal_niv);
+				
+				
+				listofFicheRecapAbsenceNiveauBean.add(franb);
+				
+			
+			}
+			
+			/*
+			 * Hors de la boucle for, le niveau etant toujours null on va maintenant faire le total 
+			 * toujours pour tous les niveaux puisque niveau est null
+			 */
+			
+			int nbreabsJfeminin = this.getNbreAbsJSexeNiveau(niveau, datemin, datemax, 0);
+			int nbreabsNJfeminin = this.getNbreAbsNJSexeNiveau(niveau, datemin, datemax, 0);
+			
+			int nbreabsJmasculin = this.getNbreAbsJSexeNiveau(niveau, datemin, datemax, 1);
+			int nbreabsNJmasculin = this.getNbreAbsNJSexeNiveau(niveau, datemin, datemax, 1);
+			
+			String nbreabsfeminin = ""+nbreabsJfeminin+" / "+nbreabsNJfeminin;
+			String nbreabsmasculin = ""+nbreabsJmasculin+" / "+nbreabsNJmasculin;
+			
+			int totalabsNJ = nbreabsNJfeminin+nbreabsNJmasculin;
+			int totalabsJ = nbreabsJfeminin+nbreabsJmasculin;
+			String nbreabstotal= ""+totalabsJ+" / "+totalabsNJ;
+			
+			FicheRecapAbsenceNiveauBean franb = new FicheRecapAbsenceNiveauBean();
+			franb.setNiveau(niveau_string);
+			franb.setNbreabsfeminin(nbreabsfeminin);
+			franb.setNbreabsmasculin(nbreabsmasculin);
+			franb.setNbreabstotal(nbreabstotal);
+			
+			System.out.println("On ajoute dans liste franb = "+niveau_string+" nbreabsfeminin=="
+					+ " "+nbreabsfeminin+" nbreabsmasculin=="+nbreabsmasculin+" nbreabstotal== "+nbreabstotal);
+			
+			listofFicheRecapAbsenceNiveauBean.add(franb);
+		
+			
+		}
+		else{
+			/*
+			 * Ici on est sur qu'on a demandé le rapport pour un niveau  bien precis
+			 */
+			
+			FicheRecapAbsenceNiveauBean franb = new FicheRecapAbsenceNiveauBean();
+			
+			int nbreabsJfeminin_niv = this.getNbreAbsJSexeNiveau(niveau, datemin, datemax, 0);
+			int nbreabsNJfeminin_niv = this.getNbreAbsNJSexeNiveau(niveau, datemin, datemax, 0);
+			
+			int nbreabsJmasculin_niv = this.getNbreAbsJSexeNiveau(niveau, datemin, datemax, 1);
+			int nbreabsNJmasculin_niv = this.getNbreAbsNJSexeNiveau(niveau, datemin, datemax, 1);
+			
+			String nbreabsfeminin_niv = ""+nbreabsJfeminin_niv+" / "+nbreabsNJfeminin_niv;
+			String nbreabsmasculin_niv = ""+nbreabsJmasculin_niv+" / "+nbreabsNJmasculin_niv;
+			
+			int totalabsNJ_niv = nbreabsNJfeminin_niv+nbreabsNJmasculin_niv;
+			int totalabsJ_niv = nbreabsJfeminin_niv+nbreabsJmasculin_niv;
+			String nbreabstotal_niv = ""+totalabsJ_niv+" / "+totalabsNJ_niv;
+			
+			franb.setNiveau(niveau_string);
+			franb.setNbreabsfeminin(nbreabsfeminin_niv);
+			franb.setNbreabsmasculin(nbreabsmasculin_niv);
+			franb.setNbreabstotal(nbreabstotal_niv);
+			
+			
+			listofFicheRecapAbsenceNiveauBean.add(franb);
+		
+			
+		}
+		
+		return listofFicheRecapAbsenceNiveauBean;
+	}
+	
+	@Override
+	public Collection<FicheRecapAbsenceNiveauBean> generateListFicheRecapAbsenceNiveauSeqBean(Niveaux niveau, 
+			Sequences periode){
+
+		
+		if(periode == null) return null;
+		
+		List<FicheRecapAbsenceNiveauBean> listofFicheRecapAbsenceNiveauBean = 
+				new ArrayList<FicheRecapAbsenceNiveauBean>();
+		
+		String niveau_string = (niveau == null)?"Tous les niveaux \n All levels":(niveau.getCodeNiveaux()+" \n "+niveau.getCodeNiveaux_en());
+		
+		if(niveau == null){
+
+			//Alors c'est le rapport complet de tous les niveaux
+			
+			
+			for(Niveaux niv : this.findAllNiveaux()){
+				FicheRecapAbsenceNiveauBean franb = new FicheRecapAbsenceNiveauBean();
+				int nbreabsJfeminin_niv = this.getNbreAbsJSexeNiveauSeq(niv, periode, 0);
+				int nbreabsNJfeminin_niv = this.getNbreAbsNJSexeNiveauSeq(niv, periode, 0);
+				
+				int nbreabsJmasculin_niv = this.getNbreAbsJSexeNiveauSeq(niv, periode, 1);
+				int nbreabsNJmasculin_niv = this.getNbreAbsNJSexeNiveauSeq(niv, periode, 1);
+				
+				String nbreabsfeminin_niv = ""+nbreabsJfeminin_niv+" / "+nbreabsNJfeminin_niv;
+				String nbreabsmasculin_niv = ""+nbreabsJmasculin_niv+" / "+nbreabsNJmasculin_niv;
+				
+				int totalabsNJ_niv = nbreabsNJfeminin_niv+nbreabsNJmasculin_niv;
+				int totalabsJ_niv = nbreabsJfeminin_niv+nbreabsJmasculin_niv;
+				String nbreabstotal_niv = ""+totalabsJ_niv+" / "+totalabsNJ_niv;
+				
+				franb.setNiveau(niveau_string);
+				franb.setNbreabsfeminin(nbreabsfeminin_niv);
+				franb.setNbreabsmasculin(nbreabsmasculin_niv);
+				franb.setNbreabstotal(nbreabstotal_niv);
+				
+				
+				listofFicheRecapAbsenceNiveauBean.add(franb);
+				
+			}
+			
+		
+			
+			int nbreabsJfeminin = this.getNbreAbsJSexeNiveauSeq(niveau, periode, 0);
+			int nbreabsNJfeminin = this.getNbreAbsNJSexeNiveauSeq(niveau, periode, 0);
+			
+			int nbreabsJmasculin = this.getNbreAbsJSexeNiveauSeq(niveau, periode, 1);
+			int nbreabsNJmasculin = this.getNbreAbsNJSexeNiveauSeq(niveau, periode, 1);
+			
+			String nbreabsfeminin = ""+nbreabsJfeminin+" / "+nbreabsNJfeminin;
+			String nbreabsmasculin = ""+nbreabsJmasculin+" / "+nbreabsNJmasculin;
+			
+			int totalabsNJ = nbreabsNJfeminin+nbreabsNJmasculin;
+			int totalabsJ = nbreabsJfeminin+nbreabsJmasculin;
+			String nbreabstotal= ""+totalabsJ+" / "+totalabsNJ;
+			
+			FicheRecapAbsenceNiveauBean franb = new FicheRecapAbsenceNiveauBean();
+			franb.setNiveau(niveau_string);
+			franb.setNbreabsfeminin(nbreabsfeminin);
+			franb.setNbreabsmasculin(nbreabsmasculin);
+			franb.setNbreabstotal(nbreabstotal);
+			
+			System.out.println("On ajoute dans liste franb = "+niveau_string+" nbreabsfeminin=="
+					+ " "+nbreabsfeminin+" nbreabsmasculin=="+nbreabsmasculin+" nbreabstotal== "+nbreabstotal);
+			
+			listofFicheRecapAbsenceNiveauBean.add(franb);
+			
+		
+		}
+		else{
+
+			/*
+			 * Ici on est sur qu'on a demandé le rapport pour un niveau bien precis
+			 */
+			
+			
+			FicheRecapAbsenceNiveauBean franb = new FicheRecapAbsenceNiveauBean();
+			
+			int nbreabsJfeminin_niv = this.getNbreAbsJSexeNiveauSeq(niveau, periode, 0);
+			int nbreabsNJfeminin_niv = this.getNbreAbsNJSexeNiveauSeq(niveau, periode, 0);
+			
+			int nbreabsJmasculin_niv = this.getNbreAbsJSexeNiveauSeq(niveau, periode, 1);
+			int nbreabsNJmasculin_niv = this.getNbreAbsNJSexeNiveauSeq(niveau,periode, 1);
+			
+			String nbreabsfeminin_niv = ""+nbreabsJfeminin_niv+" / "+nbreabsNJfeminin_niv;
+			String nbreabsmasculin_niv = ""+nbreabsJmasculin_niv+" / "+nbreabsNJmasculin_niv;
+			
+			int totalabsNJ_niv = nbreabsNJfeminin_niv+nbreabsNJmasculin_niv;
+			int totalabsJ_niv = nbreabsJfeminin_niv+nbreabsJmasculin_niv;
+			String nbreabstotal_niv = ""+totalabsJ_niv+" / "+totalabsNJ_niv;
+			
+			franb.setNiveau(niveau_string);
+			franb.setNbreabsfeminin(nbreabsfeminin_niv);
+			franb.setNbreabsmasculin(nbreabsmasculin_niv);
+			franb.setNbreabstotal(nbreabstotal_niv);
+			
+			System.out.println("On ajoute dans liste franb = "+niveau_string+" nbreabsfeminin_cy=="
+					+ " "+nbreabsfeminin_niv+" nbreabsmasculin_niv=="+nbreabsmasculin_niv+" nbreabstotal_niv== "+nbreabstotal_niv);
+			
+			listofFicheRecapAbsenceNiveauBean.add(franb);
+		
+			
+		
+		}
+		
+		return listofFicheRecapAbsenceNiveauBean;
+	
+	}
+	
+	@Override
+	public Collection<FicheRecapAbsenceNiveauBean> generateListFicheRecapAbsenceNiveauTrimBean(Niveaux niveau, 
+			Trimestres periode){
+
+
+		if(periode == null) return null;
+		
+		List<FicheRecapAbsenceNiveauBean> listofFicheRecapAbsenceNiveauBean = 
+				new ArrayList<FicheRecapAbsenceNiveauBean>();
+		
+		String niveau_string = (niveau == null)?"Tous les niveaux \n All levels":(niveau.getCodeNiveaux()+" \n "+niveau.getCodeNiveaux_en());
+		
+		if(niveau == null){
+
+			//Alors c'est le rapport complet de tous les niveaux
+			
+			
+			for(Niveaux niv : this.findAllNiveaux()){
+				FicheRecapAbsenceNiveauBean franb = new FicheRecapAbsenceNiveauBean();
+				int nbreabsJfeminin_niv = this.getNbreAbsJSexeNiveauTrim(niv, periode, 0);
+				int nbreabsNJfeminin_niv = this.getNbreAbsNJSexeNiveauTrim(niv, periode, 0);
+				
+				int nbreabsJmasculin_niv = this.getNbreAbsJSexeNiveauTrim(niv, periode, 1);
+				int nbreabsNJmasculin_niv = this.getNbreAbsNJSexeNiveauTrim(niv, periode, 1);
+				
+				String nbreabsfeminin_niv = ""+nbreabsJfeminin_niv+" / "+nbreabsNJfeminin_niv;
+				String nbreabsmasculin_niv = ""+nbreabsJmasculin_niv+" / "+nbreabsNJmasculin_niv;
+				
+				int totalabsNJ_niv = nbreabsNJfeminin_niv+nbreabsNJmasculin_niv;
+				int totalabsJ_niv = nbreabsJfeminin_niv+nbreabsJmasculin_niv;
+				String nbreabstotal_niv = ""+totalabsJ_niv+" / "+totalabsNJ_niv;
+				
+				franb.setNiveau(niveau_string);
+				franb.setNbreabsfeminin(nbreabsfeminin_niv);
+				franb.setNbreabsmasculin(nbreabsmasculin_niv);
+				franb.setNbreabstotal(nbreabstotal_niv);
+				
+				
+				listofFicheRecapAbsenceNiveauBean.add(franb);
+				
+			}
+			
+		
+			
+			int nbreabsJfeminin = this.getNbreAbsJSexeNiveauTrim(niveau, periode, 0);
+			int nbreabsNJfeminin = this.getNbreAbsNJSexeNiveauTrim(niveau, periode, 0);
+			
+			int nbreabsJmasculin = this.getNbreAbsJSexeNiveauTrim(niveau, periode, 1);
+			int nbreabsNJmasculin = this.getNbreAbsNJSexeNiveauTrim(niveau, periode, 1);
+			
+			String nbreabsfeminin = ""+nbreabsJfeminin+" / "+nbreabsNJfeminin;
+			String nbreabsmasculin = ""+nbreabsJmasculin+" / "+nbreabsNJmasculin;
+			
+			int totalabsNJ = nbreabsNJfeminin+nbreabsNJmasculin;
+			int totalabsJ = nbreabsJfeminin+nbreabsJmasculin;
+			String nbreabstotal= ""+totalabsJ+" / "+totalabsNJ;
+			
+			FicheRecapAbsenceNiveauBean franb = new FicheRecapAbsenceNiveauBean();
+			franb.setNiveau(niveau_string);
+			franb.setNbreabsfeminin(nbreabsfeminin);
+			franb.setNbreabsmasculin(nbreabsmasculin);
+			franb.setNbreabstotal(nbreabstotal);
+			
+			System.out.println("On ajoute dans liste franb = "+niveau_string+" nbreabsfeminin=="
+					+ " "+nbreabsfeminin+" nbreabsmasculin=="+nbreabsmasculin+" nbreabstotal== "+nbreabstotal);
+			
+			listofFicheRecapAbsenceNiveauBean.add(franb);
+			
+		
+		}
+		else{
+
+			/*
+			 * Ici on est sur qu'on a demandé le rapport pour un niveau bien precis
+			 */
+			
+			
+			FicheRecapAbsenceNiveauBean franb = new FicheRecapAbsenceNiveauBean();
+			
+			int nbreabsJfeminin_niv = this.getNbreAbsJSexeNiveauTrim(niveau, periode, 0);
+			int nbreabsNJfeminin_niv = this.getNbreAbsNJSexeNiveauTrim(niveau, periode, 0);
+			
+			int nbreabsJmasculin_niv = this.getNbreAbsJSexeNiveauTrim(niveau, periode, 1);
+			int nbreabsNJmasculin_niv = this.getNbreAbsNJSexeNiveauTrim(niveau,periode, 1);
+			
+			String nbreabsfeminin_niv = ""+nbreabsJfeminin_niv+" / "+nbreabsNJfeminin_niv;
+			String nbreabsmasculin_niv = ""+nbreabsJmasculin_niv+" / "+nbreabsNJmasculin_niv;
+			
+			int totalabsNJ_niv = nbreabsNJfeminin_niv+nbreabsNJmasculin_niv;
+			int totalabsJ_niv = nbreabsJfeminin_niv+nbreabsJmasculin_niv;
+			String nbreabstotal_niv = ""+totalabsJ_niv+" / "+totalabsNJ_niv;
+			
+			franb.setNiveau(niveau_string);
+			franb.setNbreabsfeminin(nbreabsfeminin_niv);
+			franb.setNbreabsmasculin(nbreabsmasculin_niv);
+			franb.setNbreabstotal(nbreabstotal_niv);
+			
+			System.out.println("On ajoute dans liste franb = "+niveau_string+" nbreabsfeminin_cy=="
+					+ " "+nbreabsfeminin_niv+" nbreabsmasculin_cy=="+nbreabsmasculin_niv+" nbreabstotal_cy== "+nbreabstotal_niv);
+			
+			listofFicheRecapAbsenceNiveauBean.add(franb);
+		
+			
+		
+		}
+		
+		return listofFicheRecapAbsenceNiveauBean;
+	
+	
+	}
+	
+	@Override
+	public Collection<FicheRecapAbsenceNiveauBean> generateListFicheRecapAbsenceNiveauAnBean(Niveaux niveau, 
+			Annee periode){
+
+		if(periode == null) return null;
+		
+		List<FicheRecapAbsenceNiveauBean> listofFicheRecapAbsenceNiveauBean = 
+				new ArrayList<FicheRecapAbsenceNiveauBean>();
+		
+		String niveau_string = (niveau == null)?"Tous les niveaux \n All levels":(niveau.getCodeNiveaux()+" \n "+niveau.getCodeNiveaux_en());
+		
+		if(niveau == null){
+
+			//Alors c'est le rapport complet de tous les niveaux
+			
+			
+			for(Niveaux niv : this.findAllNiveaux()){
+				FicheRecapAbsenceNiveauBean franb = new FicheRecapAbsenceNiveauBean();
+				int nbreabsJfeminin_niv = this.getNbreAbsJSexeNiveauAn(niv, periode, 0);
+				int nbreabsNJfeminin_niv = this.getNbreAbsNJSexeNiveauAn(niv, periode, 0);
+				
+				int nbreabsJmasculin_niv = this.getNbreAbsJSexeNiveauAn(niv, periode, 1);
+				int nbreabsNJmasculin_niv = this.getNbreAbsNJSexeNiveauAn(niv, periode, 1);
+				
+				String nbreabsfeminin_niv = ""+nbreabsJfeminin_niv+" / "+nbreabsNJfeminin_niv;
+				String nbreabsmasculin_niv = ""+nbreabsJmasculin_niv+" / "+nbreabsNJmasculin_niv;
+				
+				int totalabsNJ_niv = nbreabsNJfeminin_niv+nbreabsNJmasculin_niv;
+				int totalabsJ_niv = nbreabsJfeminin_niv+nbreabsJmasculin_niv;
+				String nbreabstotal_niv = ""+totalabsJ_niv+" / "+totalabsNJ_niv;
+				
+				franb.setNiveau(niveau_string);
+				franb.setNbreabsfeminin(nbreabsfeminin_niv);
+				franb.setNbreabsmasculin(nbreabsmasculin_niv);
+				franb.setNbreabstotal(nbreabstotal_niv);
+				
+				
+				listofFicheRecapAbsenceNiveauBean.add(franb);
+				
+			}
+			
+		
+			
+			int nbreabsJfeminin = this.getNbreAbsJSexeNiveauAn(niveau, periode, 0);
+			int nbreabsNJfeminin = this.getNbreAbsNJSexeNiveauAn(niveau, periode, 0);
+			
+			int nbreabsJmasculin = this.getNbreAbsJSexeNiveauAn(niveau, periode, 1);
+			int nbreabsNJmasculin = this.getNbreAbsNJSexeNiveauAn(niveau, periode, 1);
+			
+			String nbreabsfeminin = ""+nbreabsJfeminin+" / "+nbreabsNJfeminin;
+			String nbreabsmasculin = ""+nbreabsJmasculin+" / "+nbreabsNJmasculin;
+			
+			int totalabsNJ = nbreabsNJfeminin+nbreabsNJmasculin;
+			int totalabsJ = nbreabsJfeminin+nbreabsJmasculin;
+			String nbreabstotal= ""+totalabsJ+" / "+totalabsNJ;
+			
+			FicheRecapAbsenceNiveauBean franb = new FicheRecapAbsenceNiveauBean();
+			franb.setNiveau(niveau_string);
+			franb.setNbreabsfeminin(nbreabsfeminin);
+			franb.setNbreabsmasculin(nbreabsmasculin);
+			franb.setNbreabstotal(nbreabstotal);
+			
+			System.out.println("On ajoute dans liste franb = "+niveau_string+" nbreabsfeminin=="
+					+ " "+nbreabsfeminin+" nbreabsmasculin=="+nbreabsmasculin+" nbreabstotal== "+nbreabstotal);
+			
+			listofFicheRecapAbsenceNiveauBean.add(franb);
+			
+		
+		}
+		else{
+
+			/*
+			 * Ici on est sur qu'on a demandé le rapport pour un cycle bien precis
+			 */
+			
+			
+			FicheRecapAbsenceNiveauBean franb = new FicheRecapAbsenceNiveauBean();
+			
+			int nbreabsJfeminin_niv = this.getNbreAbsJSexeNiveauAn(niveau, periode, 0);
+			int nbreabsNJfeminin_niv = this.getNbreAbsNJSexeNiveauAn(niveau, periode, 0);
+			
+			int nbreabsJmasculin_niv = this.getNbreAbsJSexeNiveauAn(niveau, periode, 1);
+			int nbreabsNJmasculin_niv = this.getNbreAbsNJSexeNiveauAn(niveau,periode, 1);
+			
+			String nbreabsfeminin_niv = ""+nbreabsJfeminin_niv+" / "+nbreabsNJfeminin_niv;
+			String nbreabsmasculin_niv = ""+nbreabsJmasculin_niv+" / "+nbreabsNJmasculin_niv;
+			
+			int totalabsNJ_niv = nbreabsNJfeminin_niv+nbreabsNJmasculin_niv;
+			int totalabsJ_niv = nbreabsJfeminin_niv+nbreabsJmasculin_niv;
+			String nbreabstotal_niv = ""+totalabsJ_niv+" / "+totalabsNJ_niv;
+			
+			franb.setNiveau(niveau_string);
+			franb.setNbreabsfeminin(nbreabsfeminin_niv);
+			franb.setNbreabsmasculin(nbreabsmasculin_niv);
+			franb.setNbreabstotal(nbreabstotal_niv);
+			
+			System.out.println("On ajoute dans liste franb = "+niveau_string+" nbreabsfeminin_cy=="
+					+ " "+nbreabsfeminin_niv+" nbreabsmasculin_cy=="+nbreabsmasculin_niv+" nbreabstotal_cy== "+nbreabstotal_niv);
+			
+			listofFicheRecapAbsenceNiveauBean.add(franb);
+		
+			
+		
+		}
+		
+		return listofFicheRecapAbsenceNiveauBean;
+	
+	
+	}
+
+	
+	
+	@Override
+	public Collection<FicheRecapAbsenceClasseBean> generateListFicheRecapAbsenceClasseBean(Classes classe, 
+			Date datemin, Date datemax){
+
+		
+		List<FicheRecapAbsenceClasseBean> listofFicheRecapAbsenceClasseBean = 
+				new ArrayList<FicheRecapAbsenceClasseBean>();
+		
+		String classe_string = (classe == null)?"Toutes les classes \n All classess":
+			(classe.getCodeClasses()+classe.getSpecialite().getCodeSpecialite()+classe.getNumeroClasses());
+		
+		if(classe == null){
+			//Alors c'est le rapport complet de tous les cycles
+			
+			/*
+			 * Dans la boucle for on va donc faire le rapport par niveau
+			 */
+			for(Classes c : this.findAllClasseNonVide()){
+
+				FicheRecapAbsenceClasseBean fracb = new FicheRecapAbsenceClasseBean();
+				int nbreabsJfeminin_c = this.getNbreAbsJSexeClasse(c, datemin, datemax, 0);
+				int nbreabsNJfeminin_c = this.getNbreAbsNJSexeClasse(c, datemin, datemax, 0);
+				
+				int nbreabsJmasculin_c = this.getNbreAbsJSexeClasse(c, datemin, datemax, 1);
+				int nbreabsNJmasculin_c = this.getNbreAbsNJSexeClasse(c, datemin, datemax, 1);
+				
+				String nbreabsfeminin_c = ""+nbreabsJfeminin_c+" / "+nbreabsNJfeminin_c;
+				String nbreabsmasculin_c = ""+nbreabsJmasculin_c+" / "+nbreabsNJmasculin_c;
+				
+				int totalabsNJ_c = nbreabsNJfeminin_c+nbreabsNJmasculin_c;
+				int totalabsJ_c = nbreabsJfeminin_c+nbreabsJmasculin_c;
+				String nbreabstotal_c = ""+totalabsJ_c+" / "+totalabsNJ_c;
+				
+				fracb.setClasse(classe_string);
+				fracb.setNbreabsfeminin(nbreabsfeminin_c);
+				fracb.setNbreabsmasculin(nbreabsmasculin_c);
+				fracb.setNbreabstotal(nbreabstotal_c);
+				
+				
+				listofFicheRecapAbsenceClasseBean.add(fracb);
+				
+			
+			}
+			
+			/*
+			 * Hors de la boucle for, le niveau etant toujours null on va maintenant faire le total 
+			 * toujours pour tous les classes puisque niveau est null
+			 */
+			
+			int nbreabsJfeminin = this.getNbreAbsJSexeClasse(classe, datemin, datemax, 0);
+			int nbreabsNJfeminin = this.getNbreAbsNJSexeClasse(classe, datemin, datemax, 0);
+			
+			int nbreabsJmasculin = this.getNbreAbsJSexeClasse(classe, datemin, datemax, 1);
+			int nbreabsNJmasculin = this.getNbreAbsNJSexeClasse(classe, datemin, datemax, 1);
+			
+			String nbreabsfeminin = ""+nbreabsJfeminin+" / "+nbreabsNJfeminin;
+			String nbreabsmasculin = ""+nbreabsJmasculin+" / "+nbreabsNJmasculin;
+			
+			int totalabsNJ = nbreabsNJfeminin+nbreabsNJmasculin;
+			int totalabsJ = nbreabsJfeminin+nbreabsJmasculin;
+			String nbreabstotal= ""+totalabsJ+" / "+totalabsNJ;
+			
+			FicheRecapAbsenceClasseBean fracb = new FicheRecapAbsenceClasseBean();
+			fracb.setClasse(classe_string);
+			fracb.setNbreabsfeminin(nbreabsfeminin);
+			fracb.setNbreabsmasculin(nbreabsmasculin);
+			fracb.setNbreabstotal(nbreabstotal);
+			
+			System.out.println("On ajoute dans liste fracb = "+classe_string+" nbreabsfeminin=="
+					+ " "+nbreabsfeminin+" nbreabsmasculin=="+nbreabsmasculin+" nbreabstotal== "+nbreabstotal);
+			
+			listofFicheRecapAbsenceClasseBean.add(fracb);
+		
+			
+		}
+		else{
+			/*
+			 * Ici on est sur qu'on a demandé le rapport pour une classe  bien precise
+			 */
+			
+			FicheRecapAbsenceClasseBean fracb = new FicheRecapAbsenceClasseBean();
+			
+			int nbreabsJfeminin_c = this.getNbreAbsJSexeClasse(classe, datemin, datemax, 0);
+			int nbreabsNJfeminin_c = this.getNbreAbsNJSexeClasse(classe, datemin, datemax, 0);
+			
+			int nbreabsJmasculin_c = this.getNbreAbsJSexeClasse(classe, datemin, datemax, 1);
+			int nbreabsNJmasculin_c = this.getNbreAbsNJSexeClasse(classe, datemin, datemax, 1);
+			
+			String nbreabsfeminin_c = ""+nbreabsJfeminin_c+" / "+nbreabsNJfeminin_c;
+			String nbreabsmasculin_c = ""+nbreabsJmasculin_c+" / "+nbreabsNJmasculin_c;
+			
+			int totalabsNJ_c = nbreabsNJfeminin_c+nbreabsNJmasculin_c;
+			int totalabsJ_c = nbreabsJfeminin_c+nbreabsJmasculin_c;
+			String nbreabstotal_c = ""+totalabsJ_c+" / "+totalabsNJ_c;
+			
+			fracb.setClasse(classe_string);
+			fracb.setNbreabsfeminin(nbreabsfeminin_c);
+			fracb.setNbreabsmasculin(nbreabsmasculin_c);
+			fracb.setNbreabstotal(nbreabstotal_c);
+			
+			
+			listofFicheRecapAbsenceClasseBean.add(fracb);
+		
+			
+		}
+		
+		return listofFicheRecapAbsenceClasseBean;
+	
+	}
+	
+	@Override
+	public Collection<FicheRecapAbsenceClasseBean> generateListFicheRecapAbsenceClasseSeqBean(Classes classe, 
+			Sequences periode){
+
+
+		
+		if(periode == null) return null;
+		
+		List<FicheRecapAbsenceClasseBean> listofFicheRecapAbsenceClasseBean = 
+				new ArrayList<FicheRecapAbsenceClasseBean>();
+		
+		String classe_string = (classe == null)?"Toutes les classes \n All classes":
+			(classe.getCodeClasses()+classe.getSpecialite().getCodeSpecialite()+classe.getNumeroClasses());
+		
+		if(classe == null){
+
+			//Alors c'est le rapport complet de tous les niveaux
+			
+			
+			for(Classes c : this.findAllClasseNonVide()){
+				FicheRecapAbsenceClasseBean fracb = new FicheRecapAbsenceClasseBean();
+				int nbreabsJfeminin_c = this.getNbreAbsJSexeClasseSeq(c, periode, 0);
+				int nbreabsNJfeminin_c = this.getNbreAbsNJSexeClasseSeq(c, periode, 0);
+				
+				int nbreabsJmasculin_c = this.getNbreAbsJSexeClasseSeq(c, periode, 1);
+				int nbreabsNJmasculin_c = this.getNbreAbsNJSexeClasseSeq(c, periode, 1);
+				
+				String nbreabsfeminin_c = ""+nbreabsJfeminin_c+" / "+nbreabsNJfeminin_c;
+				String nbreabsmasculin_c = ""+nbreabsJmasculin_c+" / "+nbreabsNJmasculin_c;
+				
+				int totalabsNJ_c = nbreabsNJfeminin_c+nbreabsNJmasculin_c;
+				int totalabsJ_c = nbreabsJfeminin_c+nbreabsJmasculin_c;
+				String nbreabstotal_c = ""+totalabsJ_c+" / "+totalabsNJ_c;
+				
+				fracb.setClasse(classe_string);
+				fracb.setNbreabsfeminin(nbreabsfeminin_c);
+				fracb.setNbreabsmasculin(nbreabsmasculin_c);
+				fracb.setNbreabstotal(nbreabstotal_c);
+				
+				
+				listofFicheRecapAbsenceClasseBean.add(fracb);
+				
+			}
+			
+		
+			
+			int nbreabsJfeminin = this.getNbreAbsJSexeClasseSeq(classe, periode, 0);
+			int nbreabsNJfeminin = this.getNbreAbsNJSexeClasseSeq(classe, periode, 0);
+			
+			int nbreabsJmasculin = this.getNbreAbsJSexeClasseSeq(classe, periode, 1);
+			int nbreabsNJmasculin = this.getNbreAbsNJSexeClasseSeq(classe, periode, 1);
+			
+			String nbreabsfeminin = ""+nbreabsJfeminin+" / "+nbreabsNJfeminin;
+			String nbreabsmasculin = ""+nbreabsJmasculin+" / "+nbreabsNJmasculin;
+			
+			int totalabsNJ = nbreabsNJfeminin+nbreabsNJmasculin;
+			int totalabsJ = nbreabsJfeminin+nbreabsJmasculin;
+			String nbreabstotal= ""+totalabsJ+" / "+totalabsNJ;
+			
+			FicheRecapAbsenceClasseBean fracb = new FicheRecapAbsenceClasseBean();
+			fracb.setClasse(classe_string);
+			fracb.setNbreabsfeminin(nbreabsfeminin);
+			fracb.setNbreabsmasculin(nbreabsmasculin);
+			fracb.setNbreabstotal(nbreabstotal);
+			
+			System.out.println("On ajoute dans liste fracb = "+classe_string+" nbreabsfeminin=="
+					+ " "+nbreabsfeminin+" nbreabsmasculin=="+nbreabsmasculin+" nbreabstotal== "+nbreabstotal);
+			
+			listofFicheRecapAbsenceClasseBean.add(fracb);
+			
+		
+		}
+		else{
+
+			/*
+			 * Ici on est sur qu'on a demandé le rapport pour un niveau bien precis
+			 */
+			
+			
+			FicheRecapAbsenceClasseBean fracb = new FicheRecapAbsenceClasseBean();
+			
+			int nbreabsJfeminin_c = this.getNbreAbsJSexeClasseSeq(classe, periode, 0);
+			int nbreabsNJfeminin_c = this.getNbreAbsNJSexeClasseSeq(classe, periode, 0);
+			
+			int nbreabsJmasculin_c = this.getNbreAbsJSexeClasseSeq(classe, periode, 1);
+			int nbreabsNJmasculin_c = this.getNbreAbsNJSexeClasseSeq(classe,periode, 1);
+			
+			String nbreabsfeminin_c = ""+nbreabsJfeminin_c+" / "+nbreabsNJfeminin_c;
+			String nbreabsmasculin_c = ""+nbreabsJmasculin_c+" / "+nbreabsNJmasculin_c;
+			
+			int totalabsNJ_c = nbreabsNJfeminin_c+nbreabsNJmasculin_c;
+			int totalabsJ_c = nbreabsJfeminin_c+nbreabsJmasculin_c;
+			String nbreabstotal_c = ""+totalabsJ_c+" / "+totalabsNJ_c;
+			
+			fracb.setClasse(classe_string);
+			fracb.setNbreabsfeminin(nbreabsfeminin_c);
+			fracb.setNbreabsmasculin(nbreabsmasculin_c);
+			fracb.setNbreabstotal(nbreabstotal_c);
+			
+			System.out.println("On ajoute dans liste fracb = "+classe_string+" nbreabsfeminin_c=="
+					+ " "+nbreabsfeminin_c+" nbreabsmasculin_niv=="+nbreabsmasculin_c+" nbreabstotal_c== "+nbreabstotal_c);
+			
+			listofFicheRecapAbsenceClasseBean.add(fracb);
+		
+			
+		
+		}
+		
+		return listofFicheRecapAbsenceClasseBean;
+	
+	
+	}
+	
+	@Override
+	public Collection<FicheRecapAbsenceClasseBean> generateListFicheRecapAbsenceClasseTrimBean(Classes classe, 
+			Trimestres periode){
+
+
+		if(periode == null) return null;
+		
+		List<FicheRecapAbsenceClasseBean> listofFicheRecapAbsenceClasseBean = 
+				new ArrayList<FicheRecapAbsenceClasseBean>();
+		
+		String classe_string = (classe == null)?"Toutes les classes \n All classes":
+			(classe.getCodeClasses()+classe.getSpecialite().getCodeSpecialite()+classe.getNumeroClasses());
+		
+		if(classe == null){
+
+			//Alors c'est le rapport complet de toutes les classes
+			
+			
+			for(Classes c : this.findAllClasseNonVide()){
+				FicheRecapAbsenceClasseBean fracb = new FicheRecapAbsenceClasseBean();
+				int nbreabsJfeminin_c = this.getNbreAbsJSexeClasseTrim(c, periode, 0);
+				int nbreabsNJfeminin_c = this.getNbreAbsNJSexeClasseTrim(c, periode, 0);
+				
+				int nbreabsJmasculin_c = this.getNbreAbsJSexeClasseTrim(c, periode, 1);
+				int nbreabsNJmasculin_c = this.getNbreAbsNJSexeClasseTrim(c, periode, 1);
+				
+				String nbreabsfeminin_c = ""+nbreabsJfeminin_c+" / "+nbreabsNJfeminin_c;
+				String nbreabsmasculin_c = ""+nbreabsJmasculin_c+" / "+nbreabsNJmasculin_c;
+				
+				int totalabsNJ_c = nbreabsNJfeminin_c+nbreabsNJmasculin_c;
+				int totalabsJ_c = nbreabsJfeminin_c+nbreabsJmasculin_c;
+				String nbreabstotal_c = ""+totalabsJ_c+" / "+totalabsNJ_c;
+				
+				fracb.setClasse(classe_string);
+				fracb.setNbreabsfeminin(nbreabsfeminin_c);
+				fracb.setNbreabsmasculin(nbreabsmasculin_c);
+				fracb.setNbreabstotal(nbreabstotal_c);
+				
+				
+				listofFicheRecapAbsenceClasseBean.add(fracb);
+				
+			}
+			
+		
+			
+			int nbreabsJfeminin = this.getNbreAbsJSexeClasseTrim(classe, periode, 0);
+			int nbreabsNJfeminin = this.getNbreAbsNJSexeClasseTrim(classe, periode, 0);
+			
+			int nbreabsJmasculin = this.getNbreAbsJSexeClasseTrim(classe, periode, 1);
+			int nbreabsNJmasculin = this.getNbreAbsNJSexeClasseTrim(classe, periode, 1);
+			
+			String nbreabsfeminin = ""+nbreabsJfeminin+" / "+nbreabsNJfeminin;
+			String nbreabsmasculin = ""+nbreabsJmasculin+" / "+nbreabsNJmasculin;
+			
+			int totalabsNJ = nbreabsNJfeminin+nbreabsNJmasculin;
+			int totalabsJ = nbreabsJfeminin+nbreabsJmasculin;
+			String nbreabstotal= ""+totalabsJ+" / "+totalabsNJ;
+			
+			FicheRecapAbsenceClasseBean fracb = new FicheRecapAbsenceClasseBean();
+			fracb.setClasse(classe_string);
+			fracb.setNbreabsfeminin(nbreabsfeminin);
+			fracb.setNbreabsmasculin(nbreabsmasculin);
+			fracb.setNbreabstotal(nbreabstotal);
+			
+			System.out.println("On ajoute dans liste fracb = "+classe_string+" nbreabsfeminin=="
+					+ " "+nbreabsfeminin+" nbreabsmasculin=="+nbreabsmasculin+" nbreabstotal== "+nbreabstotal);
+			
+			listofFicheRecapAbsenceClasseBean.add(fracb);
+			
+		
+		}
+		else{
+
+			/*
+			 * Ici on est sur qu'on a demandé le rapport pour un niveau bien precis
+			 */
+			
+			
+			FicheRecapAbsenceClasseBean fracb = new FicheRecapAbsenceClasseBean();
+			
+			int nbreabsJfeminin_c = this.getNbreAbsJSexeClasseTrim(classe, periode, 0);
+			int nbreabsNJfeminin_c = this.getNbreAbsNJSexeClasseTrim(classe, periode, 0);
+			
+			int nbreabsJmasculin_c = this.getNbreAbsJSexeClasseTrim(classe, periode, 1);
+			int nbreabsNJmasculin_c = this.getNbreAbsNJSexeClasseTrim(classe,periode, 1);
+			
+			String nbreabsfeminin_c = ""+nbreabsJfeminin_c+" / "+nbreabsNJfeminin_c;
+			String nbreabsmasculin_c = ""+nbreabsJmasculin_c+" / "+nbreabsNJmasculin_c;
+			
+			int totalabsNJ_c = nbreabsNJfeminin_c+nbreabsNJmasculin_c;
+			int totalabsJ_c = nbreabsJfeminin_c+nbreabsJmasculin_c;
+			String nbreabstotal_c = ""+totalabsJ_c+" / "+totalabsNJ_c;
+			
+			fracb.setClasse(classe_string);
+			fracb.setNbreabsfeminin(nbreabsfeminin_c);
+			fracb.setNbreabsmasculin(nbreabsmasculin_c);
+			fracb.setNbreabstotal(nbreabstotal_c);
+			
+			System.out.println("On ajoute dans liste fracb = "+classe_string+" nbreabsfeminin_cy=="
+					+ " "+nbreabsfeminin_c+" nbreabsmasculin_cy=="+nbreabsmasculin_c+" nbreabstotal_cy== "+nbreabstotal_c);
+			
+			listofFicheRecapAbsenceClasseBean.add(fracb);
+		
+			
+		
+		}
+		
+		return listofFicheRecapAbsenceClasseBean;
+	
+	
+	
+	}
+	
+	@Override
+	public Collection<FicheRecapAbsenceClasseBean> generateListFicheRecapAbsenceClasseAnBean(Classes classe, 
+			Annee periode){
+
+
+		if(periode == null) return null;
+		
+		List<FicheRecapAbsenceClasseBean> listofFicheRecapAbsenceClasseBean = 
+				new ArrayList<FicheRecapAbsenceClasseBean>();
+		
+		String classe_string = (classe == null)?"Toutes les classes \n All classes":
+			(classe.getCodeClasses()+classe.getSpecialite().getCodeSpecialite()+classe.getNumeroClasses());
+		
+		
+		if(classe == null){
+
+			//Alors c'est le rapport complet de tous les niveaux
+			
+			
+			for(Classes c : this.findAllClasseNonVide()){
+				FicheRecapAbsenceClasseBean fracb = new FicheRecapAbsenceClasseBean();
+				int nbreabsJfeminin_c = this.getNbreAbsJSexeClasseAn(c, periode, 0);
+				int nbreabsNJfeminin_c = this.getNbreAbsNJSexeClasseAn(c, periode, 0);
+				
+				int nbreabsJmasculin_c = this.getNbreAbsJSexeClasseAn(c, periode, 1);
+				int nbreabsNJmasculin_c = this.getNbreAbsNJSexeClasseAn(c, periode, 1);
+				
+				String nbreabsfeminin_c = ""+nbreabsJfeminin_c+" / "+nbreabsNJfeminin_c;
+				String nbreabsmasculin_c = ""+nbreabsJmasculin_c+" / "+nbreabsNJmasculin_c;
+				
+				int totalabsNJ_c = nbreabsNJfeminin_c+nbreabsNJmasculin_c;
+				int totalabsJ_c = nbreabsJfeminin_c+nbreabsJmasculin_c;
+				String nbreabstotal_c = ""+totalabsJ_c+" / "+totalabsNJ_c;
+				
+				fracb.setClasse(classe_string);
+				fracb.setNbreabsfeminin(nbreabsfeminin_c);
+				fracb.setNbreabsmasculin(nbreabsmasculin_c);
+				fracb.setNbreabstotal(nbreabstotal_c);
+				
+				
+				listofFicheRecapAbsenceClasseBean.add(fracb);
+				
+			}
+			
+		
+			
+			int nbreabsJfeminin = this.getNbreAbsJSexeClasseAn(classe, periode, 0);
+			int nbreabsNJfeminin = this.getNbreAbsNJSexeClasseAn(classe, periode, 0);
+			
+			int nbreabsJmasculin = this.getNbreAbsJSexeClasseAn(classe, periode, 1);
+			int nbreabsNJmasculin = this.getNbreAbsNJSexeClasseAn(classe, periode, 1);
+			
+			String nbreabsfeminin = ""+nbreabsJfeminin+" / "+nbreabsNJfeminin;
+			String nbreabsmasculin = ""+nbreabsJmasculin+" / "+nbreabsNJmasculin;
+			
+			int totalabsNJ = nbreabsNJfeminin+nbreabsNJmasculin;
+			int totalabsJ = nbreabsJfeminin+nbreabsJmasculin;
+			String nbreabstotal= ""+totalabsJ+" / "+totalabsNJ;
+			
+			FicheRecapAbsenceClasseBean fracb = new FicheRecapAbsenceClasseBean();
+			fracb.setClasse(classe_string);
+			fracb.setNbreabsfeminin(nbreabsfeminin);
+			fracb.setNbreabsmasculin(nbreabsmasculin);
+			fracb.setNbreabstotal(nbreabstotal);
+			
+			/*System.out.println("On ajoute dans liste fracb = "+classe_string+" nbreabsfeminin=="
+					+ " "+nbreabsfeminin+" nbreabsmasculin=="+nbreabsmasculin+" nbreabstotal== "+nbreabstotal);
+			*/
+			listofFicheRecapAbsenceClasseBean.add(fracb);
+			
+		
+		}
+		else{
+
+			/*
+			 * Ici on est sur qu'on a demandé le rapport pour un cycle bien precis
+			 */
+			
+			
+			FicheRecapAbsenceClasseBean fracb = new FicheRecapAbsenceClasseBean();
+			
+			int nbreabsJfeminin_c = this.getNbreAbsJSexeClasseAn(classe, periode, 0);
+			int nbreabsNJfeminin_c = this.getNbreAbsNJSexeClasseAn(classe, periode, 0);
+			
+			int nbreabsJmasculin_c = this.getNbreAbsJSexeClasseAn(classe, periode, 1);
+			int nbreabsNJmasculin_c = this.getNbreAbsNJSexeClasseAn(classe,periode, 1);
+			
+			String nbreabsfeminin_c = ""+nbreabsJfeminin_c+" / "+nbreabsNJfeminin_c;
+			String nbreabsmasculin_c = ""+nbreabsJmasculin_c+" / "+nbreabsNJmasculin_c;
+			
+			int totalabsNJ_c = nbreabsNJfeminin_c+nbreabsNJmasculin_c;
+			int totalabsJ_c = nbreabsJfeminin_c+nbreabsJmasculin_c;
+			String nbreabstotal_c = ""+totalabsJ_c+" / "+totalabsNJ_c;
+			
+			fracb.setClasse(classe_string);
+			fracb.setNbreabsfeminin(nbreabsfeminin_c);
+			fracb.setNbreabsmasculin(nbreabsmasculin_c);
+			fracb.setNbreabstotal(nbreabstotal_c);
+			
+			/*System.out.println("On ajoute dans liste fracb = "+classe_string+" nbreabsfeminin_c=="
+					+ " "+nbreabsfeminin_c+" nbreabsmasculin_c=="+nbreabsmasculin_c+" nbreabstotal_c== "+nbreabstotal_c);
+			*/
+			listofFicheRecapAbsenceClasseBean.add(fracb);
+		
+			
+		
+		}
+		
+		return listofFicheRecapAbsenceClasseBean;
+	
+	}
+	
+	public Collection<FicheScolariteparClasseBean> generateListFicheScolariteparClasseBean(){
+		List<FicheScolariteparClasseBean> listofFicheRecapAbsenceClasseBean = 
+				new ArrayList<FicheScolariteparClasseBean>();
+		
+		List<Classes> listofClasse = this.findAllClasse();
+		
+		for(Classes cl : listofClasse){
+			FicheScolariteparClasseBean fspcb = new FicheScolariteparClasseBean();
+			
+			fspcb.setClasse(cl.getClasseString());
+			if(cl.getMontantScolarite()>0) fspcb.setMontantscolarite(cl.getMontantScolarite()+" F cfa");
+			fspcb.setNiveau(cl.getNiveau().getNiveauString());
+			
+			listofFicheRecapAbsenceClasseBean.add(fspcb);
+		}
+		
+		return listofFicheRecapAbsenceClasseBean;
+	}
 	
 	
 	

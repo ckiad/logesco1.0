@@ -26,8 +26,8 @@
 							mis à jour avec succès.</h4>
 					</div>
 					
-					<div th:if="${param.updateproviseurerrorNumerocni}">
-							<h4 align="justify" class="alert alert-danger">Le numéro de carte spécifié correspond à un autre utilisateur</h4>
+					<div th:if="${param.updateproviseurerrorNumerocniOUMatricule}">
+							<h4 align="justify" class="alert alert-danger">La CNI spécifiée ou le matricule correspond à un autre utilisateur</h4>
 					</div>
 					
 					<div th:if="${param.updateproviseurerrorNomsPrenomsDatenaiss}">
@@ -37,6 +37,18 @@
 					
 					<div th:if="${param.updateproviseurerrorUsername}">
 							<h4 align="justify" class="alert alert-danger">Le nom d'utilisateur doit être unique. </h4>
+					</div>
+					
+					<div th:if="${param.updateproviseurerrorSpecialite}">
+							<h4 align="justify" class="alert alert-danger">La fonction choisie exige une spécialité. </h4>
+					</div>
+					
+					<div th:if="${param.updateproviseurerrorMatricule}">
+							<h4 align="justify" class="alert alert-danger">La fonction choisie exige un matricule. </h4>
+					</div>
+					
+					<div th:if="${param.updateproviseurerrorGrade}">
+							<h4 align="justify" class="alert alert-danger">La fonction choisie exige un grade. </h4>
 					</div>
 					
 					<input type="hidden"
@@ -81,6 +93,15 @@
 						</div>
 						
 						<div class="form-group">
+								<label for="matriculePers"> Matricule: </label> <input type="text" name="matriculePers"
+									id="matriculePers" class="form-control" th:value="*{matriculePers}" th:field="*{matriculePers}"
+									placeholder="Matricule si possible" />
+						</div>
+						<div th:if="${#fields.hasErrors('matriculePers')}"
+								th:errors="*{matriculePers}" class="redcolor">Erreur de matricule
+						</div>
+						
+						<div class="form-group">
 								<label for="nomsPers"> Noms: <span
 									class="redcolor">*</span></label> <input type="text" name="nomsPers"
 									id="nomsPers" class="form-control" th:value="*{nomsPers}" th:field="*{nomsPers}"
@@ -91,8 +112,7 @@
 						</div>
 						
 						<div class="form-group">
-								<label for="prenomsPers"> Prénoms: <span
-									class="redcolor">*</span></label> <input type="text" name="prenomsPers"
+								<label for="prenomsPers"> Prénoms: </label> <input type="text" name="prenomsPers"
 									id="prenomsPers" class="form-control" th:value="*{prenomsPers}" th:field="*{prenomsPers}"
 									placeholder="Vos prénoms" />
 						</div>
@@ -121,6 +141,30 @@
 						</div>
 						
 						<div class="form-group">
+								<label for="sexePers" class="control-label col-sm-2 text-left"> Sexe: <span
+									class="redcolor">*</span></label> 
+									
+									<div class="radio">
+									    <label><input type="radio" name="sexePers" id="sexePers" class="radio-inline"
+									    				 th:field="*{sexePers}" value="masculin" checked="checked"/>MASCULIN</label>
+									    <label><input type="radio" name="sexePers" id="sexePers" class="radio-inline"
+									      				th:field="*{sexePers}" value="féminin"/>FEMININ</label>
+									 </div>
+						</div>
+						
+						<div class="form-group">
+								<label for="sitmatriPers" class="control-label col-sm-2 text-left"> Sit Matri: <span
+									class="redcolor">*</span></label> 
+									
+									<div class="radio">
+									    <label><input type="radio" name="sitmatriPers" id="sitmatriPers" class="radio-inline"
+									    				 th:field="*{sitmatriPers}" value="M" checked="checked"/>MARIE</label>
+									    <label><input type="radio" name="sitmatriPers" id="sitmatriPers" class="radio-inline"
+									      				th:field="*{sitmatriPers}" value="C"/>CELIBATAIRE</label>
+									 </div>
+						</div>
+						
+						<div class="form-group">
 								<label for="nationalitePers"> Nationalité: <span
 									class="redcolor">*</span></label> <input type="text" name="nationalitePers"
 									id="nationalitePers" class="form-control" th:value="*{nationalitePers}" th:field="*{nationalitePers}"
@@ -131,15 +175,52 @@
 						</div>
 						
 						<div class="form-group">
-								<label for="sexePers" class="control-label col-sm-2 text-left"> Sexe: <span
-									class="redcolor">*</span></label> 
-									
-									<div class="radio">
-									    <label><input type="radio" name="sexePers" id="sexePers" class="radio-inline"
-									    				 th:field="*{sexePers}" value="masculin" checked="checked"/>Masculin</label>
-									    <label><input type="radio" name="sexePers" id="sexePers" class="radio-inline"
-									      				th:field="*{sexePers}" value="féminin"/>Féminin</label>
-									 </div>
+								<label for="deptoriginePers"> Département d'origine: <span
+									class="redcolor">*</span></label> <input type="text" name="deptoriginePers"
+									id="deptoriginePers" class="form-control" th:value="*{deptoriginePers}" th:field="*{deptoriginePers}"
+									placeholder="Département d'origine" />
+						</div>
+						<div th:if="${#fields.hasErrors('deptoriginePers')}"
+								th:errors="*{deptoriginePers}" class="redcolor">Erreur de département d'origine
+						</div>
+						
+						<div class="form-group">
+								<label for="regionoriginePers"> Région d'origine: <span
+									class="redcolor">*</span></label> <input type="text" name="regionoriginePers"
+									id="regionoriginePers" class="form-control" th:value="*{regionoriginePers}" th:field="*{regionoriginePers}"
+									placeholder="Région d'origine" />
+						</div>
+						<div th:if="${#fields.hasErrors('regionoriginePers')}"
+								th:errors="*{regionoriginePers}" class="redcolor">Erreur de Région d'origine
+						</div>
+						
+						<div class="form-group">
+								<label for="dateentreeFPPers"> Date d'entrée fonction publique: 
+								</label> <input type="date" name="dateentreeFPPers"
+									id="dateentreeFPPers" class="form-control" th:value="*{dateentreeFPPers}" th:field="*{dateentreeFPPers}"
+									placeholder="Date de naissance(année-mois-jour)" />
+						</div>
+						<div th:if="${#fields.hasErrors('dateentreeFPPers')}"
+								th:errors="*{dateentreeFPPers}" class="redcolor">Erreur de date d'entrée fonction publique
+						</div>
+						
+						<div class="form-group">
+								<label for="datePSPers"> Date de prise de service année courante: 
+								</label> <input type="date" name="datePSPers"
+									id="datePSPers" class="form-control" th:value="*{datePSPers}" th:field="*{datePSPers}"
+									placeholder="Date de naissance(année-mois-jour)" />
+						</div>
+						<div th:if="${#fields.hasErrors('datePSPers')}"
+								th:errors="*{datePSPers}" class="redcolor">Erreur de date de prise de service
+						</div>
+						
+						<div class="form-group">
+								<label for="etabDAttache"> Etablissement d'attache: </label> <input type="text" name="etabDAttache"
+									id="etabDAttache" class="form-control" th:value="*{etabDAttache}" th:field="*{etabDAttache}"
+									placeholder="Etablissement d'attache" />
+						</div>
+						<div th:if="${#fields.hasErrors('etabDAttache')}"
+								th:errors="*{etabDAttache}" class="redcolor">Etablissement d'attache
 						</div>
 						
 						<div class="form-group col-md-8">
@@ -173,8 +254,7 @@
 						</div>
 						
 						<div class="form-group">
-								<label for="gradePers"> Grade dans le corps associé à la fonction: <span
-									class="redcolor">*</span></label> <input type="text" name="gradePers"
+								<label for="gradePers"> Grade :</label> <input type="text" name="gradePers"
 									id="gradePers" class="form-control" th:value="*{gradePers}" th:field="*{gradePers}"
 									placeholder="Votre grade" />
 						</div>
@@ -187,15 +267,41 @@
 									class="redcolor">*</span></label> 
 									
 									<select class="form-control" id="statutPers" name="statutPers" th:field="*{statutPers}">
-								        <option value="fonctionnaire">Fonctionnaire</option>
-								        <option value="vacataire">Vacataire</option>
+								        <option value="FONCTIONNAIRE">FONCTIONNAIRE</option>
+								        <option value="VACATAIRE">VACATAIRE</option>
 								        <option value="ECI">ECI</option>
 								     </select>
 						</div>
 						
 						<div class="form-group">
-								<label for="specialiteProf"> Spécialité: </label> <span
-									class="redcolor">*</span>
+								<label for="quotaHorairePers"> Quota horaire :</label> <input type="text" name="quotaHorairePers"
+									id="quotaHorairePers" class="form-control" th:value="*{quotaHorairePers}" th:field="*{quotaHorairePers}"
+									placeholder="Votre quota horaire" />
+						</div>
+						<div th:if="${#fields.hasErrors('quotaHorairePers')}"
+								th:errors="*{quotaHorairePers}" class="redcolor">Erreur de quota horaire
+						</div>
+						
+						<div class="form-group">
+								<label for="fonctionPers"> Fonction: <span
+									class="redcolor">*</span></label> 
+									
+									<select class="form-control" id="fonctionPers" name="fonctionPers" th:field="*{fonctionPers}">
+								        <option value="PROVISEUR">PROVISEUR</option>
+								        <option value="CENSEUR">CENSEUR</option>
+								        <option value="SG">SG</option>
+								        <option value="ENSEIGNANT">ENSEIGNANT</option>
+								        <option value="INTENDANT">INTENDANT</option>
+								        <option value="SECRETAIRE">SECRETAIRE</option>
+								        <option value="SURVEILLANT">SURVEILLANT</option>
+								        <option value="VEILLEUR">VEILLEUR</option>
+								        <option value="PARENT">PARENT</option>
+								        <option value="AUTRES">AUTRES</option>
+								     </select>
+						</div>
+						
+						<div class="form-group">
+								<label for="specialiteProf"> Spécialité: </label> 
 								<input type="text" name="specialiteProf"
 									id="specialiteProf" class="form-control" th:value="*{specialiteProf}" th:field="*{specialiteProf}"
 									placeholder="Votre domaine de competence" />
@@ -209,8 +315,7 @@
 					<fieldset>	
 						<legend class="text-primary">Adresses</legend>
 						<div class="form-group">
-								<label for="emailPers"> Adresse email: <span
-									class="redcolor">*</span></label> <input type="text" name="emailPers"
+								<label for="emailPers"> Adresse email: </label> <input type="text" name="emailPers"
 									id="emailPers" class="form-control" th:value="*{emailPers}" th:field="*{emailPers}"
 									placeholder="Votre adresse email" />
 						</div>
@@ -253,6 +358,15 @@
 						</div>
 						<div th:if="${#fields.hasErrors('villePers')}"
 								th:errors="*{villePers}" class="redcolor">Erreur de ville
+						</div>
+						
+						<div class="form-group">
+								<label for="observations"> Observations :</label> <textarea name="observations"
+									id="observations" class="form-control" th:value="*{observations}" th:field="*{observations}"
+									placeholder="Vos observations et remarques" cols="10" rows="3"></textarea>
+						</div>
+						<div th:if="${#fields.hasErrors('observations')}"
+								th:errors="*{observations}" class="redcolor">Erreur d'observation
 						</div>
 						
 					</fieldset>

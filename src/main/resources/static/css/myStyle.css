@@ -70,6 +70,12 @@
     background-size: auto;
 }
 
+body{
+    background-image: url("../images/fond.png");
+    background-repeat: repeat;
+    background-size: auto;
+}
+
 /* Partie CSS de la section des menus dans la page userslayout.html */
 .row{
     margin-top:40px;

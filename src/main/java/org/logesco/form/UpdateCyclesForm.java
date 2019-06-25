@@ -13,8 +13,6 @@ import org.hibernate.validator.constraints.NotEmpty;
  */
 public class UpdateCyclesForm {
 
-	@NotNull
-	@NotEmpty
 	private String codeCyclesAModif;
 	
 	@NotNull

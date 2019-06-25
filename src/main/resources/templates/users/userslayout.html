@@ -415,7 +415,7 @@
                             	</li>
                             	
                             	<li class="list-group-item" 
-                            			sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_CENSEUR')">
+                            			sec:authorize="hasAnyRole('ROLE_PROVISEUR')">
                             			<a href="#" th:href="@{/logesco/users/getdonneesConseilAnnuel}" th:inline="text">
 											<span class="glyphicon glyphicon-pencil"></span> [[#{sousmenu_classes.conseilAnnuel}]]
 										</a>
@@ -538,29 +538,100 @@
              <div class="panel panel-info panel-menu" 
 						sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_TITULAIRE','ROLE_SUPERADMIN')">
 					<div class="panel-heading">
-                            <h3 class="panel-title" th:inline="text">[[#{menu.bulletins}]]&nbsp;</h3>
+                            <h3 class="panel-title" th:inline="text">[[#{menu.bulletinsSeq}]]&nbsp;</h3>
                             <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
                     </div>
                      <div class="panel-body">
                             <ul class="list-group">
+                            
+                            	<li class="list-group-item">
+                            		<a href="#"  th:href="@{/logesco/users/bulletins/getdonneesEditions1BulletinsSeq}"  
+										th:inline="text" >
+										<span class="glyphicon glyphicon-cloud-download"></span> [[#{sousmenu_bulletins.generer1BulletinSequentiel}]]
+									</a>
+                            	</li>
+                            	
                             	<li class="list-group-item">
                             		<a href="#"  th:href="@{/logesco/users/bulletins/getdonneesEditionsBulletinsSeq}"  
 										th:inline="text" >
 										<span class="glyphicon glyphicon-cloud-download"></span> [[#{sousmenu_bulletins.genererBulletinSequentiel}]]
 									</a>
                             	</li>
+                            	
+                           </ul>
+                     </div>
+             </div>
+             
+             <div class="panel panel-info panel-menu" 
+						sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_TITULAIRE','ROLE_SUPERADMIN')">
+					<div class="panel-heading">
+                            <h3 class="panel-title" th:inline="text">[[#{menu.bulletinsTrim}]]&nbsp;</h3>
+                            <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+                    </div>
+                     <div class="panel-body">
+                            <ul class="list-group">
+                            	
+                            	<li class="list-group-item">
+                            		<a href="#" th:href="@{/logesco/users/bulletins/getdonneesEditions1BulletinsTrim}"
+										th:inline="text">
+										<span class="glyphicon glyphicon-cloud-download"></span> [[#{sousmenu_bulletins.generer1BulletinTrimestriel}]]
+									</a>
+                            	</li>
+                            	
+                            	
                             	<li class="list-group-item">
                             		<a href="#" th:href="@{/logesco/users/bulletins/getdonneesEditionsBulletinsTrim}"
 										th:inline="text">
 										<span class="glyphicon glyphicon-cloud-download"></span> [[#{sousmenu_bulletins.genererBulletinTrimestriel}]]
 									</a>
                             	</li>
+                            	
+                           </ul>
+                     </div>
+             </div>
+             
+             <div class="panel panel-info panel-menu" 
+						sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_TITULAIRE','ROLE_SUPERADMIN')">
+					<div class="panel-heading">
+                            <h3 class="panel-title" th:inline="text">[[#{menu.bulletinsTrimAn}]]&nbsp;</h3>
+                            <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+                    </div>
+                     <div class="panel-body">
+                            <ul class="list-group">
+                            	
+                            	<li class="list-group-item">
+                            		<a href="#" th:href="@{/logesco/users/bulletins/getdonneesEditions1BulletinsTrimAn}"
+										th:inline="text">
+										<span class="glyphicon glyphicon-cloud-download"></span> [[#{sousmenu_bulletins.generer1BulletinTrimestrielAvecRapportAnnuel}]]
+									</a>
+                            	</li>
+                            	
                             	<li class="list-group-item">
                             		<a href="#" th:href="@{/logesco/users/bulletins/getdonneesEditionsBulletinsTrimAn}"
 										th:inline="text">
 										<span class="glyphicon glyphicon-cloud-download"></span> [[#{sousmenu_bulletins.genererBulletinTrimestrielAvecRapportAnnuel}]]
 									</a>
                             	</li>
+                            	
+                           </ul>
+                     </div>
+             </div>
+             
+             <div class="panel panel-info panel-menu" 
+						sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_TITULAIRE','ROLE_SUPERADMIN')">
+					<div class="panel-heading">
+                            <h3 class="panel-title" th:inline="text">[[#{menu.bulletinsAn}]]&nbsp;</h3>
+                            <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+                    </div>
+                     <div class="panel-body">
+                            <ul class="list-group">
+                            	<li class="list-group-item">
+                            		<a href="#" th:href="@{/logesco/users/bulletins/getdonneesEditions1BulletinsAn}"
+										th:inline="text">
+										<span class="glyphicon glyphicon-cloud-download"></span> [[#{sousmenu_bulletins.generer1BulletinAnnuel}]]
+									</a>
+                            	</li>
+                            	
                             	<li class="list-group-item">
                             		<a href="#" th:href="@{/logesco/users/bulletins/getdonneesEditionsBulletinsAn}"
 										th:inline="text">

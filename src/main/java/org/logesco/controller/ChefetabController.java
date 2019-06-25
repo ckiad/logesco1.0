@@ -6,6 +6,7 @@ package org.logesco.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,6 +29,8 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.logesco.entities.*;
 import org.logesco.form.*;
+import org.logesco.modeles.ErrorBean;
+import org.logesco.modeles.FicheScolariteparClasseBean;
 import org.logesco.modeles.PersonnelBean;
 import org.logesco.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,6 +118,21 @@ public class ChefetabController {
 			updateProviseurForm.setStatutPers(proviseur.getStatutPers());
 			updateProviseurForm.setUsername(proviseur.getUsername());
 			updateProviseurForm.setVillePers(proviseur.getVillePers());
+			
+			/*
+			 * Traitement des nouveaux champs
+			 */
+			updateProviseurForm.setSitmatriPers(proviseur.getSitmatriPers());
+			updateProviseurForm.setMatriculePers(proviseur.getMatriculePers());
+			updateProviseurForm.setDeptoriginePers(proviseur.getDeptoriginePers());
+			updateProviseurForm.setRegionoriginePers(proviseur.getRegionoriginePers());
+			updateProviseurForm.setFonctionPers(proviseur.getFonctionPers());
+			updateProviseurForm.setQuotaHorairePers(proviseur.getQuotaHorairePers());
+			updateProviseurForm.setDateentreeFPPers(proviseur.getDateentreeFPPers());
+			updateProviseurForm.setDatePSPers(proviseur.getDatePSPers());
+			updateProviseurForm.setObservations(proviseur.getObservations());
+			updateProviseurForm.setEtabDAttache(proviseur.getEtabDAttache());
+			
 		}
 		return "users/updateProviseur";
 	}
@@ -163,7 +181,8 @@ public class ChefetabController {
 
 
 	public void constructModelConsulterUsers(Model model, HttpServletRequest request, 
-			int numPageCenseur, int numPageSg, int numPageIntendant, int numPageEns, int taillePage){
+			int numPageCenseur, int numPageSg, int numPageIntendant, int numPageEns, 
+			int numPagePersAppui, int taillePage){
 		
 		HttpSession session=request.getSession();
 		/*
@@ -250,6 +269,59 @@ public class ChefetabController {
 		List<Enseignants> listofEnseignants = usersService.findAllEnseignants();
 		session.setAttribute("listofEnseignants", listofEnseignants);
 		
+		Page<PersonnelsDAppui> pageofPersonnelsDAppui=usersService.findAllPersonnelsDAppui(numPageEns, taillePage);
+		if(pageofPersonnelsDAppui != null){
+			if(pageofPersonnelsDAppui.getContent().size()!=0){
+				model.addAttribute("listofPersonnelsDAppui", pageofPersonnelsDAppui.getContent());
+				int[] listofPagePersonnelsDAppui=new int[pageofPersonnelsDAppui.getTotalPages()];
+
+				model.addAttribute("listofPagePersonnelsDAppui", listofPagePersonnelsDAppui);
+
+				model.addAttribute("pageCourantePersonnelsDAppui", numPagePersAppui);
+				//System.err.println("numPageEnseignants  "+numPageEns);
+			}
+		}
+		//Il faut faire la liste total des Enseignants et placer en session
+		List<PersonnelsDAppui> listofPersonnelsDAppui = usersService.findAllPersonnelsDAppui();
+		session.setAttribute("listofPersonnelsDAppui", listofPersonnelsDAppui);
+		
+		List<PersonnelBean> listofPersonnelsVacataire = (List<PersonnelBean>) 
+				usersService.generateCollectionofPersonnelDeStatutBean("Vacataire");
+		
+		if(listofPersonnelsVacataire.size()>0){
+			model.addAttribute("listofPersonnelsVacataire", listofPersonnelsVacataire);
+			session.setAttribute("listofPersonnelsVacataire", listofPersonnelsVacataire);
+		}
+		
+		List<PersonnelBean> listofPersonnelsPermanent = (List<PersonnelBean>) 
+				usersService.generateCollectionofPersonnelDeStatutBean("Permanent");
+		
+		if(listofPersonnelsPermanent.size()>0){
+			model.addAttribute("listofPersonnelsPermanent", listofPersonnelsPermanent);
+			session.setAttribute("listofPersonnelsPermanent", listofPersonnelsPermanent);
+		}
+		
+		List<PersonnelBean> listofPersonnelsECI = (List<PersonnelBean>) 
+				usersService.generateCollectionofProffesseursDeStatutBean("ECI");
+		if(listofPersonnelsPermanent.size()>0){
+			model.addAttribute("listofPersonnelsECI", listofPersonnelsECI);
+			session.setAttribute("listofPersonnelsECI", listofPersonnelsECI);
+		}
+		
+		List<PersonnelBean> listofEnseignantVacataire = (List<PersonnelBean>) 
+				usersService.generateCollectionofProffesseursDeStatutBean("Vacataire");
+		if(listofEnseignantVacataire.size()>0){
+			model.addAttribute("listofEnseignantVacataire", listofEnseignantVacataire);
+			session.setAttribute("listofEnseignantVacataire", listofEnseignantVacataire);
+		}
+		
+		List<PersonnelBean> listofEnseignantPermanent = (List<PersonnelBean>) 
+				usersService.generateCollectionofProffesseursDeStatutBean("Permanent");
+		if(listofEnseignantPermanent.size()>0){
+			model.addAttribute("listofEnseignantPermanent", listofEnseignantPermanent);
+			session.setAttribute("listofEnseignantPermanent", listofEnseignantPermanent);
+		}
+		
 	}
 
 	/***************************************************************
@@ -264,6 +336,7 @@ public class ChefetabController {
 	@RequestParam(name="numPageSg", defaultValue="0") int numPageSg, 
 	@RequestParam(name="numPageIntendant", defaultValue="0") int numPageIntendant, 
 	@RequestParam(name="numPageEns", defaultValue="0") int numPageEns, 
+	@RequestParam(name="numPagePersAppui", defaultValue="0") int numPagePersAppui, 
 	@RequestParam(name="taillePage", defaultValue="5") int taillePage,
 	Model model, HttpServletRequest request){
 
@@ -272,7 +345,7 @@ public class ChefetabController {
 		 * page par page dans la page de consultation des pages
 		 */
 		this.constructModelConsulterUsers(model, request, numPageCenseur, numPageSg, 
-				numPageIntendant, numPageEns, taillePage);
+				numPageIntendant, numPageEns, numPagePersAppui, taillePage);
 
 		return "users/consulterPersonnels";
 
@@ -299,13 +372,14 @@ public class ChefetabController {
 
 	@GetMapping(path="/getupdatePersonnels")
 	public String getupdatePersonnels(@ModelAttribute("updatePersonnelsForm") 
-	UpdatePersonnelsForm updatePersonnelsForm,
-	@RequestParam(name="numPageCenseur", defaultValue="0") int numPageCenseur, 
-	@RequestParam(name="numPageSg", defaultValue="0") int numPageSg, 
-	@RequestParam(name="numPageIntendant", defaultValue="0") int numPageIntendant, 
-	@RequestParam(name="numPageEns", defaultValue="0") int numPageEns, 
-	@RequestParam(name="taillePage", defaultValue="3") int taillePage,
-	Long idUsers, Model model, HttpServletRequest request){
+		UpdatePersonnelsForm updatePersonnelsForm,
+		@RequestParam(name="numPageCenseur", defaultValue="0") int numPageCenseur, 
+		@RequestParam(name="numPageSg", defaultValue="0") int numPageSg, 
+		@RequestParam(name="numPageIntendant", defaultValue="0") int numPageIntendant, 
+		@RequestParam(name="numPageEns", defaultValue="0") int numPageEns, 
+		@RequestParam(name="numPagePersAppui", defaultValue="0") int numPagePersAppui, 
+		@RequestParam(name="taillePage", defaultValue="3") int taillePage,
+		Long idUsers, Model model, HttpServletRequest request){
 
 		/*
 		 * Tous les paramètres d'affichage de consulter page doivent être placer dans la requete Post de mise 
@@ -318,6 +392,7 @@ public class ChefetabController {
 		updatePersonnelsForm.setNumPageSg(numPageSg);
 		updatePersonnelsForm.setNumPageIntendant(numPageIntendant);
 		updatePersonnelsForm.setNumPageEns(numPageEns);
+		updatePersonnelsForm.setNumPagePersAppui(numPagePersAppui);
 
 
 		/*
@@ -325,11 +400,14 @@ public class ChefetabController {
 		 * pour initialiser le formulaire de modification	
 		 */
 		Proffesseurs profAModif=usersService.findProffesseurs(idUsers);
+		Personnels persAModif=usersService.findPersonnel(idUsers);
 		//System.err.println("Proffesseurs a modifier "+profAModif.getNomsPers());
 		/*
 		 * Il faut trouver les rôles associe à ce prof
 		 */
 		int roleCodeAssocie=usersService.getcodeUsersRole(profAModif);
+		List<String> listofRolesUser = usersService.getListRolesUser(profAModif);
+		model.addAttribute("listofRolesUser", listofRolesUser);
 		//System.err.println("Et son codeRole associe est  "+roleCodeAssocie);
 		/*
 		 * On met déjà à jour les boutons radio de choix des rôles avec les rôles retrouve
@@ -349,7 +427,7 @@ public class ChefetabController {
 			updatePersonnelsForm.setNumeroPers(censeurAssocie.getNumeroCens());
 		}
 
-		if(roleCodeAssocie==3){
+		if(roleCodeAssocie==2){
 			SG sgAssocie=usersService.findSG(idUsers);
 			//System.err.println("SG a modifier "+sgAssocie.getNomsPers());
 			/*
@@ -358,7 +436,7 @@ public class ChefetabController {
 			updatePersonnelsForm.setNumeroPers(sgAssocie.getNumeroSG());
 		}
 
-		if(roleCodeAssocie==5){
+		if(roleCodeAssocie==4){
 			Intendant intAssocie=usersService.findIntendant(idUsers);
 			//System.err.println("Intendant a modifier "+intAssocie.getNomsPers());
 			/*
@@ -368,28 +446,82 @@ public class ChefetabController {
 		}
 
 		/*
-		 * Maintenant on peut mettre l'interface de modification à jour avec le reste des données du prof à modifier
+		 * Maintenant on peut mettre l'interface de modification à jour avec le reste des données du 
+		 * prof ou du personnel à modifier car on peut etre personnel sans etre prof
 		 */
-		updatePersonnelsForm.setDatenaissPers(profAModif.getDatenaissPers());
-		updatePersonnelsForm.setDiplomePers(profAModif.getDiplomePers());
-		updatePersonnelsForm.setEmailPers(profAModif.getEmailPers());
-		updatePersonnelsForm.setGradePers(profAModif.getGradePers());
-		updatePersonnelsForm.setIdPersonnels(profAModif.getIdUsers());
-		updatePersonnelsForm.setLieunaissPers(profAModif.getLieunaissPers());
-		updatePersonnelsForm.setNationalitePers(profAModif.getNationalitePers());
-		updatePersonnelsForm.setNomsPers(profAModif.getNomsPers());
-		updatePersonnelsForm.setNumcniOuUsernamePersAModif(profAModif.getNumcniPers());
-		updatePersonnelsForm.setNumcniPers(profAModif.getNumcniPers());
-		updatePersonnelsForm.setNumtel1Pers(profAModif.getNumtel1Pers());
-		updatePersonnelsForm.setNumtel2Pers(profAModif.getNumtel2Pers());
-		updatePersonnelsForm.setPassword(profAModif.getPassword());
-		updatePersonnelsForm.setPrenomsPers(profAModif.getPrenomsPers());
-		updatePersonnelsForm.setQuartierPers(profAModif.getQuartierPers());
-		updatePersonnelsForm.setSexePers(profAModif.getSexePers());
-		updatePersonnelsForm.setSpecialiteProf(profAModif.getSpecialiteProf());
-		updatePersonnelsForm.setStatutPers(profAModif.getStatutPers());
-		updatePersonnelsForm.setUsername(profAModif.getUsername());
-		updatePersonnelsForm.setVillePers(profAModif.getVillePers());
+		if(persAModif!=null && profAModif!=null){
+			updatePersonnelsForm.setDatenaissPers(profAModif.getDatenaissPers());
+			updatePersonnelsForm.setDiplomePers(profAModif.getDiplomePers());
+			updatePersonnelsForm.setEmailPers(profAModif.getEmailPers());
+			updatePersonnelsForm.setGradePers(profAModif.getGradePers());
+			updatePersonnelsForm.setIdPersonnels(profAModif.getIdUsers());
+			updatePersonnelsForm.setLieunaissPers(profAModif.getLieunaissPers());
+			updatePersonnelsForm.setNationalitePers(profAModif.getNationalitePers());
+			updatePersonnelsForm.setNomsPers(profAModif.getNomsPers());
+			updatePersonnelsForm.setNumcniOuUsernamePersAModif(profAModif.getNumcniPers());
+			updatePersonnelsForm.setNumcniPers(profAModif.getNumcniPers());
+			updatePersonnelsForm.setNumtel1Pers(profAModif.getNumtel1Pers());
+			updatePersonnelsForm.setNumtel2Pers(profAModif.getNumtel2Pers());
+			updatePersonnelsForm.setPassword(profAModif.getPassword());
+			updatePersonnelsForm.setPrenomsPers(profAModif.getPrenomsPers());
+			updatePersonnelsForm.setQuartierPers(profAModif.getQuartierPers());
+			updatePersonnelsForm.setSexePers(profAModif.getSexePers());
+			updatePersonnelsForm.setSpecialiteProf(profAModif.getSpecialiteProf());
+			updatePersonnelsForm.setStatutPers(profAModif.getStatutPers());
+			updatePersonnelsForm.setUsername(profAModif.getUsername());
+			updatePersonnelsForm.setVillePers(profAModif.getVillePers());
+			
+			/*
+			 * Traitement des nouveaux champs
+			 */
+			updatePersonnelsForm.setSitmatriPers(profAModif.getSitmatriPers());
+			updatePersonnelsForm.setMatriculePers(profAModif.getMatriculePers());
+			updatePersonnelsForm.setDeptoriginePers(profAModif.getDeptoriginePers());
+			updatePersonnelsForm.setRegionoriginePers(profAModif.getRegionoriginePers());
+			updatePersonnelsForm.setFonctionPers(profAModif.getFonctionPers());
+			updatePersonnelsForm.setQuotaHorairePers(profAModif.getQuotaHorairePers());
+			updatePersonnelsForm.setDateentreeFPPers(profAModif.getDateentreeFPPers());
+			updatePersonnelsForm.setDatePSPers(profAModif.getDatePSPers());
+			updatePersonnelsForm.setObservations(profAModif.getObservations());
+			updatePersonnelsForm.setEtabDAttache(profAModif.getEtabDAttache());
+		}
+		
+		if(persAModif!=null && profAModif==null){
+			updatePersonnelsForm.setDatenaissPers(persAModif.getDatenaissPers());
+			updatePersonnelsForm.setDiplomePers(persAModif.getDiplomePers());
+			updatePersonnelsForm.setEmailPers(persAModif.getEmailPers());
+			updatePersonnelsForm.setGradePers(persAModif.getGradePers());
+			updatePersonnelsForm.setIdPersonnels(persAModif.getIdUsers());
+			updatePersonnelsForm.setLieunaissPers(persAModif.getLieunaissPers());
+			updatePersonnelsForm.setNationalitePers(persAModif.getNationalitePers());
+			updatePersonnelsForm.setNomsPers(persAModif.getNomsPers());
+			updatePersonnelsForm.setNumcniOuUsernamePersAModif(persAModif.getNumcniPers());
+			updatePersonnelsForm.setNumcniPers(persAModif.getNumcniPers());
+			updatePersonnelsForm.setNumtel1Pers(persAModif.getNumtel1Pers());
+			updatePersonnelsForm.setNumtel2Pers(persAModif.getNumtel2Pers());
+			updatePersonnelsForm.setPassword(persAModif.getPassword());
+			updatePersonnelsForm.setPrenomsPers(persAModif.getPrenomsPers());
+			updatePersonnelsForm.setQuartierPers(persAModif.getQuartierPers());
+			updatePersonnelsForm.setSexePers(persAModif.getSexePers());
+			updatePersonnelsForm.setSpecialiteProf("");
+			updatePersonnelsForm.setStatutPers(persAModif.getStatutPers());
+			updatePersonnelsForm.setUsername(persAModif.getUsername());
+			updatePersonnelsForm.setVillePers(persAModif.getVillePers());
+			
+			/*
+			 * Traitement des nouveaux champs
+			 */
+			updatePersonnelsForm.setSitmatriPers(persAModif.getSitmatriPers());
+			updatePersonnelsForm.setMatriculePers(persAModif.getMatriculePers());
+			updatePersonnelsForm.setDeptoriginePers(persAModif.getDeptoriginePers());
+			updatePersonnelsForm.setRegionoriginePers(persAModif.getRegionoriginePers());
+			updatePersonnelsForm.setFonctionPers(persAModif.getFonctionPers());
+			updatePersonnelsForm.setQuotaHorairePers(persAModif.getQuotaHorairePers());
+			updatePersonnelsForm.setDateentreeFPPers(persAModif.getDateentreeFPPers());
+			updatePersonnelsForm.setDatePSPers(persAModif.getDatePSPers());
+			updatePersonnelsForm.setObservations(persAModif.getObservations());
+			updatePersonnelsForm.setEtabDAttache(persAModif.getEtabDAttache());
+		}
 
 		return "users/updatePersonnels";
 
@@ -635,6 +767,78 @@ public class ChefetabController {
 		+ "&&idClasseSelect="+idClasseSelect;
 	}
 
+	@GetMapping(path="/exportlistPersonnelsDAppui")
+	public ModelAndView exportlistPersonnelsDAppui(Model model, HttpServletRequest request){
+
+
+		Etablissement etablissementConcerne = usersService.getEtablissement();
+
+		Annee anneeScolaire = usersService.findAnneeActive();
+
+		if(etablissementConcerne == null || anneeScolaire == null) {
+			String erreur = "LISTE DES ERREURS RENCONTREES:  CONTACTER L'ADMINISTRATEUR.";
+			
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			String error="";
+			if(etablissementConcerne == null ){
+				error+="\n ETABLISSEMENT NON RETROUVE ";
+			}
+			if(anneeScolaire == null){
+				error+="\n ANNEE SCOLAIRE NON RETROUVE ";
+			}
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+		}
+
+		Collection<PersonnelBean> collectionofPersonnelBean = 
+				usersService.generateCollectionofPersonnelDAppuiBean();
+
+		Map<String, Object> parameters = new HashMap<String, Object>();
+
+		parameters.put("delegation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
+		parameters.put("delegation_en", etablissementConcerne.getDeleguationdeptuteleanglaisEtab().toUpperCase());
+		parameters.put("etablissement_fr", etablissementConcerne.getNomsEtab().toUpperCase());
+		parameters.put("etablissement_en", etablissementConcerne.getNomsanglaisEtab().toUpperCase());
+		String adresse = "BP "+etablissementConcerne.getBpEtab()+
+				"  TEL: "+etablissementConcerne.getNumtel1Etab();
+		parameters.put("adresse", adresse);
+		parameters.put("annee_scolaire_fr", "Année Académique "+anneeScolaire.getIntituleAnnee());
+		parameters.put("annee_scolaire_en", "Academic year "+anneeScolaire.getIntituleAnnee());
+		parameters.put("ministere_fr", etablissementConcerne.getMinisteretuteleEtab());
+		parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
+		parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
+		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
+		String titre_liste = "LISTE DES PERSONNELS D'APPUI DE L'ETABLISSEMENT";
+		parameters.put("titre_liste", titre_liste);
+		parameters.put("ville", etablissementConcerne.getVilleEtab());
+
+		File f=new File(logoetabDir+etablissementConcerne.getLogoEtab());
+		////System.err.println("est ce que le fichier existe "+f.exists());
+
+		if(f.exists()==true){
+			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
+		}
+		else{
+			parameters.put("logo", "classpath:/static/images/logobekoko.png");
+		}
+
+		parameters.put("datasource", collectionofPersonnelBean);
+		
+		JasperReportsPdfView view = new JasperReportsPdfView();
+		view.setUrl("classpath:/reports/compiled/fiches/ListePersonnel1.jasper");
+		view.setApplicationContext(applicationContext);
+
+		return new ModelAndView(view, parameters);
+	
+	}
+	
 	@GetMapping(path="/exportlistMembrePersonnels")
 	public ModelAndView exportlistMembrePersonnels(Model model, HttpServletRequest request){
 
@@ -642,7 +846,27 @@ public class ChefetabController {
 
 		Annee anneeScolaire = usersService.findAnneeActive();
 
-		if(etablissementConcerne == null || anneeScolaire == null) return null;
+		if(etablissementConcerne == null || anneeScolaire == null) {
+			String erreur = "LISTE DES ERREURS RENCONTREES:  CONTACTER L'ADMINISTRATEUR.";
+			
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			String error="";
+			if(etablissementConcerne == null ){
+				error+="\n ETABLISSEMENT NON RETROUVE ";
+			}
+			if(anneeScolaire == null){
+				error+="\n ANNEE SCOLAIRE NON RETROUVE ";
+			}
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+		}
 
 		Collection<PersonnelBean> collectionofPersonnelBean = 
 				usersService.generateCollectionofPersonnelBean();
@@ -673,14 +897,14 @@ public class ChefetabController {
 			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
 		}
 		else{
-			parameters.put("logo", "src/main/resources/static/images/logobekoko.png");
+			parameters.put("logo", "classpath:/static/images/logobekoko.png");
 		}
 
-		JasperReportsPdfView view = new JasperReportsPdfView();
-		view.setUrl("classpath:/reports/compiled/fiches/ListePersonnel.jasper");
-		view.setApplicationContext(applicationContext);
-
 		parameters.put("datasource", collectionofPersonnelBean);
+		
+		JasperReportsPdfView view = new JasperReportsPdfView();
+		view.setUrl("classpath:/reports/compiled/fiches/ListePersonnel1.jasper");
+		view.setApplicationContext(applicationContext);
 
 		return new ModelAndView(view, parameters);
 	}
@@ -693,7 +917,28 @@ public class ChefetabController {
 
 		Annee anneeScolaire = usersService.findAnneeActive();
 
-		if(etablissementConcerne == null || anneeScolaire == null) return null;
+		if(etablissementConcerne == null || anneeScolaire == null) {
+			//System.out.println("l'etablissement ou l'année scolaire est null donc aucun pdf ne peut etre edite");
+			String erreur = "LISTE DES ERREURS RENCONTREES:  CONTACTER L'ADMINISTRATEUR.";
+			
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			String error="";
+			if(etablissementConcerne == null ){
+				error+="\n ETABLISSEMENT NON RETROUVE ";
+			}
+			if(anneeScolaire == null){
+				error+="\n ANNEE SCOLAIRE NON RETROUVE ";
+			}
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+		}
 		
 		Collection<PersonnelBean> collectionofCenseurBean = 
 				usersService.generateCollectionofCenseurBean();
@@ -724,14 +969,14 @@ public class ChefetabController {
 			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
 		}
 		else{
-			parameters.put("logo", "src/main/resources/static/images/logobekoko.png");
+			parameters.put("logo", "classpath:/static/images/logobekoko.png");
 		}
-
+		parameters.put("logo", "classpath:/static/images/logobekoko.png");
+		//System.out.println("le chemin du logo est "+parameters.get("logo").toString());
+		parameters.put("datasource", collectionofCenseurBean);
 		JasperReportsPdfView view = new JasperReportsPdfView();
 		view.setUrl("classpath:/reports/compiled/fiches/ListePersonnel.jasper");
 		view.setApplicationContext(applicationContext);
-
-		parameters.put("datasource", collectionofCenseurBean);
 
 		return new ModelAndView(view, parameters);
 	}
@@ -744,7 +989,27 @@ public class ChefetabController {
 
 		Annee anneeScolaire = usersService.findAnneeActive();
 
-		if(etablissementConcerne == null || anneeScolaire == null) return null;
+		if(etablissementConcerne == null || anneeScolaire == null) {
+			String erreur = "LISTE DES ERREURS RENCONTREES:  CONTACTER L'ADMINISTRATEUR.";
+			
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			String error="";
+			if(etablissementConcerne == null ){
+				error+="\n ETABLISSEMENT NON RETROUVE ";
+			}
+			if(anneeScolaire == null){
+				error+="\n ANNEE SCOLAIRE NON RETROUVE ";
+			}
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+		}
 		
 		Collection<PersonnelBean> collectionofSgBean = 
 				usersService.generateCollectionofSgBean();
@@ -775,17 +1040,20 @@ public class ChefetabController {
 			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
 		}
 		else{
-			parameters.put("logo", "src/main/resources/static/images/logobekoko.png");
+			parameters.put("logo", "classpath:/static/images/logobekoko.png");
 		}
 
+		parameters.put("datasource", collectionofSgBean);
+		
 		JasperReportsPdfView view = new JasperReportsPdfView();
 		view.setUrl("classpath:/reports/compiled/fiches/ListePersonnel.jasper");
 		view.setApplicationContext(applicationContext);
 
-		parameters.put("datasource", collectionofSgBean);
+		
 
 		return new ModelAndView(view, parameters);
 	}
+	
 	
 	@GetMapping(path="/exportlistEnseignants")
 	public ModelAndView exportlistEnseignants(Model model, HttpServletRequest request){
@@ -794,7 +1062,27 @@ public class ChefetabController {
 
 		Annee anneeScolaire = usersService.findAnneeActive();
 
-		if(etablissementConcerne == null || anneeScolaire == null) return null;
+		if(etablissementConcerne == null || anneeScolaire == null) {
+			String erreur = "LISTE DES ERREURS RENCONTREES:  CONTACTER L'ADMINISTRATEUR.";
+			
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			String error="";
+			if(etablissementConcerne == null ){
+				error+="\n ETABLISSEMENT NON RETROUVE ";
+			}
+			if(anneeScolaire == null){
+				error+="\n ANNEE SCOLAIRE NON RETROUVE ";
+			}
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+		}
 		
 		Collection<PersonnelBean> collectionofEnseignantBean = 
 				usersService.generateCollectionofEnseignantBean();
@@ -825,17 +1113,20 @@ public class ChefetabController {
 			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
 		}
 		else{
-			parameters.put("logo", "src/main/resources/static/images/logobekoko.png");
+			parameters.put("logo", "classpath:/static/images/logobekoko.png");
 		}
 
+		parameters.put("datasource", collectionofEnseignantBean);
+		
 		JasperReportsPdfView view = new JasperReportsPdfView();
 		view.setUrl("classpath:/reports/compiled/fiches/ListePersonnel.jasper");
 		view.setApplicationContext(applicationContext);
 
-		parameters.put("datasource", collectionofEnseignantBean);
+		
 
 		return new ModelAndView(view, parameters);
 	}
+	
 	
 	@GetMapping(path="/exportlistIntendant")
 	public ModelAndView exportlistIntendant(Model model, HttpServletRequest request){
@@ -844,7 +1135,27 @@ public class ChefetabController {
 
 		Annee anneeScolaire = usersService.findAnneeActive();
 
-		if(etablissementConcerne == null || anneeScolaire == null) return null;
+		if(etablissementConcerne == null || anneeScolaire == null) {
+			String erreur = "LISTE DES ERREURS RENCONTREES:  CONTACTER L'ADMINISTRATEUR.";
+			
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			String error="";
+			if(etablissementConcerne == null ){
+				error+="\n ETABLISSEMENT NON RETROUVE ";
+			}
+			if(anneeScolaire == null){
+				error+="\n ANNEE SCOLAIRE NON RETROUVE ";
+			}
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+		}
 		
 		Collection<PersonnelBean> collectionofIntendantBean = 
 				usersService.generateCollectionofIntendantBean();
@@ -875,17 +1186,483 @@ public class ChefetabController {
 			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
 		}
 		else{
-			parameters.put("logo", "src/main/resources/static/images/logobekoko.png");
+			parameters.put("logo", "classpath:/static/images/logobekoko.png");
 		}
 
+		parameters.put("datasource", collectionofIntendantBean);
+		
 		JasperReportsPdfView view = new JasperReportsPdfView();
 		view.setUrl("classpath:/reports/compiled/fiches/ListePersonnel.jasper");
 		view.setApplicationContext(applicationContext);
 
-		parameters.put("datasource", collectionofIntendantBean);
+		return new ModelAndView(view, parameters);
+	}
+	
+	
+	@GetMapping(path="/exportlistMembrePersonnelsPermanent")
+	public ModelAndView exportlistMembrePersonnelsPermanent(Model model, 
+			HttpServletRequest request){
+
+		Etablissement etablissementConcerne = usersService.getEtablissement();
+
+		Annee anneeScolaire = usersService.findAnneeActive();
+
+		if(etablissementConcerne == null || anneeScolaire == null) {
+			String erreur = "LISTE DES ERREURS RENCONTREES:  CONTACTER L'ADMINISTRATEUR.";
+			
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			String error="";
+			if(etablissementConcerne == null ){
+				error+="\n ETABLISSEMENT NON RETROUVE ";
+			}
+			if(anneeScolaire == null){
+				error+="\n ANNEE SCOLAIRE NON RETROUVE ";
+			}
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+		}
+
+		Collection<PersonnelBean> listofPersonnelsPermanent = 
+				usersService.generateCollectionofPersonnelDeStatutBean("Permanent");
+		
+		if(listofPersonnelsPermanent == null){
+			String error = "AUCUN PERSONNEL PERMANENT N'EST ENCORE ENREGISTRE.";
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			String erreur="LES DONNEES NECESSAIRE A L'EDITION DU PDF NE SONT PAS DISPONIBLE";
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+		}
+		
+		Collection<PersonnelBean> collectionofPersonnelBean = listofPersonnelsPermanent;
+		
+
+		Map<String, Object> parameters = new HashMap<String, Object>();
+
+		parameters.put("delegation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
+		parameters.put("delegation_en", etablissementConcerne.getDeleguationdeptuteleanglaisEtab().toUpperCase());
+		parameters.put("etablissement_fr", etablissementConcerne.getNomsEtab().toUpperCase());
+		parameters.put("etablissement_en", etablissementConcerne.getNomsanglaisEtab().toUpperCase());
+		String adresse = "BP "+etablissementConcerne.getBpEtab()+
+				"  TEL: "+etablissementConcerne.getNumtel1Etab();
+		parameters.put("adresse", adresse);
+		parameters.put("annee_scolaire_fr", "Année Académique "+anneeScolaire.getIntituleAnnee());
+		parameters.put("annee_scolaire_en", "Academic year "+anneeScolaire.getIntituleAnnee());
+		parameters.put("ministere_fr", etablissementConcerne.getMinisteretuteleEtab());
+		parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
+		parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
+		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
+		String titre_liste = "LISTE DES MEMBRES DU PERSONNEL PERMANENT DE L'ETABLISSEMENT";
+		parameters.put("titre_liste", titre_liste);
+		parameters.put("ville", etablissementConcerne.getVilleEtab());
+
+		File f=new File(logoetabDir+etablissementConcerne.getLogoEtab());
+		////System.err.println("est ce que le fichier existe "+f.exists());
+
+		if(f.exists()==true){
+			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
+		}
+		else{
+			parameters.put("logo", "classpath:/static/images/logobekoko.png");
+		}
+
+		parameters.put("datasource", collectionofPersonnelBean);
+		
+		JasperReportsPdfView view = new JasperReportsPdfView();
+		view.setUrl("classpath:/reports/compiled/fiches/ListePersonnel1.jasper");
+		view.setApplicationContext(applicationContext);
 
 		return new ModelAndView(view, parameters);
 	}
+	
+	
+	@GetMapping(path="/exportlistEnseignantPermanent")
+	public ModelAndView exportlistEnseignantPermanent(Model model, 
+			HttpServletRequest request){
+
+
+		Etablissement etablissementConcerne = usersService.getEtablissement();
+
+		Annee anneeScolaire = usersService.findAnneeActive();
+
+		if(etablissementConcerne == null || anneeScolaire == null) {
+			String erreur = "LISTE DES ERREURS RENCONTREES:  CONTACTER L'ADMINISTRATEUR.";
+			
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			String error="";
+			if(etablissementConcerne == null ){
+				error+="\n ETABLISSEMENT NON RETROUVE ";
+			}
+			if(anneeScolaire == null){
+				error+="\n ANNEE SCOLAIRE NON RETROUVE ";
+			}
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+		}
+
+		Collection<PersonnelBean> listofPersonnelsPermanent = 
+				usersService.generateCollectionofProffesseursDeStatutBean("Permanent");
+		
+		if(listofPersonnelsPermanent == null){
+			String error = "AUCUN PERSONNEL PERMANENT N'EST ENCORE ENREGISTRE.";
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			String erreur="LES DONNEES NECESSAIRE A L'EDITION DU PDF NE SONT PAS DISPONIBLE";
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+		}
+		
+		Collection<PersonnelBean> collectionofPersonnelBean = listofPersonnelsPermanent;
+		
+
+		Map<String, Object> parameters = new HashMap<String, Object>();
+
+		parameters.put("delegation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
+		parameters.put("delegation_en", etablissementConcerne.getDeleguationdeptuteleanglaisEtab().toUpperCase());
+		parameters.put("etablissement_fr", etablissementConcerne.getNomsEtab().toUpperCase());
+		parameters.put("etablissement_en", etablissementConcerne.getNomsanglaisEtab().toUpperCase());
+		String adresse = "BP "+etablissementConcerne.getBpEtab()+
+				"  TEL: "+etablissementConcerne.getNumtel1Etab();
+		parameters.put("adresse", adresse);
+		parameters.put("annee_scolaire_fr", "Année Académique "+anneeScolaire.getIntituleAnnee());
+		parameters.put("annee_scolaire_en", "Academic year "+anneeScolaire.getIntituleAnnee());
+		parameters.put("ministere_fr", etablissementConcerne.getMinisteretuteleEtab());
+		parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
+		parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
+		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
+		String titre_liste = "LISTE DES MEMBRES DU PERSONNEL PERMANENT DE L'ETABLISSEMENT";
+		parameters.put("titre_liste", titre_liste);
+		parameters.put("ville", etablissementConcerne.getVilleEtab());
+
+		File f=new File(logoetabDir+etablissementConcerne.getLogoEtab());
+		////System.err.println("est ce que le fichier existe "+f.exists());
+
+		if(f.exists()==true){
+			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
+		}
+		else{
+			parameters.put("logo", "classpath:/static/images/logobekoko.png");
+		}
+
+		parameters.put("datasource", collectionofPersonnelBean);
+		
+		JasperReportsPdfView view = new JasperReportsPdfView();
+		view.setUrl("classpath:/reports/compiled/fiches/ListePersonnel1.jasper");
+		view.setApplicationContext(applicationContext);
+
+		return new ModelAndView(view, parameters);
+	
+	}
+
+	
+	@GetMapping(path="/exportlistMembrePersonnelsVacataire")
+	public ModelAndView exportlistMembrePersonnelsVacataire(Model model, 
+			HttpServletRequest request){
+
+
+		Etablissement etablissementConcerne = usersService.getEtablissement();
+
+		Annee anneeScolaire = usersService.findAnneeActive();
+
+		if(etablissementConcerne == null || anneeScolaire == null) {
+			String erreur = "LISTE DES ERREURS RENCONTREES:  CONTACTER L'ADMINISTRATEUR.";
+			
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			String error="";
+			if(etablissementConcerne == null ){
+				error+="\n ETABLISSEMENT NON RETROUVE ";
+			}
+			if(anneeScolaire == null){
+				error+="\n ANNEE SCOLAIRE NON RETROUVE ";
+			}
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+		}
+
+		Collection<PersonnelBean> listofPersonnelsVacataire =  
+				usersService.generateCollectionofPersonnelDeStatutBean("Vacataire");
+		
+		if(listofPersonnelsVacataire == null){
+			String error = "AUCUN PERSONNEL PERMANENT N'EST ENCORE ENREGISTRE.";
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			String erreur="LES DONNEES NECESSAIRE A L'EDITION DU PDF NE SONT PAS DISPONIBLE";
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+		}
+		
+		Collection<PersonnelBean> collectionofPersonnelBean = listofPersonnelsVacataire;
+		
+
+		Map<String, Object> parameters = new HashMap<String, Object>();
+
+		parameters.put("delegation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
+		parameters.put("delegation_en", etablissementConcerne.getDeleguationdeptuteleanglaisEtab().toUpperCase());
+		parameters.put("etablissement_fr", etablissementConcerne.getNomsEtab().toUpperCase());
+		parameters.put("etablissement_en", etablissementConcerne.getNomsanglaisEtab().toUpperCase());
+		String adresse = "BP "+etablissementConcerne.getBpEtab()+
+				"  TEL: "+etablissementConcerne.getNumtel1Etab();
+		parameters.put("adresse", adresse);
+		parameters.put("annee_scolaire_fr", "Année Académique "+anneeScolaire.getIntituleAnnee());
+		parameters.put("annee_scolaire_en", "Academic year "+anneeScolaire.getIntituleAnnee());
+		parameters.put("ministere_fr", etablissementConcerne.getMinisteretuteleEtab());
+		parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
+		parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
+		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
+		String titre_liste = "LISTE DES MEMBRES DU PERSONNEL VACATAIRE DE L'ETABLISSEMENT";
+		parameters.put("titre_liste", titre_liste);
+		parameters.put("ville", etablissementConcerne.getVilleEtab());
+
+		File f=new File(logoetabDir+etablissementConcerne.getLogoEtab());
+		////System.err.println("est ce que le fichier existe "+f.exists());
+
+		if(f.exists()==true){
+			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
+		}
+		else{
+			parameters.put("logo", "classpath:/static/images/logobekoko.png");
+		}
+
+		parameters.put("datasource", collectionofPersonnelBean);
+		
+		JasperReportsPdfView view = new JasperReportsPdfView();
+		view.setUrl("classpath:/reports/compiled/fiches/ListePersonnel1.jasper");
+		view.setApplicationContext(applicationContext);
+
+		return new ModelAndView(view, parameters);
+	
+	}
+	
+	
+	@GetMapping(path="/exportlistEnseignantVacataire")
+	public ModelAndView exportlistEnseignantVacataire(Model model, 
+			HttpServletRequest request){
+
+
+
+		Etablissement etablissementConcerne = usersService.getEtablissement();
+
+		Annee anneeScolaire = usersService.findAnneeActive();
+
+		if(etablissementConcerne == null || anneeScolaire == null) {
+			String erreur = "LISTE DES ERREURS RENCONTREES:  CONTACTER L'ADMINISTRATEUR.";
+			
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			String error="";
+			if(etablissementConcerne == null ){
+				error+="\n ETABLISSEMENT NON RETROUVE ";
+			}
+			if(anneeScolaire == null){
+				error+="\n ANNEE SCOLAIRE NON RETROUVE ";
+			}
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+		}
+
+		Collection<PersonnelBean> listofPersonnelsVacataire = 
+				usersService.generateCollectionofProffesseursDeStatutBean("Vacataire");
+		
+		if(listofPersonnelsVacataire == null){
+			String error = "AUCUN PERSONNEL PERMANENT N'EST ENCORE ENREGISTRE.";
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			String erreur="LES DONNEES NECESSAIRE A L'EDITION DU PDF NE SONT PAS DISPONIBLE";
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+		}
+		
+		Collection<PersonnelBean> collectionofPersonnelBean = listofPersonnelsVacataire;
+		
+
+		Map<String, Object> parameters = new HashMap<String, Object>();
+
+		parameters.put("delegation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
+		parameters.put("delegation_en", etablissementConcerne.getDeleguationdeptuteleanglaisEtab().toUpperCase());
+		parameters.put("etablissement_fr", etablissementConcerne.getNomsEtab().toUpperCase());
+		parameters.put("etablissement_en", etablissementConcerne.getNomsanglaisEtab().toUpperCase());
+		String adresse = "BP "+etablissementConcerne.getBpEtab()+
+				"  TEL: "+etablissementConcerne.getNumtel1Etab();
+		parameters.put("adresse", adresse);
+		parameters.put("annee_scolaire_fr", "Année Académique "+anneeScolaire.getIntituleAnnee());
+		parameters.put("annee_scolaire_en", "Academic year "+anneeScolaire.getIntituleAnnee());
+		parameters.put("ministere_fr", etablissementConcerne.getMinisteretuteleEtab());
+		parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
+		parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
+		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
+		String titre_liste = "LISTE DES MEMBRES DU PERSONNEL PERMANENT DE L'ETABLISSEMENT";
+		parameters.put("titre_liste", titre_liste);
+		parameters.put("ville", etablissementConcerne.getVilleEtab());
+
+		File f=new File(logoetabDir+etablissementConcerne.getLogoEtab());
+		////System.err.println("est ce que le fichier existe "+f.exists());
+
+		if(f.exists()==true){
+			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
+		}
+		else{
+			parameters.put("logo", "classpath:/static/images/logobekoko.png");
+		}
+
+		parameters.put("datasource", collectionofPersonnelBean);
+		
+		JasperReportsPdfView view = new JasperReportsPdfView();
+		view.setUrl("classpath:/reports/compiled/fiches/ListePersonnel1.jasper");
+		view.setApplicationContext(applicationContext);
+
+		return new ModelAndView(view, parameters);
+	
+	
+	}
+	
+	
+	@GetMapping(path="/exportlistMembrePersonnelsECI")
+	public ModelAndView exportlistMembrePersonnelsECI(Model model, 
+			HttpServletRequest request){
+
+
+
+		Etablissement etablissementConcerne = usersService.getEtablissement();
+
+		Annee anneeScolaire = usersService.findAnneeActive();
+
+		if(etablissementConcerne == null || anneeScolaire == null) {
+			String erreur = "LISTE DES ERREURS RENCONTREES:  CONTACTER L'ADMINISTRATEUR.";
+			
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			String error="";
+			if(etablissementConcerne == null ){
+				error+="\n ETABLISSEMENT NON RETROUVE ";
+			}
+			if(anneeScolaire == null){
+				error+="\n ANNEE SCOLAIRE NON RETROUVE ";
+			}
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+		}
+
+		Collection<PersonnelBean> listofPersonnelsECI =  
+				usersService.generateCollectionofPersonnelDeStatutBean("ECI");
+		
+		if(listofPersonnelsECI == null){
+			String error = "AUCUN PERSONNEL PERMANENT N'EST ENCORE ENREGISTRE.";
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			String erreur="LES DONNEES NECESSAIRE A L'EDITION DU PDF NE SONT PAS DISPONIBLE";
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+		}
+		
+		Collection<PersonnelBean> collectionofPersonnelBean = listofPersonnelsECI;
+		
+
+		Map<String, Object> parameters = new HashMap<String, Object>();
+
+		parameters.put("delegation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
+		parameters.put("delegation_en", etablissementConcerne.getDeleguationdeptuteleanglaisEtab().toUpperCase());
+		parameters.put("etablissement_fr", etablissementConcerne.getNomsEtab().toUpperCase());
+		parameters.put("etablissement_en", etablissementConcerne.getNomsanglaisEtab().toUpperCase());
+		String adresse = "BP "+etablissementConcerne.getBpEtab()+
+				"  TEL: "+etablissementConcerne.getNumtel1Etab();
+		parameters.put("adresse", adresse);
+		parameters.put("annee_scolaire_fr", "Année Académique "+anneeScolaire.getIntituleAnnee());
+		parameters.put("annee_scolaire_en", "Academic year "+anneeScolaire.getIntituleAnnee());
+		parameters.put("ministere_fr", etablissementConcerne.getMinisteretuteleEtab());
+		parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
+		parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
+		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
+		String titre_liste = "LISTE DES MEMBRES DU PERSONNEL ECI DE L'ETABLISSEMENT";
+		parameters.put("titre_liste", titre_liste);
+		parameters.put("ville", etablissementConcerne.getVilleEtab());
+
+		File f=new File(logoetabDir+etablissementConcerne.getLogoEtab());
+		////System.err.println("est ce que le fichier existe "+f.exists());
+
+		if(f.exists()==true){
+			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
+		}
+		else{
+			parameters.put("logo", "classpath:/static/images/logobekoko.png");
+		}
+
+		parameters.put("datasource", collectionofPersonnelBean);
+		
+		JasperReportsPdfView view = new JasperReportsPdfView();
+		view.setUrl("classpath:/reports/compiled/fiches/ListePersonnel1.jasper");
+		view.setApplicationContext(applicationContext);
+
+		return new ModelAndView(view, parameters);
+	
+	
+	}
+	
+	
+	
+	
 	
 	
 	public void constructModelConfigMtScoClasse(UpdateMtScoClassesForm updateMtScoClassesForm,	Model model, 
@@ -991,6 +1768,58 @@ public class ChefetabController {
 		
 		return "users/configMtScoClasse";
 	}
+	
+	
+	@GetMapping(path="/getexportlistClasses")
+	public ModelAndView getexportlistClasses(){
+		Etablissement etablissementConcerne = usersService.getEtablissement();
+		Annee anneeScolaire = usersService.findAnneeActive();
+		if(etablissementConcerne == null ||  anneeScolaire == null ){
+			return null;
+		}
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		parameters.put("delegation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
+		parameters.put("delegation_en", etablissementConcerne.getDeleguationdeptuteleanglaisEtab().toUpperCase());
+		parameters.put("etablissement_fr", etablissementConcerne.getNomsEtab().toUpperCase());
+		parameters.put("etablissement_en", etablissementConcerne.getNomsanglaisEtab().toUpperCase());
+		String adresse = "BP "+etablissementConcerne.getBpEtab()+
+				"  TEL: "+etablissementConcerne.getNumtel1Etab();
+		parameters.put("adresse", adresse);
+		parameters.put("annee_scolaire_fr", "Année Académique "+anneeScolaire.getIntituleAnnee());
+		parameters.put("annee_scolaire_en", "Academic year "+anneeScolaire.getIntituleAnnee());
+		parameters.put("ministere_fr", etablissementConcerne.getMinisteretuteleEtab());
+		parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
+		parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
+		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
+		parameters.put("ville", etablissementConcerne.getVilleEtab());
+
+		File f=new File(logoetabDir+etablissementConcerne.getLogoEtab());
+
+		if(f.exists()==true){
+			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
+		}
+		else{
+			parameters.put("logo", "classpath:/static/images/logobekoko.png");
+		}
+
+		parameters.put("periode", anneeScolaire.getIntituleAnnee());
+		
+		Collection<FicheScolariteparClasseBean> collectionofFicheScoparClasse = 
+				usersService.generateListFicheScolariteparClasseBean();
+		
+		parameters.put("datasource", collectionofFicheScoparClasse);
+		JasperReportsPdfView view = new JasperReportsPdfView();
+		view.setUrl("classpath:/reports/compiled/fiches/FicheScolariteparClasse.jasper");
+		view.setApplicationContext(applicationContext);
+		
+		return new ModelAndView(view, parameters);
+		
+	}
+		
+	
+	
+	
 
 
 	////////////////////////////////////FIN DES REQUETES DE TYPE GET ////////////////////////////////////////////	
@@ -1041,11 +1870,26 @@ public class ChefetabController {
 		proviseur.setUsername(updateProviseurForm.getUsername());
 		proviseur.setVillePers(updateProviseurForm.getVillePers());
 
+		/*
+		 * Traitement des nouveaux champs
+		 */
+		proviseur.setSitmatriPers(updateProviseurForm.getSitmatriPers());
+		proviseur.setMatriculePers(updateProviseurForm.getMatriculePers());
+		proviseur.setDeptoriginePers(updateProviseurForm.getDeptoriginePers());
+		proviseur.setRegionoriginePers(updateProviseurForm.getRegionoriginePers());
+		proviseur.setFonctionPers(updateProviseurForm.getFonctionPers());
+		proviseur.setQuotaHorairePers(updateProviseurForm.getQuotaHorairePers());
+		proviseur.setDateentreeFPPers(updateProviseurForm.getDateentreeFPPers());
+		proviseur.setDatePSPers(updateProviseurForm.getDatePSPers());
+		proviseur.setObservations(updateProviseurForm.getObservations());
+		proviseur.setFonctionPers(updateProviseurForm.getFonctionPers());
+		proviseur.setEtabDAttache(updateProviseurForm.getEtabDAttache());
 
 		if(!(filephotoPers.isEmpty())){
 			proviseur.setPhotoPers(filephotoPers.getOriginalFilename());
 		}
 
+		
 
 
 		Long idProviseur=adminService.saveProviseur(proviseur);
@@ -1058,6 +1902,15 @@ public class ChefetabController {
 
 		if(idProviseur.longValue()==-3) 
 			return "redirect:/logesco/users/chefetab/getupdateProviseur?updateproviseurerrorUsername";
+		
+		if(idProviseur.longValue()==-4) return "redirect:/logesco/users/chefetab/getupdateProviseur?"
+		+ "updateproviseurerrorSpecialite";
+
+		if(idProviseur.longValue()==-5) return "redirect:/logesco/users/chefetab/getupdateProviseur?"
+				+ "updateproviseurerrorMatricule";
+		
+		if(idProviseur.longValue()==-6) return "redirect:/logesco/users/chefetab/getupdateProviseur?"
+		+ "updateproviseurerrorGrade";
 
 		//System.err.println("TOUJOURS PAS DERREUR ON UPLOAD PHOTOPROVISEUR");
 		if(!(filephotoPers.isEmpty())){
@@ -1089,7 +1942,7 @@ public class ChefetabController {
 
 		Long idPersonnels=new Long(0);
 
-		if((enregPersonnelsForm.getRoleCode()==1)||(enregPersonnelsForm.getRoleCode()==2)){
+		if((enregPersonnelsForm.getRoleCode()==1)){
 			//alors c'est un censeur qu'on enregistre ou qu'on met à jour
 			Censeurs censeur=new Censeurs();
 			censeur.setDatenaissPers(enregPersonnelsForm.getDatenaissPers());
@@ -1117,6 +1970,34 @@ public class ChefetabController {
 			censeur.setStatutPers(enregPersonnelsForm.getStatutPers());
 			censeur.setUsername(enregPersonnelsForm.getUsername());
 			censeur.setVillePers(enregPersonnelsForm.getVillePers());
+			
+			/*
+			 * Traitement des nouveaux champs du personnel
+			 */
+			/*
+			 * Traitement des nouveaux champs du personnel
+			 */
+			censeur.setSitmatriPers(enregPersonnelsForm.getSitmatriPers());
+			censeur.setMatriculePers(enregPersonnelsForm.getMatriculePers());
+			censeur.setDeptoriginePers(enregPersonnelsForm.getDeptoriginePers());
+			censeur.setRegionoriginePers(enregPersonnelsForm.getRegionoriginePers());
+			censeur.setFonctionPers(enregPersonnelsForm.getFonctionPers());
+			censeur.setQuotaHorairePers(enregPersonnelsForm.getQuotaHorairePers());
+			try{
+				DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+				String dsfppers=df.format(enregPersonnelsForm.getDateentreeFPPers());
+				Date dfppers=df.parse(dsfppers);
+				censeur.setDateentreeFPPers(dfppers);
+				String dspspers=df.format(enregPersonnelsForm.getDatePSPers());
+				Date dpspers=df.parse(dspspers);
+				censeur.setDatePSPers(dpspers);
+			}
+			catch(Exception e){
+				
+			}
+			censeur.setObservations(enregPersonnelsForm.getObservations());
+			censeur.setFonctionPers(enregPersonnelsForm.getFonctionPers());
+			censeur.setEtabDAttache(enregPersonnelsForm.getEtabDAttache());
 
 
 			if(!(filephotoPers.isEmpty())){
@@ -1129,7 +2010,7 @@ public class ChefetabController {
 			idPersonnels=usersService.saveCenseurs(censeur, roleCode);
 
 		}
-		else if((enregPersonnelsForm.getRoleCode()==3)||(enregPersonnelsForm.getRoleCode()==4)){
+		else if((enregPersonnelsForm.getRoleCode()==2)){
 			//alors c'est un sg qu'on enregistre ou qu'on met à jour
 			SG sg=new SG();
 			sg.setDatenaissPers(enregPersonnelsForm.getDatenaissPers());
@@ -1157,6 +2038,31 @@ public class ChefetabController {
 			sg.setStatutPers(enregPersonnelsForm.getStatutPers());
 			sg.setUsername(enregPersonnelsForm.getUsername());
 			sg.setVillePers(enregPersonnelsForm.getVillePers());
+			
+			/*
+			 * Traitement des nouveaux champs du personnel
+			 */
+			sg.setSitmatriPers(enregPersonnelsForm.getSitmatriPers());
+			sg.setMatriculePers(enregPersonnelsForm.getMatriculePers());
+			sg.setDeptoriginePers(enregPersonnelsForm.getDeptoriginePers());
+			sg.setRegionoriginePers(enregPersonnelsForm.getRegionoriginePers());
+			sg.setFonctionPers(enregPersonnelsForm.getFonctionPers());
+			sg.setQuotaHorairePers(enregPersonnelsForm.getQuotaHorairePers());
+			DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+			try{
+				String dsfppers=df.format(enregPersonnelsForm.getDateentreeFPPers());
+				Date dfppers=df.parse(dsfppers);
+				sg.setDateentreeFPPers(dfppers);
+				String dspspers=df.format(enregPersonnelsForm.getDatePSPers());
+				Date dpspers=df.parse(dspspers);
+				sg.setDatePSPers(dpspers);
+			}
+			catch(Exception e){
+				
+			}
+			sg.setObservations(enregPersonnelsForm.getObservations());
+			sg.setFonctionPers(enregPersonnelsForm.getFonctionPers());
+			sg.setEtabDAttache(enregPersonnelsForm.getEtabDAttache());
 
 			//System.err.println("TOUJOURS PAS DERREUR ON SETPHOTOPERS CENSEUR");
 			if(!(filephotoPers.isEmpty())){
@@ -1168,7 +2074,7 @@ public class ChefetabController {
 			int roleCode=enregPersonnelsForm.getRoleCode();
 			idPersonnels=usersService.saveSG(sg, roleCode);
 		}
-		else if((enregPersonnelsForm.getRoleCode()==5)||(enregPersonnelsForm.getRoleCode()==6)){
+		else if((enregPersonnelsForm.getRoleCode()==4)){
 			//alors c'est un intendant qu'on enregistre ou qu'on met à jour
 			Intendant intendant=new Intendant();
 			intendant.setDatenaissPers(enregPersonnelsForm.getDatenaissPers());
@@ -1196,6 +2102,31 @@ public class ChefetabController {
 			intendant.setStatutPers(enregPersonnelsForm.getStatutPers());
 			intendant.setUsername(enregPersonnelsForm.getUsername());
 			intendant.setVillePers(enregPersonnelsForm.getVillePers());
+			
+			/*
+			 * Traitement des nouveaux champs du personnel
+			 */
+			intendant.setSitmatriPers(enregPersonnelsForm.getSitmatriPers());
+			intendant.setMatriculePers(enregPersonnelsForm.getMatriculePers());
+			intendant.setDeptoriginePers(enregPersonnelsForm.getDeptoriginePers());
+			intendant.setRegionoriginePers(enregPersonnelsForm.getRegionoriginePers());
+			intendant.setFonctionPers(enregPersonnelsForm.getFonctionPers());
+			intendant.setQuotaHorairePers(enregPersonnelsForm.getQuotaHorairePers());
+			DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+			try{
+				String dsfppers=df.format(enregPersonnelsForm.getDateentreeFPPers());
+				Date dfppers=df.parse(dsfppers);
+				intendant.setDateentreeFPPers(dfppers);
+				String dspspers=df.format(enregPersonnelsForm.getDatePSPers());
+				Date dpspers=df.parse(dspspers);
+				intendant.setDatePSPers(dpspers);
+			}
+			catch(Exception e){
+				
+			}
+			intendant.setObservations(enregPersonnelsForm.getObservations());
+			intendant.setFonctionPers(enregPersonnelsForm.getFonctionPers());
+			intendant.setEtabDAttache(enregPersonnelsForm.getEtabDAttache());
 
 			//System.err.println("TOUJOURS PAS DERREUR ON SETPHOTOPERS CENSEUR");
 			if(!(filephotoPers.isEmpty())){
@@ -1207,7 +2138,7 @@ public class ChefetabController {
 			int roleCode=enregPersonnelsForm.getRoleCode();
 			idPersonnels=usersService.saveIntendant(intendant, roleCode);
 		}
-		else if((enregPersonnelsForm.getRoleCode()==7)){
+		else if((enregPersonnelsForm.getRoleCode()==3)){
 			//alors c'est un enseignant qu'on enregistre ou qu'on met à jour
 			Enseignants enseignant=new Enseignants();
 			enseignant.setDatenaissPers(enregPersonnelsForm.getDatenaissPers());
@@ -1229,6 +2160,31 @@ public class ChefetabController {
 			enseignant.setStatutPers(enregPersonnelsForm.getStatutPers());
 			enseignant.setUsername(enregPersonnelsForm.getUsername());
 			enseignant.setVillePers(enregPersonnelsForm.getVillePers());
+			
+			/*
+			 * Traitement des nouveaux champs du personnel
+			 */
+			enseignant.setSitmatriPers(enregPersonnelsForm.getSitmatriPers());
+			enseignant.setMatriculePers(enregPersonnelsForm.getMatriculePers());
+			enseignant.setDeptoriginePers(enregPersonnelsForm.getDeptoriginePers());
+			enseignant.setRegionoriginePers(enregPersonnelsForm.getRegionoriginePers());
+			enseignant.setFonctionPers(enregPersonnelsForm.getFonctionPers());
+			enseignant.setQuotaHorairePers(enregPersonnelsForm.getQuotaHorairePers());
+			DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+			try{
+				String dsfppers=df.format(enregPersonnelsForm.getDateentreeFPPers());
+				Date dfppers=df.parse(dsfppers);
+				enseignant.setDateentreeFPPers(dfppers);
+				String dspspers=df.format(enregPersonnelsForm.getDatePSPers());
+				Date dpspers=df.parse(dspspers);
+				enseignant.setDatePSPers(dpspers);
+			}
+			catch(Exception e){
+				
+			}
+			enseignant.setObservations(enregPersonnelsForm.getObservations());
+			enseignant.setFonctionPers(enregPersonnelsForm.getFonctionPers());
+			enseignant.setEtabDAttache(enregPersonnelsForm.getEtabDAttache());
 
 			//System.err.println("TOUJOURS PAS DERREUR ON SETPHOTOPERS CENSEUR");
 			if(!(filephotoPers.isEmpty())){
@@ -1239,12 +2195,71 @@ public class ChefetabController {
 
 			idPersonnels=usersService.saveEnseignants(enseignant);
 		}
+		else if((enregPersonnelsForm.getRoleCode()==5)||(enregPersonnelsForm.getRoleCode()==6)
+				||(enregPersonnelsForm.getRoleCode()==7)||(enregPersonnelsForm.getRoleCode()==8)){
+			
+			//alors c'est un personnel simple qu'on enregistre ou qu'on met à jour
+			PersonnelsDAppui personnels=new PersonnelsDAppui();
+			personnels.setDatenaissPers(enregPersonnelsForm.getDatenaissPers());
+			personnels.setDiplomePers(enregPersonnelsForm.getDiplomePers());
+			personnels.setEmailPers(enregPersonnelsForm.getEmailPers());
+			personnels.setEnabled(true);
+			personnels.setGradePers(enregPersonnelsForm.getGradePers());
+			personnels.setLieunaissPers(enregPersonnelsForm.getLieunaissPers());
+			personnels.setNationalitePers(enregPersonnelsForm.getNationalitePers());
+			personnels.setNomsPers(enregPersonnelsForm.getNomsPers());
+			personnels.setNumcniPers(enregPersonnelsForm.getNumcniPers());
+			personnels.setNumtel1Pers(enregPersonnelsForm.getNumtel1Pers());
+			personnels.setNumtel2Pers(enregPersonnelsForm.getNumtel2Pers());
+			personnels.setPassword(enregPersonnelsForm.getPassword());
+			personnels.setPrenomsPers(enregPersonnelsForm.getPrenomsPers());
+			personnels.setQuartierPers(enregPersonnelsForm.getQuartierPers());
+			personnels.setSexePers(enregPersonnelsForm.getSexePers());
+			personnels.setStatutPers(enregPersonnelsForm.getStatutPers());
+			personnels.setUsername(enregPersonnelsForm.getUsername());
+			personnels.setVillePers(enregPersonnelsForm.getVillePers());
+			
+			/*
+			 * Traitement des nouveaux champs du personnel
+			 */
+			personnels.setSitmatriPers(enregPersonnelsForm.getSitmatriPers());
+			personnels.setMatriculePers(enregPersonnelsForm.getMatriculePers());
+			personnels.setDeptoriginePers(enregPersonnelsForm.getDeptoriginePers());
+			personnels.setRegionoriginePers(enregPersonnelsForm.getRegionoriginePers());
+			personnels.setFonctionPers(enregPersonnelsForm.getFonctionPers());
+			personnels.setQuotaHorairePers(enregPersonnelsForm.getQuotaHorairePers());
+			DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+			try{
+				String dsfppers=df.format(enregPersonnelsForm.getDateentreeFPPers());
+				Date dfppers=df.parse(dsfppers);
+				personnels.setDateentreeFPPers(dfppers);
+				String dspspers=df.format(enregPersonnelsForm.getDatePSPers());
+				Date dpspers=df.parse(dspspers);
+				personnels.setDatePSPers(dpspers);
+			}
+			catch(Exception e){
+				
+			}
+			personnels.setObservations(enregPersonnelsForm.getObservations());
+			personnels.setFonctionPers(enregPersonnelsForm.getFonctionPers());
+			personnels.setEtabDAttache(enregPersonnelsForm.getEtabDAttache());
+
+			//System.err.println("TOUJOURS PAS DERREUR ON SETPHOTOPERS CENSEUR");
+			if(!(filephotoPers.isEmpty())){
+				personnels.setPhotoPers(filephotoPers.getOriginalFilename());
+			}
+
+			//System.err.println("TOUJOURS PAS DERREUR ON SAVE CENSEUR");
+
+			idPersonnels=usersService.savePersonnelsDAppui(personnels);
+			
+		}
 		else{
 			return "redirect:/logesco/users/chefetab/getenregPersonnels?enregpersonnelserrorChoixRoles";
 		}
 
 		if(idPersonnels.longValue()==-1) 
-			return "redirect:/logesco/users/chefetab/getenregPersonnels?enregpersonnelserrorNumeroCni";
+			return "redirect:/logesco/users/chefetab/getenregPersonnels?updateproviseurerrorNumerocniOUMatricule";
 		if(idPersonnels.longValue()==-2) 
 			return "redirect:/logesco/users/chefetab/getenregPersonnels?enregpersonnelserrorNomsPrenomsDatenaiss";
 		if(idPersonnels.longValue()==-3) 
@@ -1252,9 +2267,13 @@ public class ChefetabController {
 		if(idPersonnels.longValue()==-4) 
 			return "redirect:/logesco/users/chefetab/getenregPersonnels?enregpersonnelserrorNumeroPers";
 		if(idPersonnels.longValue()==-5) 
-			return "redirect:/logesco/users/chefetab/getenregPersonnels?enregpersonnelserrorRole";
+			return "redirect:/logesco/users/chefetab/getenregPersonnels?enregpersonnelserrorSpecialite";
 		if(idPersonnels.longValue()==-6) 
-			return "redirect:/logesco/users/chefetab/getenregPersonnels?enregpersonnelserrorRoleEns";
+			return "redirect:/logesco/users/chefetab/getenregPersonnels?enregpersonnelserrorMatricule";
+		if(idPersonnels.longValue()==-7) 
+			return "redirect:/logesco/users/chefetab/getenregPersonnels?enregpersonnelserrorGrade";
+		if(idPersonnels.longValue()==-8) 
+			return "redirect:/logesco/users/chefetab/getenregPersonnels?enregpersonnelserrorRole";
 
 		/*
 		 * Ici on peut upload l'image sans problème puisqu'aucune erreur n'est constaté pendant le 
@@ -1304,7 +2323,7 @@ public class ChefetabController {
 				XSSFRow row = (XSSFRow)rows.next();
 				Iterator cells = row.cellIterator();
 				int j = 1;
-				//***Initialiser les champs de l'élève à partir des données lues dans le fichier
+				//***Initialiser les champs du personnels à partir des données lues dans le fichier
 				if(i>=3){
 					while(cells.hasNext()){
 						XSSFCell cell = (XSSFCell)cells.next();
@@ -1689,7 +2708,6 @@ public class ChefetabController {
 				+ "enreglistpersonnelserrorfich";
 	}
 
-	@SuppressWarnings("unused")
 	@PostMapping(path="/postupdatePersonnels")
 	public String postupdatePersonnels(@Valid @ModelAttribute("updatePersonnelsForm") 
 	UpdatePersonnelsForm updatePersonnelsForm, 
@@ -1718,6 +2736,7 @@ public class ChefetabController {
 		int numPageSg=updatePersonnelsForm.getNumPageSg();
 		int numPageIntendant=updatePersonnelsForm.getNumPageIntendant();
 		int numPageEns=updatePersonnelsForm.getNumPageEns();
+		int numPagePersAppui=updatePersonnelsForm.getNumPagePersAppui();
 
 		/*
 		 * le roleCode ne doit pas être egale à 0 donc faut aussi signaler cette erreur car cela signifie que rien n'a été choisi
@@ -1729,6 +2748,7 @@ public class ChefetabController {
 			+ "&&numPageSg="+numPageSg
 			+ "&&numPageIntendant="+numPageIntendant
 			+ "&&numPageEns="+numPageEns
+			+ "&&numPagePersAppui="+numPagePersAppui
 			+ "&&updatepersonnelserrorChoixRoles";
 		}
 
@@ -1743,7 +2763,7 @@ public class ChefetabController {
 
 		//System.err.println("il faut mettre à jour le proffesseur");
 
-		if((updatePersonnelsForm.getRoleCodeAModif()==1)||(updatePersonnelsForm.getRoleCodeAModif()==2)){
+		if((updatePersonnelsForm.getRoleCodeAModif()==1)){
 			//Alors le personnel qu'on veut modifier assumait le role de censeur mais on peut lui faire changer de role
 
 			Censeurs censeurAModif=new Censeurs();
@@ -1767,6 +2787,31 @@ public class ChefetabController {
 			censeurAModif.setStatutPers(updatePersonnelsForm.getStatutPers());
 			censeurAModif.setUsername(updatePersonnelsForm.getUsername());
 			censeurAModif.setVillePers(updatePersonnelsForm.getVillePers());
+			
+			/*
+			 * Traitement des nouveaux champs du personnel
+			 */
+			censeurAModif.setSitmatriPers(updatePersonnelsForm.getSitmatriPers());
+			censeurAModif.setMatriculePers(updatePersonnelsForm.getMatriculePers());
+			censeurAModif.setDeptoriginePers(updatePersonnelsForm.getDeptoriginePers());
+			censeurAModif.setRegionoriginePers(updatePersonnelsForm.getRegionoriginePers());
+			censeurAModif.setFonctionPers(updatePersonnelsForm.getFonctionPers());
+			censeurAModif.setQuotaHorairePers(updatePersonnelsForm.getQuotaHorairePers());
+			try{
+				DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+				String dsfppers=df.format(updatePersonnelsForm.getDateentreeFPPers());
+				Date dfppers=df.parse(dsfppers);
+				censeurAModif.setDateentreeFPPers(dfppers);
+				String dspspers=df.format(updatePersonnelsForm.getDatePSPers());
+				Date dpspers=df.parse(dspspers);
+				censeurAModif.setDatePSPers(dpspers);
+			}
+			catch(Exception e){
+				
+			}
+			censeurAModif.setObservations(updatePersonnelsForm.getObservations());
+			censeurAModif.setFonctionPers(updatePersonnelsForm.getFonctionPers());
+			censeurAModif.setEtabDAttache(updatePersonnelsForm.getEtabDAttache());
 
 			//System.err.println("TOUJOURS PAS DERREUR ON SETPHOTOPERS CENSEUR");
 			if(!(filephotoPers.isEmpty())){
@@ -1786,7 +2831,7 @@ public class ChefetabController {
 			}*/
 
 		}
-		else if((updatePersonnelsForm.getRoleCodeAModif()==3)||(updatePersonnelsForm.getRoleCodeAModif()==4)){
+		else if((updatePersonnelsForm.getRoleCodeAModif()==2)){
 
 			//Alors le personnel qu'on veut modifier assumait le role de SG mais on peut lui faire changer de role
 
@@ -1811,6 +2856,31 @@ public class ChefetabController {
 			sgAModif.setStatutPers(updatePersonnelsForm.getStatutPers());
 			sgAModif.setUsername(updatePersonnelsForm.getUsername());
 			sgAModif.setVillePers(updatePersonnelsForm.getVillePers());
+			
+			/*
+			 * Traitement des nouveaux champs du personnel
+			 */
+			sgAModif.setSitmatriPers(updatePersonnelsForm.getSitmatriPers());
+			sgAModif.setMatriculePers(updatePersonnelsForm.getMatriculePers());
+			sgAModif.setDeptoriginePers(updatePersonnelsForm.getDeptoriginePers());
+			sgAModif.setRegionoriginePers(updatePersonnelsForm.getRegionoriginePers());
+			sgAModif.setFonctionPers(updatePersonnelsForm.getFonctionPers());
+			sgAModif.setQuotaHorairePers(updatePersonnelsForm.getQuotaHorairePers());
+			try{
+				DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+				String dsfppers=df.format(updatePersonnelsForm.getDateentreeFPPers());
+				Date dfppers=df.parse(dsfppers);
+				sgAModif.setDateentreeFPPers(dfppers);
+				String dspspers=df.format(updatePersonnelsForm.getDatePSPers());
+				Date dpspers=df.parse(dspspers);
+				sgAModif.setDatePSPers(dpspers);
+			}
+			catch(Exception e){
+				
+			}
+			sgAModif.setObservations(updatePersonnelsForm.getObservations());
+			sgAModif.setFonctionPers(updatePersonnelsForm.getFonctionPers());
+			sgAModif.setEtabDAttache(updatePersonnelsForm.getEtabDAttache());
 
 			//System.err.println("TOUJOURS PAS DERREUR ON SETPHOTOPERS CENSEUR");
 			if(!(filephotoPers.isEmpty())){
@@ -1830,7 +2900,7 @@ public class ChefetabController {
 			}*/
 
 		}
-		else if((updatePersonnelsForm.getRoleCodeAModif()==5)||(updatePersonnelsForm.getRoleCodeAModif()==6)){
+		else if((updatePersonnelsForm.getRoleCodeAModif()==4)){
 
 			//Alors le personnel qu'on veut modifier assumait le role de SG mais on peut lui faire changer de role
 
@@ -1855,6 +2925,31 @@ public class ChefetabController {
 			intendantAModif.setStatutPers(updatePersonnelsForm.getStatutPers());
 			intendantAModif.setUsername(updatePersonnelsForm.getUsername());
 			intendantAModif.setVillePers(updatePersonnelsForm.getVillePers());
+			
+			/*
+			 * Traitement des nouveaux champs du personnel
+			 */
+			intendantAModif.setSitmatriPers(updatePersonnelsForm.getSitmatriPers());
+			intendantAModif.setMatriculePers(updatePersonnelsForm.getMatriculePers());
+			intendantAModif.setDeptoriginePers(updatePersonnelsForm.getDeptoriginePers());
+			intendantAModif.setRegionoriginePers(updatePersonnelsForm.getRegionoriginePers());
+			intendantAModif.setFonctionPers(updatePersonnelsForm.getFonctionPers());
+			intendantAModif.setQuotaHorairePers(updatePersonnelsForm.getQuotaHorairePers());
+			try{
+				DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+				String dsfppers=df.format(updatePersonnelsForm.getDateentreeFPPers());
+				Date dfppers=df.parse(dsfppers);
+				intendantAModif.setDateentreeFPPers(dfppers);
+				String dspspers=df.format(updatePersonnelsForm.getDatePSPers());
+				Date dpspers=df.parse(dspspers);
+				intendantAModif.setDatePSPers(dpspers);
+			}
+			catch(Exception e){
+				
+			}
+			intendantAModif.setObservations(updatePersonnelsForm.getObservations());
+			intendantAModif.setFonctionPers(updatePersonnelsForm.getFonctionPers());
+			intendantAModif.setEtabDAttache(updatePersonnelsForm.getEtabDAttache());
 
 			//System.err.println("TOUJOURS PAS DERREUR ON SETPHOTOPERS intendant");
 			if(!(filephotoPers.isEmpty())){
@@ -1874,7 +2969,7 @@ public class ChefetabController {
 			}*/
 
 		}
-		else if((updatePersonnelsForm.getRoleCodeAModif()==7)){
+		else if((updatePersonnelsForm.getRoleCodeAModif()==3)){
 
 			//Alors le personnel qu'on veut modifier assumait le role de SG mais on peut lui faire changer de role
 
@@ -1899,6 +2994,31 @@ public class ChefetabController {
 			ensAModif.setStatutPers(updatePersonnelsForm.getStatutPers());
 			ensAModif.setUsername(updatePersonnelsForm.getUsername());
 			ensAModif.setVillePers(updatePersonnelsForm.getVillePers());
+			
+			/*
+			 * Traitement des nouveaux champs du personnel
+			 */
+			ensAModif.setSitmatriPers(updatePersonnelsForm.getSitmatriPers());
+			ensAModif.setMatriculePers(updatePersonnelsForm.getMatriculePers());
+			ensAModif.setDeptoriginePers(updatePersonnelsForm.getDeptoriginePers());
+			ensAModif.setRegionoriginePers(updatePersonnelsForm.getRegionoriginePers());
+			ensAModif.setFonctionPers(updatePersonnelsForm.getFonctionPers());
+			ensAModif.setQuotaHorairePers(updatePersonnelsForm.getQuotaHorairePers());
+			try{
+				DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+				String dsfppers=df.format(updatePersonnelsForm.getDateentreeFPPers());
+				Date dfppers=df.parse(dsfppers);
+				ensAModif.setDateentreeFPPers(dfppers);
+				String dspspers=df.format(updatePersonnelsForm.getDatePSPers());
+				Date dpspers=df.parse(dspspers);
+				ensAModif.setDatePSPers(dpspers);
+			}
+			catch(Exception e){
+				
+			}
+			ensAModif.setObservations(updatePersonnelsForm.getObservations());
+			ensAModif.setFonctionPers(updatePersonnelsForm.getFonctionPers());
+			ensAModif.setEtabDAttache(updatePersonnelsForm.getEtabDAttache());
 
 			//System.err.println("TOUJOURS PAS DERREUR ON SETPHOTOPERS ensAModif");
 			if(!(filephotoPers.isEmpty())){
@@ -1909,35 +3029,88 @@ public class ChefetabController {
 			idPersonnels=usersService.updateProffesseurs(idUsers, ensAModif);
 
 		}
+		
+		else if((updatePersonnelsForm.getRoleCode()==5)||(updatePersonnelsForm.getRoleCode()==6)
+				||(updatePersonnelsForm.getRoleCode()==7)||(updatePersonnelsForm.getRoleCode()==8)){
+			
+			//alors c'est un personnel simple qu'on enregistre ou qu'on met à jour
+			PersonnelsDAppui personnels=new PersonnelsDAppui();
+			personnels.setDatenaissPers(updatePersonnelsForm.getDatenaissPers());
+			personnels.setDiplomePers(updatePersonnelsForm.getDiplomePers());
+			personnels.setEmailPers(updatePersonnelsForm.getEmailPers());
+			personnels.setEnabled(true);
+			personnels.setGradePers(updatePersonnelsForm.getGradePers());
+			personnels.setLieunaissPers(updatePersonnelsForm.getLieunaissPers());
+			personnels.setNationalitePers(updatePersonnelsForm.getNationalitePers());
+			personnels.setNomsPers(updatePersonnelsForm.getNomsPers());
+			personnels.setNumcniPers(updatePersonnelsForm.getNumcniPers());
+			personnels.setNumtel1Pers(updatePersonnelsForm.getNumtel1Pers());
+			personnels.setNumtel2Pers(updatePersonnelsForm.getNumtel2Pers());
+			personnels.setPassword(updatePersonnelsForm.getPassword());
+			personnels.setPrenomsPers(updatePersonnelsForm.getPrenomsPers());
+			personnels.setQuartierPers(updatePersonnelsForm.getQuartierPers());
+			personnels.setSexePers(updatePersonnelsForm.getSexePers());
+			personnels.setStatutPers(updatePersonnelsForm.getStatutPers());
+			personnels.setUsername(updatePersonnelsForm.getUsername());
+			personnels.setVillePers(updatePersonnelsForm.getVillePers());
+			
+			/*
+			 * Traitement des nouveaux champs du personnel
+			 */
+			personnels.setSitmatriPers(updatePersonnelsForm.getSitmatriPers());
+			personnels.setMatriculePers(updatePersonnelsForm.getMatriculePers());
+			personnels.setDeptoriginePers(updatePersonnelsForm.getDeptoriginePers());
+			personnels.setRegionoriginePers(updatePersonnelsForm.getRegionoriginePers());
+			personnels.setFonctionPers(updatePersonnelsForm.getFonctionPers());
+			personnels.setQuotaHorairePers(updatePersonnelsForm.getQuotaHorairePers());
+			try{
+				DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+				String dsfppers=df.format(updatePersonnelsForm.getDateentreeFPPers());
+				Date dfppers=df.parse(dsfppers);
+				personnels.setDateentreeFPPers(dfppers);
+				String dspspers=df.format(updatePersonnelsForm.getDatePSPers());
+				Date dpspers=df.parse(dspspers);
+				personnels.setDatePSPers(dpspers);
+			}
+			catch(Exception e){
+				
+			}
+			personnels.setObservations(updatePersonnelsForm.getObservations());
+			personnels.setFonctionPers(updatePersonnelsForm.getFonctionPers());
+			personnels.setEtabDAttache(updatePersonnelsForm.getEtabDAttache());
+
+			//System.err.println("TOUJOURS PAS DERREUR ON SETPHOTOPERS CENSEUR");
+			if(!(filephotoPers.isEmpty())){
+				personnels.setPhotoPers(filephotoPers.getOriginalFilename());
+			}
+
+			//System.err.println("TOUJOURS PAS DERREUR ON SAVE CENSEUR");
+
+			idPersonnels=usersService.savePersonnelsDAppui(personnels);
+			
+		}
+		
 
 
-
+		/*
 		if(idPersonnels.longValue()>0){
-			//System.err.println("la mise à jour du personnel s'est bien passe on doit maintenant fixer les rôles");
-			//ie que la modification du proffesseur s'est bien passe
+			
 			String roleString=new String("ENSEIGNANT");
 			Long idUsers=updatePersonnelsForm.getIdPersonnels();
 			if((updatePersonnelsForm.getRoleCode()==1)||(updatePersonnelsForm.getRoleCode()==2)){
-				/*
-				 * Lorsqu'on est censeur on ne peut qu'assumer les roles de censeur ou alors de censeur et enseignant
-				 * C'est pourquoi le test suivant est effectué car si ce test est vérifié alors on a le role censeur 
-				 * Bref etant censeur on peut devenir censeur et enseignant et rester censeur
-				 */
+				
 				if((updatePersonnelsForm.getRoleCodeAModif()==1)||(updatePersonnelsForm.getRoleCodeAModif()==2)){
-					//System.err.println("On supprime d'abord tous les rôles que possedaient cet utilisateur ");
-
+					
 					int repServeur=usersService.supprimerAllRoleUsers(
 							usersService.findUtilisateurs(updatePersonnelsForm.getIdPersonnels()));
 
-					/*if(repServeur==0)  //System.err.println("erreur de suppression des rôles surtout s'il y avait aucun role");
-*/
-					//System.err.println("les rôles ont été tous supprimer  MAINTENANT ON FAIT LES MISES A JOUR");
+					
 					String roleString1=new String("CENSEUR");
 					int repServ=usersService.saveUsersRoles(idUsers, roleString1);
 					if(repServ==1) //System.err.println(" rôles censeur bien fixé");
 					if(updatePersonnelsForm.getRoleCode()==1){
 						repServ=usersService.saveUsersRoles(idUsers, roleString);
-						/*if(repServ==1) //System.err.println(" rôles enseignant bien fixé");*/
+						
 					}
 				}
 				else{
@@ -1945,25 +3118,18 @@ public class ChefetabController {
 				}
 			}
 			else if((updatePersonnelsForm.getRoleCode()==3)||(updatePersonnelsForm.getRoleCode()==4)){
-				/*
-				 * Lorsqu'on est SG on ne peut qu'assumer les roles de SG ou alors de SG et enseignant
-				 * C'est pourquoi le test suivant est effectué car si ce test est vérifié alors on a le role SG 
-				 * Bref etant SG on peut devenir SG et enseignant et rester SG
-				 */
+				
 				if((updatePersonnelsForm.getRoleCodeAModif()==3)||(updatePersonnelsForm.getRoleCodeAModif()==4)){
-					//System.err.println("On supprime d'abord tous les rôles que possedaient cet utilisateur ");
-
+					
 					int repServeur=usersService.supprimerAllRoleUsers(usersService.findUtilisateurs(updatePersonnelsForm.getIdPersonnels()));
 
-				/*	if(repServeur==0)  //System.err.println("erreur de suppression des rôles surtout s'il y avait aucun role");*/
-					//System.err.println("les rôles ont été tous supprimer  MAINTENANT ON FAIT LES MISES A JOUR");
-
+				
 					String roleString1=new String("SG");
 					int repServ=usersService.saveUsersRoles(idUsers, roleString1);
-					if(repServ==1) //System.err.println(" rôles sg bien fixé");
+					
 					if(updatePersonnelsForm.getRoleCode()==3){
 						repServ=usersService.saveUsersRoles(idUsers, roleString);
-						/*if(repServ==1) //System.err.println(" rôles enseignant bien fixé");*/
+						
 					}
 				}
 				else{
@@ -1971,27 +3137,19 @@ public class ChefetabController {
 				}
 			}
 			else if((updatePersonnelsForm.getRoleCode()==5)||(updatePersonnelsForm.getRoleCode()==6)){
-				/*
-				 * Lorsqu'on est INTENDANT on ne peut qu'assumer les roles de INTENDANT ou alors de INTENDANT et enseignant
-				 * C'est pourquoi le test suivant est effectué car si ce test est vérifié alors on a le role INTENDANT 
-				 * Bref etant INTENDANT on peut devenir INTENDANT et enseignant et rester INTENDANT
-				 */
+				
 				if((updatePersonnelsForm.getRoleCodeAModif()==5)||(updatePersonnelsForm.getRoleCodeAModif()==6)){
 
-					//System.err.println("On supprime d'abord tous les rôles que possedaient cet utilisateur ");
+					
 
 					int repServeur=usersService.supprimerAllRoleUsers(usersService.findUtilisateurs(updatePersonnelsForm.getIdPersonnels()));
 
-					/*if(repServeur==0)  //System.err.println("erreur de suppression des rôles surtout s'il y avait aucun role");*/
-
-					//System.err.println("les rôles ont été tous supprimer  MAINTENANT ON FAIT LES MISES A JOUR");
-
+					
 					String roleString1=new String("INTENDANT");
 					int repServ=usersService.saveUsersRoles(idUsers, roleString1);
-					if(repServ==1) //System.err.println(" rôles intendant bien fixé");
 					if(updatePersonnelsForm.getRoleCode()==5){
 						repServ=usersService.saveUsersRoles(idUsers, roleString);
-						/*if(repServ==1) //System.err.println(" rôles enseignant bien fixé");*/
+						
 					}
 				}
 				else{
@@ -1999,28 +3157,23 @@ public class ChefetabController {
 				}
 			}
 			else if((updatePersonnelsForm.getRoleCode()==7)){
-				/*
-				 * Lorsqu'on est ENSEIGNANT on reste ENSEIGNANT sauf si on change de fonction
-				 */
+				
 				if((updatePersonnelsForm.getRoleCodeAModif()==7)){
 
-					//System.err.println("On supprime d'abord tous les rôles que possedaient cet utilisateur ");
+					
 
 					int repServeur=usersService.supprimerAllRoleUsers(usersService.findUtilisateurs(updatePersonnelsForm.getIdPersonnels()));
 
-					/*if(repServeur==0)  //System.err.println("erreur de suppression des rôles surtout s'il y avait aucun role");*/
-
-					//System.err.println("les rôles ont été tous supprimer  MAINTENANT ON FAIT LES MISES A JOUR");
-
+					
 					String roleString1=new String("ENSEIGNANT");
 					int repServ=usersService.saveUsersRoles(idUsers, roleString1);
-					/*if(repServ==1) //System.err.println(" rôles enseignant bien fixé");*/
+					
 				}
 				else{
 					idPersonnels=new Long(-7);
 				}
 			}
-		}
+		}*/
 
 		if(idPersonnels.longValue()==-1) 
 			return "redirect:/logesco/users/chefetab/getupdatePersonnels?enregpersonnelserrorNumeroCni"
@@ -2047,13 +3200,20 @@ public class ChefetabController {
 			+ "&&numPageIntendant="+numPageIntendant
 			+ "&&numPageEns="+numPageEns;
 		if(idPersonnels.longValue()==-5) 
-			return "redirect:/logesco/users/chefetab/getupdatePersonnels?enregpersonnelserrorRole"
+			return "redirect:/logesco/users/chefetab/getupdatePersonnels?enregpersonnelserrorSpecialite"
 			+ "&&numPageCenseur="+numPageCenseur
 			+ "&&numPageSg="+numPageSg
 			+ "&&numPageIntendant="+numPageIntendant
 			+ "&&numPageEns="+numPageEns;
 		if(idPersonnels.longValue()==-6) 
-			return "redirect:/logesco/users/chefetab/getupdatePersonnels?enregpersonnelserrorRoleEns"
+			return "redirect:/logesco/users/chefetab/getupdatePersonnels?enregpersonnelserrorMatricule"
+			+ "&&numPageCenseur="+numPageCenseur
+			+ "&&numPageSg="+numPageSg
+			+ "&&numPageIntendant="+numPageIntendant
+			+ "&&numPageEns="+numPageEns;
+		
+		if(idPersonnels.longValue()==-7) 
+			return "redirect:/logesco/users/chefetab/getupdatePersonnels?enregpersonnelserrorGrade"
 			+ "&&numPageCenseur="+numPageCenseur
 			+ "&&numPageSg="+numPageSg
 			+ "&&numPageIntendant="+numPageIntendant
@@ -2075,7 +3235,7 @@ public class ChefetabController {
 		 * Voila pourquoi l'affichage de ces avectissement se fait sur la page de consultation car
 		 * a ce niveau toutes les autres modifications ont réussi
 		 */
-		if(idPersonnels.longValue()==-7) 
+		if(idPersonnels.longValue()==-8) 
 			return "redirect:/logesco/users/chefetab/getconsulterPersonnels?enregpersonnelswarningRole"
 			+ "&&numPageCenseur="+numPageCenseur
 			+ "&&numPageSg="+numPageSg
@@ -2145,7 +3305,6 @@ public class ChefetabController {
 			
 			while(rows.hasNext()){
 				List<String> listofData = new ArrayList<String>();
-				////System.err.println("ligne numero "+i);
 				XSSFRow row = (XSSFRow)rows.next();
 				Iterator cells = row.cellIterator();
 				int j = 1;
@@ -2154,35 +3313,29 @@ public class ChefetabController {
 					while(cells.hasNext()){
 						XSSFCell cell = (XSSFCell)cells.next();
 
-						////System.err.println("colonne numero "+j);
 						if(j==1) {
 							//On met d'abord le type de la cellule en String pour eviter les problemes de lecture
 							cell.setCellType(CellType.STRING);
 							listofData.add(cell.getStringCellValue());
-							////System.err.println("Noms");
 						}
 						if(j==2) {
 							//On met d'abord le type de la cellule en String pour eviter les problemes de lecture
 							cell.setCellType(CellType.STRING);
 							listofData.add(cell.getStringCellValue());
-							////System.err.println("Prénoms");
 						}
 						if(j==3) {
 							Date datenaiss = cell.getDateCellValue();
 							String datenaissString = spd1.format(datenaiss);
 							listofData.add(datenaissString);
-							////System.err.println("Date de naissance");
 						}
 						if(j==4) {
 							//On met d'abord le type de la cellule en String pour eviter les problemes de lecture
 							cell.setCellType(CellType.STRING);
 							listofData.add(cell.getStringCellValue());
-							////System.err.println("Lieu de naissance");
 						}
 						if(j==5) {
 							//On met d'abord le type de la cellule en String pour eviter les problemes de lecture
 							cell.setCellType(CellType.STRING);
-							////System.err.println("Sexe");
 							String sexe = "masculin";
 							if(cell.getStringCellValue().equalsIgnoreCase("F")==true
 									||cell.getStringCellValue().equalsIgnoreCase("feminin")==true
@@ -2195,32 +3348,27 @@ public class ChefetabController {
 							//On met d'abord le type de la cellule en String pour eviter les problemes de lecture
 							cell.setCellType(CellType.STRING);
 							listofData.add(cell.getStringCellValue());
-							////System.err.println("Nationalite");
 						}
 						if(j==7) {
 							//On met d'abord le type de la cellule en String pour eviter les problemes de lecture
 							cell.setCellType(CellType.STRING);
 							listofData.add(cell.getStringCellValue());
-							////System.err.println("Quartier");
 						}
 						if(j==8) {
 							//On met d'abord le type de la cellule en String pour eviter les problemes de lecture
 							cell.setCellType(CellType.STRING);
 							listofData.add(cell.getStringCellValue());
-							////System.err.println("Ville");
 						}
 						if(j==9) {
 							//On met d'abord le type de la cellule en String pour eviter les problemes de lecture
 							cell.setCellType(CellType.STRING);
 							String tel = ""+cell.getStringCellValue();
 							listofData.add(""+tel);
-							////System.err.println("Tel");
 						}
 						if(j==10) {
 							//On met d'abord le type de la cellule en String pour eviter les problemes de lecture
 							cell.setCellType(CellType.STRING);
 							listofData.add(cell.getStringCellValue());
-							////System.err.println("Email");
 						}
 						/*
 						 * On affiche donc les données des élèves si on les a tous lues
@@ -2253,7 +3401,6 @@ public class ChefetabController {
 								//int index = i+1;
 								String matricule = usersService.getNextMatricule(codeEtab, anneeString);
 								eleveAValider.setMatriculeEleves(matricule);
-								////System.out.println("eleveAValider  "+i+"  "+eleveAValider.toString());
 								/*
 								 * Après construction il faut donc valider avant de placer dans la liste des élèves 
 								 * a enregistrer
