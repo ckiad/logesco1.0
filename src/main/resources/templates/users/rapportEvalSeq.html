@@ -104,8 +104,8 @@
 											<td th:inline="text">[[${eval.proportionEval}]] </td>
 											<td th:inline="text">[[${#dates.format(eval.dateenregEval,"dd-MM-yyyy")}]] </td>
 											<td th:inline="text">
-												<a class="btn btn-primary btn-sm pull-left" href="#" 
-													th:href="@{/logesco/users/getprocesverbalNotes(idEval=${eval.idEval})}"
+												<a class="btn btn-primary btn-sm pull-left" href="#"  target="_blank"
+													th:href="@{/logesco/users/getprocesverbalNotes(idEvalConcerne=${eval.idEval})}"
 													 role="button" th:inline="text">
 													 <span class="glyphicon glyphicon-list-all"></span> [[#{rapportevalseq.bouton_voirpv}]]
 												</a>

@@ -28,6 +28,7 @@ import org.logesco.form.*;
 import org.logesco.modeles.EleveBean;
 import org.logesco.modeles.EleveBean2;
 import org.logesco.modeles.EleveInsolvableBean;
+import org.logesco.modeles.ErrorBean;
 import org.logesco.modeles.FicheRecapAbsenceClasseBean;
 import org.logesco.modeles.FicheRecapAbsenceCycleBean;
 import org.logesco.modeles.FicheRecapAbsenceNiveauBean;
@@ -342,21 +343,37 @@ public class UsersController {
 		Classes classeSelect = usersService.findClasses(idClasseSelect);
 		
 		Annee anneeScolaire = usersService.findAnneeActive();
-		
-		if(classeSelect == null) {
+		String error ="";
+		if(etablissementConcerne == null || classeSelect == null || anneeScolaire == null) {
 			//System.out.println("la classe selectionner est null dans le code donc mauvaise recuperation");
-			return null;
+			
+
+			String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			if(etablissementConcerne == null){
+				error+="\n L'ETABLISSEMENT EST INEXISTANT";
+			}
+			if(classeSelect == null){
+				error+="\n LA CLASSE N'A PAS ETE RETROUVE AU NIVEAU DE LA BASE DE DONNEE";
+			}
+			if(anneeScolaire == null){
+				error+="\n L'ANNEE SCOLAIRE N'A PAS ENCORE ETE ENREGISTRE";
+			}
+			
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+		
 		}
 		
-		if(anneeScolaire == null){
-			//System.out.println("l'annee scolaire est null donc mal recuperer ou pas encore enregistrée");
-			return null;
-		}
 		
-		if(etablissementConcerne == null){
-			//System.out.println("Avez vous déjà enregistrer l'établissement si oui alors mauvaise recuperation");
-			return null;
-		}
 		
 		Collection<EleveBean> collectionofEleveprovClasse = 
 				usersService.generateCollectionofEleveprovClasse(classeSelect.getIdClasses());
@@ -659,20 +676,36 @@ public class UsersController {
 		
 		Annee anneeScolaire = usersService.findAnneeActive();
 		
-		if(classeSelect == null) {
+		if(etablissementConcerne == null || classeSelect == null || anneeScolaire == null) {
 			//System.out.println("la classe selectionner est null dans le code donc mauvaise recuperation");
-			return null;
+			
+			String error="";
+			
+			String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			if(etablissementConcerne == null){
+				error+="\n L'ETABLISSEMENT EST INEXISTANT";
+			}
+			if(classeSelect == null){
+				error+="\n LA CLASSE N'A PAS ETE RETROUVE AU NIVEAU DE LA BASE DE DONNEE";
+			}
+			if(anneeScolaire == null){
+				error+="\n L'ANNEE SCOLAIRE N'A PAS ENCORE ETE ENREGISTRE";
+			}
+			
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+		
 		}
 		
-		if(anneeScolaire == null){
-			//System.out.println("l'annee scolaire est null donc mal recuperer");
-			return null;
-		}
-		
-		if(etablissementConcerne == null){
-			//System.out.println("Avez vous déjà enregistrer l'établissement si oui alors mauvaise recuperation");
-			return null;
-		}
 		double coefMontant = critere * 0.01;
 		double montantMin = classeSelect.getMontantScolarite() * coefMontant;
 		
@@ -1454,17 +1487,17 @@ public class UsersController {
 		model.addAttribute("profConnecte", profConnecte);
 		
 		if(userconnecte != null){
-			int roleUser = usersService.getcodeUsersRole(userconnecte);
-			////System.out.println("le role joue vis a vis du système a pour code "+roleUser);
+			//int roleUser = usersService.getcodeUsersRole(userconnecte);
+			//System.out.println("le role joue vis a vis du système a pour code "+roleUser);
 
 			/*
 			 * Il faut la liste des séquences de l'année en cours
 			 */
 			Annee anneeActive = usersService.findAnneeActive();
 			
-			
+			String roleCen = "CENSEUR";
 			List<Niveaux> listofNiveaux = usersService.findAllNiveaux();
-			if(roleUser == 1 || roleUser == 2){
+			if(usersService.hasRole(userconnecte, roleCen)==true){
 				/*
 				 *Si il a le role censeur alors il faut chargé la liste de toutes les classes puisque lui il peut voir 
 				 *tous les proces verbaux recapitulatifs
@@ -1535,7 +1568,35 @@ public class UsersController {
 		if(etablissementConcerne==null || classeConcerne==null || anneeScolaire==null || 
 				 userconnecte==null) {
 			//System.out.println("un de ces truc est null vraiment");
-			return null;
+			
+			String error="";
+			
+			String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			if(etablissementConcerne == null){
+				error+="\n L'ETABLISSEMENT EST INEXISTANT";
+			}
+			if(classeConcerne == null){
+				error+="\n LA CLASSE N'A PAS ETE RETROUVE AU NIVEAU DE LA BASE DE DONNEE";
+			}
+			if(anneeScolaire == null){
+				error+="\n L'ANNEE SCOLAIRE N'A PAS ENCORE ETE ENREGISTRE";
+			}
+			if(userconnecte == null){
+				error+="\n ERREUR D'UTILISATEUR CONNECTE";
+			}
+			
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+			
 		}
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -1564,9 +1625,14 @@ public class UsersController {
 		List<EleveBean2> listofEleve = (List<EleveBean2>) usersService.generateReleveNote(idClasseSelect);
 		parameters.put("SUBREPORT_DIR", "classpath:/reports/compiled/fiches/");
 		
-		String titulaire = classeConcerne.getProffesseur().getNomsPers()+" "+
-				classeConcerne.getProffesseur().getPrenomsPers();
+		String titulaire="";
+		if(classeConcerne.getProffesseur() != null){
+			titulaire = classeConcerne.getProffesseur().getNomsPers()+" "+
+					classeConcerne.getProffesseur().getPrenomsPers();
+		}
+		
 		parameters.put("titulaire", titulaire.toUpperCase());
+		
 		parameters.put("LOGO", "classpath:/static/images/logobekoko.png");
 		parameters.put("datasource", listofEleve);
 		//System.out.println("Aucun de ces truc n'est null vraiment  "+listofEleve.size());
@@ -1610,7 +1676,41 @@ public class UsersController {
 		if(etablissementConcerne==null || classeConcerne==null || anneeScolaire==null || 
 				sequenceConcerne==null || cours==null || userconnecte==null) {
 			//System.out.println("un de ces truc est null vraiment pour l'impression des pv de sequence");
-			return null;
+
+			String error="";
+			
+			String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			if(etablissementConcerne == null){
+				error+="\n L'ETABLISSEMENT EST INEXISTANT";
+			}
+			if(classeConcerne == null){
+				error+="\n LA CLASSE N'A PAS ETE RETROUVE AU NIVEAU DE LA BASE DE DONNEE";
+			}
+			if(anneeScolaire == null){
+				error+="\n L'ANNEE SCOLAIRE N'A PAS ENCORE ETE ENREGISTRE";
+			}
+			if(userconnecte == null){
+				error+="\n ERREUR D'UTILISATEUR CONNECTE";
+			}
+			if(sequenceConcerne == null){
+				error+="\n LA SEQUENCE INDIQUEE N'A PAS ETE RETROUVE";
+			}
+			if(cours == null){
+				error+="\n LE COURS CONCERNE N'EST PAS RETROUVE";
+			}
+			
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+			
 		}
 		
 		
@@ -1740,7 +1840,41 @@ public class UsersController {
 					+ "etablissementConcerne "+etablissementConcerne+
 					"classeConcerne "+classeConcerne+" anneeScolaire "+anneeScolaire+
 					"trimestreConcerne"+trimestreConcerne+" cours"+cours+" userconnecte"+userconnecte);*/
-			return null;
+			
+			String error="";
+			
+			String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			if(etablissementConcerne == null){
+				error+="\n L'ETABLISSEMENT EST INEXISTANT";
+			}
+			if(classeConcerne == null){
+				error+="\n LA CLASSE N'A PAS ETE RETROUVE AU NIVEAU DE LA BASE DE DONNEE";
+			}
+			if(anneeScolaire == null){
+				error+="\n L'ANNEE SCOLAIRE N'A PAS ENCORE ETE ENREGISTRE";
+			}
+			if(userconnecte == null){
+				error+="\n ERREUR D'UTILISATEUR CONNECTE";
+			}
+			if(trimestreConcerne == null){
+				error+="\n LA SEQUENCE INDIQUEE N'A PAS ETE RETROUVE";
+			}
+			if(cours == null){
+				error+="\n LE COURS CONCERNE N'EST PAS RETROUVE";
+			}
+			
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+			
 		}
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -1851,7 +1985,7 @@ public class UsersController {
 		model.addAttribute("profConnecte", profConnecte);
 		
 		if(userconnecte != null){
-			int roleUser = usersService.getcodeUsersRole(userconnecte);
+			//int roleUser = usersService.getcodeUsersRole(userconnecte);
 			//System.out.println("le role joue vis a vis du système a pour code "+roleUser);
 
 			/*
@@ -1862,7 +1996,8 @@ public class UsersController {
 			model.addAttribute("listofTrimestre", listofTrimestre);
 			
 			List<Niveaux> listofNiveaux = usersService.findAllNiveaux();
-			if(roleUser == 1 || roleUser == 2){
+			String roleCen = "CENSEUR";
+			if(usersService.hasRole(userconnecte, roleCen)==true){
 				/*
 				 *Si il a le role censeur alors il faut chargé la liste de toutes les classes puisque lui il peut voir 
 				 *tous les proces verbaux recapitulatifs
@@ -1967,7 +2102,40 @@ public class UsersController {
 					+ "etablissementConcerne "+etablissementConcerne+
 					"classeConcerne "+classeConcerne+" anneeScolaire "+anneeScolaire+
 					"evalConcerne "+evalConcerne+" cours"+cours+" userconnecte "+userconnecte);*/
-			return null;
+			String error="";
+			
+			String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			if(etablissementConcerne == null){
+				error+="\n L'ETABLISSEMENT EST INEXISTANT";
+			}
+			if(classeConcerne == null){
+				error+="\n LA CLASSE N'A PAS ETE RETROUVE AU NIVEAU DE LA BASE DE DONNEE";
+			}
+			if(anneeScolaire == null){
+				error+="\n L'ANNEE SCOLAIRE N'A PAS ENCORE ETE ENREGISTRE";
+			}
+			if(userconnecte == null){
+				error+="\n ERREUR D'UTILISATEUR CONNECTE";
+			}
+			if(evalConcerne == null){
+				error+="\n L'EVALUATION CONCERNE N'A PAS ETE RETROUVE";
+			}
+			if(cours == null){
+				error+="\n LE COURS CONCERNE N'EST PAS RETROUVE";
+			}
+			
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+			
 		}
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -2042,6 +2210,149 @@ public class UsersController {
 		return new ModelAndView(view, parameters);
 	}
 	
+	
+	@GetMapping(path="/getprocesverbalNotes")
+	public ModelAndView getprocesverbalNotes(
+			Model model, HttpServletRequest request,
+			@RequestParam(name="idEvalConcerne", defaultValue="0") long idEvalConcerne){
+		
+		HttpSession session=request.getSession();
+		
+		Etablissement etablissementConcerne = usersService.getEtablissement();
+		
+		Annee anneeScolaire = usersService.findAnneeActive();
+		
+		
+		Evaluations evalConcerne =  usersService.findEvaluations(idEvalConcerne);
+		Classes classeConcerne = null;
+		if(evalConcerne!=null){
+			classeConcerne = evalConcerne.getCours().getClasse();
+		}
+		
+		Cours cours = evalConcerne.getCours();
+		
+		String username=(String)session.getAttribute("username");
+		
+		Utilisateurs userconnecte = usersService.findByUsername(username);
+		
+		Proffesseurs profConnecte = usersService.findProffesseurs(userconnecte.getIdUsers());
+		
+		
+		List<NotesEval> listofNotesEvalSeq = (List<NotesEval>) evalConcerne.getListofnotesEval();
+	
+		
+		//liste des élèves classé par ordre alphabetique
+		//List<Eleves> listofAllEleveDeClasseConcerne = usersService.findListElevesClasse(classeConcerne.getIdClasses());
+		
+		if(etablissementConcerne==null || classeConcerne==null || anneeScolaire==null || 
+				evalConcerne==null || cours==null || userconnecte==null) {
+			/*//System.out.println("un de ces truc est null vraiment dans l'impression du pv du trimestre "
+					+ "etablissementConcerne "+etablissementConcerne+
+					"classeConcerne "+classeConcerne+" anneeScolaire "+anneeScolaire+
+					"evalConcerne "+evalConcerne+" cours"+cours+" userconnecte "+userconnecte);*/
+			String error="";
+			
+			String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			if(etablissementConcerne == null){
+				error+="\n L'ETABLISSEMENT EST INEXISTANT";
+			}
+			if(classeConcerne == null){
+				error+="\n LA CLASSE N'A PAS ETE RETROUVE AU NIVEAU DE LA BASE DE DONNEE";
+			}
+			if(anneeScolaire == null){
+				error+="\n L'ANNEE SCOLAIRE N'A PAS ENCORE ETE ENREGISTRE";
+			}
+			if(userconnecte == null){
+				error+="\n ERREUR D'UTILISATEUR CONNECTE";
+			}
+			if(evalConcerne == null){
+				error+="\n L'EVALUATION CONCERNE N'A PAS ETE RETROUVE";
+			}
+			if(cours == null){
+				error+="\n LE COURS CONCERNE N'EST PAS RETROUVE";
+			}
+			
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+			
+		}
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		parameters.put("deleguation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
+		parameters.put("deleguation_en", etablissementConcerne.getDeleguationdeptuteleanglaisEtab().toUpperCase());
+		parameters.put("etablissement_fr", etablissementConcerne.getNomsEtab().toUpperCase());
+		parameters.put("etablissement_en", etablissementConcerne.getNomsanglaisEtab().toUpperCase());
+		String adresse = "BP "+etablissementConcerne.getBpEtab()+
+				"  TEL: "+etablissementConcerne.getNumtel1Etab();
+		parameters.put("adresse", adresse);
+		parameters.put("annee_scolaire_fr", "Année Académique "+anneeScolaire.getIntituleAnnee());
+		parameters.put("annee_scolaire_en", "Academic year "+anneeScolaire.getIntituleAnnee());
+		parameters.put("ministere_fr", etablissementConcerne.getMinisteretuteleEtab());
+		parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
+		parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
+		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
+		parameters.put("ville", etablissementConcerne.getVilleEtab());
+		
+		String titre_pv = "PROCES VERBAL DES NOTES ";
+		parameters.put("titre_pv", titre_pv);
+		String nomClasse= classeConcerne.getCodeClasses()+classeConcerne.getSpecialite().getCodeSpecialite()+
+				classeConcerne.getNumeroClasses();
+		parameters.put("classe", nomClasse);
+		
+		String matiere = cours.getIntituleCours()+" ("+cours.getMatiere().getIntituleMatiere()+")";
+		parameters.put("matiere", matiere);
+		String enseignant = profConnecte.getNomsPers()+" "+profConnecte.getPrenomsPers();
+		parameters.put("enseignant", enseignant);
+		
+		int nbre_moyennes = usersService.getNbreNoteDansCourspourEvalDansListe(listofNotesEvalSeq);
+		int nbre_sous_moyennes = usersService.getNbreSousNoteDansCourspourEvalDansListe(listofNotesEvalSeq);
+		//System.err.println("nbre_moyennes dans evaluation "+nbre_moyennes);
+		
+		if(nbre_moyennes<0) nbre_moyennes = 0;
+		parameters.put("nbre_moyennes", nbre_moyennes);
+		
+		if(nbre_sous_moyennes<0) nbre_sous_moyennes = 0;
+		parameters.put("nbre_sous_moyennes", nbre_sous_moyennes);
+		
+		double nbM=new Double(nbre_moyennes).doubleValue();
+		double nbSM=new Double(nbre_sous_moyennes).doubleValue();
+		double pourRr = (nbM/(nbM+nbSM))*100;
+
+		int nb_decimale = 3;
+		pourRr = usersService.getUtilitairesBulletins().tronqueDouble(pourRr, nb_decimale);
+		String pourR = ""+pourRr+" %";
+		
+		List<PV_NoteBean> listofPV = (List<PV_NoteBean>) usersService.generatePVEvalAvecListeNote(listofNotesEvalSeq);
+		
+		String label_devoir=" EVALUATION COMPTANT POUR ";
+		
+		parameters.put("pourd", evalConcerne.getProportionEval()+"%");
+		parameters.put("pourR", pourR);
+		parameters.put("label_devoir", label_devoir);
+		parameters.put("LOGO", "classpath:/static/images/logobekoko.png");
+		//parameters.put("IMAGE_FOND", "src/main/resources/static/images/logobekoko.png");
+		parameters.put("datasource", listofPV);
+		//System.out.println("Aucun de ces truc n'est null vraiment  "+listofPV.size());
+		JasperReportsPdfView view = new JasperReportsPdfView();
+		view.setUrl("classpath:/reports/compiled/fiches/PVNoteEval.jasper");
+		view.setApplicationContext(applicationContext);
+		
+		
+		return new ModelAndView(view, parameters);
+		
+	}
+	
+	
 	@GetMapping(path="/getNotesFinaleClasse")
 	public ModelAndView getNotesFinaleClasse(
 			Model model, HttpServletRequest request,
@@ -2091,7 +2402,37 @@ public class UsersController {
 					+ "etablissementConcerne "+etablissementConcerne+
 					"classeConcerne "+classeConcerne+" anneeScolaire "+anneeScolaire
 					+" cours  "+coursConcerne+" userconnecte "+userconnecte);*/
-			return null;
+			String error="";
+			
+			String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			if(etablissementConcerne == null){
+				error+="\n L'ETABLISSEMENT EST INEXISTANT";
+			}
+			if(classeConcerne == null){
+				error+="\n LA CLASSE N'A PAS ETE RETROUVE AU NIVEAU DE LA BASE DE DONNEE";
+			}
+			if(anneeScolaire == null){
+				error+="\n L'ANNEE SCOLAIRE N'A PAS ENCORE ETE ENREGISTRE";
+			}
+			if(userconnecte == null){
+				error+="\n ERREUR D'UTILISATEUR CONNECTE";
+			}
+			
+			if(coursConcerne == null){
+				error+="\n LE COURS CONCERNE N'EST PAS RETROUVE";
+			}
+			
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
 		}
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -2157,9 +2498,11 @@ public class UsersController {
 		for(Evaluations eval: listofEvalSeq){
 			if(eval.getTypeEval().equalsIgnoreCase("CC")){
 				pourcc = eval.getProportionEval();
+				pourds = 100 - pourcc;
 			}
 			if(eval.getTypeEval().equalsIgnoreCase("DS")){
 				pourds = eval.getProportionEval();
+				pourcc = 100 - pourds;
 			}
 		}
 	
@@ -2293,8 +2636,32 @@ public class UsersController {
 		Etablissement etablissementConcerne = usersService.getEtablissement();
 		Annee anneeScolaire = usersService.findAnneeActive();
 		if(etablissementConcerne == null ||  anneeScolaire == null ){
-			return null;
+			
+			String error="";
+			
+			String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			if(etablissementConcerne == null){
+				error+="\n L'ETABLISSEMENT EST INEXISTANT";
+			}
+			
+			if(anneeScolaire == null){
+				error+="\n L'ANNEE SCOLAIRE N'A PAS ENCORE ETE ENREGISTRE";
+			}
+			
+			
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
 		}
+		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		
 		parameters.put("delegation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
@@ -2321,7 +2688,26 @@ public class UsersController {
 		}
 		
 		Operations operation_concerne = usersService.findOperation(idOperation_a_imprimer);
-		if(operation_concerne == null) return null;
+		if(operation_concerne == null) {
+			
+			String error="";
+			
+			String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+			Map<String, Object> parameters1 = new HashMap<String, Object>();
+			if(operation_concerne == null){
+				error+="\n L'OPERATION EFFECTUE N'A PAS ETE RETROUVE";
+			}
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			
+			parameters1.put("erreur", erreur);
+			parameters1.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters1);
+		}
 		
 		Date date_op = operation_concerne.getDateOperation();
 		SimpleDateFormat spd = new SimpleDateFormat("yyyy-MM-dd");//"dd-MM-yyyy"
@@ -2336,8 +2722,26 @@ public class UsersController {
 		
 		Eleves eleveConcerne = operation_concerne.getCompteinscription().getEleveProprietaire();
 		if(eleveConcerne==null){
-			return null;
+			String error="";
+			
+			String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+			Map<String, Object> parameters1 = new HashMap<String, Object>();
+			if(eleveConcerne == null){
+				error+="\n L'ELEVE CONCERNE N'A PAS ETE RETROUVE";
+			}
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			
+			parameters1.put("erreur", erreur);
+			parameters1.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters1);
 		}
+		
+		
 		String classeString=eleveConcerne.getClasse().getCodeClasses()+
 				eleveConcerne.getClasse().getSpecialite().getCodeSpecialite()+
 				eleveConcerne.getClasse().getNumeroClasses();
@@ -2386,7 +2790,26 @@ public class UsersController {
 			Etablissement etablissementConcerne = usersService.getEtablissement();
 			Annee anneeScolaire = usersService.findAnneeActive();
 			if(etablissementConcerne == null ||  anneeScolaire == null ){
-				return null;
+				String error="";
+				
+				String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+				Map<String, Object> parameters1 = new HashMap<String, Object>();
+				if(etablissementConcerne == null){
+					error+="\n L'ETABLISSEMENT CONCERNE N'A PAS ETE RETROUVE";
+				}
+				if(anneeScolaire == null){
+					error+="\n L'ANNEE SCOLAIRE CONCERNE N'A PAS ETE RETROUVE";
+				}
+				Collection<ErrorBean> collectionofErreurBean = 
+						usersService.generateCollectionofErrorBean(error);
+				
+				parameters1.put("erreur", erreur);
+				parameters1.put("datasource", collectionofErreurBean);
+				JasperReportsPdfView view = new JasperReportsPdfView();
+				view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+				view.setApplicationContext(applicationContext);
+
+				return new ModelAndView(view, parameters1);
 			}
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			
@@ -2451,10 +2874,34 @@ public class UsersController {
 		Eleves eleveConcerne = usersService.findEleves(idEleve);
 		if(etablissementConcerne == null ||  anneeScolaire == null || eleveConcerne == null){
 			System.out.println("Erreur dans les paramètre car etab, annee ou eleve sont null");
-			return null;
+			String error="";
+			
+			String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+			Map<String, Object> parameters1 = new HashMap<String, Object>();
+			if(etablissementConcerne == null){
+				error+="\n L'ETABLISSEMENT CONCERNE N'A PAS ETE RETROUVE";
+			}
+			if(anneeScolaire == null){
+				error+="\n L'ANNEE SCOLAIRE CONCERNE N'A PAS ETE RETROUVE";
+			}
+			if(eleveConcerne == null){
+				error+="\n L'ELEVE CONCERNE N'A PAS ETE RETROUVE";
+			}
+			
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			
+			parameters1.put("erreur", erreur);
+			parameters1.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters1);
+			
 		}
 		
-		System.out.println("Tout est bien ");
+		
 		List<Operations> listOperationEleve = usersService.findListAllOperationsEleve(idEleve);
 		double montantTotal=usersService.calculMontantTotalListOperation(listOperationEleve);
 		Collection<OperationBean> listofOperationBean = usersService.generateListOperationEleve(idEleve);
@@ -2516,7 +2963,29 @@ public class UsersController {
 		Annee anneeScolaire = usersService.findAnneeActive();
 		Classes classe = usersService.findClasses(idClasseSelect);
 		if(etablissementConcerne == null ||  anneeScolaire == null || classe == null){
-			return null;
+			String error="";
+			
+			String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+			Map<String, Object> parameters1 = new HashMap<String, Object>();
+			if(etablissementConcerne == null){
+				error+="\n L'ETABLISSEMENT CONCERNE N'A PAS ETE RETROUVE";
+			}
+			if(anneeScolaire == null){
+				error+="\n L'ANNEE SCOLAIRE CONCERNE N'A PAS ETE RETROUVE";
+			}
+			if(classe == null){
+				error+="\n LA CLASSE CONCERNE N'A PAS ETE RETROUVE";
+			}
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			
+			parameters1.put("erreur", erreur);
+			parameters1.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters1);
 		}
 		
 		List<Eleves> listeleveinsolvableDansClasses = usersService.getListElevesInsolvable(idClasseSelect);
@@ -2621,13 +3090,27 @@ public class UsersController {
 		 */
 		List<SanctionDisciplinaire> listofSanctionDisc = usersService.findListAllSanctionDisciplinaire();
 		List<SanctionTravail> listofSanctionTrav = usersService.findListAllSanctionTravail();
+		/*
+		 * Pour signifie que les parametres du conseil ne sont pas encore fixé par l'administrateur ie les 
+		 * possible sanction de travail et sanction disciplinaire
+		 */
+		model.addAttribute("paramConseil","0");
+		
 		if(listofSanctionDisc.size()>0 && listofSanctionTrav.size()>0){
 			model.addAttribute("listofSanctionDisc", listofSanctionDisc);
 			model.addAttribute("listofSanctionTrav", listofSanctionTrav);
 			
+			/*
+			 * Pour signifie que les parametres du conseil sont deja fixé par l'administrateur ie les 
+			 * possible sanction de travail et sanction disciplinaire
+			 */
+			model.addAttribute("paramConseil","1");
+			
 			List<Eleves> listofAllEleve = usersService.findListElevesClasse(idClasseConcerne);
+			System.out.println("listofAllEleve=="+listofAllEleve);
 			if(listofAllEleve != null){
 				model.addAttribute("effectifTotal", listofAllEleve.size());
+				System.out.println("liste superieur a 0 "+listofAllEleve.size());
 				if((listofAllEleve.size() > 0)){
 					model.addAttribute("listofAllEleve", listofAllEleve);
 					Sequences sequenceConcerne = usersService.findSequences(idSequenceConcerne);
@@ -2782,9 +3265,12 @@ public class UsersController {
 		 */
 		List<SanctionDisciplinaire> listofSanctionDisc = usersService.findListAllSanctionDisciplinaire();
 		List<SanctionTravail> listofSanctionTrav = usersService.findListAllSanctionTravail();
+		model.addAttribute("paramConseil","0");
+		
 		if(listofSanctionDisc.size()>0 && listofSanctionTrav.size()>0){
 			model.addAttribute("listofSanctionDisc", listofSanctionDisc);
 			model.addAttribute("listofSanctionTrav", listofSanctionTrav);
+			model.addAttribute("paramConseil","1");
 			
 			List<Eleves> listofAllEleve = usersService.findListElevesClasse(idClasseConcerne);
 			if(listofAllEleve != null){
@@ -2804,7 +3290,7 @@ public class UsersController {
 					
 					if(pageofEleves.getContent().size()!=0){
 						model.addAttribute("listofEleves", pageofEleves.getContent());
-						int[] listofPagesEleves=new int[pageofEleves.getTotalPages()];
+						int[] listofPagesEleves=new int[pageofEleves.getTotalPages()];  
 							
 						model.addAttribute("listofPagesEleves", listofPagesEleves);
 							
@@ -2954,10 +3440,12 @@ public class UsersController {
 		List<SanctionTravail> listofSanctionTrav = usersService.findListAllSanctionTravail();
 		List<Decision> listofDecision = usersService.findListAllDecision();
 		
+		model.addAttribute("paramConseil","0");
 		
 		if(listofDecision.size()>0 && listofSanctionTrav.size()>0){
 			model.addAttribute("listofDecision", listofDecision);
 			model.addAttribute("listofSanctionTrav", listofSanctionTrav);
+			model.addAttribute("paramConseil","1");
 			List<Eleves> listofAllEleve = usersService.findListElevesClasse(idClasseConcerne);
 			if(listofAllEleve != null){
 				model.addAttribute("listofAllEleve", listofAllEleve);
@@ -3091,7 +3579,26 @@ public class UsersController {
 		Etablissement etablissementConcerne = usersService.getEtablissement();
 		Annee anneeScolaire = usersService.findAnneeActive();
 		if(etablissementConcerne == null ||  anneeScolaire == null){
-			return null;
+			String error="";
+			
+			String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+			Map<String, Object> parameters1 = new HashMap<String, Object>();
+			if(etablissementConcerne == null){
+				error+="\n L'ETABLISSEMENT CONCERNE N'A PAS ETE RETROUVE";
+			}
+			if(anneeScolaire == null){
+				error+="\n L'ANNEE SCOLAIRE CONCERNE N'A PAS ETE RETROUVE";
+			}
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			
+			parameters1.put("erreur", erreur);
+			parameters1.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters1);
 		}
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -3168,7 +3675,23 @@ public class UsersController {
 			Trimestres periodTrimestre = usersService.findTrimestres(idPeriode);
 			Annee periodAnnee = usersService.findAnnee(idPeriode);
 			
-			if(periodSequence == null && periodTrimestre == null && periodAnnee == null) return null;
+			if(periodSequence == null && periodTrimestre == null && periodAnnee == null) {
+				String error=" LA PERIODE SPECIFIEE N'A PAS ETE RETROUVEE";
+				
+				String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+				Map<String, Object> parameters1 = new HashMap<String, Object>();
+				
+				Collection<ErrorBean> collectionofErreurBean = 
+						usersService.generateCollectionofErrorBean(error);
+				
+				parameters1.put("erreur", erreur);
+				parameters1.put("datasource", collectionofErreurBean);
+				JasperReportsPdfView view = new JasperReportsPdfView();
+				view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+				view.setApplicationContext(applicationContext);
+
+				return new ModelAndView(view, parameters1);
+			}
 			
 			Collection<FicheRecapAbsenceCycleBean> listofFicheRecapAbsenceCycleBean = null;
 			
@@ -3265,13 +3788,29 @@ public class UsersController {
 		/*
 		 * Il faut chercher le cycle et retourner une erreur s'il n'existe pas
 		 */
-		System.out.println("on va aller cherche les donnees");
 		Etablissement etablissementConcerne = usersService.getEtablissement();
 		Annee anneeScolaire = usersService.findAnneeActive();
 		if(etablissementConcerne == null ||  anneeScolaire == null){
+			String error="";
 			
+			String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+			Map<String, Object> parameters1 = new HashMap<String, Object>();
+			if(etablissementConcerne == null){
+				error+="\n L'ETABLISSEMENT CONCERNE N'A PAS ETE RETROUVE";
+			}
+			if(anneeScolaire == null){
+				error+="\n L'ANNEE SCOLAIRE CONCERNE N'A PAS ETE RETROUVE";
+			}
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
 			
-			return null;
+			parameters1.put("erreur", erreur);
+			parameters1.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters1);
 		}
 		
 		System.out.println("on cherche les vraies donnees");
@@ -3326,7 +3865,7 @@ public class UsersController {
 				
 				parameters.put("datasource", listofFicheRecapAbsenceNiveauBean);
 				JasperReportsPdfView view = new JasperReportsPdfView();
-				view.setUrl("classpath:/reports/compiled/fiches/FicheRecapAbsenceCycle.jasper");
+				view.setUrl("classpath:/reports/compiled/fiches/FicheRecapAbsenceNiveau.jasper");
 				view.setApplicationContext(applicationContext);
 				
 				return new ModelAndView(view, parameters);
@@ -3353,8 +3892,21 @@ public class UsersController {
 			
 			if(periodSequence == null && periodTrimestre == null && periodAnnee == null) {
 				
+				String error="LA PERIODE SPECIFIE N'A PAS ETE RETROUVEE";
 				
-				return null;
+				String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+				Map<String, Object> parameters1 = new HashMap<String, Object>();
+				
+				Collection<ErrorBean> collectionofErreurBean = 
+						usersService.generateCollectionofErrorBean(error);
+				
+				parameters1.put("erreur", erreur);
+				parameters1.put("datasource", collectionofErreurBean);
+				JasperReportsPdfView view = new JasperReportsPdfView();
+				view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+				view.setApplicationContext(applicationContext);
+
+				return new ModelAndView(view, parameters1);
 			}
 			
 			Collection<FicheRecapAbsenceNiveauBean> listofFicheRecapAbsenceNiveauBean = null;
@@ -3464,7 +4016,26 @@ public class UsersController {
 		Etablissement etablissementConcerne = usersService.getEtablissement();
 		Annee anneeScolaire = usersService.findAnneeActive();
 		if(etablissementConcerne == null ||  anneeScolaire == null){
-			return null;
+			String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			String error=" ";
+			if(etablissementConcerne == null ){
+				error+="\n ETABLISSEMENT NON RETROUVE ";
+			}
+			if(anneeScolaire == null){
+				error+="\n ANNEE SCOLAIRE NON RETROUVE ";
+			}
+			
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
 		}
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -3517,7 +4088,7 @@ public class UsersController {
 				
 				parameters.put("datasource", listofFicheRecapAbsenceClasseBean);
 				JasperReportsPdfView view = new JasperReportsPdfView();
-				view.setUrl("classpath:/reports/compiled/fiches/FicheRecapAbsenceCycle.jasper");
+				view.setUrl("classpath:/reports/compiled/fiches/FicheRecapAbsenceClasse.jasper");
 				view.setApplicationContext(applicationContext);
 				
 				return new ModelAndView(view, parameters);
@@ -3544,7 +4115,25 @@ public class UsersController {
 			Trimestres periodTrimestre = usersService.findTrimestres(idPeriode);
 			Annee periodAnnee = usersService.findAnnee(idPeriode);
 			
-			if(periodSequence == null && periodTrimestre == null && periodAnnee == null) return null;
+			if(periodSequence == null && periodTrimestre == null && periodAnnee == null) {
+				
+
+				String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+				Map<String, Object> parameters1 = new HashMap<String, Object>();
+				String error=" LA PERIODE INDIQUE N'EST PAS VALIDE";
+				
+				Collection<ErrorBean> collectionofErreurBean = 
+						usersService.generateCollectionofErrorBean(error);
+				
+				parameters1.put("erreur", erreur);
+				parameters1.put("datasource", collectionofErreurBean);
+				JasperReportsPdfView view = new JasperReportsPdfView();
+				view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+				view.setApplicationContext(applicationContext);
+
+				return new ModelAndView(view, parameters1);
+			
+			}
 			
 			Collection<FicheRecapAbsenceClasseBean> listofFicheRecapAbsenceClasseBean = null;
 			
@@ -3581,7 +4170,7 @@ public class UsersController {
 			
 			parameters.put("datasource", listofFicheRecapAbsenceClasseBean);
 			JasperReportsPdfView view = new JasperReportsPdfView();
-			view.setUrl("classpath:/reports/compiled/fiches/FicheRecapAbsenceNiveau.jasper");
+			view.setUrl("classpath:/reports/compiled/fiches/FicheRecapAbsenceClasse.jasper");
 			view.setApplicationContext(applicationContext);
 			
 			return new ModelAndView(view, parameters);
@@ -3592,8 +4181,95 @@ public class UsersController {
 		return null;
 	}
 	
+	public void constructModelgetdonneesStatMoyClasse(Model model,	HttpServletRequest request){
+		List<Niveaux> listofNiveaux = usersService.findAllNiveaux();
+		
+		String usernameConnect = request.getUserPrincipal().getName();
+		
+		Utilisateurs usersConnect = usersService.findByUsername(usernameConnect);
+		
+		model.addAttribute("usersConnect", usersConnect);
+		
+		if(usersService.hasRole(usersConnect, "CENSEUR")==false){
+			if(usersService.hasRole(usersConnect, "TITULAIRE")==true){
+				listofNiveaux = usersService.findAllNiveauxDirigesEns(usersConnect.getIdUsers());
+			}
+		}
+		else{
+			//Donc il a le role censeur donc c'est un patron
+			model.addAttribute("patron", usersConnect);
+		}
+		
+		if(listofNiveaux.size()>0){
+			model.addAttribute("affichechoixcycle", "oui");
+			model.addAttribute("listofNiveaux", listofNiveaux);
+		}
+		else{
+			model.addAttribute("affichechoixcycle", "non");
+		}
+		
+		Annee anneeActive = usersService.findAnneeActive();
+		
+		if(anneeActive != null) {
+			model.addAttribute("anneeActive", anneeActive);
+		}
+		
+		List<Trimestres> listofTrimestreActif = usersService.findAllActiveTrimestre(anneeActive.getIdPeriodes());
+		model.addAttribute("listofTrimestreActif", listofTrimestreActif);
+		
+		List<Sequences> listofSequenceActif = usersService.findAllSequenceActive(anneeActive.getIdPeriodes());
+		model.addAttribute("listofSequenceActif", listofSequenceActif);
+		
+	}
 	
+	@GetMapping(path="/getdonneesStatMoyClasse")
+	public String getdonneesStatMoyClasse(Model model, HttpServletRequest request){
+		
+		this.constructModelgetdonneesStatMoyClasse(model,	request);
+		
+		return "users/donneesStatMoyClasse";
+	}
 	
+	public void constructModelgetdonneesStatNoteCoursPeriode(Model model,	HttpServletRequest request){
+
+		List<Niveaux> listofNiveaux = usersService.findAllNiveaux();
+		
+		String usernameConnect = request.getUserPrincipal().getName();
+		
+		Utilisateurs usersConnect = usersService.findByUsername(usernameConnect);
+		
+		model.addAttribute("usersConnect", usersConnect);
+		
+		if(listofNiveaux.size()>0){
+			model.addAttribute("affichechoixcycle", "oui");
+			model.addAttribute("listofNiveaux", listofNiveaux);
+		}
+		else{
+			model.addAttribute("affichechoixcycle", "non");
+		}
+		
+		Annee anneeActive = usersService.findAnneeActive();
+		
+		if(anneeActive != null) {
+			model.addAttribute("anneeActive", anneeActive);
+		}
+		
+		List<Trimestres> listofTrimestreActif = usersService.findAllActiveTrimestre(anneeActive.getIdPeriodes());
+		model.addAttribute("listofTrimestreActif", listofTrimestreActif);
+		
+		List<Sequences> listofSequenceActif = usersService.findAllSequenceActive(anneeActive.getIdPeriodes());
+		model.addAttribute("listofSequenceActif", listofSequenceActif);
+		
+	
+	}
+	
+	@GetMapping(path="/getdonneesStatNoteCoursPeriode")
+	public String getdonneesStatNoteCoursPeriode(Model model, HttpServletRequest request){
+		
+		this.constructModelgetdonneesStatNoteCoursPeriode(model,	request);
+		
+		return "users/donneesStatNoteCoursPeriode";
+	}
 	
 	
 	

@@ -9,19 +9,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.logesco.entities.*;
-import org.logesco.modeles.BulletinAnnuelBean;
-import org.logesco.modeles.BulletinSequenceBean;
-import org.logesco.modeles.BulletinTrimAnnuelBean;
-import org.logesco.modeles.BulletinTrimestreBean;
 import org.logesco.modeles.EleveBean;
 import org.logesco.modeles.EleveBean2;
 import org.logesco.modeles.EleveInsolvableBean;
 import org.logesco.modeles.ErrorBean;
-import org.logesco.modeles.FicheConseilClasseBean;
 import org.logesco.modeles.FicheRecapAbsenceClasseBean;
 import org.logesco.modeles.FicheRecapAbsenceCycleBean;
 import org.logesco.modeles.FicheRecapAbsenceNiveauBean;
-import org.logesco.modeles.FicheScolariteparClasseBean;
 import org.logesco.modeles.OperationBean;
 import org.logesco.modeles.PV_NoteBean;
 import org.logesco.modeles.PV_SequenceBean;
@@ -33,7 +27,7 @@ import org.springframework.data.domain.Page;
  * @author cedrickiadjeu
  *
  */
-public interface IUsersService {
+public  interface IUsersService {
 
 	/**************
 	 * Liste des methodes qui correspondent aux besoins fonctionnels des utilisateurs de l'application
@@ -148,7 +142,7 @@ public interface IUsersService {
 	 *					-5 si le rôle intendant indiqué n'est pas encore enregistré par l'administrateur
 	 *					-6 si le rôle enseignant indiqué n'est pas encore enregistré par l'administrateur
 	 */
-	public Long saveCenseurs(Censeurs censeur, int roleCode);
+	//public Long saveCenseurs(Censeurs censeur, int roleCode);
 	
 	/*********************************************************************************
 	 * Cette methode permettra d'enregistrer une liste d'enseignant construite à partir d'un fichier
@@ -159,7 +153,7 @@ public interface IUsersService {
 	 * l'enregistrement puisqu'il n'y a que ces contraintes pour empecher un enregistrement
 	 * d'un personnel.
 	 */
-	public List<String> saveListCenseurs(List<Censeurs> listofcenseur);
+	//public List<String> saveListCenseurs(List<Censeurs> listofcenseur);
 
 	/**
 	 * Met à jour le numero d'un Censeurs à jour dans la base de données
@@ -168,7 +162,7 @@ public interface IUsersService {
 	 *					 1  si le numero de le Censeurs a bien été mis à jour
 	 *					 0  si la contrainte sur le numero Censeurs est violé
 	 */
-	public int updateNumeroCenseurs(Long idUsers, int newNumero);
+	//public int updateNumeroCenseurs(Long idUsers, int newNumero);
 
 	/**
 	 * Enregistrer un sg dans la base de donnée sachant que ce sg peut en plus être un enseignant
@@ -186,7 +180,7 @@ public interface IUsersService {
 	 *					-5 si le rôle intendant indiqué n'est pas encore enregistré par l'administrateur
 	 *					-6 si le rôle enseignant indiqué n'est pas encore enregistré par l'administrateur
 	 */
-	public Long saveSG(SG sg, int roleCode);
+	//public Long saveSG(SG sg, int roleCode);
 	
 	/*********************************************************************************
 	 * Cette methode permettra d'enregistrer une liste d'enseignant construite à partir d'un fichier
@@ -197,7 +191,7 @@ public interface IUsersService {
 	 * l'enregistrement puisqu'il n'y a que ces contraintes pour empecher un enregistrement
 	 * d'un personnel.
 	 */
-	public List<String> saveListSG(List<SG> listofsg);
+	//public List<String> saveListSG(List<SG> listofsg);
 
 	/**
 	 * Met à jour le numero d'un SG à jour dans la base de données
@@ -206,7 +200,7 @@ public interface IUsersService {
 	 *					 1  si le numero de le SG a bien été mis à jour
 	 *					 0  si la contrainte sur le numero SG est violé
 	 */
-	public int updateNumeroSG(Long idUsers, int newNumero);
+	//public int updateNumeroSG(Long idUsers, int newNumero);
 
 	/**
 	 * Enregistrer un intendant dans la base de donnée sachant que ce censeur peut en plus être un enseignant
@@ -224,7 +218,7 @@ public interface IUsersService {
 	 *					-5 si le rôle intendant indiqué n'est pas encore enregistré par l'administrateur
 	 *					-6 si le rôle enseignant indiqué n'est pas encore enregistré par l'administrateur
 	 */
-	public Long saveIntendant(Intendant intendant, int roleCode);
+	//public Long saveIntendant(Intendant intendant, int roleCode);
 
 	/**
 	 * Met à jour le numero d'un intendant à jour dans la base de données
@@ -233,7 +227,7 @@ public interface IUsersService {
 	 *					 1  si le numero de l'intendant a bien été mis à jour
 	 *					 0  si la contrainte sur le numero intendant est violé
 	 */
-	public int updateNumeroIntendant(Long idUsers, int newNumero);
+	//public int updateNumeroIntendant(Long idUsers, int newNumero);
 
 	/**
 	 * Enregistrer un enseignant dans la base de donnée 
@@ -246,7 +240,7 @@ public interface IUsersService {
 	 *					-2 si pour  l'enregistrement la contrainte sur le triplet noms prenoms datenaiss est violé
 	 *					-3 si pour  l'enregistrement la contrainte sur le username est violé
 	 ******************************************************************************************************/
-	public Long saveEnseignants(Enseignants enseignants);
+	//public Long saveEnseignants(Enseignants enseignants);
 	
 	/**
 	 * Enregistrer un personnel d'appui dans la base de donnée 
@@ -259,7 +253,7 @@ public interface IUsersService {
 	 *					-2 si pour  l'enregistrement la contrainte sur le triplet noms prenoms datenaiss est violé
 	 *					-3 si pour  l'enregistrement la contrainte sur le username est violé
 	 ******************************************************************************************************/
-	public Long savePersonnelsDAppui(PersonnelsDAppui personnels);
+	//public Long savePersonnelsDAppui(PersonnelsDAppui personnels);
 	
 	/*********************************************************************************
 	 * Cette methode permettra d'enregistrer une liste d'enseignant construite à partir d'un fichier
@@ -270,7 +264,7 @@ public interface IUsersService {
 	 * l'enregistrement puisqu'il n'y a que ces contraintes pour empecher un enregistrement
 	 * d'un personnel.
 	 */
-	public List<String> saveListEnseignants(List<Enseignants> listofenseignant);
+	//public List<String> saveListEnseignants(List<Enseignants> listofenseignant);
 
 
 	/**************************************
@@ -282,13 +276,16 @@ public interface IUsersService {
 	 *					-2 si pour la mise a jour  la contrainte sur le triplet noms prenoms datenaiss est violé
 	 *					-3 si pour la mise a jour la contrainte sur le username est violé
 	 */
-	public Long updateProffesseurs(Long idUsers, Proffesseurs proffesseurs);
+	//public Long updateProffesseurs(Long idUsers, Proffesseurs proffesseurs);
 
 	/**************************************************************
-	 * Cette methode attribue un role à un utilisateur dont l'idUsers est passé en paramètres
+	 *  Cette methode attribue un role à un utilisateur dont l'idUsers est passé en paramètres
 	 * donc enregistre les entites de UtilisateursRoles. 
 	 * 		Retourne 1 lorsque tout s'est bien passé 
 	 * 						 0 sinon
+	 * @param idUsers
+	 * @param roleString
+	 * @return
 	 */
 	public int saveUsersRoles(Long idUsers, String roleString);
 
@@ -311,16 +308,25 @@ public interface IUsersService {
 	/***
 	 * Retourne le code correspondant aux roles joue par un utilisateur vis a vis du système
 	 * Elle prend en paramètre l'utilisateur dont on veut le code associé à ses roles
-	 * codeRole				=1 si c'est un Censeurs
-	 * 					=2 si SG
+	 * codeRole				=1 si c'est un Censeurs et il peut donc aussi avoir le role ENSEIGNANT
+	 * 					=2 si SG et il peut donc aussi avoir le role ENSEIGNANT
 	 * 					=3 si c'est ENSEIGNANT
-	 * 					=4 si c'est INTENDANT
-	 * 					=5 si c'est SECRETAIRE
+	 * 					=4 si c'est INTENDANT et il peut donc aussi avoir le role ENSEIGNANT
+	 * 					=5 si c'est SECRETAIRE 
 	 * 					=6 si c'est SURVEILLANT
 	 * 					=7 si c'est VEILLEUR
 	 * 					=7 si c'est AUTRES
 	 */
 	public int getcodeUsersRole(Utilisateurs users);
+	
+	/********************************************************************
+	 * Cette methode retourne true lorsque l'utilisateur passe en 
+	 * paramètre a le role donc l'alias est passe en paramètre. 
+	 * @param users
+	 * @param role
+	 * @return
+	 */
+	public boolean hasRole(Utilisateurs users, String role);
 	
 	/***********************************************************
 	 * Cette methode retourne la liste des rôles d'un utilisateur
@@ -334,7 +340,7 @@ public interface IUsersService {
 	 * Supprimer tous les rôles qui sont attribués à un utilisateur
 	 * Retourne 1 si tous est bien fait et 0 sinon
 	 */
-	public int supprimerAllRoleUsers(Utilisateurs users);
+	//public int supprimerAllRoleUsers(Utilisateurs users);
 
 	/*********************
 	 * Retourne le Proffesseurs dont le idUsers est passe en paramètre
@@ -480,7 +486,7 @@ public interface IUsersService {
 	 * 
 	 * Elle prend en paramètre idUsers à supprimer
 	 */
-	public int deleteUsers(Long idUsers);
+	//public int deleteUsers(Long idUsers);
 
 	/************************
 	 * Cette fonction retourne le rang inocupée que peut prendre un proffesseurs censeurs, sg ou intendant
@@ -624,7 +630,7 @@ public interface IUsersService {
 	 * @param codeEtab
 	 * @return
 	 */
-	public String getNextMatricule(String codeEtab, String annee);
+	//public String getNextMatricule_(String codeEtab, String annee);
 	
 
 	/******************************************
@@ -671,7 +677,7 @@ public interface IUsersService {
 	 *			-1 si le matricule n'est pas unique
 	 *			-2 si la classe dont l'identifiant est indiqué n'est pas existante
 	 */
-	public Long saveEleves(Eleves eleve, Long idClasse);
+	//public Long saveEleves(Eleves eleve, Long idClasse);
 	
 	/*********************************************************************************
 	 * Cette methode permettra d'enregistrer une liste d'élève construite à partir d'un fichier
@@ -681,7 +687,7 @@ public interface IUsersService {
 	 * l'enregistrement puisqu'il n'y a que cette contrainte pour empecher un enregistrement
 	 * d'un élève du moment ou le matricule est généré par l'application.
 	 */
-	public List<String> saveListEleves(List<Eleves> listofeleve, Long idClasse);
+	//public List<String> saveListEleves(List<Eleves> listofeleve, Long idClasse);
 
 	/************************************************************
 	 * Retourne la liste de tous les eleves page par page
@@ -739,14 +745,14 @@ public interface IUsersService {
 	 *			-2 si la classe dont l'identifiant est indiqué n'est pas existante(evenement impossible)
 	 *			-3 si l'eleve à modifier n'est pas retrouver dans la base de donnée (evenement impossible)
 	 */
-	public Long updateEleves(Eleves eleveAModif, Long newidClasse);
+	//public Long updateEleves(Eleves eleveAModif, Long newidClasse);
 
 	/***************************************************************************
 	 * Methode permettant de supprimer un élève de la base de données complètement
 	 * 
 	 * Retourne 1 si la supppression se passe bien et 0 sinon
 	 */
-	public int supprimerEleves(Long idElevesASupprim);
+	//public int supprimerEleves(Long idElevesASupprim);
 
 
 	/****************************************************************************************
@@ -755,7 +761,7 @@ public interface IUsersService {
 	 * Long: c'est l'identifiant de l'operation qui vient de se réaliser sur le compte de l'élève
 	 * -1 si il ya une erreur quelconque
 	 ******************************************************************************************/
-	public Long enregVersementSco(Long idEleveConcerne, double montantAVerser);
+	//public Long enregVersementSco(Long idEleveConcerne, double montantAVerser);
 	
 	/***********************************************************************************************
 	 * Cette methode retourne l'identifiant de la dernière opération sur un compteInscription
@@ -773,7 +779,7 @@ public interface IUsersService {
 	 * @param idOperation
 	 * @return
 	 */
-	public double getMontantOperation(Long idOperation);
+	//public double getMontantOperation(Long idOperation);
 	
 	/***********************************************************
 	 * Cette fonction retourne l'identifiant de l'operation qui doit apparaitre sur le 
@@ -781,7 +787,7 @@ public interface IUsersService {
 	 * @param idOperation
 	 * @return
 	 */
-	public String getIdentifiantOperation(Long idOperation);
+	//public String getIdentifiantOperation(Long idOperation);
 
 	/********************************
 	 * Cette fonction retourne le nombre de transaction financière déjà effectué.
@@ -815,7 +821,7 @@ public interface IUsersService {
 	 * 	0 lorsque le code qu'on veut donner à la matière violera la contrainte d'unicite du code 
 	 * 		de la matiere
 	 ******************************************************************************/
-	public int updateMatiere(Matieres matiere);
+	//public int updateMatiere(Matieres matiere);
 
 	/**************************************************************************
 	 * Methode qui supprime une matière(département) de la base de donnée
@@ -824,7 +830,7 @@ public interface IUsersService {
 	 * 	0 lorsque la matière contient déjà des cours 
 	 * 	-1 si la matière indiquée n'existe pas dans la base de donnée
 	 */
-	public int deleteMatiere(Long idMatiere);
+	//public int deleteMatiere(Long idMatiere);
 
 	/*******************************************************************************************
 	 * Methode qui retourne la liste de tous les cours enregistrés dans la base de données page par page
@@ -974,7 +980,7 @@ public interface IUsersService {
 	 * 		du code
 	 * 	-1 lorsque la classe, la matiere ou le prof associe au cours n'existe pas encore
 	 ******************************************************************************/
-	public int updateCours(Cours cours, Long idMatiereAssocie, Long idProfAssocie, Long idClasseAssocie);
+	//public int updateCours(Cours cours, Long idMatiereAssocie, Long idProfAssocie, Long idClasseAssocie);
 
 	/**************************************************************************
 	 * Methode qui supprime un cours de la base de donnée
@@ -983,7 +989,7 @@ public interface IUsersService {
 	 * 	0 lorsque le cours contient déjà des évaluations 
 	 * 	-1 si le cours n'existe pas dans la base de donnée
 	 */
-	public int deleteCours(Long idCours);
+	//public int deleteCours(Long idCours);
 
 	/**********************************************************************************************
 	 * Méthode qui retourne la liste des séquences enregistrés dans le système page par page
@@ -998,7 +1004,7 @@ public interface IUsersService {
 	 * 	1 si la sequence passe à l'état false
 	 * 	0 si une erreur se produit lors du changement d'état
 	 */
-	public int swicthEtatPeriodesSeq(Long idPeriode);
+	//public int swicthEtatPeriodesSeq(Long idPeriode);
 
 	/**********************************************************************************************
 	 * Méthode qui retourne la liste des trimestres enregistrés dans le système page par page
@@ -1018,7 +1024,7 @@ public interface IUsersService {
 	 * 	1 si le trimestre passe à l'état false
 	 * 	0 si une erreur se produit lors du changement d'état
 	 */
-	public int swicthEtatPeriodesTrim(Long idPeriode);
+	//public int swicthEtatPeriodesTrim_(Long idPeriode);
 
 	/**************************************************************************
 	 * Methode qui change l'état d'une AnneeScolaire. les états possible sont true ou false
@@ -1027,7 +1033,7 @@ public interface IUsersService {
 	 * 	1 si l'année scolaire passe à l'état false
 	 * 	0 si une erreur se produit lors du changement d'état
 	 */
-	public int swicthEtatPeriodesAnnee(Long idPeriode);
+	//public int swicthEtatPeriodesAnnee_(Long idPeriode);
 
 	/***************************************************************************
 	 * Methode permettant d'attribuer un titulaire à une classe. cette méthode octroit le 
@@ -1040,7 +1046,7 @@ public interface IUsersService {
 	 * 		0 si le rôle TITUALIRE que doit désormais avoir le prof indiqué n'existe pas
 	 * 	   -1 sinon
 	 */
-	public int setTitulaireClasse(Long idClasseConcerne, Long idProfTitulaire);
+	//public int setTitulaireClasse(Long idClasseConcerne, Long idProfTitulaire);
 
 	/*********************************************************************
 	 * Methode qui retourne l'année active enregistré dans la base de donnée
@@ -1235,7 +1241,7 @@ public interface IUsersService {
 	 * 						    -2 si la date_enreg est ultérieure à la date du jour
 	 * 						    -3 en cas de toutes autres erreurs
 	 */
-	public int saveRAbsenceSeqEleve(Long idEleves, Long idSequence, int nbreHJ, int nbreHNJ, Date date_enreg);
+	//public int saveRAbsenceSeqEleve(Long idEleves, Long idSequence, int nbreHJ, int nbreHNJ, Date date_enreg);
 
 
 	/**********************************************************************************************************
@@ -1257,15 +1263,15 @@ public interface IUsersService {
 	 * 							-2 si la date_enreg est ultérieure à la date du jour
 	 * 							-3 dans tous les autres cas
 	 */
-	public int saveRDisciplineSeqEleve(Long idEleves, Long idSequence, Date date_enreg, int nbreperiode, 
-			String unite, String motif, Long idSanctionDisc);
+	/*public int saveRDisciplineSeqEleve(Long idEleves, Long idSequence, Date date_enreg, int nbreperiode, 
+			String unite, String motif, Long idSanctionDisc);*/
 	
 	/*************************************************************
 	 * Cette methode supprime un rapport disciplinaire enregistrée
 	 * @param idRdisc
 	 * @return
 	 */
-	public int deleteRapportDisciplinaire(Long idRdisc);
+	//public int deleteRapportDisciplinaire(Long idRdisc);
 	
 	
 	/*************************************************************
@@ -1302,7 +1308,7 @@ public interface IUsersService {
 	 * 							-1 si le montant n'est pas un double
 	 * 							-2 en cas d'autres erreurs
 	 */
-	public int setMontantScoClasse(Long idClasseAConfig, double montantScolarite);
+	//public int setMontantScoClasse_(Long idClasseAConfig, double montantScolarite);
 
 	/************************************************************************************************
 	 * Methode qui retourne la liste des cours qui passe dans une classe dont l'identifiant sera passé en 
@@ -1372,7 +1378,7 @@ public interface IUsersService {
 	 * @return
 	 */
 	//public Collection<BulletinSequenceBean> generateCollectionofBulletinSequence_opt(Long idClasse, Long idSequence);
-	public Map<String, Object> generateCollectionofBulletinSequence_opt(Long idClasse, Long idSequence);
+	//public Map<String, Object> generateCollectionofBulletinSequence_opt(Long idClasse, Long idSequence);
 	
 	/*************************************************************************************
 	 * Cette methode retourne une collection qui va contenir un seul bulletin séquentiel. 
@@ -1384,7 +1390,7 @@ public interface IUsersService {
 	 * @param idSequence
 	 * @return
 	 */
-	public Collection<BulletinSequenceBean> generate1BulletinSequence(Long idEleve, Long idClasse, Long idSequence);
+	//public Collection<BulletinSequenceBean> generate1BulletinSequence(Long idEleve, Long idClasse, Long idSequence);
 	
 	/*********************************************************************************************************
 	 * Cette methode retourne un dictionnaire qui aura n+1 clé où les n premières cles est associe chacune 
@@ -1514,9 +1520,9 @@ public interface IUsersService {
 	 * @param profPrincipal
 	 * @return
 	 */
-	public FicheConseilClasseBean getRapportConseilClasseSequentiel(Etablissement etab, 
+	/*public FicheConseilClasseBean getRapportConseilClasseSequentiel(Etablissement etab, 
 			Annee annee, Classes classe , double tauxReussite, double moyenne_general,	
-			Sequences sequence, List<Eleves> listofElevesOrdreDecroissantMoyenneSequentiel);
+			Sequences sequence, List<Eleves> listofElevesOrdreDecroissantMoyenneSequentiel);*/
 	
 	/*************************************************************************************
 	 * 
@@ -1529,9 +1535,9 @@ public interface IUsersService {
 	 * @param listofElevesOrdreDecroissantMoyenneTrimestriel
 	 * @return
 	 */
-	public FicheConseilClasseBean getRapportConseilClasseTrimestriel(Etablissement etab, 
+	/*public FicheConseilClasseBean getRapportConseilClasseTrimestriel(Etablissement etab, 
 			Annee annee, Classes classe , double tauxReussite, double moyenne_general,	
-			Trimestres trimestre, List<Eleves> listofElevesOrdreDecroissantMoyenneTrimestriel);
+			Trimestres trimestre, List<Eleves> listofElevesOrdreDecroissantMoyenneTrimestriel);*/
 	
 	/********************************************************************************
 	 * 
@@ -1544,9 +1550,9 @@ public interface IUsersService {
 	 * @param listofElevesOrdreDecroissantMoyenneAnnuel
 	 * @return
 	 */
-	public FicheConseilClasseBean getRapportConseilClasseAnnuel(Etablissement etab, 
+	/*public FicheConseilClasseBean getRapportConseilClasseAnnuel(Etablissement etab, 
 			Annee annee, Classes classe , double tauxReussite, double moyenne_general,	
-			List<Eleves> listofElevesOrdreDecroissantMoyenneAnnuel);
+			List<Eleves> listofElevesOrdreDecroissantMoyenneAnnuel);*/
 	
 	/********************************************************************
 	 * Cette methode genere la liste des EleveBean qui represente la liste des élèves 
@@ -1569,14 +1575,14 @@ public interface IUsersService {
 	 * de l'établissement sans distinction de fonction
 	 * @return
 	 */
-	public Collection<PersonnelBean> generateCollectionofPersonnelBean();
+	//public Collection<PersonnelBean> generateCollectionofPersonnelBean_();
 	
 	/**********************************************************************
 	 * Cette methode retourne la liste des membres du personnel
 	 * ayant la fonction CENSEUR dans l'établissement. 
 	 * @return
 	 */
-	public Collection<PersonnelBean> generateCollectionofCenseurBean();
+	//public Collection<PersonnelBean> generateCollectionofCenseurBean();
 	
 	public Collection<ErrorBean> generateCollectionofErrorBean(String error_msg);
 	
@@ -1585,21 +1591,21 @@ public interface IUsersService {
 	 * ayant la fonction SG dans l'établissement. 
 	 * @return
 	 */
-	public Collection<PersonnelBean> generateCollectionofSgBean();
+	//public Collection<PersonnelBean> generateCollectionofSgBean();
 	
 	/**********************************************************************
 	 * Cette methode retourne la liste des membres du personnel
 	 * ayant la fonction ENSEIGNANT dans l'établissement. 
 	 * @return
 	 */
-	public Collection<PersonnelBean> generateCollectionofEnseignantBean();
+	//public Collection<PersonnelBean> generateCollectionofEnseignantBean();
 	
 	/**********************************************************************
 	 * Cette methode retourne la liste des membres du personnel
 	 * ayant la fonction INTENDANT dans l'établissement. 
 	 * @return
 	 */
-	public Collection<PersonnelBean> generateCollectionofIntendantBean();
+	//public Collection<PersonnelBean> generateCollectionofIntendantBean();
 	
 	/**********************************************************************
 	 * Cette methode retourne la liste des personnel d'appui dans l'établissement. 
@@ -1612,14 +1618,14 @@ public interface IUsersService {
 	 * passe en parametre
 	 * @return
 	 */
-	public Collection<PersonnelBean> generateCollectionofPersonnelDeStatutBean(String statutPers);
+	//public Collection<PersonnelBean> generateCollectionofPersonnelDeStatutBean_(String statutPers);
 	
 	/*********************************************************************************************
 	 * Cette methode retourne la liste de tous les proffesseurs  enregistré dans le système avec le statut
 	 * passe en parametre
 	 * @return
 	 */
-	public Collection<PersonnelBean> generateCollectionofProffesseursDeStatutBean(String statutPers);
+	//public Collection<PersonnelBean> generateCollectionofProffesseursDeStatutBean_(String statutPers);
 	
 	
 	/*******************************************************************************************
@@ -1634,8 +1640,8 @@ public interface IUsersService {
 	 */
 	/*public Collection<BulletinTrimestreBean> generateCollectionofBulletinTrimestre_opt(Long idClasse, 
 			Long idTrimestre);*/
-	 public Map<String, Object> generateCollectionofBulletinTrimestre_opt(Long idClasse, 
-				Long idTrimestre);
+	/* public Map<String, Object> generateCollectionofBulletinTrimestre_opt(Long idClasse, 
+				Long idTrimestre);*/
 	
 	 /*********************************************************************************************************
 	  * Cette methode retourne le bulletin d'un eleve dans un trimestre. l'identifiant de l'élève et du trimestre
@@ -1645,8 +1651,8 @@ public interface IUsersService {
 	  * @param idTrimestre
 	  * @return
 	  */
-	 public Collection<BulletinTrimestreBean> generate1BulletinTrimestre(Long idEleve, Long idClasse, 
-			 Long idTrimestre);
+	 /*public Collection<BulletinTrimestreBean> generate1BulletinTrimestre(Long idEleve, Long idClasse, 
+			 Long idTrimestre);*/
 	 
 
 	/*******************************************************************************************
@@ -1662,8 +1668,8 @@ public interface IUsersService {
 	 */
 	/*public Collection<BulletinAnnuelBean> generateCollectionofBulletinAnnee(Long idClasse,
 			Long idAnnee);*/
-	public  Map<String, Object> generateCollectionofBulletinAnnee(Long idClasse,
-			Long idAnnee);
+	/*public  Map<String, Object> generateCollectionofBulletinAnnee(Long idClasse,
+			Long idAnnee);*/
 	
 	/***********************************************************************************************************
 	 * Cette methode retourne le bulletin Annuel de l'élève dont l'id est passe en parametre pour le compte
@@ -1673,8 +1679,8 @@ public interface IUsersService {
 	 * @param idAnnee
 	 * @return
 	 */
-	 public Collection<BulletinAnnuelBean> generate1BulletinAnnuel(Long idEleve, Long idClasse, 
-			 Long idAnnee);
+	 /*public Collection<BulletinAnnuelBean> generate1BulletinAnnuel(Long idEleve, Long idClasse, 
+			 Long idAnnee);*/
 	 
 	
 	/******************************************************************************************************
@@ -1687,8 +1693,8 @@ public interface IUsersService {
 	 */
 	/*public Collection<BulletinTrimAnnuelBean> generateCollectionofBulletinTrimAnnee(Long idClasse,
 	Long idAnnee);*/
-	public  Map<String, Object> generateCollectionofBulletinTrimAnnee(Long idClasse,
-		Long idTrimestre);
+	/*public  Map<String, Object> generateCollectionofBulletinTrimAnnee(Long idClasse,
+		Long idTrimestre);*/
 	
 	/**********************************************************************************************************
 	 * Cette methode retourne le bulletin trimestriel d'un eleve avec son  rapport annuel. 
@@ -1697,8 +1703,8 @@ public interface IUsersService {
 	 * @param idTrimestre
 	 * @return
 	 */
-	public Collection<BulletinTrimAnnuelBean> generate1BulletinTrimAnnuel(Long idEleve, Long idClasse, 
-			Long idTrimestre);
+	/*public Collection<BulletinTrimAnnuelBean> generate1BulletinTrimAnnuel(Long idEleve, Long idClasse, 
+			Long idTrimestre);*/
 	 
 	
 	public double getValeurNotesFinaleEleve(Long idEleve, Long idCours, Long idSequence);
@@ -2255,7 +2261,7 @@ public interface IUsersService {
 	 * sont deja defini
 	 * @return
 	 */
-	public Collection<FicheScolariteparClasseBean> generateListFicheScolariteparClasseBean();
+	//public Collection<FicheScolariteparClasseBean> generateListFicheScolariteparClasseBean_();
 	
 	
 	

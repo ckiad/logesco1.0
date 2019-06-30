@@ -2028,22 +2028,22 @@
 				<text><![CDATA[B. The most unruly pupils]]></text>
 			</staticText>
 			<line>
-				<reportElement x="6" y="299" width="542" height="1" uuid="212d42d1-b680-45e4-90f3-fc1bb6284dc2">
+				<reportElement x="6" y="271" width="542" height="1" uuid="212d42d1-b680-45e4-90f3-fc1bb6284dc2">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="6" y="315" width="542" height="1" uuid="c75ae3aa-a6be-46d1-b6fb-0864d712311f">
+				<reportElement x="6" y="287" width="542" height="1" uuid="c75ae3aa-a6be-46d1-b6fb-0864d712311f">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="259" y="282" width="289" height="1" uuid="6a694d66-36b5-4b88-94b6-427579c0c34e">
+				<reportElement x="201" y="257" width="347" height="1" uuid="6a694d66-36b5-4b88-94b6-427579c0c34e">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 			</line>
 			<staticText>
-				<reportElement x="5" y="269" width="239" height="16" uuid="70db1d3b-8178-4550-b23d-b06bf5cebe29">
+				<reportElement x="5" y="241" width="239" height="16" uuid="70db1d3b-8178-4550-b23d-b06bf5cebe29">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement>
@@ -2052,22 +2052,17 @@
 				<text><![CDATA[Advice and recommendations of the class council:]]></text>
 			</staticText>
 			<line>
-				<reportElement x="4" y="261" width="542" height="1" uuid="aec2dd8d-fbbf-4463-af89-b4de0955ac92">
+				<reportElement x="4" y="231" width="542" height="1" uuid="9a807506-faa8-49f9-95bd-4f179ffaf666">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 			</line>
 			<line>
-				<reportElement x="4" y="245" width="542" height="1" uuid="9a807506-faa8-49f9-95bd-4f179ffaf666">
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-				</reportElement>
-			</line>
-			<line>
-				<reportElement x="273" y="229" width="273" height="1" uuid="e94040f5-bb21-4fb8-a83e-c1ef000292b5">
+				<reportElement x="182" y="219" width="364" height="1" uuid="e94040f5-bb21-4fb8-a83e-c1ef000292b5">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 			</line>
 			<staticText>
-				<reportElement x="4" y="217" width="259" height="16" uuid="d0e121d6-66e0-4a20-8ad9-b3d15d294533">
+				<reportElement x="4" y="203" width="259" height="16" uuid="d0e121d6-66e0-4a20-8ad9-b3d15d294533">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement>
@@ -2757,20 +2752,25 @@
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="77">
+		<band height="51">
 			<staticText>
-				<reportElement x="-8" y="24" width="108" height="16" uuid="d2616779-d301-48a5-aeae-b5c702bca9b1"/>
+				<reportElement x="-8" y="14" width="108" height="16" uuid="d2616779-d301-48a5-aeae-b5c702bca9b1"/>
 				<textElement>
 					<font fontName="Arial Narrow" isBold="true" isUnderline="false"/>
 				</textElement>
 				<text><![CDATA[Class master]]></text>
 			</staticText>
-			<textField pattern="MMMMM dd, yyyy">
-				<reportElement x="247" y="4" width="294" height="19" uuid="451f8f49-74b9-4d1b-a488-f320bab0e5a1"/>
+			<textField pattern="dd MMM yyyy">
+				<reportElement x="247" y="4" width="294" height="15" uuid="451f8f49-74b9-4d1b-a488-f320bab0e5a1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial Narrow"/>
+				</textElement>
 				<textFieldExpression><![CDATA["Do at "+$F{ville}+", at "+new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="435" y="25" width="108" height="16" uuid="ae12ee16-a76c-483c-9ac9-ba00529e6c53"/>
+				<reportElement x="435" y="15" width="108" height="16" uuid="ae12ee16-a76c-483c-9ac9-ba00529e6c53"/>
 				<textElement>
 					<font fontName="Arial Narrow" isBold="true" isUnderline="false"/>
 				</textElement>

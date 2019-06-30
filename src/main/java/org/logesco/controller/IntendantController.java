@@ -22,6 +22,7 @@ import org.logesco.entities.Eleves;
 import org.logesco.entities.Etablissement;
 import org.logesco.entities.Niveaux;
 import org.logesco.modeles.Recu_versement;
+import org.logesco.services.IIntendantService;
 import org.logesco.services.IUsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,6 +51,9 @@ public class IntendantController {
 	
 	@Autowired
 	private IUsersService usersService;
+	
+	@Autowired
+	private IIntendantService intendantService;
 	
 	
 ////////////////////////////////////DEBUT DES REQUETES DE TYPE GET ////////////////////////////////////////////
@@ -166,7 +170,7 @@ public class IntendantController {
 		 */
 		//System.err.println("Appel à la fonction d'enregistrement de versement ");
 		
-		Long repServeur = usersService.enregVersementSco(idEleveAModif, montantAVerse);
+		Long repServeur = intendantService.enregVersementSco(idEleveAModif, montantAVerse);
 		
 		
 		 System.out.println("Le montant versé est enregistré et il faut à présent sortir  un reçu qui approuve "
@@ -207,26 +211,13 @@ public class IntendantController {
 		session.setAttribute("idOperation_a_imprimer", repServeur);
 		session.setAttribute("operation_presente", "1");
 		
-		/*System.out.println("On la garde donc en session  cle: idOperation_a_imprimer == "
-		+session.getAttribute("idOperation_a_imprimer")+"  cle: operation_presente == "
-				+session.getAttribute("operation_presente"));*/
 		
-		/*Long idOperation_a_imprimer  = usersService.getLastOperationOnCompte(idEleveAModif);
-		System.out.println("Operation recherche  "+idOperation_a_imprimer);
-		if(idOperation_a_imprimer!=null) {
-			session.setAttribute("idOperation_a_imprimer", idOperation_a_imprimer);
-			session.setAttribute("operation_presente", "1");
-			System.out.println("Operation trouver et placer en session");
-		}*/
 		
 		return "redirect:/logesco/users/intendant/getinscriptionEleves?updateetatInscelevessuccess"
 				+ "&&idClasseSelect="+idClasseSelect
 				+ "&&numPageEleves="+numPageEleves;
 		
-		/*return "redirect:/logesco/users/intendant/lancerEditionsRecuVersement?"
-				+ "&&montantScolarite="+montantScolarite
-				+"&&montantAVerse="+montantAVerse
-				+"&&idEleveAModif="+idEleveAModif;*/
+		
 		
 	}
 	
@@ -274,10 +265,10 @@ public class IntendantController {
 		String dateString = spd.format(dateJour);
 		parameters.put("date_jour", dateString);
 		
-		String numero_recu=usersService.getIdentifiantOperation(idOperation_a_imprimer);
+		String numero_recu=intendantService.getIdentifiantOperation(idOperation_a_imprimer);
 		parameters.put("numero_recu", numero_recu);
 		
-		double montantTransaction = usersService.getMontantOperation(idOperation_a_imprimer);
+		double montantTransaction = intendantService.getMontantOperation(idOperation_a_imprimer);
 		parameters.put("montant", montantTransaction+" F cfa");
 		
 		Eleves eleveConcerne = usersService.findEleves(idEleveConcerne);

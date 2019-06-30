@@ -69,116 +69,116 @@
 	<title>
 		<band height="123">
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="346" y="8" width="201" height="12" uuid="24970302-1e4f-4a44-8d46-d260fad3a6eb"/>
+				<reportElement stretchType="RelativeToTallestObject" x="346" y="18" width="201" height="12" uuid="24970302-1e4f-4a44-8d46-d260fad3a6eb"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true"/>
+					<font fontName="Arial Narrow" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[REPUBLIQUE DU CAMEROUN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="346" y="19" width="201" height="12" uuid="328e57fb-1555-4ab7-a665-3d1fbcaae7e7"/>
+				<reportElement stretchType="RelativeToTallestObject" x="346" y="29" width="201" height="12" uuid="328e57fb-1555-4ab7-a665-3d1fbcaae7e7"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" isItalic="false"/>
+					<font fontName="Arial Narrow" size="9" isBold="true" isItalic="false"/>
 				</textElement>
 				<text><![CDATA[Paix-Travail-Patrie]]></text>
 			</staticText>
 			<image>
-				<reportElement x="250" y="14" width="63" height="60" uuid="12350d2f-6bc8-4ba3-baea-39e438aed55b"/>
+				<reportElement x="259" y="24" width="63" height="60" uuid="12350d2f-6bc8-4ba3-baea-39e438aed55b"/>
 				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="151" y="87" width="257" height="10" uuid="99310b64-71c3-4d33-8f93-26d34c1778c5"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="151" y="97" width="257" height="10" uuid="99310b64-71c3-4d33-8f93-26d34c1778c5"/>
 				<textElement textAlignment="Center" markup="none">
-					<font fontName="Times New Roman" size="7" isBold="true" isItalic="false"/>
+					<font fontName="Arial Narrow" size="7" isBold="true" isItalic="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{devise_fr}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="151" y="96" width="257" height="10" uuid="586360a1-f3b1-46bc-b887-31f42af77e95"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="151" y="106" width="257" height="10" uuid="586360a1-f3b1-46bc-b887-31f42af77e95"/>
 				<textElement textAlignment="Center" markup="none">
-					<font fontName="Times New Roman" size="7" isBold="false" isItalic="true"/>
+					<font fontName="Arial Narrow" size="7" isBold="false" isItalic="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{devise_en}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="346" y="30" width="201" height="12" uuid="b6baa32b-fd93-43c4-8cd5-bf86bc163e56"/>
+				<reportElement stretchType="RelativeToTallestObject" x="346" y="40" width="201" height="12" uuid="b6baa32b-fd93-43c4-8cd5-bf86bc163e56"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" isItalic="true"/>
+					<font fontName="Arial Narrow" size="9" isBold="true" isItalic="true"/>
 				</textElement>
 				<text><![CDATA[REPUBLIC OF CAMEROON]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="346" y="41" width="201" height="12" uuid="88adbfad-edb7-4e2a-b0fe-9791f993a3c9"/>
+				<reportElement stretchType="RelativeToTallestObject" x="346" y="51" width="201" height="12" uuid="88adbfad-edb7-4e2a-b0fe-9791f993a3c9"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="9" isBold="true" isItalic="true"/>
+					<font fontName="Arial Narrow" size="9" isBold="true" isItalic="true"/>
 				</textElement>
 				<text><![CDATA[Peace-Work-Fatherland]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="346" y="52" width="201" height="12" uuid="33371d6a-fe89-4a0f-a2af-42ea965ca7c2"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="346" y="62" width="201" height="12" uuid="33371d6a-fe89-4a0f-a2af-42ea965ca7c2"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font fontName="Times New Roman" size="9" isBold="true"/>
+					<font fontName="Arial Narrow" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ministere_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="346" y="63" width="201" height="12" uuid="c7a46ee8-86a4-4eec-bec4-0dfc499e1dd2"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="346" y="73" width="201" height="12" uuid="c7a46ee8-86a4-4eec-bec4-0dfc499e1dd2"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font fontName="Times New Roman" size="9" isBold="true" isItalic="true"/>
+					<font fontName="Arial Narrow" size="9" isBold="true" isItalic="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ministere_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="8" width="233" height="12" uuid="769326d9-0834-4eff-9cbe-17dc5afed27c"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="18" width="233" height="12" uuid="769326d9-0834-4eff-9cbe-17dc5afed27c"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font fontName="Times New Roman" size="9" isBold="true"/>
+					<font fontName="Arial Narrow" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{delegation_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="30" width="233" height="12" forecolor="#2E6DAD" uuid="e0b843f3-49a6-4a98-8bb1-cfd2be67a585"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="40" width="233" height="12" forecolor="#2E6DAD" uuid="e0b843f3-49a6-4a98-8bb1-cfd2be67a585"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font fontName="Times New Roman" size="9" isBold="true"/>
+					<font fontName="Arial Narrow" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{etablissement_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="52" width="233" height="12" uuid="9653f0a4-c199-40ea-92ee-142c2c4b9bf2"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="62" width="233" height="12" uuid="9653f0a4-c199-40ea-92ee-142c2c4b9bf2"/>
 				<textElement textAlignment="Center" markup="none">
-					<font fontName="Times New Roman" size="9" isBold="true"/>
+					<font fontName="Arial Narrow" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{adresse}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="63" width="233" height="12" uuid="67303179-11bb-470c-b10b-4f51961b3f34"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="73" width="233" height="12" uuid="67303179-11bb-470c-b10b-4f51961b3f34"/>
 				<textElement textAlignment="Center" markup="none">
-					<font fontName="Times New Roman" size="9" isBold="true"/>
+					<font fontName="Arial Narrow" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{annee_scolaire_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="19" width="233" height="12" uuid="c76e9ac7-48aa-4c73-9208-4eb8da7b92cc"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="29" width="233" height="12" uuid="c76e9ac7-48aa-4c73-9208-4eb8da7b92cc"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font fontName="Times New Roman" size="9" isBold="true" isItalic="true"/>
+					<font fontName="Arial Narrow" size="9" isBold="true" isItalic="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{delegation_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="41" width="233" height="12" forecolor="#2E6DAD" uuid="eaf8981d-f817-4aa0-830e-ee3d889093f1"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="51" width="233" height="12" forecolor="#2E6DAD" uuid="eaf8981d-f817-4aa0-830e-ee3d889093f1"/>
 				<textElement textAlignment="Center" markup="none">
-					<font fontName="Times New Roman" size="9" isBold="true" isItalic="true"/>
+					<font fontName="Arial Narrow" size="9" isBold="true" isItalic="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{etablissement_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="74" width="233" height="12" uuid="279a405f-9955-4f56-91df-6d76f05f13c3"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="84" width="233" height="12" uuid="279a405f-9955-4f56-91df-6d76f05f13c3"/>
 				<textElement textAlignment="Center" markup="none">
-					<font fontName="Times New Roman" size="9" isBold="true" isItalic="true"/>
+					<font fontName="Arial Narrow" size="9" isBold="true" isItalic="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{annee_scolaire_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="0" y="114" width="547" height="1" uuid="2afcb3df-857d-4d3d-959f-1d81af46d792"/>
+				<reportElement x="0" y="120" width="547" height="1" uuid="2afcb3df-857d-4d3d-959f-1d81af46d792"/>
 			</line>
 		</band>
 	</title>

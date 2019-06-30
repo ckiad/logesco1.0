@@ -295,7 +295,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Arial Narrow" isBold="true"/>
 				</textElement>
 				<text><![CDATA[MASCULIN / MALE]]></text>
 			</staticText>
@@ -432,20 +432,22 @@
 				<text><![CDATA[Fait à / do at]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="515" y="8" width="133" height="16" uuid="974d5fc5-4416-45e4-aba8-2675d548d0f7"/>
+				<reportElement x="519" y="8" width="133" height="16" uuid="974d5fc5-4416-45e4-aba8-2675d548d0f7"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$P{ville}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="649" y="9" width="32" height="16" uuid="0d92c865-22c4-47b1-b2ad-4c5bf0b1f90e"/>
+				<reportElement x="657" y="9" width="21" height="16" uuid="0d92c865-22c4-47b1-b2ad-4c5bf0b1f90e"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial Narrow" isBold="true" isUnderline="false"/>
 				</textElement>
 				<text><![CDATA[, le]]></text>
 			</staticText>
-			<textField pattern="MMMMM dd, yyyy">
+			<textField pattern="dd MMM yyyy">
 				<reportElement x="684" y="8" width="100" height="19" uuid="1fcda9ab-a036-4c53-9171-f135c6e65efc"/>
-				<textElement verticalAlignment="Middle"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial Narrow"/>
+				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<staticText>

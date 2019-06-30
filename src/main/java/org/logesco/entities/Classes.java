@@ -746,6 +746,83 @@ public class Classes implements Serializable{
 		Collections.sort((List<Cours>)this.listofCours, monComparator);
 		return listofCours;
 	}
+	
+	/****************************
+	 * Retourne 1 si le cours a été evalue dans la séquence 0 sinon
+	 * @param cours
+	 * @param idSequence
+	 * @return
+	 */
+	public int estEvalueDansSequence(Cours cours, Long idSequence){
+		int esteval=0;
+		for(Eleves eleve: this.getListofEleves()){
+			double valNote = eleve.getValeurNotesFinaleEleve(cours.getIdCours(), idSequence);
+			if(valNote>0){
+				esteval=1;//donc au moins 1 éleve a été evalue donc on doit ajouter le cours a la liste
+			}
+		}
+		return esteval;
+	}
+	
+	/*******************************************************************
+	 * Retourne 1 si le cours a été evalue dans le trimestre 0 sinon
+	 * @param cours
+	 * @param trimestre
+	 * @return
+	 */
+	public int estEvalueDansTrimestre(Cours cours, Trimestres trimestre){
+		int esteval=0;
+		if(trimestre !=null){
+			for(Sequences seq : trimestre.listofsequence){
+				if(this.estEvalueDansSequence(cours, seq.getIdPeriodes())==1){
+					esteval = 1;
+				}
+			}
+		}
+		return esteval;
+	}
+	
+	/**********************************************************************
+	 * Retourne 1 si le cours a été evalue dans l'annee 0 sinon
+	 * @param cours
+	 * @param annee
+	 * @return
+	 */
+	public int estEvalueDansAnnee(Cours cours, Annee annee){
+		int esteval=0;
+		if(annee !=null){
+			for(Trimestres trim : annee.listoftrimestre){
+				if(this.estEvalueDansTrimestre(cours, trim)==1){
+					esteval = 1;
+				}
+			}
+		}
+		return esteval;
+	}
+	
+	public List<Cours> getListOfCoursEvalueDansAnnee(Annee an){
+		List<Cours> listofCoursEvalueAn = new ArrayList<Cours>();
+		if(an !=null){
+			for(Cours cours : this.getListofCours()){
+				if(this.estEvalueDansAnnee(cours, an)==1){
+					listofCoursEvalueAn.add(cours);
+				}
+			}
+		}
+		return listofCoursEvalueAn;
+	}
+	
+	public List<Cours> getListOfCoursEvalueDansTrimestre(Trimestres trimestre){
+		List<Cours> listofCoursEvalueTrim = new ArrayList<Cours>();
+		if(trimestre !=null){
+			for(Cours cours : this.getListofCours()){
+				if(this.estEvalueDansTrimestre(cours, trimestre)==1){
+					listofCoursEvalueTrim.add(cours);
+				}
+			}
+		}
+		return listofCoursEvalueTrim;
+	}
 
 	public List<Cours> getListOfCoursEvalueDansSequence(Long idSequence){
 		List<Cours> listofCoursEvalueSeq = new ArrayList<Cours>();

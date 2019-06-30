@@ -16,6 +16,7 @@ import org.logesco.entities.Eleves;
 import org.logesco.entities.Niveaux;
 import org.logesco.entities.SanctionDisciplinaire;
 import org.logesco.entities.Sequences;
+import org.logesco.services.ISGService;
 import org.logesco.services.IUsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,6 +35,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class SGController {
 	@Autowired
 	private IUsersService usersService;
+	
+	@Autowired
+	private ISGService sgService;
 	/**
 	 * 
 	 */
@@ -283,11 +287,11 @@ public class SGController {
 				if(nbreHJustifie[i]>0 || nbreHNJustifie[i]>0){
 					
 						if(date_enreg.compareTo(date_defaut)!=0 ){
-							ret = usersService.saveRAbsenceSeqEleve(idEleves[i], idSequenceConcerne, nbreHJustifie[i], 
+							ret = sgService.saveRAbsenceSeqEleve(idEleves[i], idSequenceConcerne, nbreHJustifie[i], 
 									nbreHNJustifie[i],date_enreg);
 						}
 						else{
-							ret = usersService.saveRAbsenceSeqEleve(idEleves[i], idSequenceConcerne, nbreHJustifie[i], 
+							ret = sgService.saveRAbsenceSeqEleve(idEleves[i], idSequenceConcerne, nbreHJustifie[i], 
 									nbreHNJustifie[i],new Date());
 						}
 				}
@@ -349,7 +353,7 @@ public class SGController {
 		try{
 			Date date_enreg = spd.parse(dateenreg);
 			int nbre_periode = Integer.parseInt(nbreperiode);
-			ret = usersService.saveRDisciplineSeqEleve(idEleves, idSequenceConcerne, date_enreg, 
+			ret = sgService.saveRDisciplineSeqEleve(idEleves, idSequenceConcerne, date_enreg, 
 					nbre_periode, unite, motif, idsanctionAssocie);
 			
 			if(ret==0) return "redirect:/logesco/users/sg/getformSaisieRDiscipline?updateDisciplineErrornbreperiode"
@@ -377,7 +381,7 @@ public class SGController {
 			@RequestParam(name="idSequenceConcerne", defaultValue="0") Long idSequenceConcerne,
 			@RequestParam(name="idClassesConcerne", defaultValue="0") Long idClassesConcerne){
 		
-		usersService.deleteRapportDisciplinaire(idRdisc);
+		sgService.deleteRapportDisciplinaire(idRdisc);
 		
 		return "redirect:/logesco/users/sg/getformSaisieRDiscipline?supprimDisciplineSuccess"
 				+ "&&idSequenceConcerne="+idSequenceConcerne

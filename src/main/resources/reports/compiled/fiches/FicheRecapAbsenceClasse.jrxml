@@ -295,7 +295,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font fontName="Arial Narrow" isBold="true"/>
 				</textElement>
 				<text><![CDATA[MASCULIN / MALE]]></text>
 			</staticText>
@@ -437,7 +437,7 @@
 				<textFieldExpression><![CDATA[$P{ville}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="649" y="9" width="32" height="16" uuid="6f3225f3-42d7-44ac-bc64-ce1a30678ddf"/>
+				<reportElement x="658" y="9" width="21" height="16" uuid="6f3225f3-42d7-44ac-bc64-ce1a30678ddf"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial Narrow" isBold="true" isUnderline="false"/>
 				</textElement>
@@ -450,9 +450,11 @@
 				</textElement>
 				<text><![CDATA[LE RESPONSABLE DE LA SURVEILLANCE / SUPERVISOR]]></text>
 			</staticText>
-			<textField pattern="MMMMM dd, yyyy">
+			<textField pattern="dd MMM yyyy">
 				<reportElement x="684" y="8" width="100" height="19" uuid="5e4db499-05b3-4587-ae31-588150431d02"/>
-				<textElement verticalAlignment="Middle"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial Narrow"/>
+				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 		</band>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="users/userslayout">
+<head>
+<meta charset="UTF-8"/>
+<title th:inline="text">[[#{donneesStatNoteCoursPeriode.titre_page}]]</title>
+</head>
+<body>
+
+<span layout:fragment="titre_boite">
+        <kbd th:inline="text">[[#{donneesStatNoteCoursPeriode.titre_boite}]]</kbd>
+</span>
+
+<div layout:fragment="formactionusers">
+<!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
+<div class="col-md-8  col-md-offset-1">
+	<form action="#"
+		th:action="@{/logesco/users/exportStatNoteCoursPeriode}" method="get" target="_blank">
+		<div th:if="${affichechoixcycle !='non' and anneeActive != null}" >
+			<div class="form-group">
+				<label for="idClasseConcerne" th:inline="text">[[#{donneesStatNoteCoursPeriode.label_classe}]] : <span
+						class="redcolor">*</span></label>
+				<select class="form-control" name="idClasseConcerne"
+					id="idClasseConcerne" >
+					<optgroup th:label="${n.codeNiveaux}" th:if="${listofNiveaux}"
+						th:each="n:${listofNiveaux}">
+						<option th:each="c:${n.listofClasses}" th:if="${c.geteffectifEleve()>0}"
+							th:value="${c.idClasses}" th:inline="text">
+										
+							 [[${c.codeClasses}]] [[${c.specialite.codeSpecialite}]] [[${c.numeroClasses}]]
+											
+						</option>
+					</optgroup>
+				</select>
+			</div>
+			
+			<div class="form-group" th:if="${listofTrimestreActif !=null and listofSequenceActif!=null}">
+					<label for="idPeriode" th:inline="text">[[#{donneesStatNoteCoursPeriode.label_periode}]] : <span
+						class="redcolor">*</span></label>
+					
+					<select class="form-control" name="idPeriode"
+						id="idPeriode" >
+						
+						<optgroup th:label="#{donneesStatNoteCoursPeriode.label_optgroupSeq}">
+							<option th:each="seq:${listofSequenceActif}" th:value="${seq.idPeriodes}" th:inline="text">
+								[[${seq.numeroSeq}]]
+							</option>
+						</optgroup>
+						
+						<optgroup th:label="#{donneesStatNoteCoursPeriode.label_optgroupTrim}">
+							<option th:each="trim:${listofTrimestreActif}" th:value="${trim.idPeriodes}" th:inline="text">
+								[[${trim.numeroTrim}]]
+							</option>
+						</optgroup>
+						
+						<optgroup  th:label="#{donneesStatNoteCoursPeriode.label_optgroupAn}">
+							<option th:value="${anneeActive.idPeriodes}" th:inline="text">
+								[[${anneeActive.intituleAnnee}]]
+							</option>
+						</optgroup>
+					
+					</select>
+				</div>
+				
+				<button type="submit" class="btn btn-primary  pull-right" th:inline="text">
+					<span class="glyphicon glyphicon-send"></span> [[#{donneesStatNoteCoursPeriode.bouton_envoyer}]] 
+				</button>
+			
+		</div>
+	</form>
+</div>
+<!-- FIN DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
+</div>
+
+</body>
+</html>

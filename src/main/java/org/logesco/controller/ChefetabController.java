@@ -69,6 +69,9 @@ public class ChefetabController {
 
 	@Autowired
 	private IUsersService usersService;
+	
+	@Autowired
+	private IProviseurService proviseurService;
 
 	@Value("${dir.images.personnels}")
 	private String photoPersonnelsDir;
@@ -286,7 +289,7 @@ public class ChefetabController {
 		session.setAttribute("listofPersonnelsDAppui", listofPersonnelsDAppui);
 		
 		List<PersonnelBean> listofPersonnelsVacataire = (List<PersonnelBean>) 
-				usersService.generateCollectionofPersonnelDeStatutBean("Vacataire");
+				proviseurService.generateCollectionofPersonnelDeStatutBean("Vacataire");
 		
 		if(listofPersonnelsVacataire.size()>0){
 			model.addAttribute("listofPersonnelsVacataire", listofPersonnelsVacataire);
@@ -294,7 +297,7 @@ public class ChefetabController {
 		}
 		
 		List<PersonnelBean> listofPersonnelsPermanent = (List<PersonnelBean>) 
-				usersService.generateCollectionofPersonnelDeStatutBean("Permanent");
+				proviseurService.generateCollectionofPersonnelDeStatutBean("Permanent");
 		
 		if(listofPersonnelsPermanent.size()>0){
 			model.addAttribute("listofPersonnelsPermanent", listofPersonnelsPermanent);
@@ -302,21 +305,21 @@ public class ChefetabController {
 		}
 		
 		List<PersonnelBean> listofPersonnelsECI = (List<PersonnelBean>) 
-				usersService.generateCollectionofProffesseursDeStatutBean("ECI");
+				proviseurService.generateCollectionofProffesseursDeStatutBean("ECI");
 		if(listofPersonnelsPermanent.size()>0){
 			model.addAttribute("listofPersonnelsECI", listofPersonnelsECI);
 			session.setAttribute("listofPersonnelsECI", listofPersonnelsECI);
 		}
 		
 		List<PersonnelBean> listofEnseignantVacataire = (List<PersonnelBean>) 
-				usersService.generateCollectionofProffesseursDeStatutBean("Vacataire");
+				proviseurService.generateCollectionofProffesseursDeStatutBean("Vacataire");
 		if(listofEnseignantVacataire.size()>0){
 			model.addAttribute("listofEnseignantVacataire", listofEnseignantVacataire);
 			session.setAttribute("listofEnseignantVacataire", listofEnseignantVacataire);
 		}
 		
 		List<PersonnelBean> listofEnseignantPermanent = (List<PersonnelBean>) 
-				usersService.generateCollectionofProffesseursDeStatutBean("Permanent");
+				proviseurService.generateCollectionofProffesseursDeStatutBean("Permanent");
 		if(listofEnseignantPermanent.size()>0){
 			model.addAttribute("listofEnseignantPermanent", listofEnseignantPermanent);
 			session.setAttribute("listofEnseignantPermanent", listofEnseignantPermanent);
@@ -362,7 +365,7 @@ public class ChefetabController {
 	@GetMapping(path="/getsuppressionPersonnels")
 	public String getsuppressionPersonnels(Long idUsers, 
 			Model model, HttpServletRequest request){
-		int repServeur=usersService.deleteUsers(idUsers);
+		int repServeur=proviseurService.deleteUsers(idUsers);
 		if(repServeur==0){
 			return "redirect:/logesco/users/chefetab/getconsulterPersonnels?supprimUserserror";
 		}
@@ -418,7 +421,8 @@ public class ChefetabController {
 		 * En fonction du roleCodeAssocie du proffesseur on peut donc aller chercher son numero dans la fonction
 		 * sauf dans le cas ou il est simple enseignant
 		 */
-		if(roleCodeAssocie==1){
+		String roleCen = "CENSEUR";
+		if(usersService.hasRole(profAModif, roleCen)==true){
 			Censeurs censeurAssocie=usersService.findCenseurs(idUsers);
 			//System.err.println("Censeurs a modifier "+censeurAssocie.getNomsPers());
 			/*
@@ -426,8 +430,9 @@ public class ChefetabController {
 			 */
 			updatePersonnelsForm.setNumeroPers(censeurAssocie.getNumeroCens());
 		}
-
-		if(roleCodeAssocie==2){
+		
+		String roleSg = "SG";
+		if(usersService.hasRole(profAModif, roleSg)==true){
 			SG sgAssocie=usersService.findSG(idUsers);
 			//System.err.println("SG a modifier "+sgAssocie.getNomsPers());
 			/*
@@ -436,7 +441,8 @@ public class ChefetabController {
 			updatePersonnelsForm.setNumeroPers(sgAssocie.getNumeroSG());
 		}
 
-		if(roleCodeAssocie==4){
+		String roleInt = "INTENDANT";
+		if(usersService.hasRole(profAModif, roleInt)==true){
 			Intendant intAssocie=usersService.findIntendant(idUsers);
 			//System.err.println("Intendant a modifier "+intAssocie.getNomsPers());
 			/*
@@ -759,7 +765,7 @@ public class ChefetabController {
 
 	@GetMapping(path="/getsupprimerEleves")
 	public String getsupprimerEleves(Long idElevesASupprim, Long idClasseSelect){
-		int repServeur=usersService.supprimerEleves(idElevesASupprim);
+		int repServeur=proviseurService.supprimerEleves(idElevesASupprim);
 		if(repServeur==0) return "redirect:/logesco/users/chefetab/getgestionEleves?supprimEleveserror"
 		+ "&&idClasseSelect="+idClasseSelect;
 
@@ -869,7 +875,7 @@ public class ChefetabController {
 		}
 
 		Collection<PersonnelBean> collectionofPersonnelBean = 
-				usersService.generateCollectionofPersonnelBean();
+				proviseurService.generateCollectionofPersonnelBean();
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -941,7 +947,7 @@ public class ChefetabController {
 		}
 		
 		Collection<PersonnelBean> collectionofCenseurBean = 
-				usersService.generateCollectionofCenseurBean();
+				proviseurService.generateCollectionofCenseurBean();
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -1012,7 +1018,7 @@ public class ChefetabController {
 		}
 		
 		Collection<PersonnelBean> collectionofSgBean = 
-				usersService.generateCollectionofSgBean();
+				proviseurService.generateCollectionofSgBean();
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -1085,7 +1091,7 @@ public class ChefetabController {
 		}
 		
 		Collection<PersonnelBean> collectionofEnseignantBean = 
-				usersService.generateCollectionofEnseignantBean();
+				proviseurService.generateCollectionofEnseignantBean();
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -1158,7 +1164,7 @@ public class ChefetabController {
 		}
 		
 		Collection<PersonnelBean> collectionofIntendantBean = 
-				usersService.generateCollectionofIntendantBean();
+				proviseurService.generateCollectionofIntendantBean();
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -1230,7 +1236,7 @@ public class ChefetabController {
 		}
 
 		Collection<PersonnelBean> listofPersonnelsPermanent = 
-				usersService.generateCollectionofPersonnelDeStatutBean("Permanent");
+				proviseurService.generateCollectionofPersonnelDeStatutBean("Permanent");
 		
 		if(listofPersonnelsPermanent == null){
 			String error = "AUCUN PERSONNEL PERMANENT N'EST ENCORE ENREGISTRE.";
@@ -1321,7 +1327,7 @@ public class ChefetabController {
 		}
 
 		Collection<PersonnelBean> listofPersonnelsPermanent = 
-				usersService.generateCollectionofProffesseursDeStatutBean("Permanent");
+				proviseurService.generateCollectionofProffesseursDeStatutBean("Permanent");
 		
 		if(listofPersonnelsPermanent == null){
 			String error = "AUCUN PERSONNEL PERMANENT N'EST ENCORE ENREGISTRE.";
@@ -1413,7 +1419,7 @@ public class ChefetabController {
 		}
 
 		Collection<PersonnelBean> listofPersonnelsVacataire =  
-				usersService.generateCollectionofPersonnelDeStatutBean("Vacataire");
+				proviseurService.generateCollectionofPersonnelDeStatutBean("Vacataire");
 		
 		if(listofPersonnelsVacataire == null){
 			String error = "AUCUN PERSONNEL PERMANENT N'EST ENCORE ENREGISTRE.";
@@ -1506,7 +1512,7 @@ public class ChefetabController {
 		}
 
 		Collection<PersonnelBean> listofPersonnelsVacataire = 
-				usersService.generateCollectionofProffesseursDeStatutBean("Vacataire");
+				proviseurService.generateCollectionofProffesseursDeStatutBean("Vacataire");
 		
 		if(listofPersonnelsVacataire == null){
 			String error = "AUCUN PERSONNEL PERMANENT N'EST ENCORE ENREGISTRE.";
@@ -1600,7 +1606,7 @@ public class ChefetabController {
 		}
 
 		Collection<PersonnelBean> listofPersonnelsECI =  
-				usersService.generateCollectionofPersonnelDeStatutBean("ECI");
+				proviseurService.generateCollectionofPersonnelDeStatutBean("ECI");
 		
 		if(listofPersonnelsECI == null){
 			String error = "AUCUN PERSONNEL PERMANENT N'EST ENCORE ENREGISTRE.";
@@ -1774,9 +1780,32 @@ public class ChefetabController {
 	public ModelAndView getexportlistClasses(){
 		Etablissement etablissementConcerne = usersService.getEtablissement();
 		Annee anneeScolaire = usersService.findAnneeActive();
+		String error ="";
 		if(etablissementConcerne == null ||  anneeScolaire == null ){
-			return null;
+			
+			String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			if(etablissementConcerne == null){
+				error+="\n L'ETABLISSEMENT EST INEXISTANT";
+			}
+			
+			if(anneeScolaire == null){
+				error+="\n L'ANNEE SCOLAIRE N'A PAS ENCORE ETE ENREGISTRE";
+			}
+			
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+			
 		}
+		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		
 		parameters.put("delegation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
@@ -1806,7 +1835,7 @@ public class ChefetabController {
 		parameters.put("periode", anneeScolaire.getIntituleAnnee());
 		
 		Collection<FicheScolariteparClasseBean> collectionofFicheScoparClasse = 
-				usersService.generateListFicheScolariteparClasseBean();
+				proviseurService.generateListFicheScolariteparClasseBean();
 		
 		parameters.put("datasource", collectionofFicheScoparClasse);
 		JasperReportsPdfView view = new JasperReportsPdfView();
@@ -1816,7 +1845,164 @@ public class ChefetabController {
 		return new ModelAndView(view, parameters);
 		
 	}
+	
+	public void constructModelUpdateSequence(Model model,	HttpServletRequest	request,	
+			int numPageTrim,	int taillePage){
+
 		
+		/*
+		 * Il faut la liste des séquences page par page
+		 */
+		
+		/*Page<Sequences> pageofSeq = usersService.findAllSequences(numPageTrim, taillePage);
+		
+		if(pageofSeq.getContent().size()!=0){
+			model.addAttribute("listofSequences", pageofSeq.getContent());
+			int[] listofPagesSequences=new int[pageofSeq.getTotalPages()];
+			
+			model.addAttribute("listofPagesSequence", listofPagesSequences);
+			
+			model.addAttribute("pageCouranteSequence", numPageTrim);
+			//System.err.println("numPageSequence  "+numPageTrim);
+		}*/
+		
+		/*
+		 * Il faut la liste des trimestres page par page
+		 */
+		
+		Page<Trimestres> pageofTrim = usersService.findAllTrimestres(numPageTrim, taillePage);
+		
+		if(pageofTrim != null){
+			if(pageofTrim.getContent().size()!=0){
+				model.addAttribute("listofTrimestres", pageofTrim.getContent());
+				int[] listofPagesTrimestres=new int[pageofTrim.getTotalPages()];
+				
+				model.addAttribute("listofPagesTrimestre", listofPagesTrimestres);
+				
+				model.addAttribute("pageCouranteTrimestre", numPageTrim);
+				//System.err.println("numPageTrimestre  "+numPageTrim);
+			}
+		}
+	
+	
+	}
+		
+	@GetMapping(path="/getupdateSequence")
+	public String getupdateSequence(
+			@RequestParam(name="numPageTrim", defaultValue="0") int numPageTrim,
+			@RequestParam(name="taillePage", defaultValue="3") int taillePage,
+			Model model, HttpServletRequest request){
+		
+		this.constructModelUpdateSequence(model,	request,	numPageTrim,	taillePage);
+		
+		return "users/updateSequence";
+		
+	}
+	
+	@GetMapping(path="/getactualiserSequence")
+	public String getactualiserSequence(
+			@RequestParam(name="idPeriodes", defaultValue="0") Long idPeriodes, 
+			@RequestParam(name="numPageTrim", defaultValue="0") int numPageTrim,
+			Model model, HttpServletRequest request){
+		
+
+		
+		int repServeur = proviseurService.swicthEtatPeriodesSeq(idPeriodes);
+		
+		if(repServeur == 1) return "redirect:/logesco/users/chefetab/getupdateSequence?actualiserSeqsuccessFalse"
+				+ "&&numPageTrim="+numPageTrim;
+		
+		if(repServeur == 0) return "redirect:/logesco/users/chefetab/getupdateSequence?actualiserSeqerror"
+				+ "&&numPageTrim="+numPageTrim;
+		
+		if(repServeur == -1) return "redirect:/logesco/users/chefetab/getupdateSequence?actualiserSeqerrorTrim"
+				+ "&&numPageTrim="+numPageTrim;
+		
+		return "redirect:/logesco/users/chefetab/getupdateSequence?actualiserSeqsuccessTrue"
+				+ "&&numPageTrim="+numPageTrim;
+		
+	
+	}
+	
+	public void constructModelUpdateTrimestre(Model model,	HttpServletRequest	request,	
+			int numPageAn,	int taillePage){
+		
+
+		/*
+		 * Ici il faut la liste des trimestres page par page
+		 */
+		
+		/*Page<Trimestres> pageofTrim = usersService.findAllTrimestres(numPageAn, taillePage);
+		
+		if(pageofTrim.getContent().size()!=0){
+			model.addAttribute("listofTrimestres", pageofTrim.getContent());
+			int[] listofPagesTrimestres=new int[pageofTrim.getTotalPages()];
+			
+			model.addAttribute("listofPagesTrimestre", listofPagesTrimestres);
+			
+			model.addAttribute("pageCouranteTrimestre", numPageAn);
+			//System.err.println("numPageTrimestre  "+numPageAn);
+		}*/
+		
+		/*
+		 * Ici il faut la liste des année page par page
+		 */
+		
+		Page<Annee> pageofAn = usersService.findAllAnnee(numPageAn, taillePage);
+		
+		if(pageofAn != null){
+			if(pageofAn.getContent().size()!=0){
+				model.addAttribute("listofAnnee", pageofAn.getContent());
+				int[] listofPagesAnnee=new int[pageofAn.getTotalPages()];
+				
+				model.addAttribute("listofPagesAnnee", listofPagesAnnee);
+				
+				model.addAttribute("pageCouranteAnnee", numPageAn);
+				//System.err.println("numPageAnnee  "+numPageAn);
+			}
+		}
+	
+	}
+	
+	@GetMapping(path="/getupdateTrimestre")
+	public String getupdateTrimestre(
+			@RequestParam(name="numPageAn", defaultValue="0") int numPageAn,
+			@RequestParam(name="taillePage", defaultValue="1") int taillePage,
+			Model model, HttpServletRequest request){
+		
+		this.constructModelUpdateTrimestre(model,	request,	numPageAn,	taillePage);
+		
+		return "users/updateTrimestre";
+		
+	}
+	
+	@GetMapping(path="/getactualiserTrimestre")
+	public String getactualiserTrimestre(
+			@RequestParam(name="idPeriodes", defaultValue="0") Long idPeriodes, 
+			@RequestParam(name="numPageAn", defaultValue="0") int numPageAn,
+			Model model, HttpServletRequest request){
+		
+
+		
+		int repServeur = proviseurService.swicthEtatPeriodesTrim(idPeriodes);
+		
+		if(repServeur == 1) return "redirect:/logesco/users/censeur/getupdateTrimestre?actualiserTrimsuccessFalse"
+				+ "&&numPageAn="+numPageAn;
+		
+		if(repServeur == 0) return "redirect:/logesco/users/censeur/getupdateTrimestre?actualiserTrimerror"
+				+ "&&numPageAn="+numPageAn;
+		
+		if(repServeur == -1) return "redirect:/logesco/users/censeur/getupdateTrimestre?actualiserTrimerrorSeq"
+		+ "&&numPageAn="+numPageAn;
+		
+		
+		return "redirect:/logesco/users/censeur/getupdateTrimestre?actualiserTrimsuccessTrue"
+				+ "&&numPageAn="+numPageAn;
+		
+	
+		
+	}
+	
 	
 	
 	
@@ -2007,7 +2193,7 @@ public class ChefetabController {
 			//System.err.println("TOUJOURS PAS DERREUR ON SAVE CENSEUR");
 
 			int roleCode=enregPersonnelsForm.getRoleCode();
-			idPersonnels=usersService.saveCenseurs(censeur, roleCode);
+			idPersonnels=proviseurService.saveCenseurs(censeur, roleCode);
 
 		}
 		else if((enregPersonnelsForm.getRoleCode()==2)){
@@ -2072,7 +2258,7 @@ public class ChefetabController {
 			//System.err.println("TOUJOURS PAS DERREUR ON SAVE CENSEUR");
 
 			int roleCode=enregPersonnelsForm.getRoleCode();
-			idPersonnels=usersService.saveSG(sg, roleCode);
+			idPersonnels=proviseurService.saveSG(sg, roleCode);
 		}
 		else if((enregPersonnelsForm.getRoleCode()==4)){
 			//alors c'est un intendant qu'on enregistre ou qu'on met à jour
@@ -2136,7 +2322,7 @@ public class ChefetabController {
 			//System.err.println("TOUJOURS PAS DERREUR ON SAVE CENSEUR");
 
 			int roleCode=enregPersonnelsForm.getRoleCode();
-			idPersonnels=usersService.saveIntendant(intendant, roleCode);
+			idPersonnels=proviseurService.saveIntendant(intendant, roleCode);
 		}
 		else if((enregPersonnelsForm.getRoleCode()==3)){
 			//alors c'est un enseignant qu'on enregistre ou qu'on met à jour
@@ -2193,7 +2379,7 @@ public class ChefetabController {
 
 			//System.err.println("TOUJOURS PAS DERREUR ON SAVE CENSEUR");
 
-			idPersonnels=usersService.saveEnseignants(enseignant);
+			idPersonnels=proviseurService.saveEnseignants(enseignant);
 		}
 		else if((enregPersonnelsForm.getRoleCode()==5)||(enregPersonnelsForm.getRoleCode()==6)
 				||(enregPersonnelsForm.getRoleCode()==7)||(enregPersonnelsForm.getRoleCode()==8)){
@@ -2251,7 +2437,7 @@ public class ChefetabController {
 
 			//System.err.println("TOUJOURS PAS DERREUR ON SAVE CENSEUR");
 
-			idPersonnels=usersService.savePersonnelsDAppui(personnels);
+			idPersonnels=proviseurService.savePersonnelsDAppui(personnels);
 			
 		}
 		else{
@@ -2658,7 +2844,7 @@ public class ChefetabController {
 				List<String> listofErrorInter = new ArrayList<String>();
 				
 				//On appele les 03 methodes: une pour chaque type de user
-				listofErrorInter = usersService.saveListCenseurs(listofCenseursAEnreg);
+				listofErrorInter = proviseurService.saveListCenseurs(listofCenseursAEnreg);
 				//System.out.println("taille liste censeur a enreg "+listofCenseursAEnreg.size());
 				for(Censeurs cae : listofCenseursAEnreg){
 					//System.out.println(cae.getNomsPers());
@@ -2666,7 +2852,7 @@ public class ChefetabController {
 				for(String ei : listofErrorInter){
 					listofErrorEnreg.add(ei);
 				}
-				listofErrorInter = usersService.saveListSG(listofSGAEnreg);
+				listofErrorInter = proviseurService.saveListSG(listofSGAEnreg);
 				//System.out.println("taille liste sg a enreg "+listofSGAEnreg.size());
 				for(SG cae : listofSGAEnreg){
 					//System.out.println(cae.getNomsPers());
@@ -2674,7 +2860,7 @@ public class ChefetabController {
 				for(String ei : listofErrorInter){
 					listofErrorEnreg.add(ei);
 				}
-				listofErrorInter = usersService.saveListEnseignants(listofEnseignantsAEnreg);
+				listofErrorInter = proviseurService.saveListEnseignants(listofEnseignantsAEnreg);
 				//System.out.println("taille liste enseignant a enreg "+listofEnseignantsAEnreg.size());
 				for(Enseignants cae : listofEnseignantsAEnreg){
 					//System.out.println(cae.getNomsPers());
@@ -2819,7 +3005,7 @@ public class ChefetabController {
 			}
 
 			Long idUsers=updatePersonnelsForm.getIdPersonnels();
-			idPersonnels=usersService.updateProffesseurs(idUsers, censeurAModif);
+			idPersonnels=proviseurService.updateProffesseurs(idUsers, censeurAModif);
 
 			/*int modifNumero=usersService.updateNumeroCenseurs(idUsers, updatePersonnelsForm.getNumeroPers());
 
@@ -2888,7 +3074,7 @@ public class ChefetabController {
 			}
 
 			Long idUsers=updatePersonnelsForm.getIdPersonnels();
-			idPersonnels=usersService.updateProffesseurs(idUsers, sgAModif);
+			idPersonnels=proviseurService.updateProffesseurs(idUsers, sgAModif);
 
 			/*int modifNumero=usersService.updateNumeroSG(idUsers, updatePersonnelsForm.getNumeroPers());
 
@@ -2957,7 +3143,7 @@ public class ChefetabController {
 			}
 
 			Long idUsers=updatePersonnelsForm.getIdPersonnels();
-			idPersonnels=usersService.updateProffesseurs(idUsers, intendantAModif);
+			idPersonnels=proviseurService.updateProffesseurs(idUsers, intendantAModif);
 
 			/*int modifNumero=usersService.updateNumeroIntendant(idUsers, updatePersonnelsForm.getNumeroPers());
 
@@ -3026,7 +3212,7 @@ public class ChefetabController {
 			}
 
 			Long idUsers=updatePersonnelsForm.getIdPersonnels();
-			idPersonnels=usersService.updateProffesseurs(idUsers, ensAModif);
+			idPersonnels=proviseurService.updateProffesseurs(idUsers, ensAModif);
 
 		}
 		
@@ -3086,94 +3272,11 @@ public class ChefetabController {
 
 			//System.err.println("TOUJOURS PAS DERREUR ON SAVE CENSEUR");
 
-			idPersonnels=usersService.savePersonnelsDAppui(personnels);
+			idPersonnels=proviseurService.savePersonnelsDAppui(personnels);
 			
 		}
 		
 
-
-		/*
-		if(idPersonnels.longValue()>0){
-			
-			String roleString=new String("ENSEIGNANT");
-			Long idUsers=updatePersonnelsForm.getIdPersonnels();
-			if((updatePersonnelsForm.getRoleCode()==1)||(updatePersonnelsForm.getRoleCode()==2)){
-				
-				if((updatePersonnelsForm.getRoleCodeAModif()==1)||(updatePersonnelsForm.getRoleCodeAModif()==2)){
-					
-					int repServeur=usersService.supprimerAllRoleUsers(
-							usersService.findUtilisateurs(updatePersonnelsForm.getIdPersonnels()));
-
-					
-					String roleString1=new String("CENSEUR");
-					int repServ=usersService.saveUsersRoles(idUsers, roleString1);
-					if(repServ==1) //System.err.println(" rôles censeur bien fixé");
-					if(updatePersonnelsForm.getRoleCode()==1){
-						repServ=usersService.saveUsersRoles(idUsers, roleString);
-						
-					}
-				}
-				else{
-					idPersonnels=new Long(-7);
-				}
-			}
-			else if((updatePersonnelsForm.getRoleCode()==3)||(updatePersonnelsForm.getRoleCode()==4)){
-				
-				if((updatePersonnelsForm.getRoleCodeAModif()==3)||(updatePersonnelsForm.getRoleCodeAModif()==4)){
-					
-					int repServeur=usersService.supprimerAllRoleUsers(usersService.findUtilisateurs(updatePersonnelsForm.getIdPersonnels()));
-
-				
-					String roleString1=new String("SG");
-					int repServ=usersService.saveUsersRoles(idUsers, roleString1);
-					
-					if(updatePersonnelsForm.getRoleCode()==3){
-						repServ=usersService.saveUsersRoles(idUsers, roleString);
-						
-					}
-				}
-				else{
-					idPersonnels=new Long(-7);
-				}
-			}
-			else if((updatePersonnelsForm.getRoleCode()==5)||(updatePersonnelsForm.getRoleCode()==6)){
-				
-				if((updatePersonnelsForm.getRoleCodeAModif()==5)||(updatePersonnelsForm.getRoleCodeAModif()==6)){
-
-					
-
-					int repServeur=usersService.supprimerAllRoleUsers(usersService.findUtilisateurs(updatePersonnelsForm.getIdPersonnels()));
-
-					
-					String roleString1=new String("INTENDANT");
-					int repServ=usersService.saveUsersRoles(idUsers, roleString1);
-					if(updatePersonnelsForm.getRoleCode()==5){
-						repServ=usersService.saveUsersRoles(idUsers, roleString);
-						
-					}
-				}
-				else{
-					idPersonnels=new Long(-7);
-				}
-			}
-			else if((updatePersonnelsForm.getRoleCode()==7)){
-				
-				if((updatePersonnelsForm.getRoleCodeAModif()==7)){
-
-					
-
-					int repServeur=usersService.supprimerAllRoleUsers(usersService.findUtilisateurs(updatePersonnelsForm.getIdPersonnels()));
-
-					
-					String roleString1=new String("ENSEIGNANT");
-					int repServ=usersService.saveUsersRoles(idUsers, roleString1);
-					
-				}
-				else{
-					idPersonnels=new Long(-7);
-				}
-			}
-		}*/
 
 		if(idPersonnels.longValue()==-1) 
 			return "redirect:/logesco/users/chefetab/getupdatePersonnels?enregpersonnelserrorNumeroCni"
@@ -3399,7 +3502,7 @@ public class ChefetabController {
 								eleveAValider.setStatutEleves("nouveau");
 								//les index de la liste des matricule a générer commence a partir de 0
 								//int index = i+1;
-								String matricule = usersService.getNextMatricule(codeEtab, anneeString);
+								String matricule = proviseurService.getNextMatricule(codeEtab, anneeString);
 								eleveAValider.setMatriculeEleves(matricule);
 								/*
 								 * Après construction il faut donc valider avant de placer dans la liste des élèves 
@@ -3452,7 +3555,7 @@ public class ChefetabController {
 						" en classe de "+classe.getCodeClasses()+classe.getNumeroClasses());*/
 				
 				List<String> listofErrorEnreg = new ArrayList<String>();
-				listofErrorEnreg = usersService.saveListEleves(listofElevesAEnreg, classe.getIdClasses());
+				listofErrorEnreg = proviseurService.saveListEleves(listofElevesAEnreg, classe.getIdClasses());
 				////System.err.println("resultat de l'enreglist "+listofErrorEnreg.size());
 				if(listofErrorEnreg.size() == 0){
 					model.addAttribute("enregListSucces", "successEnregList");
@@ -3513,7 +3616,7 @@ public class ChefetabController {
 		String codeEtab="";
 		if(etab != null) codeEtab = etab.getCodeMatriculeEtab();
 
-		String matricule = usersService.getNextMatricule(codeEtab, anneeString);
+		String matricule = proviseurService.getNextMatricule(codeEtab, anneeString);
 
 		//System.err.println("le matricule generer pour cet eleve est "+matricule);
 		
@@ -3538,15 +3641,17 @@ public class ChefetabController {
 		}
 		eleveAEnreg.setPrenomsEleves(enregElevesForm.getPrenomsEleves());
 		eleveAEnreg.setQuartierEleves(enregElevesForm.getQuartierEleves());
-		eleveAEnreg.setRedoublant("non");
+		//eleveAEnreg.setRedoublant("non");
+		eleveAEnreg.setRedoublant(enregElevesForm.getRedoublant());
 		eleveAEnreg.setSexeEleves(enregElevesForm.getSexeEleves());
-		eleveAEnreg.setStatutEleves("nouveau");
+		//eleveAEnreg.setStatutEleves("nouveau");
+		eleveAEnreg.setStatutEleves(enregElevesForm.getStatutEleves());
 		eleveAEnreg.setVilleEleves(enregElevesForm.getVilleEleves());
 
 		/*
 		 * Appel du metier pour l'enregistrement
 		 */
-		idEleves= usersService.saveEleves(eleveAEnreg, enregElevesForm.getIdClasse());
+		idEleves= proviseurService.saveEleves(eleveAEnreg, enregElevesForm.getIdClasse());
 
 		if(idEleves.longValue()==0) return "redirect:/logesco/users/chefetab/getenregEleves?enregeleveserrorNames";
 
@@ -3646,6 +3751,7 @@ public class ChefetabController {
 		eleveAModif.setQuartierEleves(updateElevesForm.getQuartierEleves());
 		eleveAModif.setSexeEleves(updateElevesForm.getSexeEleves());
 		eleveAModif.setStatutEleves(updateElevesForm.getStatutEleves());
+		eleveAModif.setRedoublant(updateElevesForm.getRedoublant());
 
 		//System.err.println("Paramètres eleveAModif.setSexeEleves=="+updateElevesForm.getSexeEleves());
 		//System.err.println("Paramètres eleveAModif.setStatutEleves=="+updateElevesForm.getStatutEleves());
@@ -3653,7 +3759,7 @@ public class ChefetabController {
 		/*
 		 * Appel du metier pour l'enregistrement
 		 */
-		Long idElevesModif= usersService.updateEleves(eleveAModif, updateElevesForm.getIdClasse());
+		Long idElevesModif= proviseurService.updateEleves(eleveAModif, updateElevesForm.getIdClasse());
 
 		if(idElevesModif.longValue()==0) 
 			return "redirect:/logesco/users/chefetab/getgestionEleves?updateeleveserrorNames"
@@ -3662,16 +3768,16 @@ public class ChefetabController {
 			+ "&&numPageEleves="+numPageEleves;
 
 		if(idElevesModif.longValue()==-1) 
-			return "redirect:/logesco/users/chefetab/getgestionEleves?enregeleveserrorMatricule"
+			return "redirect:/logesco/users/chefetab/getgestionEleves?updateeleveserrorMatricule"
 			+ "&&idElevesAModif="+idElevesAModif
 			+ "&&idClasseSelect="+idClasseSelect
 			+ "&&numPageEleves="+numPageEleves;
 
-		/*if(idElevesModif.longValue()==-2) 
-				return "redirect:/logesco/users/chefetab/getgestionEleves?enregeleveserrorClasse"
+		if(idElevesModif.longValue()==-2) 
+				return "redirect:/logesco/users/chefetab/getgestionEleves?updateeleveserrorClasse"
 				+ "&&idElevesAModif="+idElevesAModif
 				+ "&&idClasseSelect="+idClasseSelect
-				+ "&&numPageEleves="+numPageEleves;*/
+				+ "&&numPageEleves="+numPageEleves;
 
 		/*
 		 * Tout s'étant bien passé et bien enregistré il faut uploader la photos
@@ -3711,7 +3817,7 @@ public class ChefetabController {
 		 * On va appeler la methode du service metier pour fixer les montants 
 		 */
 		
-		int ret = usersService.setMontantScoClasse(updateMtScoClassesForm.getIdclasseAConfig(), 
+		int ret = proviseurService.setMontantScoClasse(updateMtScoClassesForm.getIdclasseAConfig(), 
 				updateMtScoClassesForm.getMontantScolarite());
 		
 		/*//System.err.println("classe == "+updateMtScoClassesForm.getIdclasseAConfig()+

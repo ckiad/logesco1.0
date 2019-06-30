@@ -1262,9 +1262,11 @@
 				</textElement>
 				<text><![CDATA[, le]]></text>
 			</staticText>
-			<textField pattern="MMMMM dd, yyyy">
+			<textField pattern="dd MMM yyyy">
 				<reportElement x="684" y="8" width="100" height="19" uuid="1d9b45ee-0004-4ec7-a93d-6ff0e85869ee"/>
-				<textElement verticalAlignment="Middle"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial Narrow"/>
+				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<staticText>

@@ -65,7 +65,28 @@
 			<form action="#" th:action="@{/logesco/users/chefetab/postupdateEleves}"
 						th:object="${updateElevesForm}"  method="post" enctype="multipart/form-data"
 						id="formupdateEleves" name="formupdateEleves">
-						
+				
+				<div th:if="${param.updateelevessuccess}">
+					<h4 align="justify" class="alert alert-success" th:inline="text">
+						[[#{gestionelv.labelsuccess_updateelevessuccess}]].
+					</h4>
+				</div>
+				
+				<div th:if="${param.updateeleveserrorMatricule}">
+					<h4 align="justify" class="alert alert-danger" th:inline="text">
+						[[#{gestionelv.labelerror_updateeleveserrorMatricule}]].</h4>
+				</div>
+				
+				<div th:if="${param.updateeleveserrorClasse}">
+					<h4 align="justify" class="alert alert-danger" th:inline="text">
+						[[#{gestionelv.labelerror_updateeleveserrorClasse}]].</h4>
+				</div>
+				
+				<div th:if="${param.updateeleveserrorNames}">
+					<h4 align="justify" class="alert alert-danger" th:inline="text">
+						[[#{gestionelv.labelerror_updateeleveserrorNames}]].</h4>
+				</div>
+					
 				<fieldset class="col-md-12" th:if="${eleveAModif}">
 					<legend class="text-primary" th:inline="text">[[#{gestionelv.legend_formmodif}]]</legend>
 					
@@ -130,9 +151,9 @@
 											
 								<span class="radio">
 									    <label><input type="radio" name="sexeEleves" id="sexeEleves" class="radio-inline"
-								    				 th:field="*{sexeEleves}" value="masculin" checked="checked"/>Masculin/Male</label>
+								    				 th:field="*{sexeEleves}" value="masculin" />Masculin/Male</label>
 									    <label><input type="radio" name="sexeEleves" id="sexeEleves" class="radio-inline"
-								      				th:field="*{sexeEleves}" value="féminin"/>Féminin/Female</label>
+								      				th:field="*{sexeEleves}" value="feminin"/>Féminin/Female</label>
 							   	</span>
 							</div>
 							<div th:if="${#fields.hasErrors('sexeEleves')}"
@@ -240,10 +261,25 @@
 							<div th:if="${#fields.hasErrors('statutEleves')}"
 								th:errors="*{statutEleves}" class="redcolor">erreur statutEleves Eleves</div>
 						
-						<div class="form-group">
+						<!-- <div class="form-group">
 							<label for="redoublant" th:inline="text"> [[#{gestionelv.label_redoublant}]]?: </label> 
 							<label  th:text="*{redoublant}" class="redcolor" th:inline="text"> [[#{gestionelv.label_ouinon}]] </label>
-						</div>
+						</div> -->
+						
+						<div class="form-group">
+						<label for="redoublant" class="control-label text-left" th:inline="text">[[#{gestionelv.label_redoublant}]] : <span
+							class="redcolor">*</span></label> 
+									
+						<div class="radio">
+							    <label><input type="radio" name="redoublant" id="redoublant" class="radio-inline"
+						    				 th:field="*{redoublant}" value="oui" checked="checked"/>OUI/YES</label>
+							    <label><input type="radio" name="redoublant" id="redoublant" class="radio-inline"
+						      				th:field="*{redoublant}" value="non"/>NON/NO</label>
+					   </div>
+					</div>
+					<div th:if="${#fields.hasErrors('redoublant')}"
+						th:errors="*{redoublant}" class="redcolor">erreur redoublant Eleves</div>
+						
 						<div class="form-group">
 							<label for="etatInscEleves" th:inline="text"> [[#{gestionelv.label_etatInscEleves}]]: </label> 
 							<label  th:text="*{etatInscEleves}" class="redcolor" th:inline="text"> [[#{gestionelv.label_inscritounon}]] </label>
@@ -377,7 +413,7 @@
 									        		[[${eleve.lieunaissEleves}]]</span></h4>
 									        	<h4  th:inline="text"><b>[[#{gestionelv.sexenationalite}]]:</b> 
 									        	<span th:inline="text">[[${eleve.sexeEleves}]] [[#{gestionelv.denationalite}]] [[${eleve.nationaliteEleves}]]</span></h4>
-									        	<h4  th:inline="text"><b>[[#{gestionelv.label_statut}]]:</b> <span th:inline="text">[[${eleve.statutEleves}]]  Redoublant?: 
+									        	<h4  th:inline="text"><b>[[#{gestionelv.label_statut}]]:</b> <span th:inline="text">[[${eleve.statutEleves}]]  <b>Redoublant?: </b>
 									        		[[${eleve.redoublant}]]</span></h4>
 									        	<h4 th:inline="text"><b>[[#{gestionelv.classe}]]:</b> <span th:inline="text">[[${eleve.classe.codeClasses}]] 
 									        	[[${eleve.classe.specialite.codeSpecialite}]] [[${eleve.classe.numeroClasses}]]</span></h4>

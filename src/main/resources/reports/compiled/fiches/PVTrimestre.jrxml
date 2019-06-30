@@ -259,7 +259,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font isBold="true"/>
+					<font fontName="Arial Narrow" isBold="true"/>
 				</textElement>
 				<text><![CDATA[NOMS, PRENOMS ET DATE DE NAISSANCE]]></text>
 			</staticText>
@@ -274,7 +274,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font isBold="true"/>
+					<font fontName="Arial Narrow" isBold="true"/>
 				</textElement>
 				<text><![CDATA[NOTE FINALE]]></text>
 			</staticText>
@@ -300,7 +300,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font isBold="true"/>
+					<font fontName="Arial Narrow" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{labelSeq2}]]></textFieldExpression>
 			</textField>

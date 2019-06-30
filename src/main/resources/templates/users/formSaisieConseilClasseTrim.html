@@ -10,19 +10,32 @@
 </head>
 <body>
 
-<span layout:fragment="titre_boite">
+<span layout:fragment="titre_boite" >
     <kbd th:inline="text"> [[#{formsaisieconseilclassetrim.titre_boite}]] </kbd> 
-	<span th:inline="text" class="alert alert-warning"> 
+	<span th:inline="text" class="alert alert-warning" th:if="${paramConseil=='1'}"> 
 		<kbd th:inline="text">
 			[[${classeConcerne.codeClasses}]][[${classeConcerne.specialite.codeSpecialite}]] [[${classeConcerne.numeroClasses}]]
 			([[#{formsaisieconseilclassetrim.label_trimestre}]]: [[${trimestreConcerne.numeroTrim}]]).
 		</kbd>
 	</span>
+	
+	<span th:inline="text"  th:if="${paramConseil=='0'}"> 
+		<kbd th:inline="text">
+			Les données du conseil ne peuvent pas être enregistrées: les différentes sanctions ne sont pas encore enregistrés 
+		par l'administrateur tant sur le plan disciplinaire que du travail.
+		</kbd>
+	</span>
+	
 </span>
 
 <div layout:fragment="formactionusers">
 <!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE   col-md-offset-1-->
-<div class="col-md-9">
+	
+	
+<div class="col-md-9" th:if="${paramConseil=='1'}">
+
+	
+
 	<table class="table table-striped">
 		<thead>
 			<tr>

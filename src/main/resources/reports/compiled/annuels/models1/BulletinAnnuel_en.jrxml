@@ -1474,7 +1474,7 @@
 				<text><![CDATA[HEAD OF SCHOOL VISA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="5" y="97" width="81" height="11" uuid="7008680a-2aef-4a76-80ab-2d8a43451112"/>
+				<reportElement x="5" y="100" width="68" height="11" uuid="7008680a-2aef-4a76-80ab-2d8a43451112"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1483,21 +1483,21 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement>
-					<font fontName="Arial Narrow" size="7" isBold="false"/>
+					<font fontName="Arial Narrow" size="9" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Appreciation :]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="86" y="97" width="75" height="11" forecolor="#1E4A1F" backcolor="#FFFFFF" uuid="5e5411af-0a28-4df2-a1a1-11796a9b6526"/>
-				<textElement markup="none">
-					<font fontName="Arial Narrow" size="7" isBold="true"/>
+				<reportElement x="73" y="100" width="88" height="11" forecolor="#1E4A1F" backcolor="#FFFFFF" uuid="5e5411af-0a28-4df2-a1a1-11796a9b6526"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="Arial Narrow" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{appreciation}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="161" y="108" width="184" height="62" forecolor="#1E4A1F" backcolor="#FFFFFF" uuid="b2a9375e-0227-4407-9c91-eabe931b407f"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-					<font fontName="Arial Narrow" size="7" isBold="true"/>
+					<font fontName="Arial Narrow" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{decision_conseil}]]></textFieldExpression>
 			</textField>
@@ -1516,37 +1516,37 @@
 				<text><![CDATA[An effort is imposed in:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="174" y="188" width="170" height="11" forecolor="#61050D" backcolor="#FFFFFF" uuid="c54a883c-fb76-4d16-9106-28fcdec3b816"/>
+				<reportElement x="174" y="190" width="170" height="11" forecolor="#61050D" backcolor="#FFFFFF" uuid="c54a883c-fb76-4d16-9106-28fcdec3b816"/>
 				<textElement markup="none">
-					<font fontName="Arial Narrow" size="7" isBold="true"/>
+					<font fontName="Arial Narrow" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{effort_matiere1}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="174" y="198" width="170" height="11" forecolor="#61050D" backcolor="#FFFFFF" uuid="465d7697-c4e8-44f8-bbb0-e6656ebaff42"/>
+				<reportElement x="174" y="205" width="170" height="11" forecolor="#61050D" backcolor="#FFFFFF" uuid="465d7697-c4e8-44f8-bbb0-e6656ebaff42"/>
 				<textElement markup="none">
-					<font fontName="Arial Narrow" size="7" isBold="true"/>
+					<font fontName="Arial Narrow" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{effort_matiere2}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="174" y="208" width="170" height="11" forecolor="#61050D" backcolor="#FFFFFF" uuid="4966dbc7-1af0-42fb-adc4-474bd3afeb21"/>
+				<reportElement x="174" y="219" width="170" height="11" forecolor="#61050D" backcolor="#FFFFFF" uuid="4966dbc7-1af0-42fb-adc4-474bd3afeb21"/>
 				<textElement markup="none">
-					<font fontName="Arial Narrow" size="7" isBold="true"/>
+					<font fontName="Arial Narrow" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{effort_matiere3}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="345" y="117" width="63" height="11" forecolor="#2E6DAD" backcolor="#FFFFFF" uuid="f054f215-39f0-4803-93c4-9e6c5cbdbc08">
+				<reportElement x="345" y="117" width="78" height="11" forecolor="#2E6DAD" backcolor="#FFFFFF" uuid="f054f215-39f0-4803-93c4-9e6c5cbdbc08">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ville}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="408" y="117" width="15" height="11" forecolor="#2E6DAD" uuid="6c47fad8-dd69-431f-b883-cbc641f27efa">
+				<reportElement x="425" y="117" width="15" height="11" forecolor="#2E6DAD" uuid="6c47fad8-dd69-431f-b883-cbc641f27efa">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -1562,11 +1562,11 @@
 				<text><![CDATA[At]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="425" y="160" width="121" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="e53c5214-f498-43c6-ad02-5ea560476b8a"/>
+				<reportElement x="359" y="144" width="176" height="11" forecolor="#000000" backcolor="#FFFFFF" uuid="e53c5214-f498-43c6-ad02-5ea560476b8a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
-				<text><![CDATA[THE PRINCIPAL]]></text>
+				<text><![CDATA[THE PRINCIPAL / LE PROVISEUR]]></text>
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="0" y="0" width="73" height="14" forecolor="#1E4A1F" backcolor="#9BC0EB" uuid="14665c80-50de-4d17-b0bd-b2af8011600b"/>
@@ -1599,8 +1599,10 @@
 				<textFieldExpression><![CDATA[$F{total_points}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd MMM yyyy">
-				<reportElement x="425" y="117" width="122" height="17" forecolor="#2E6DAD" uuid="edf51401-42cb-4d3a-8f28-2e2b97ec619b">
+				<reportElement x="442" y="117" width="105" height="11" forecolor="#2E6DAD" uuid="edf51401-42cb-4d3a-8f28-2e2b97ec619b">
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Courier New" size="9" isBold="true"/>
@@ -1684,14 +1686,14 @@
 				<textFieldExpression><![CDATA[$F{rapport_disc1}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="4" y="123" width="155" height="48" forecolor="#1E4A1F" uuid="8e9fcb77-fea1-4a95-b303-013bcc76ad7e"/>
+				<reportElement x="4" y="128" width="155" height="43" forecolor="#1E4A1F" uuid="8e9fcb77-fea1-4a95-b303-013bcc76ad7e"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial Narrow" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{distinction}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="43" y="109" width="70" height="12" uuid="e17ef6a1-92c1-4361-9bc9-53723f83bb86">
+				<reportElement x="43" y="114" width="70" height="12" uuid="e17ef6a1-92c1-4361-9bc9-53723f83bb86">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement>

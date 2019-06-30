@@ -3,9 +3,13 @@
  */
 package org.logesco.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +21,7 @@ import org.logesco.entities.Censeurs;
 import org.logesco.entities.Classes;
 import org.logesco.entities.Cours;
 import org.logesco.entities.Enseignants;
+import org.logesco.entities.Etablissement;
 import org.logesco.entities.Evaluations;
 import org.logesco.entities.Intendant;
 import org.logesco.entities.Matieres;
@@ -25,13 +30,17 @@ import org.logesco.entities.Proffesseurs;
 import org.logesco.entities.Proviseur;
 import org.logesco.entities.SG;
 import org.logesco.entities.Sequences;
-import org.logesco.entities.Trimestres;
 import org.logesco.form.GetrapportEvalSeqForm;
 import org.logesco.form.UpdateCoursForm;
 import org.logesco.form.UpdateMatieresForm;
 import org.logesco.form.UpdateTitulaireForm;
+import org.logesco.modeles.ErrorBean;
+import org.logesco.modeles.FicheTitulaireparClasseBean;
+import org.logesco.services.ICenseurService;
 import org.logesco.services.IUsersService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,6 +50,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.jasperreports.JasperReportsPdfView;
 
 /**
  * @author cedrickiadjeu
@@ -49,8 +60,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping(path="/logesco/users/censeur")
 public class CenseurController {
+	
+	@Autowired
+	private ApplicationContext applicationContext;
+	
 	@Autowired
 	private IUsersService usersService;
+	
+	@Autowired
+	private ICenseurService censeurService;
+	
+	@Value("${dir.emblemes.logo}")
+	private String logoetabDir;
 	
 ////////////////////////////////////DEBUT DES REQUETES DE TYPE GET ////////////////////////////////////////////
 	
@@ -271,7 +292,7 @@ public class CenseurController {
 			@RequestParam(name="idMatiere", defaultValue="0") Long idMatiere, 
 			Model model, HttpServletRequest request){
 		
-		int repServeur = usersService.deleteMatiere(idMatiere);
+		int repServeur = censeurService.deleteMatiere(idMatiere);
 		
 		if(repServeur == -1) return "redirect:/logesco/users/censeur/getupdateMatieres?supprimmatiereserrorMat";
 		
@@ -287,7 +308,7 @@ public class CenseurController {
 			@RequestParam(name="idClasseAssocie", defaultValue="0") Long idClasseAssocie,
 			Model model, HttpServletRequest request){
 		
-		int repServeur = usersService.deleteCours(idCours);
+		int repServeur = censeurService.deleteCours(idCours);
 		
 		if(repServeur == -1) return "redirect:/logesco/users/censeur/getupdateCours?supprimcourserrorMat"
 				+ "&&idClasseAssocie="+idClasseAssocie;
@@ -300,149 +321,6 @@ public class CenseurController {
 		
 	}
 	
-	public void constructModelUpdateSequence(Model model,	HttpServletRequest	request,	int numPageTrim,	int taillePage){
-		/*
-		 * Il faut la liste des séquences page par page
-		 */
-		
-		/*Page<Sequences> pageofSeq = usersService.findAllSequences(numPageTrim, taillePage);
-		
-		if(pageofSeq.getContent().size()!=0){
-			model.addAttribute("listofSequences", pageofSeq.getContent());
-			int[] listofPagesSequences=new int[pageofSeq.getTotalPages()];
-			
-			model.addAttribute("listofPagesSequence", listofPagesSequences);
-			
-			model.addAttribute("pageCouranteSequence", numPageTrim);
-			//System.err.println("numPageSequence  "+numPageTrim);
-		}*/
-		
-		/*
-		 * Il faut la liste des trimestres page par page
-		 */
-		
-		Page<Trimestres> pageofTrim = usersService.findAllTrimestres(numPageTrim, taillePage);
-		
-		if(pageofTrim != null){
-			if(pageofTrim.getContent().size()!=0){
-				model.addAttribute("listofTrimestres", pageofTrim.getContent());
-				int[] listofPagesTrimestres=new int[pageofTrim.getTotalPages()];
-				
-				model.addAttribute("listofPagesTrimestre", listofPagesTrimestres);
-				
-				model.addAttribute("pageCouranteTrimestre", numPageTrim);
-				//System.err.println("numPageTrimestre  "+numPageTrim);
-			}
-		}
-	
-	}
-	
-
-	@GetMapping(path="/getupdateSequence")
-	public String getupdateSequence(
-			@RequestParam(name="numPageTrim", defaultValue="0") int numPageTrim,
-			@RequestParam(name="taillePage", defaultValue="3") int taillePage,
-			Model model, HttpServletRequest request){
-		
-		this.constructModelUpdateSequence(model,	request,	numPageTrim,	taillePage);
-		
-		return "users/updateSequence";
-		
-	}
-	
-	@GetMapping(path="/getactualiserSequence")
-	public String getactualiserSequence(
-			@RequestParam(name="idPeriodes", defaultValue="0") Long idPeriodes, 
-			@RequestParam(name="numPageTrim", defaultValue="0") int numPageTrim,
-			Model model, HttpServletRequest request){
-		
-		int repServeur = usersService.swicthEtatPeriodesSeq(idPeriodes);
-		
-		if(repServeur == 1) return "redirect:/logesco/users/censeur/getupdateSequence?actualiserSeqsuccessFalse"
-				+ "&&numPageTrim="+numPageTrim;
-		
-		if(repServeur == 0) return "redirect:/logesco/users/censeur/getupdateSequence?actualiserSeqerror"
-				+ "&&numPageTrim="+numPageTrim;
-		
-		if(repServeur == -1) return "redirect:/logesco/users/censeur/getupdateSequence?actualiserSeqerrorTrim"
-				+ "&&numPageTrim="+numPageTrim;
-		
-		return "redirect:/logesco/users/censeur/getupdateSequence?actualiserSeqsuccessTrue"
-				+ "&&numPageTrim="+numPageTrim;
-		
-	}
-	
-	public void constructModelUpdateTrimestre(Model model,	HttpServletRequest	request,	int numPageAn,	int taillePage){
-		/*
-		 * Ici il faut la liste des trimestres page par page
-		 */
-		
-		/*Page<Trimestres> pageofTrim = usersService.findAllTrimestres(numPageAn, taillePage);
-		
-		if(pageofTrim.getContent().size()!=0){
-			model.addAttribute("listofTrimestres", pageofTrim.getContent());
-			int[] listofPagesTrimestres=new int[pageofTrim.getTotalPages()];
-			
-			model.addAttribute("listofPagesTrimestre", listofPagesTrimestres);
-			
-			model.addAttribute("pageCouranteTrimestre", numPageAn);
-			//System.err.println("numPageTrimestre  "+numPageAn);
-		}*/
-		
-		/*
-		 * Ici il faut la liste des année page par page
-		 */
-		
-		Page<Annee> pageofAn = usersService.findAllAnnee(numPageAn, taillePage);
-		
-		if(pageofAn != null){
-			if(pageofAn.getContent().size()!=0){
-				model.addAttribute("listofAnnee", pageofAn.getContent());
-				int[] listofPagesAnnee=new int[pageofAn.getTotalPages()];
-				
-				model.addAttribute("listofPagesAnnee", listofPagesAnnee);
-				
-				model.addAttribute("pageCouranteAnnee", numPageAn);
-				//System.err.println("numPageAnnee  "+numPageAn);
-			}
-		}
-	}
-	
-	@GetMapping(path="/getupdateTrimestre")
-	public String getupdateTrimestre(
-			@RequestParam(name="numPageAn", defaultValue="0") int numPageAn,
-			@RequestParam(name="taillePage", defaultValue="1") int taillePage,
-			Model model, HttpServletRequest request){
-		
-		this.constructModelUpdateTrimestre(model,	request,	numPageAn,	taillePage);
-		
-		return "users/updateTrimestre";
-		
-	}
-	
-	
-	@GetMapping(path="/getactualiserTrimestre")
-	public String getactualiserTrimestre(
-			@RequestParam(name="idPeriodes", defaultValue="0") Long idPeriodes, 
-			@RequestParam(name="numPageAn", defaultValue="0") int numPageAn,
-			Model model, HttpServletRequest request){
-		
-		int repServeur = usersService.swicthEtatPeriodesTrim(idPeriodes);
-		
-		if(repServeur == 1) return "redirect:/logesco/users/censeur/getupdateTrimestre?actualiserTrimsuccessFalse"
-				+ "&&numPageAn="+numPageAn;
-		
-		if(repServeur == 0) return "redirect:/logesco/users/censeur/getupdateTrimestre?actualiserTrimerror"
-				+ "&&numPageAn="+numPageAn;
-		
-		if(repServeur == -1) return "redirect:/logesco/users/censeur/getupdateTrimestre?actualiserTrimerrorSeq"
-		+ "&&numPageAn="+numPageAn;
-		
-		
-		return "redirect:/logesco/users/censeur/getupdateTrimestre?actualiserTrimsuccessTrue"
-				+ "&&numPageAn="+numPageAn;
-		
-	}
 	
 	public void constructModelUpdateTitulaire(Model model,	HttpServletRequest request,	UpdateTitulaireForm updateTitulaireForm,
 			int numPageNiveaux,	int taillePage,	Long idClasseAModif,	Long idUsersTitulaire){
@@ -484,18 +362,7 @@ public class CenseurController {
 		if(listofenseignants.size()	!=	0)	model.addAttribute("listofenseignants", listofenseignants);
 		
 		
-		/*Page<Classes> pageofClasses=
-				usersService.findPageClasse(numPageClasses, taillePage); 
 		
-		if(pageofClasses.getContent().size()!=0){
-			model.addAttribute("listofClasses", pageofClasses.getContent());
-			int[] listofPagesClasses=new int[pageofClasses.getTotalPages()];
-			
-			model.addAttribute("listofPagesClasses", listofPagesClasses);
-			
-			model.addAttribute("pageCouranteClasses", numPageClasses);
-			//System.err.println("numPageClasses  "+numPageClasses);
-		}*/
 		
 		/*  List<Niveaux> listofNiveaux = usersService.findAllNiveaux();
 		model.addAttribute("listofNiveaux", listofNiveaux);*/
@@ -568,6 +435,82 @@ public class CenseurController {
 		return "users/rapportEvalSeq";
 	}
 	
+	@GetMapping(path="/exportlistTitulaireClasse")
+	public ModelAndView exportlistTitulaireClasse( Model model, HttpServletRequest request){
+		Etablissement etablissementConcerne = usersService.getEtablissement();
+		Annee anneeScolaire = usersService.findAnneeActive();
+		String error ="";
+		if(etablissementConcerne == null ||  anneeScolaire == null ){
+
+			
+			String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			if(etablissementConcerne == null){
+				error+="\n L'ETABLISSEMENT EST INEXISTANT";
+			}
+			
+			if(anneeScolaire == null){
+				error+="\n L'ANNEE SCOLAIRE N'A PAS ENCORE ETE ENREGISTRE";
+			}
+			
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+			
+		}
+		
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		parameters.put("delegation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
+		parameters.put("delegation_en", etablissementConcerne.getDeleguationdeptuteleanglaisEtab().toUpperCase());
+		parameters.put("etablissement_fr", etablissementConcerne.getNomsEtab().toUpperCase());
+		parameters.put("etablissement_en", etablissementConcerne.getNomsanglaisEtab().toUpperCase());
+		String adresse = "BP "+etablissementConcerne.getBpEtab()+
+				"  TEL: "+etablissementConcerne.getNumtel1Etab();
+		parameters.put("adresse", adresse);
+		parameters.put("annee_scolaire_fr", "Année Académique "+anneeScolaire.getIntituleAnnee());
+		parameters.put("annee_scolaire_en", "Academic year "+anneeScolaire.getIntituleAnnee());
+		parameters.put("ministere_fr", etablissementConcerne.getMinisteretuteleEtab());
+		parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
+		parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
+		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
+		parameters.put("ville", etablissementConcerne.getVilleEtab());
+
+		File f=new File(logoetabDir+etablissementConcerne.getLogoEtab());
+
+		if(f.exists()==true){
+			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
+		}
+		else{
+			parameters.put("logo", "classpath:/static/images/logobekoko.png");
+		}
+
+		parameters.put("periode", anneeScolaire.getIntituleAnnee());
+		
+		Collection<FicheTitulaireparClasseBean> collectionofTitulaireparClasse = 
+				censeurService.generateListFicheTitulaireparClasseBean();
+		
+		parameters.put("datasource", collectionofTitulaireparClasse);
+		JasperReportsPdfView view = new JasperReportsPdfView();
+		view.setUrl("classpath:/reports/compiled/fiches/FicheTitulaireparClasse.jasper");
+		view.setApplicationContext(applicationContext);
+		
+		return new ModelAndView(view, parameters);
+		
+		
+	}
+	
+	
+	
+	
 	
 	
 ////////////////////////////////////FIN DES REQUETES DE TYPE GET ////////////////////////////////////////////	
@@ -623,7 +566,7 @@ public class CenseurController {
 		
 		matiere.setIdMatiere(updateMatieresForm.getIdMatiere() );
 		
-		int repServeur = usersService.updateMatiere(matiere);
+		int repServeur = censeurService.updateMatiere(matiere);
 		
 		if(repServeur == 0) return "redirect:/logesco/users/censeur/getupdateMatieres?updatematiereserrorCode"
 				+ "&&idMatiere="+updateMatieresForm.getIdMatiere();
@@ -694,7 +637,7 @@ public class CenseurController {
 			cours.setIdCours(updateCoursForm.getIdCours());
 			cours.setIntituleCours(updateCoursForm.getIntituleCours());
 			
-			int repServeur = usersService.updateCours(cours, updateCoursForm.getIdMatiereAssocie(), 
+			int repServeur = censeurService.updateCours(cours, updateCoursForm.getIdMatiereAssocie(), 
 					updateCoursForm.getIdUsersAssocie(), updateCoursForm.getIdClasseSelect());
 			
 			if(repServeur == 0) return "redirect:/logesco/users/censeur/getupdateCours?updatecourserrorCode"
@@ -745,7 +688,7 @@ public class CenseurController {
 		}
 		
 		
-		int repServeur = usersService.setTitulaireClasse(updateTitulaireForm.getIdClassesConcerne(), updateTitulaireForm.getIdUsersTitulaire());
+		int repServeur = censeurService.setTitulaireClasse(updateTitulaireForm.getIdClassesConcerne(), updateTitulaireForm.getIdUsersTitulaire());
 		
 		if(repServeur == 0) return "redirect:/logesco/users/censeur/getupdateTitulaire?updatetutulaireerror"
 				+ "&&numPageNiveaux="+updateTitulaireForm.getNumPageNiveaux()

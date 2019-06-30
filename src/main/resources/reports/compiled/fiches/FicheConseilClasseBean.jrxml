@@ -2290,36 +2290,36 @@
 				<text><![CDATA[Sanction]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="4" y="242" width="259" height="16" uuid="4e2fc6e2-eb88-4764-8ae6-d4f9e842263d"/>
+				<reportElement x="4" y="206" width="259" height="16" uuid="4e2fc6e2-eb88-4764-8ae6-d4f9e842263d"/>
 				<textElement>
 					<font fontName="Arial Narrow" isBold="true" isUnderline="false"/>
 				</textElement>
 				<text><![CDATA[Problème de la classe et proposition de solution:]]></text>
 			</staticText>
 			<line>
-				<reportElement x="273" y="251" width="273" height="1" uuid="157c4f5f-c75b-400d-9b07-9bbe14147218"/>
+				<reportElement x="273" y="215" width="273" height="1" uuid="157c4f5f-c75b-400d-9b07-9bbe14147218"/>
 			</line>
 			<line>
-				<reportElement x="4" y="267" width="542" height="1" uuid="29681953-73ee-4268-a430-f9acb9b438df"/>
+				<reportElement x="4" y="231" width="542" height="1" uuid="29681953-73ee-4268-a430-f9acb9b438df"/>
 			</line>
 			<line>
-				<reportElement x="4" y="283" width="542" height="1" uuid="dbbfa063-1d1d-422c-b490-d090d6b0d7dd"/>
+				<reportElement x="4" y="247" width="542" height="1" uuid="dbbfa063-1d1d-422c-b490-d090d6b0d7dd"/>
 			</line>
 			<staticText>
-				<reportElement x="5" y="293" width="239" height="16" uuid="065289e2-d6bb-4848-960b-bf630ffd8ac1"/>
+				<reportElement x="5" y="257" width="239" height="16" uuid="065289e2-d6bb-4848-960b-bf630ffd8ac1"/>
 				<textElement>
 					<font fontName="Arial Narrow" isBold="true" isUnderline="false"/>
 				</textElement>
 				<text><![CDATA[Avis et recommandations du conseil de classe: ]]></text>
 			</staticText>
 			<line>
-				<reportElement x="259" y="303" width="289" height="1" uuid="f033930c-9375-4e8b-9766-a35e6cf0e50a"/>
+				<reportElement x="259" y="267" width="289" height="1" uuid="f033930c-9375-4e8b-9766-a35e6cf0e50a"/>
 			</line>
 			<line>
-				<reportElement x="6" y="316" width="542" height="1" uuid="a935e68e-4d6b-45e1-8548-d31516b8fcd1"/>
+				<reportElement x="6" y="280" width="542" height="1" uuid="a935e68e-4d6b-45e1-8548-d31516b8fcd1"/>
 			</line>
 			<line>
-				<reportElement x="6" y="332" width="542" height="1" uuid="2a9878d0-e875-43da-8317-08577f1a808e"/>
+				<reportElement x="6" y="296" width="542" height="1" uuid="2a9878d0-e875-43da-8317-08577f1a808e"/>
 			</line>
 			<textField isBlankWhenNull="true">
 				<reportElement x="24" y="125" width="171" height="13" uuid="b61c01c1-e2be-4d2d-88bf-a04773964165">
@@ -2748,39 +2748,45 @@
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="77">
+		<band height="51">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<staticText>
-				<reportElement x="240" y="9" width="32" height="16" uuid="86e4c1cf-4e5e-41b9-857e-e932ca3c11d6"/>
+				<reportElement x="240" y="5" width="32" height="16" uuid="86e4c1cf-4e5e-41b9-857e-e932ca3c11d6"/>
 				<textElement textAlignment="Right">
 					<font fontName="Arial Narrow" isBold="true" isUnderline="false"/>
 				</textElement>
 				<text><![CDATA[Fait à]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="273" y="8" width="133" height="16" uuid="ffb854ca-1f81-4c90-aba6-e3a7ca587efa"/>
-				<textElement textAlignment="Right"/>
+				<reportElement x="273" y="4" width="133" height="16" uuid="ffb854ca-1f81-4c90-aba6-e3a7ca587efa"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial Narrow"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{ville}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="407" y="9" width="32" height="16" uuid="ae20f2d4-9ec0-4f66-bf79-5c2a15024f3f"/>
+				<reportElement x="407" y="5" width="26" height="16" uuid="ae20f2d4-9ec0-4f66-bf79-5c2a15024f3f"/>
 				<textElement>
 					<font fontName="Arial Narrow" isBold="true" isUnderline="false"/>
 				</textElement>
 				<text><![CDATA[, le]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="-8" y="28" width="108" height="16" uuid="d2616779-d301-48a5-aeae-b5c702bca9b1"/>
+				<reportElement x="-8" y="19" width="108" height="16" uuid="d2616779-d301-48a5-aeae-b5c702bca9b1"/>
 				<textElement>
 					<font fontName="Arial Narrow" isBold="true" isUnderline="false"/>
 				</textElement>
 				<text><![CDATA[Le professeur principal]]></text>
 			</staticText>
-			<textField pattern="MMMMM dd, yyyy">
-				<reportElement x="442" y="8" width="100" height="19" uuid="451f8f49-74b9-4d1b-a488-f320bab0e5a1"/>
+			<textField pattern="dd MMM yyyy">
+				<reportElement x="435" y="4" width="100" height="15" uuid="451f8f49-74b9-4d1b-a488-f320bab0e5a1"/>
+				<textElement>
+					<font fontName="Arial Narrow"/>
+				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="435" y="29" width="108" height="16" uuid="ae12ee16-a76c-483c-9ac9-ba00529e6c53"/>
+				<reportElement x="435" y="20" width="108" height="16" uuid="ae12ee16-a76c-483c-9ac9-ba00529e6c53"/>
 				<textElement>
 					<font fontName="Arial Narrow" isBold="true" isUnderline="false"/>
 				</textElement>

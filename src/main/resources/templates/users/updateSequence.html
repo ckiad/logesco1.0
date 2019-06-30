@@ -69,7 +69,7 @@
 						 <td>
 			      				<div>
 			      					<a class="btn btn-primary btn-sm" href="#" 
-			      						th:href="@{/logesco/users/censeur/getactualiserSequence(idPeriodes=${s.idPeriodes}, 
+			      						th:href="@{/logesco/users/chefetab/getactualiserSequence(idPeriodes=${s.idPeriodes}, 
 											numPageTrim=${pageCouranteTrimestre})}" 
 			      						role="button" th:inline="text">
 			      						[[${s.etatPeriodes==false}?'Activer': 'Desactiver']]
@@ -87,7 +87,7 @@
 			<div class="container">
 					<ul class="pagination"><!-- nav nav-pills -->
 						<li th:each="p,status:${listofPagesSequence}" th:class="${status.index==pageCouranteTrimestre}?active:' ' ">
-							<a th:href="@{/logesco/users/censeur/getupdateSequence(numPageTrim=${status.index})}"
+							<a th:href="@{/logesco/users/chefetab/getupdateSequence(numPageTrim=${status.index})}"
 									th:text="${status.index+1}"></a>
 						</li>
 					</ul>

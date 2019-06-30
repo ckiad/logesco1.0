@@ -28,38 +28,38 @@
 		<band height="16" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="199" y="0" width="25" height="16" uuid="2b4284aa-371f-4698-ab31-d6b1c43a5daa">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="199" y="0" width="25" height="16" forecolor="#76089E" uuid="2b4284aa-371f-4698-ab31-d6b1c43a5daa">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="7"/>
+					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{note_ann_g1}]]></textFieldExpression>
 			</textField>
 			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="124" y="0" width="25" height="16" uuid="d383929c-09c6-4ab2-9645-ffd4234f4e2c">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="124" y="0" width="25" height="16" forecolor="#76089E" uuid="d383929c-09c6-4ab2-9645-ffd4234f4e2c">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="7"/>
+					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{note_1_g1}]]></textFieldExpression>
 			</textField>
 			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="249" y="0" width="42" height="16" forecolor="#FFFFFF" backcolor="#9ABEE4" uuid="8df01b51-d68d-4030-942c-3de6b54574c8">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="249" y="0" width="42" height="16" forecolor="#76089E" backcolor="#9ABEE4" uuid="8df01b51-d68d-4030-942c-3de6b54574c8">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="7"/>
+					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total_ann_g1}]]></textFieldExpression>
 			</textField>
@@ -139,14 +139,14 @@
 				<textFieldExpression><![CDATA[$F{coef_g1}]]></textFieldExpression>
 			</textField>
 			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="149" y="0" width="25" height="16" uuid="341c71c7-26e3-48a3-b75b-c206a7119698">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="149" y="0" width="25" height="16" forecolor="#76089E" uuid="341c71c7-26e3-48a3-b75b-c206a7119698">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="7"/>
+					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{note_2_g1}]]></textFieldExpression>
 			</textField>
@@ -163,14 +163,14 @@
 				<textFieldExpression><![CDATA[$F{pourcentage_g1}]]></textFieldExpression>
 			</textField>
 			<textField pattern="0.000;-0.000" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="174" y="0" width="25" height="16" uuid="3d6f98d5-d876-4618-bd39-863bf0f06c21">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="174" y="0" width="25" height="16" forecolor="#76089E" uuid="3d6f98d5-d876-4618-bd39-863bf0f06c21">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial Narrow" size="7"/>
+					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{note_3_g1}]]></textFieldExpression>
 			</textField>

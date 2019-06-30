@@ -29,9 +29,9 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="79" splitType="Stretch">
+		<band height="112" splitType="Stretch">
 			<textField>
-				<reportElement x="-1" y="-10" width="200" height="10" uuid="17a08986-33ba-4126-bcad-a472b1a39a4e">
+				<reportElement x="-1" y="17" width="200" height="10" uuid="17a08986-33ba-4126-bcad-a472b1a39a4e">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -40,11 +40,11 @@
 				<textFieldExpression><![CDATA[$P{delegation_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="245" y="-6" width="63" height="60" uuid="3fa491ad-e421-4724-9548-2d397700019e"/>
+				<reportElement x="245" y="21" width="63" height="60" uuid="3fa491ad-e421-4724-9548-2d397700019e"/>
 				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement x="-1" y="0" width="200" height="10" uuid="da65bba0-61e3-4f50-8e36-5e885c786a04">
+				<reportElement x="-1" y="27" width="200" height="10" uuid="da65bba0-61e3-4f50-8e36-5e885c786a04">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -54,7 +54,7 @@
 				<textFieldExpression><![CDATA[$P{delegation_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="-1" y="21" width="200" height="10" uuid="90a76a7d-1612-44d4-8618-b73ee8d470ba">
+				<reportElement x="-1" y="48" width="200" height="10" uuid="90a76a7d-1612-44d4-8618-b73ee8d470ba">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -64,7 +64,7 @@
 				<textFieldExpression><![CDATA[$P{etablissement_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="-1" y="11" width="200" height="10" uuid="6ba15ffa-850a-48ff-86f9-9e9f2bf52d6f">
+				<reportElement x="-1" y="38" width="200" height="10" uuid="6ba15ffa-850a-48ff-86f9-9e9f2bf52d6f">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -74,7 +74,7 @@
 				<textFieldExpression><![CDATA[$P{etablissement_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="-1" y="32" width="200" height="10" uuid="adc16e88-772a-4d80-8071-01a3341f8188">
+				<reportElement x="-1" y="59" width="200" height="10" uuid="adc16e88-772a-4d80-8071-01a3341f8188">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -84,7 +84,7 @@
 				<textFieldExpression><![CDATA[$P{annee_scolaire_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="-1" y="42" width="200" height="10" uuid="f7a99e8a-61db-4fba-8d29-8259dff1de80">
+				<reportElement x="-1" y="69" width="200" height="10" uuid="f7a99e8a-61db-4fba-8d29-8259dff1de80">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -94,7 +94,7 @@
 				<textFieldExpression><![CDATA[$P{annee_scolaire_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="202" y="57" width="150" height="10" uuid="c8b8bad6-0630-437f-9a09-a2ef37a79351">
+				<reportElement x="202" y="84" width="150" height="10" uuid="c8b8bad6-0630-437f-9a09-a2ef37a79351">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -104,7 +104,7 @@
 				<textFieldExpression><![CDATA[$P{devise_fr}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="202" y="67" width="150" height="10" uuid="6136b00b-24f5-4b21-87d8-c34696b7b331">
+				<reportElement x="202" y="94" width="150" height="10" uuid="6136b00b-24f5-4b21-87d8-c34696b7b331">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -114,7 +114,7 @@
 				<textFieldExpression><![CDATA[$P{devise_fr}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="354" y="-10" width="200" height="10" uuid="da925cae-c8fd-4dec-b65e-70a0c7bc8fa1">
+				<reportElement x="354" y="17" width="200" height="10" uuid="da925cae-c8fd-4dec-b65e-70a0c7bc8fa1">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -124,7 +124,7 @@
 				<text><![CDATA[REPUBLIQUE DU CAMEROUN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="354" y="-2" width="200" height="10" uuid="b9eb4ac5-a7ec-4d85-9836-156361b41830">
+				<reportElement x="354" y="25" width="200" height="10" uuid="b9eb4ac5-a7ec-4d85-9836-156361b41830">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -134,7 +134,7 @@
 				<text><![CDATA[Paix-Travail-Patrie]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="354" y="9" width="200" height="10" uuid="447f9c47-cd68-4916-8564-c3788332889c">
+				<reportElement x="354" y="36" width="200" height="10" uuid="447f9c47-cd68-4916-8564-c3788332889c">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -144,7 +144,7 @@
 				<text><![CDATA[REPUBLIC OF CAMEROON]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="354" y="18" width="200" height="10" uuid="50e129b6-8e13-48f8-a901-56a4da34fc86">
+				<reportElement x="354" y="45" width="200" height="10" uuid="50e129b6-8e13-48f8-a901-56a4da34fc86">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -154,7 +154,7 @@
 				<text><![CDATA[Peace-Work-Fatherland]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="354" y="39" width="200" height="10" uuid="9f4582c1-a9c1-4baf-8621-2a329e959fa6">
+				<reportElement x="354" y="66" width="200" height="10" uuid="9f4582c1-a9c1-4baf-8621-2a329e959fa6">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -164,7 +164,7 @@
 				<textFieldExpression><![CDATA[$P{ministere_en}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="354" y="28" width="200" height="10" uuid="0e2e7029-412c-4040-bb6d-4791d71fbea5">
+				<reportElement x="354" y="55" width="200" height="10" uuid="0e2e7029-412c-4040-bb6d-4791d71fbea5">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -173,6 +173,11 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ministere_fr}.toUpperCase()]]></textFieldExpression>
 			</textField>
+			<line>
+				<reportElement x="10" y="108" width="540" height="1" uuid="76ea1e3b-4ea8-427e-9af3-046a1441a619">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</line>
 		</band>
 	</title>
 	<pageHeader>

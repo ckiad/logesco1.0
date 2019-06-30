@@ -196,6 +196,36 @@
 					<div th:if="${#fields.hasErrors('idClasse')}"
 								th:errors="*{idClasse}" class="redcolor">Erreur de classe</div>
 					
+					
+					<div class="form-group">
+						<label for="redoublant" class="control-label text-left" th:inline="text">[[#{enregelv.label_redoublant}]] : <span
+							class="redcolor">*</span></label> 
+									
+						<div class="radio">
+							    <label><input type="radio" name="redoublant" id="redoublant" class="radio-inline"
+						    				 th:field="*{redoublant}" value="oui" checked="checked"/>OUI/YES</label>
+							    <label><input type="radio" name="redoublant" id="redoublant" class="radio-inline"
+						      				th:field="*{redoublant}" value="non"/>NON/NO</label>
+					   </div>
+					</div>
+					<div th:if="${#fields.hasErrors('redoublant')}"
+						th:errors="*{redoublant}" class="redcolor">erreur redoublant Eleves</div>
+					
+					<div class="form-group">
+						<label for="statutEleves" class="control-label text-left" th:inline="text">[[#{enregelv.label_statutEleves}]] : <span
+							class="redcolor">*</span></label> 
+									
+						<div class="radio">
+							    <label><input type="radio" name="statutEleves" id="statutEleves" class="radio-inline"
+						    				 th:field="*{statutEleves}" value="nouveau" checked="checked"/>NOUVEAU/NEW</label>
+							    <label><input type="radio" name="statutEleves" id="statutEleves" class="radio-inline"
+						      				th:field="*{statutEleves}" value="ancien"/>ANCIEN/OLD</label>
+					   </div>
+					</div>
+					<div th:if="${#fields.hasErrors('statutEleves')}"
+						th:errors="*{statutEleves}" class="redcolor">erreur statutEleves Eleves</div>
+					
+					
 					<button type="submit" class="btn btn-primary  pull-right" th:inline="text">
 						<span class="glyphicon glyphicon-save"></span> [[#{enregelv.bouton_envoyer}]]
 					</button>

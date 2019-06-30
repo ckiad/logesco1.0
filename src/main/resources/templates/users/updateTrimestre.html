@@ -66,7 +66,7 @@
 						<td>
 			      				<div>
 			      					<a class="btn btn-primary btn-sm" href="#" 
-			      						th:href="@{/logesco/users/censeur/getactualiserTrimestre(idPeriodes=${t.idPeriodes}, 
+			      						th:href="@{/logesco/users/chefetab/getactualiserTrimestre(idPeriodes=${t.idPeriodes}, 
 											numPageAn=${pageCouranteAnnee})}" 
 			      						role="button" th:text="${t.etatPeriodes==false}?'Activer':'Désactiver'">
 			      						<span class="glyphicon glyphicon-refresh"></span> Actualiser</a>
@@ -81,7 +81,7 @@
 			<div class="container">
 					<ul class="pagination"><!-- nav nav-pills -->
 						<li th:each="p,status:${listofPagesAnnee}" th:class="${status.index==pageCouranteAnnee}?active:' ' ">
-							<a th:href="@{/logesco/users/censeur/getupdateTrimestre(numPageAn=${status.index})}"
+							<a th:href="@{/logesco/users/chefetab/getupdateTrimestre(numPageAn=${status.index})}"
 									th:text="${status.index+1}"></a>
 						</li>
 					</ul>

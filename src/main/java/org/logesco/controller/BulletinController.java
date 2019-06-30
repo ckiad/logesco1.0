@@ -26,6 +26,7 @@ import org.logesco.modeles.BulletinTrimAnnuelBean;
 import org.logesco.modeles.BulletinTrimestreBean;
 import org.logesco.modeles.ErrorBean;
 import org.logesco.modeles.FicheConseilClasseBean;
+import org.logesco.services.IBulletinService;
 import org.logesco.services.IUsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -48,6 +49,10 @@ import org.springframework.web.servlet.view.jasperreports.JasperReportsPdfView;
 public class BulletinController {
 	@Autowired
 	private IUsersService usersService;
+	
+	@Autowired
+	private IBulletinService bulletinService;
+	
 	@Autowired
 	private ApplicationContext applicationContext;
 	
@@ -185,7 +190,7 @@ public class BulletinController {
 			*/
 			
 			Map<String, Object> donnee = new HashMap<String, Object>();
-			donnee = usersService.generateCollectionofBulletinSequence_opt(classeConcerne.getIdClasses(), 
+			donnee = bulletinService.generateCollectionofBulletinSequence_opt(classeConcerne.getIdClasses(), 
 					sequenceConcerne.getIdPeriodes());
 			
 			/*Collection<BulletinSequenceBean> listofBulletinSeqClasse = 
@@ -459,7 +464,7 @@ public class BulletinController {
 
 		if(classeConcerne.getSection().getCodeSections().equalsIgnoreCase(new String("GENERAL")) == true){
 			Collection<BulletinSequenceBean> bulletinSeqEleve = 
-					usersService.generate1BulletinSequence(idEleveConcerne, idClasseConcerne, idSequenceConcerne);
+					bulletinService.generate1BulletinSequence(idEleveConcerne, idClasseConcerne, idSequenceConcerne);
 					
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			
@@ -693,7 +698,7 @@ public class BulletinController {
 					trimestreConcerne.getIdPeriodes());*/
 	
 	Map<String, Object> donnee = new HashMap<String, Object>();
-	donnee = usersService.generateCollectionofBulletinTrimestre_opt(classeConcerne.getIdClasses(), 
+	donnee = bulletinService.generateCollectionofBulletinTrimestre_opt(classeConcerne.getIdClasses(), 
 			trimestreConcerne.getIdPeriodes());
 	
 
@@ -922,7 +927,7 @@ public class BulletinController {
 		if(classeConcerne.getSection().getCodeSections().equalsIgnoreCase(new String("GENERAL")) == true){
 			
 			
-			Collection<BulletinTrimestreBean> listofBulletinTrimClasse = usersService.generate1BulletinTrimestre(idEleveConcerne, 
+			Collection<BulletinTrimestreBean> listofBulletinTrimClasse = bulletinService.generate1BulletinTrimestre(idEleveConcerne, 
 					idClasseConcerne, idTrimestreConcerne);
 			
 		
@@ -1107,7 +1112,7 @@ public class BulletinController {
 			*/
 			
 			Map<String, Object> donnee = new HashMap<String, Object>();
-			donnee = usersService.generateCollectionofBulletinAnnee(classeConcerne.getIdClasses(), 
+			donnee = bulletinService.generateCollectionofBulletinAnnee(classeConcerne.getIdClasses(), 
 					anneeScolaire.getIdPeriodes());
 			
 
@@ -1357,7 +1362,7 @@ public class BulletinController {
 		if(classeConcerne.getSection().getCodeSections().equalsIgnoreCase(new String("GENERAL")) == true){
 			
 			
-			Collection<BulletinAnnuelBean> listofBulletinAnClasse = usersService.generate1BulletinAnnuel(idEleveConcerne,
+			Collection<BulletinAnnuelBean> listofBulletinAnClasse = bulletinService.generate1BulletinAnnuel(idEleveConcerne,
 					idClasseConcerne, idAnneeConcerne);
 			
 			Map<String, Object> parameters = new HashMap<String, Object>();
@@ -1548,7 +1553,7 @@ public class BulletinController {
 					trimestreConcerne.getIdPeriodes());*/
 	
 	Map<String, Object> donnee = new HashMap<String, Object>();
-	donnee = usersService.generateCollectionofBulletinTrimAnnee(classeConcerne.getIdClasses(), 
+	donnee = bulletinService.generateCollectionofBulletinTrimAnnee(classeConcerne.getIdClasses(), 
 			trimestreConcerne.getIdPeriodes());
 	
 
@@ -1815,7 +1820,7 @@ public class BulletinController {
 		if(classeConcerne.getSection().getCodeSections().equalsIgnoreCase(new String("GENERAL")) == true){
 			
 			
-			Collection<BulletinTrimAnnuelBean> listofBulletinTrimAnnuelClasse = usersService.generate1BulletinTrimAnnuel(idEleveConcerne,
+			Collection<BulletinTrimAnnuelBean> listofBulletinTrimAnnuelClasse = bulletinService.generate1BulletinTrimAnnuel(idEleveConcerne,
 					idClasseConcerne, idTrimestreConcerne);
 			
 			Map<String, Object> parameters = new HashMap<String, Object>();

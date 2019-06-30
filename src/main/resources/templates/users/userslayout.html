@@ -372,12 +372,12 @@
                     <div class="panel-body">
                             <ul class="list-group">
                             	<li class="list-group-item">
-                                    <a href="#" th:href="@{/logesco/users/censeur/getupdateSequence}" th:inline="text">
+                                    <a href="#" th:href="@{/logesco/users/chefetab/getupdateSequence}" th:inline="text">
 										<span class="glyphicon glyphicon-wrench"></span> [[#{sousmenu_periodes.updateSequence}]]
 									</a>
                                 </li>
                                 <li class="list-group-item">
-                                    <a href="#" th:href="@{/logesco/users/censeur/getupdateTrimestre}" th:inline="text">
+                                    <a href="#" th:href="@{/logesco/users/chefetab/getupdateTrimestre}" th:inline="text">
 										<span class="glyphicon glyphicon-wrench"></span> [[#{sousmenu_periodes.updateTrimestre}]]
 									</a>
                                 </li>
@@ -511,19 +511,6 @@
 								  	</a>
                             	</li>
                             	
-                            	<li class="list-group-item" 
-                            			sec:authorize="hasAnyRole('ROLE_CENSEUR')">
-                            		<a href="#" th:href="@{/logesco/users/getliststatnotePeriode}"  th:inline="text">
-										<span class="glyphicon glyphicon-list-alt"></span> [[#{sousmenu_notes.liststatnotePeriode}]]
-									</a>
-                            	</li>
-                            	
-                            	<li class="list-group-item" 
-                            			sec:authorize="hasAnyRole('ROLE_CENSEUR')">
-                            		<a href="#" th:href="@{/logesco/users/getliststatmoyennePeriode}"  th:inline="text">
-										<span class="glyphicon glyphicon-list-alt"></span> [[#{sousmenu_notes.liststatmoyennePeriode}]]
-									</a>
-                            	</li>
                             	
                             	<li class="list-group-item" 
                             			sec:authorize="hasAnyRole('ROLE_ENSEIGNANT','ROLE_SUPERADMIN')" >
@@ -642,6 +629,47 @@
                            </ul>
                      </div>
              </div>
+             
+             <!-- <div class="panel panel-info panel-menu" 
+						sec:authorize="hasAnyRole('ROLE_CENSEUR','ROLE_TITULAIRE','ROLE_SUPERADMIN')">
+					<div class="panel-heading">
+                            <h3 class="panel-title" th:inline="text">[[#{menu.statistiques}]]&nbsp;</h3>
+                            <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+                    </div>
+                     <div class="panel-body">
+                            <ul class="list-group">
+                            
+                            	<li class="list-group-item">
+                            		<a href="#"  th:href="@{/logesco/users/getdonneesStatMoyClasse}"  
+										th:inline="text" >
+										<span class="glyphicon glyphicon-list-alt"></span> [[#{sousmenu_statistique.donneesStatMoyClassePeriode}]]
+									</a>
+                            	</li>
+                            	
+                            	<li class="list-group-item">
+                            		<a href="#"  th:href="@{/logesco/users/getdonneesStatMoyNiveau}"  
+										th:inline="text" >
+										<span class="glyphicon glyphicon-list-alt"></span> [[#{sousmenu_statistique.donneesStatMoyNiveauPeriode}]]
+									</a>
+                            	</li>
+                            	
+                            	<li class="list-group-item">
+                            		<a href="#"  th:href="@{/logesco/users/getdonneesStatMoyCycle}"  
+										th:inline="text" >
+										<span class="glyphicon glyphicon-list-alt"></span> [[#{sousmenu_statistique.donneesStatMoyCyclePeriode}]]
+									</a>
+                            	</li>
+                            	
+                            	<li class="list-group-item">
+                            		<a href="#"  th:href="@{/logesco/users/getdonneesStatNoteCoursPeriode}"  
+										th:inline="text" >
+										<span class="glyphicon glyphicon-list-alt"></span> [[#{sousmenu_statistique.donneesStatNoteCoursPeriode}]]
+									</a>
+                            	</li>
+                            	
+                           </ul>
+                     </div>
+             </div> -->
             
              <!-- Fin de l'insertion des menus de l'application -->
         </div>
