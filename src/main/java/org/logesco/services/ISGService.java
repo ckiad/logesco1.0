@@ -3,7 +3,14 @@
  */
 package org.logesco.services;
 
+import java.util.Collection;
 import java.util.Date;
+
+import org.logesco.entities.Annee;
+import org.logesco.entities.Classes;
+import org.logesco.entities.Sequences;
+import org.logesco.entities.Trimestres;
+import org.logesco.modeles.FicheAbsenceEleveBean;
 
 /**
  * @author cedrickiadjeu
@@ -62,6 +69,24 @@ public interface ISGService {
 	 */
 	public int deleteRapportDisciplinaire(Long idRdisc);
 	
+	/***************************
+	 * Cette methode retourne une collection d'objet representant le rapport d'absence de chaque eleve
+	 * d'une classe dans une periode donnee
+	 * @param classe
+	 * @param datemin
+	 * @param datemax
+	 * @return
+	 */
+	public Collection<FicheAbsenceEleveBean> generateListFicheAbsenceEleveBean(Classes classe, 
+			Date datemin, Date datemax);
 	
+	public Collection<FicheAbsenceEleveBean> generateListFicheAbsenceEleveSeqBean(Classes classe, 
+			Sequences periode);
+	
+	public Collection<FicheAbsenceEleveBean> generateListFicheAbsenceEleveTrimBean(Classes classe, 
+			Trimestres periode);
+	
+	public Collection<FicheAbsenceEleveBean> generateListFicheAbsenceEleveAnBean(Classes classe, 
+			Annee periode);
 	
 }

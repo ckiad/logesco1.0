@@ -6,32 +6,31 @@
 	layout:decorator="users/userslayout">
 <head>
 <meta charset="UTF-8"/>
-<title>Bulletins annuels: Paramètres de production</title>
+<title th:inline="text">[[#{donneesEditions1BulletinsAn.titre_page}]]</title>
 </head>
 <body>
 
 <span layout:fragment="titre_boite">
-       <kbd> Paramètres de production des bulletins annuels</kbd>
+       <kbd th:inline="text"> [[#{donneesEditions1BulletinsAn.titre_boite}]] </kbd>
 </span>
 
 <div layout:fragment="formactionusers">
 	<!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
 	<div class="col-md-9">
 	
-	<span class="col-md-12 alert alert-warning">
-		Sélectionner la classe  puis cliquer sur le bouton envoyer. Un second formulaire vous sera
-			envoyé pour vous permettre de choisir l'élève dont le bulletin est demandé dans la période choisie.
-			<span class="glyphicon glyphicon-minus">Si une erreur concernant la section survient, faites vérifier 
-			par l'administrateur si les codes des sections sont soit: GENERAL, INDUSTRIELLE OU COMMERCIALE
+	<span class="col-md-12 alert alert-warning" th:inline="text">
+		[[#{donneesEditions1BulletinsAn.label_explication1}]]
+			<span class="glyphicon glyphicon-minus" th:inline="text">
+				[[#{donneesEditions1BulletinsAn.label_explication2}]]
 			</span>
-		</span>
+	</span>
 	
 				<form action="#"
 						th:action="@{/logesco/users/bulletins/lancerSelectEleveBulletinsAn}" method="get"
 						class="form-inline" >
 						<div th:if="${listofNiveauxDirigesEns != null and anneeActive != null}" >
 							<div class="form-group">
-								<label for="idClassesConcerne"> Classes: <span
+								<label for="idClassesConcerne" th:inline="text"> [[#{donneesEditions1BulletinsAn.label_classe}]]: <span
 									class="redcolor">*</span></label>
 								<select class="form-control" name="idClasseConcerne"
 									id="idClasseConcerne" >
@@ -52,14 +51,14 @@
 							
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						<div class="form-group">
-								<label th:inline="text"> Année Scolaire: <span
+								<label th:inline="text"> [[#{donneesEditions1BulletinsAn.label_annee}]]: <span
 									class="redcolor">[[${anneeActive.intituleAnnee}]]</span></label>
 								<input type="hidden" name="idAnneeConcerne" id="idAnneeConcerne" 
 									class="form-control" th:value="${anneeActive.idPeriodes}" />
 						</div>
 							
-						<button type="submit" class="btn btn-primary  pull-right">
-							<span class="glyphicon glyphicon-send"></span> Envoyer
+						<button type="submit" class="btn btn-primary  pull-right" th:inline="text">
+							<span class="glyphicon glyphicon-send"></span> [[#{donneesEditions1BulletinsAn.bouton_envoyer}]]
 						</button>
 							
 						</div>

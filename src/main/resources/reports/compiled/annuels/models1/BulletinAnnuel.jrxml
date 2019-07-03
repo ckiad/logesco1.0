@@ -1188,7 +1188,7 @@
 				<textElement markup="none">
 					<font fontName="Arial Narrow" size="7" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{result_moy_an}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{r_moy_an}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="135" y="26" width="86" height="11" uuid="17483c3a-3673-4fa3-b699-3019f06b13f7"/>

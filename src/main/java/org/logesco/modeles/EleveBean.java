@@ -23,6 +23,7 @@ public class EleveBean implements Serializable {
     private String statut;
     private String date_naissance;
     private String lieu_naissance;
+    private String redoublant;
 
 	/**
 	 * 
@@ -137,6 +138,20 @@ public class EleveBean implements Serializable {
 	 */
 	public void setLieu_naissance(String lieu_naissance) {
 		this.lieu_naissance = lieu_naissance;
+	}
+
+	/**
+	 * @return the redoublant
+	 */
+	public String getRedoublant() {
+		return redoublant;
+	}
+
+	/**
+	 * @param redoublant the redoublant to set
+	 */
+	public void setRedoublant(String redoublant) {
+		this.redoublant = redoublant;
 	}
 	
 	

@@ -1964,10 +1964,20 @@ public class UsersServiceImplementation implements IUsersService {
 			elv.setNumero(eleve.getNumero(listofEleveDeClasse));
 			String sexe ="";
 			String statut ="";
-			if(eleve.getSexeEleves().equals("masculin")==true) sexe="M"; else sexe="F";
-			if(eleve.getStatutEleves().equals("nouveau")==true) statut="N"; else statut="A";
+			String redoublant ="";
+			if(eleve.getClasse().getLangueClasses().equalsIgnoreCase("fr")==true){
+				if(eleve.getSexeEleves().equalsIgnoreCase("masculin")==true) sexe="M"; else sexe="F";
+				if(eleve.getStatutEleves().equalsIgnoreCase("nouveau")==true) statut="N"; else statut="A";
+				if(eleve.getRedoublant().equalsIgnoreCase("oui")==true) redoublant="O"; else redoublant="N"; 
+			}
+			else{
+				if(eleve.getSexeEleves().equalsIgnoreCase("masculin")==true) sexe="M"; else sexe="F";
+				if(eleve.getStatutEleves().equalsIgnoreCase("nouveau")==true) statut="N"; else statut="O";
+				if(eleve.getRedoublant().equalsIgnoreCase("oui")==true) redoublant="Y"; else redoublant="N"; 
+			}
 			elv.setSexe(sexe);
 			elv.setStatut(statut);
+			elv.setRedoublant(redoublant);
 			
 			collectionofEleveprovClasse.add(elv);
 		}
@@ -1998,10 +2008,20 @@ public class UsersServiceImplementation implements IUsersService {
 			elv.setNumero(eleve.getNumero(listdefofEleves));
 			String sexe ="";
 			String statut ="";
-			if(eleve.getSexeEleves().equals("masculin")==true) sexe="M"; else sexe="F";
-			if(eleve.getStatutEleves().equals("nouveau")==true) statut="N"; else statut="A";
+			String redoublant = "";
+			if(eleve.getClasse().getLangueClasses().equalsIgnoreCase("fr")==true){
+				if(eleve.getSexeEleves().equalsIgnoreCase("masculin")==true) sexe="M"; else sexe="F";
+				if(eleve.getStatutEleves().equalsIgnoreCase("nouveau")==true) statut="N"; else statut="A";
+				if(eleve.getRedoublant().equalsIgnoreCase("oui")==true) redoublant="O"; else redoublant="N"; 
+			}
+			else{
+				if(eleve.getSexeEleves().equalsIgnoreCase("masculin")==true) sexe="M"; else sexe="F";
+				if(eleve.getStatutEleves().equalsIgnoreCase("nouveau")==true) statut="N"; else statut="O";
+				if(eleve.getRedoublant().equalsIgnoreCase("oui")==true) redoublant="Y"; else redoublant="N"; 
+			}
 			elv.setSexe(sexe);
 			elv.setStatut(statut);
+			elv.setRedoublant(redoublant);
 			
 			collectionofElevedefClasse.add(elv);
 		}

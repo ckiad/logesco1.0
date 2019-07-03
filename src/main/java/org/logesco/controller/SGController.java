@@ -3,9 +3,13 @@
  */
 package org.logesco.controller;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -13,18 +17,26 @@ import javax.servlet.http.HttpSession;
 import org.logesco.entities.Annee;
 import org.logesco.entities.Classes;
 import org.logesco.entities.Eleves;
+import org.logesco.entities.Etablissement;
 import org.logesco.entities.Niveaux;
 import org.logesco.entities.SanctionDisciplinaire;
 import org.logesco.entities.Sequences;
+import org.logesco.entities.Trimestres;
+import org.logesco.modeles.ErrorBean;
+import org.logesco.modeles.FicheAbsenceEleveBean;
 import org.logesco.services.ISGService;
 import org.logesco.services.IUsersService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.jasperreports.JasperReportsPdfView;
 
 /**
  * @author cedrickiadjeu
@@ -33,11 +45,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping(path="/logesco/users/sg")
 public class SGController {
+	
+	@Value("${dir.emblemes.logo}")
+	private String logoetabDir;
+	
 	@Autowired
 	private IUsersService usersService;
 	
 	@Autowired
 	private ISGService sgService;
+	
+	@Autowired
+	private ApplicationContext applicationContext;
+	
 	/**
 	 * 
 	 */
@@ -129,11 +149,11 @@ public class SGController {
 				
 				if(sequenceConcerne!=null && classeConcerne!=null){
 					model.addAttribute("sequenceConcerneRabs", sequenceConcerne);
-					System.out.println("sequenceConcerneRabs "+sequenceConcerne.getNumeroSeq());
+					//System.out.println("sequenceConcerneRabs "+sequenceConcerne.getNumeroSeq());
 					model.addAttribute("classeConcerne", classeConcerne);
 					
 					model.addAttribute("affichechoixclasse", "oui");
-					System.out.println("affichechoixclasse= oui");
+					//System.out.println("affichechoixclasse= oui");
 				}
 				else{
 					model.addAttribute("affichechoixclasse", "non");
@@ -161,6 +181,223 @@ public class SGController {
 				idEleves, numPageEleves, taillePage);
 		
 		return "users/formSaisieRAbsences";
+	}
+	
+	public void constructModelgetdonneesAbsClasse(Model model,	HttpServletRequest request){
+		List<Niveaux> listofNiveaux = usersService.findAllNiveaux();
+		
+		if(listofNiveaux.size()>0){
+			model.addAttribute("affichechoixcycle", "oui");
+			model.addAttribute("listofNiveaux", listofNiveaux);
+		}
+		else{
+			model.addAttribute("affichechoixcycle", "non");
+		}
+		
+		
+		Annee anneeActive = usersService.findAnneeActive();
+		
+		if(anneeActive != null) {
+			model.addAttribute("anneeActive", anneeActive);
+			
+		}
+		
+		List<Trimestres> listofTrimestreActif = usersService.findAllActiveTrimestre(anneeActive.getIdPeriodes());
+		model.addAttribute("listofTrimestreActif", listofTrimestreActif);
+		
+		List<Sequences> listofSequenceActif = usersService.findAllSequenceActive(anneeActive.getIdPeriodes());
+		model.addAttribute("listofSequenceActif", listofSequenceActif);
+	
+		
+	}
+	
+	@GetMapping(path="/getdonneesAbsClasse")
+	public String getdonneesAbsClasse(Model model, HttpServletRequest request){
+		
+		this.constructModelgetdonneesAbsClasse(model,	request);
+		
+		return "users/donneesAbsClasses";
+	}
+	
+	@GetMapping(path="/exportAbsencesClasses")
+	public ModelAndView exportAbsencesClasses(Model model, HttpServletRequest request,
+			@RequestParam(name="idClasseConcerne", defaultValue="0") Long idClasseConcerne,
+			@RequestParam(name="idPeriode", defaultValue="0") Long idPeriode,
+			@RequestParam(name="datedebut", defaultValue="2019-01-01") String datedebut,
+			@RequestParam(name="datefin", defaultValue="2035-01-01") String datefin){
+		
+		HttpSession session = request.getSession();
+		
+		Etablissement etablissementConcerne = usersService.getEtablissement();
+		Annee anneeScolaire = usersService.findAnneeActive();
+		Classes classeConcerne = usersService.findClasses(idClasseConcerne);
+		
+		if(etablissementConcerne == null ||  anneeScolaire == null ||  classeConcerne == null){
+			String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			String error=" ";
+			if(etablissementConcerne == null ){
+				error+="\n ETABLISSEMENT NON RETROUVE ";
+			}
+			if(anneeScolaire == null){
+				error+="\n ANNEE SCOLAIRE NON RETROUVE ";
+			}
+			if(classeConcerne == null){
+				error+="\n CLASSE NON RETROUVE ";
+			}
+			
+			Collection<ErrorBean> collectionofErreurBean = 
+					usersService.generateCollectionofErrorBean(error);
+			
+			parameters.put("erreur", erreur);
+			parameters.put("datasource", collectionofErreurBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+			view.setApplicationContext(applicationContext);
+
+			return new ModelAndView(view, parameters);
+		}
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		parameters.put("delegation_fr", etablissementConcerne.getDeleguationdeptuteleEtab().toUpperCase());
+		parameters.put("delegation_en", etablissementConcerne.getDeleguationdeptuteleanglaisEtab().toUpperCase());
+		parameters.put("etablissement_fr", etablissementConcerne.getNomsEtab().toUpperCase());
+		parameters.put("etablissement_en", etablissementConcerne.getNomsanglaisEtab().toUpperCase());
+		String adresse = "BP "+etablissementConcerne.getBpEtab()+
+				"  TEL: "+etablissementConcerne.getNumtel1Etab();
+		parameters.put("adresse", adresse);
+		parameters.put("annee_scolaire_fr", "Année Académique "+anneeScolaire.getIntituleAnnee());
+		parameters.put("annee_scolaire_en", "Academic year "+anneeScolaire.getIntituleAnnee());
+		parameters.put("ministere_fr", etablissementConcerne.getMinisteretuteleEtab());
+		parameters.put("ministere_en", etablissementConcerne.getMinisteretuteleanglaisEtab());
+		parameters.put("devise_fr", etablissementConcerne.getDeviseEtab());
+		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
+		parameters.put("ville", etablissementConcerne.getVilleEtab());
+
+		File f=new File(logoetabDir+etablissementConcerne.getLogoEtab());
+
+		if(f.exists()==true){
+			parameters.put("logo", logoetabDir+etablissementConcerne.getLogoEtab());
+		}
+		else{
+			parameters.put("logo", "classpath:/static/images/logobekoko.png");
+		}
+		
+		parameters.put("classe", classeConcerne.getClasseString());
+		
+		if(idPeriode.longValue()==0){
+
+
+			SimpleDateFormat spd = new SimpleDateFormat("yyyy-MM-dd");
+			try{
+				Date date_min = spd.parse(datedebut);
+				Date date_max = spd.parse(datefin);
+				parameters.put("date1", datedebut);
+				parameters.put("date2", datefin);
+				parameters.put("periode", "");
+				
+				Collection<FicheAbsenceEleveBean> listofFicheAbsenceEleveBean = 
+						sgService.generateListFicheAbsenceEleveBean(classeConcerne, date_min, date_max);
+				
+				//System.out.println("taille de la liste des fiches = "+listofFicheRecapAbsenceCycleBean.size());
+				
+				
+				parameters.put("datasource", listofFicheAbsenceEleveBean);
+				JasperReportsPdfView view = new JasperReportsPdfView();
+				view.setUrl("classpath:/reports/compiled/fiches/FicheAbsenceEleve.jasper");
+				view.setApplicationContext(applicationContext);
+				
+				return new ModelAndView(view, parameters);
+				
+			}
+			catch(Exception e){
+				System.out.println("Erreur de conversion des dates "+datedebut+" et "+datefin+" et on doit "
+						+ " lancer un pdf d'erreur "+e.getMessage());
+				//e.printStackTrace();
+			}
+		
+		
+		}
+		else{
+
+
+			/*
+			 * A ce niveau cela signifie qu'il n'a pas choisi un intervalle de date mais juste une période bien 
+			 * déterminer et enregistrer dans le système comme une séquence, un trimestre ou une 
+			 * année scolaire
+			 */
+			
+			String periode = "";
+			String lang = (String)session.getAttribute("lang");
+			Sequences periodSequence = usersService.findSequences(idPeriode);
+			Trimestres periodTrimestre = usersService.findTrimestres(idPeriode);
+			Annee periodAnnee = usersService.findAnnee(idPeriode);
+			
+			if(periodSequence == null && periodTrimestre == null && periodAnnee == null) {
+				
+
+				String erreur = "LISTE DES ERREURS RENCONTREES: CONTACTER L'ADMINISTRATEUR.";
+				Map<String, Object> parameters1 = new HashMap<String, Object>();
+				String error=" LA PERIODE INDIQUE N'EST PAS VALIDE";
+				
+				Collection<ErrorBean> collectionofErreurBean = 
+						usersService.generateCollectionofErrorBean(error);
+				
+				parameters1.put("erreur", erreur);
+				parameters1.put("datasource", collectionofErreurBean);
+				JasperReportsPdfView view = new JasperReportsPdfView();
+				view.setUrl("classpath:/reports/compiled/errors/error.jasper");
+				view.setApplicationContext(applicationContext);
+
+				return new ModelAndView(view, parameters1);
+			
+			}
+			
+			Collection<FicheAbsenceEleveBean> listofFicheAbsenceEleveBean = null;
+			
+			if(periodSequence !=null) {
+				periode = lang.equalsIgnoreCase("fr")==true?"Séquence "+periodSequence.getNumeroSeq(): 
+					"Sequence "+periodSequence.getNumeroSeq();
+
+				listofFicheAbsenceEleveBean = 
+						sgService.generateListFicheAbsenceEleveSeqBean(classeConcerne, periodSequence);
+				
+			}
+			
+			if(periodTrimestre !=null) {
+				periode = lang.equalsIgnoreCase("fr")==true?"Trimestre "+periodTrimestre.getNumeroTrim(): 
+					"Term "+periodTrimestre.getNumeroTrim();
+				
+				listofFicheAbsenceEleveBean = 
+						sgService.generateListFicheAbsenceEleveTrimBean(classeConcerne, periodTrimestre);
+				
+			}
+			
+			if(periodAnnee !=null) {
+				periode = lang.equalsIgnoreCase("fr")==true?" "+periodAnnee.getIntituleAnnee(): 
+					" "+periodAnnee.getIntituleAnnee();
+				
+				listofFicheAbsenceEleveBean = 
+						sgService.generateListFicheAbsenceEleveAnBean(classeConcerne, periodAnnee);
+				
+			}
+			
+			parameters.put("date1", "");
+			parameters.put("date2", "");
+			parameters.put("periode", periode);
+			
+			parameters.put("datasource", listofFicheAbsenceEleveBean);
+			JasperReportsPdfView view = new JasperReportsPdfView();
+			view.setUrl("classpath:/reports/compiled/fiches/FicheAbsenceEleve.jasper");
+			view.setApplicationContext(applicationContext);
+			
+			return new ModelAndView(view, parameters);
+			
+		
+		}
+		
+		return null;
 	}
 	
 	public void constructModelgetformSaisieRDiscipline(Model model,	HttpServletRequest request, Long idSequenceConcerne,  
@@ -321,7 +558,7 @@ public class SGController {
 		}
 		catch(Exception e){
 			//System.err.println("Exception généré "+e.getMessage());
-			e.printStackTrace();
+			//e.printStackTrace();
 			return "redirect:/logesco/users/sg/getformSaisieRAbsences?updateAbsenceErrorConvert"
 					+ "&&idSequenceConcerne="+idSequenceConcerne
 					+ "&&idClassesConcerne="+idClassesConcerne

@@ -446,6 +446,12 @@
 									</a>
                             	</li>
                             	
+                            	<li class="list-group-item" sec:authorize="hasAnyRole('ROLE_SG')">
+                            		<a href="#" th:href="@{/logesco/users/sg/getdonneesAbsClasse}" th:inline="text">
+										[[#{sousmenu_discipline.donneeAbsClasse}]]
+									</a>
+                            	</li>
+                            	
                             	<li class="list-group-item" sec:authorize="hasAnyRole('ROLE_PROVISEUR','ROLE_CENSEUR','ROLE_SG')">
                             		<a href="#" th:href="@{/logesco/users/getdonneesRAbsCycle}" th:inline="text">
 										[[#{sousmenu_discipline.donneeRabsCycle}]]

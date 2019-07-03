@@ -408,7 +408,7 @@ public class UsersController {
 		}
 		else if(classeSelect.getLangueClasses().equalsIgnoreCase("en")==true){
 			parameters.put("titre_liste", "PROVISIONAL STUDENT'S LIST OF  "+nomClasse);
-			view.setUrl("classpath:/reports/compiled/fiches/ListeEleveParClasse.jasper");
+			view.setUrl("classpath:/reports/compiled/fiches/ListeEleveParClasse_en.jasper");
 		}
 		
 		view.setApplicationContext(applicationContext);
@@ -731,17 +731,34 @@ public class UsersController {
 		parameters.put("devise_en", etablissementConcerne.getDeviseanglaisEtab());
 		String nomClasse= classeSelect.getCodeClasses()+classeSelect.getSpecialite().getCodeSpecialite()+
 				classeSelect.getNumeroClasses();
-		String titre = "Liste des eleves ayant paye au moins "+montantMin+" en classe de "+nomClasse;
-		if(montantMin == classeSelect.getMontantScolarite()) 
-			titre = "Liste definitive des eleves de la classe "+nomClasse;
 		
-		parameters.put("titre_liste", titre);
+		String titre_fr = "LISTE DES ELEVES AYANT VERSE AU MOINS "+montantMin+" POUR LA  "+nomClasse;
+		String titre_en = "LIST OF STUDENTS WITH AT LEAST "+montantMin+" FOR  "+nomClasse;
+		
+		
+		if(classeSelect.getLangueClasses().equalsIgnoreCase("fr")==true){
+			if(montantMin == classeSelect.getMontantScolarite()) 
+				titre_fr = "LISTE DEFINITIVE DES ELEVES DE LA  "+nomClasse;
+			parameters.put("titre_liste", titre_fr);
+		}
+		else if(classeSelect.getLangueClasses().equalsIgnoreCase("en")==true){
+			if(montantMin == classeSelect.getMontantScolarite()) 
+				titre_fr = "FINAL LIST OF STUDENTS IN THE  "+nomClasse;
+			parameters.put("titre_liste", titre_en);
+		}
+		
+		
 		parameters.put("ville", etablissementConcerne.getVilleEtab());
 		
 		parameters.put("LOGO", "classpath:/static/images/logobekoko.png");
 		
 		JasperReportsPdfView view = new JasperReportsPdfView();
-		view.setUrl("classpath:/reports/compiled/fiches/ListeEleveParClasse.jasper");
+		if(classeSelect.getLangueClasses().equalsIgnoreCase("fr")==true){
+			view.setUrl("classpath:/reports/compiled/fiches/ListeEleveParClasse.jasper");
+		}
+		else{
+			view.setUrl("classpath:/reports/compiled/fiches/ListeEleveParClasse_en.jasper");
+		}
 		view.setApplicationContext(applicationContext);
 		
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -4009,9 +4026,6 @@ public class UsersController {
 			@RequestParam(name="datefin", defaultValue="2035-01-01") String datefin){
 		
 		HttpSession session = request.getSession();
-		/*
-		 * Il faut chercher le cycle et retourner une erreur s'il n'existe pas
-		 */
 		
 		Etablissement etablissementConcerne = usersService.getEtablissement();
 		Annee anneeScolaire = usersService.findAnneeActive();
@@ -4097,7 +4111,7 @@ public class UsersController {
 			catch(Exception e){
 				System.out.println("Erreur de conversion des dates "+datedebut+" et "+datefin+" et on doit "
 						+ " lancer un pdf d'erreur "+e.getMessage());
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		
 		}

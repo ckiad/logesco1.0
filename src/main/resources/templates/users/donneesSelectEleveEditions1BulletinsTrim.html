@@ -6,11 +6,11 @@
 	layout:decorator="users/userslayout">
 <head>
 <meta charset="UTF-8"/>
-<title>Bulletins trimestriels: Paramètres de production</title>
+<title th:inline="text">[[#{donneesSelectEleveEditionsBulletinsTrim.titre_page}]]</title>
 </head>
 <body>
 <span layout:fragment="titre_boite">
-        <kbd>Sélectionner l'élève pour lequel le bulletin trimestriel est souhaité</kbd>
+        <kbd th:inline="text">[[#{donneesSelectEleveEditionsBulletinsTrim.titre_boite}]]</kbd>
 </span>
 
 <div layout:fragment="formactionusers">
@@ -18,9 +18,7 @@
 <div class="col-md-9">
 	<span class="col-md-12 alert alert-warning">
 			<label>
-				<span class="glyphicon glyphicon-minus">Si une erreur concernant la section survient, faites vérifier 
-				par l'administrateur si les codes des sections sont soit: GENERAL, INDUSTRIELLE OU COMMERCIALE
-				</span>
+				<span class="glyphicon glyphicon-minus" th:inline="text">[[#{donneesSelectEleveEditionsBulletinsTrim.label_explication1}]]</span>
 			</label>
 	</span>
 	
@@ -30,7 +28,7 @@
 		
 		<div th:if="${listofEleves != null}" >
 			<div class="form-group">
-					<label for="idClassesConcerne"> Sélectionner l'élève: <span
+					<label for="idClassesConcerne" th:inline="text"> [[#{donneesSelectEleveEditionsBulletinsTrim.label_eleve}]] : <span
 						class="redcolor">*</span></label>
 					<select class="form-control" name="idEleveConcerne"
 						id="idEleveConcerne" >
@@ -52,8 +50,8 @@
 				<input type="hidden" name="idClasseConcerne" id="idClasseConcerne" 
 					class="form-control" th:value="${idClasseConcerne}" />
 				
-				<button type="submit" class="btn btn-primary  pull-right">
-					<span class="glyphicon glyphicon-send"></span> Envoyer
+				<button type="submit" class="btn btn-primary  pull-right" th:inline="text">
+					<span class="glyphicon glyphicon-send"></span> [[#{donneesSelectEleveEditionsBulletinsTrim.bouton_envoyer}]]
 				</button>
 				
 		</div>

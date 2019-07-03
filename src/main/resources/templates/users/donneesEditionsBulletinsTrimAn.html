@@ -6,25 +6,22 @@
 	layout:decorator="users/userslayout">
 <head>
 <meta charset="UTF-8"/>
-<title>Bulletins trimestre 3 et annuels: Paramètres de production</title>
+<title th:inline="text">[[#{donneesEditionsBulletinsTrimAn.titre_page}]]</title>
 </head>
 <body>
 
 <span layout:fragment="titre_boite">
-        <kbd>Paramètres de production des bulletins trimestriels avec rapport annuel</kbd>
+        <kbd th:inline="text">[[#{donneesEditionsBulletinsTrimAn.titre_boite}]]</kbd>
 </span>
 
 <div layout:fragment="formactionusers">
 	<!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
 	<div class="col-md-9">
-		<span class="col-md-12 alert alert-warning">
-			Sélectionner la classe et le trimestre puis cliquer sur le bouton envoyer pour que les bullletins
-			trimestriels soient édités. Une fois cela fait, le fichier les contenant vous sera proposé en téléchargement.
+		<span class="col-md-12 alert alert-warning" th:inline="text">
+			[[#{donneesEditionsBulletinsTrimAn.label_explication1}]].
 			<br/><u>NB:</u><br/>
-			<span class="glyphicon glyphicon-minus">Une fois les bulletins générés appuyer sur la touche F5 ou 
-			actualiser la page pour générer le rapport de conseil de classe.</span><br/>
-			<span class="glyphicon glyphicon-minus">Si une erreur concernant la section survient, faites vérifier 
-			par l'administrateur si les codes des sections sont soit: GENERAL, INDUSTRIELLE OU COMMERCIALE
+			<span class="glyphicon glyphicon-minus" th:inline="text">[[#{donneesEditionsBulletinsTrimAn.label_explication2}]].</span><br/>
+			<span class="glyphicon glyphicon-minus" th:inline="text">[[#{donneesEditionsBulletinsTrimAn.label_explication3}]]
 			</span>
 		</span>
 		<form action="#"
@@ -32,7 +29,7 @@
 				class="form-inline" target="_blank">
 					<div th:if="${listofNiveauxDirigesEns != null and anneeActive != null}" >
 						<div class="form-group">
-							<label for="idClassesConcerne"> Classes: <span
+							<label for="idClassesConcerne" th:inline="text"> [[#{donneesEditionsBulletinsTrimAn.label_classe}]]: <span
 									class="redcolor">*</span></label>
 									
 							<select class="form-control" name="idClasseConcerne"
@@ -56,7 +53,7 @@
 						
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						<div class="form-group">
-							<label th:inline="text"> Trimestre: </label>
+							<label th:inline="text" > [[#{donneesEditionsBulletinsTrimAn.label_trimestre}]]: </label>
 							<select class="form-control" name="idTrimestreConcerne"
 										id="idTrimestreConcerne" >
 								<option th:each="t:${listofTrimestreActive}"
@@ -68,14 +65,14 @@
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						
 						<div class="form-group">
-							<label th:inline="text"> Année Scolaire: <span
+							<label th:inline="text"> [[#{donneesEditionsBulletinsTrimAn.label_annee}]]: <span
 									class="redcolor">[[${anneeActive.intituleAnnee}]]</span></label>
 							<input type="hidden" name="idAnneeActive" id="idAnneeActive" 
 									class="form-control" th:value="${anneeActive.idPeriodes}" />
 						</div>
 						
-						<button type="submit" class="btn btn-primary  pull-right">
-							<span class="glyphicon glyphicon-send"></span> Envoyer
+						<button type="submit" class="btn btn-primary  pull-right" th:inline="text">
+							<span class="glyphicon glyphicon-send"></span> [[#{donneesEditionsBulletinsTrimAn.bouton_envoyer}]]
 						</button>
 						
 					</div>
@@ -83,9 +80,8 @@
 				<br/>
 				
 				<div th:if="${session.getrapporttriman}">
-					<label>
-						Actualiser la page pour générer automatiquement le rapport de conseil de classe une 
-						fois que les bulletins sont générés.
+					<label th:inline="text">
+						[[#{donneesEditionsBulletinsTrimAn.label_explication4}]]
 					</label>	
 				</div>
 				
@@ -95,9 +91,9 @@
 							class="form-inline"  th:if="${session.getrapporttriman}"  target="_blank">
 							
 							<fieldset class="col-md-12" th:if="${session.getrapporttriman}">
-								<legend class="text-primary">Rapport de conseil trimestriel</legend>
-								<button type="submit" class="btn btn-success">
-									<span class="glyphicon glyphicon-cloud-download"></span> Générer le rapport de conseil de classe trimestriel
+								<legend class="text-primary" th:inline="text">[[#{donneesEditionsBulletinsTrimAn.label_legendTrim}]]</legend>
+								<button type="submit" class="btn btn-success" th:inline="text">
+									<span class="glyphicon glyphicon-cloud-download"></span> [[#{donneesEditionsBulletinsTrimAn.bouton_genererConseilTrim}]]
 								</button>
 							</fieldset>
 					
@@ -110,9 +106,9 @@
 							class="form-inline"  th:if="${session.getrapportantrim}"  target="_blank">
 							
 							<fieldset class="col-md-12" th:if="${session.getrapportantrim}">
-								<legend class="text-primary">Rapport de conseil annuel</legend>
-								<button type="submit" class="btn btn-success">
-									<span class="glyphicon glyphicon-cloud-download"></span> Générer le rapport de conseil de classe annuel
+								<legend class="text-primary" th:inline="text">[[#{donneesEditionsBulletinsTrimAn.label_legendAn}]]</legend>
+								<button type="submit" class="btn btn-success" th:inline="text">
+									<span class="glyphicon glyphicon-cloud-download"></span> [[#{donneesEditionsBulletinsTrimAn.bouton_genererConseilAn}]]
 								</button>
 							</fieldset>
 					

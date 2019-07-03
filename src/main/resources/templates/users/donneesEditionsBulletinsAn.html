@@ -6,26 +6,23 @@
 	layout:decorator="users/userslayout">
 <head>
 <meta charset="UTF-8"/>
-<title>Bulletins annuels: Paramètres de production</title>
+<title th:inline="text">[[#{donneesEditionsBulletinsAn.titre_page}]] </title>
 </head>
 <body>
 
 <span layout:fragment="titre_boite">
-       <kbd> Paramètres de production des bulletins annuels</kbd>
+       <kbd th:inline="text"> [[#{donneesEditionsBulletinsAn.titre_boite}]]</kbd>
 </span>
 
 <div layout:fragment="formactionusers">
 	<!-- DEBUT DU FORMULAIRE PERMETTANT D'EFFECTUER L'ACTION DEMANDEE -->
 	<div class="col-md-9">
 	
-	<span class="col-md-12 alert alert-warning">
-			Sélectionner la classe puis cliquer sur le bouton envoyer pour que les bullletins
-			annuels soient édités. Une fois cela fait, le fichier les contenant vous sera proposé en téléchargement.
+	<span class="col-md-12 alert alert-warning" th:inline="text">
+			[[#{donneesEditionsBulletinsAn.label_explication1}]]
 			<br/><u>NB:</u><br/>
-			<span class="glyphicon glyphicon-minus">Une fois les bulletins générés appuyer sur la touche F5 ou 
-			actualiser la page pour générer le rapport de conseil de classe.</span><br/>
-			<span class="glyphicon glyphicon-minus">Si une erreur concernant la section survient, faites vérifier 
-			par l'administrateur si les codes des sections sont soit: GENERAL, INDUSTRIELLE OU COMMERCIALE
+			<span class="glyphicon glyphicon-minus" th:inline="text">[[#{donneesEditionsBulletinsAn.label_explication2}]]</span><br/>
+			<span class="glyphicon glyphicon-minus" th:inline="text">[[#{donneesEditionsBulletinsAn.label_explication3}]]
 			</span>
 		</span>
 	
@@ -34,7 +31,7 @@
 						class="form-inline" target="_blank">
 						<div th:if="${listofNiveauxDirigesEns != null and anneeActive != null}" >
 							<div class="form-group">
-								<label for="idClassesConcerne"> Classes: <span
+								<label for="idClassesConcerne" th:inline="text"> [[#{donneesEditionsBulletinsAn.label_classe}]]: <span
 									class="redcolor">*</span></label>
 								<select class="form-control" name="idClasseConcerne"
 									id="idClasseConcerne" >
@@ -55,14 +52,14 @@
 							
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						<div class="form-group">
-								<label th:inline="text"> Année Scolaire: <span
+								<label th:inline="text"> [[#{donneesEditionsBulletinsAn.label_annee}]]: <span
 									class="redcolor">[[${anneeActive.intituleAnnee}]]</span></label>
 								<input type="hidden" name="idAnneeActive" id="idAnneeActive" 
 									class="form-control" th:value="${anneeActive.idPeriodes}" />
 						</div>
 							
-						<button type="submit" class="btn btn-primary  pull-right">
-							<span class="glyphicon glyphicon-send"></span> Envoyer
+						<button type="submit" class="btn btn-primary  pull-right" th:inline="text">
+							<span class="glyphicon glyphicon-send"></span> [[#{donneesEditionsBulletinsAn.bouton_envoyer}]]
 						</button>
 							
 						</div>
@@ -72,15 +69,14 @@
 					<form action="#"
 						th:action="@{/logesco/users/bulletins/lancerEditionsRapportConseilAn}" method="get"
 						class="form-inline"  th:if="${session.getrapportan}"  target="_blank">
-						<label>
-							Actualiser la page pour générer automatiquement le rapport de conseil de classe une 
-							fois que les bulletins sont générés.
+						<label th:inline="text">
+							[[#{donneesEditionsBulletinsAn.label_explication4}]]
 						</label>	
 						<br/>
 						<fieldset class="col-md-12" th:if="${session.getrapportan}">
-							<legend class="text-primary">Bouton de génération du rapport de conseil</legend>
-							<button type="submit" class="btn btn-success">
-								<span class="glyphicon glyphicon-cloud-download"></span> Générer le rapport de conseil de classe annuel
+							<legend class="text-primary" th:inline="text">[[#{donneesEditionsBulletinsAn.label_legend}]]</legend>
+							<button type="submit" class="btn btn-success" th:inline="text">
+								<span class="glyphicon glyphicon-cloud-download"></span> [[#{donneesEditionsBulletinsAn.bouton_genererConseil}]]
 							</button>
 						</fieldset>
 						

@@ -177,7 +177,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 		List<SousRapport1ConseilBean> listofSousRapport1ConseilBean = 
 				ub.getListofSousRapport1Conseil(classe, sequence);
 		ficheCC.setSous_rapport1_conseil(listofSousRapport1ConseilBean);
-		//System.err.println("listofSousRapport1ConseilBean  "+listofSousRapport1ConseilBean.size());
 		//resultat d'ensemble
 		int g_classe = 0;
 		int f_classe = 0;
@@ -905,7 +904,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 		 List<BulletinSequenceBean> collectionofBulletionSequence_opt = new ArrayList<BulletinSequenceBean>();
 		
 		 if((classeConcerne==null) || (sequenceConcerne==null)) {
-			//System.err.println("les données de calcul du bean bulletin sont errone donc rien n'est possible ");
 			return null;
 		 }
 		 
@@ -1044,7 +1042,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 				 * on va essayer de charger le fichier correspondant avec la classe File de java.io
 				 */
 				File f=new File(photoElevesDir+eleve.getIdEleves());
-				//System.err.println("est ce que le fichier existe "+f.exists());
 				
 				if(f.exists()==true){
 					bulletinSeq.setPhoto(photoElevesDir+eleve.getIdEleves()); 
@@ -1767,7 +1764,7 @@ public class BulletinServiceImplementation implements IBulletinService {
 				long finforTime = System.currentTimeMillis();
 				collectionofBulletionSequence_opt.add(bulletinSeq);
 				
-				System.err.println("bulletin "+numBull+" de  "+ eleve.getNomsEleves()+
+				System.out.println("bulletin "+numBull+" de  "+ eleve.getNomsEleves()+
 						" de la sequence "+sequenceConcerne.getNumeroSeq()+
 						"  ajouter avec succes en "+(finforTime-startTimeFor));
 				
@@ -1894,7 +1891,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 				List<SousRapport1ConseilBean> listofSousRapport1ConseilBean = 
 						ub.getListofSousRapport1Conseil(classe, trimestre);
 				ficheCC.setSous_rapport1_conseil(listofSousRapport1ConseilBean);
-				//System.err.println("listofSousRapport1ConseilBean  "+listofSousRapport1ConseilBean.size());
 				//resultat d'ensemble
 				int g_classe = 0;
 				int f_classe = 0;
@@ -2621,7 +2617,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 		 List<BulletinTrimestreBean> collectionofBulletionTrimestre = new ArrayList<BulletinTrimestreBean>();
 		
 		 if((classeConcerne==null) || (trimestreConcerne==null)) {
-			//System.err.println("les données de calcul du bean bulletin sont errone donc rien n'est possible ");
 			return null;
 		 }
 		 String lang="";
@@ -2782,7 +2777,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 				 * on va essayer de charger le fichier correspondant avec la classe File de java.io
 				 */
 				File f=new File(photoElevesDir+eleve.getIdEleves());
-				//System.err.println("est ce que le fichier existe "+f.exists());
 				
 				if(f.exists()==true){
 					bulletinTrim.setPhoto(photoElevesDir+eleve.getIdEleves()); 
@@ -2871,15 +2865,7 @@ public class BulletinServiceImplementation implements IBulletinService {
 				int nhaj = 0;
 				int nhanj = 0;
 				
-				/*for(Sequences seq : trimestreConcerne.getListofsequence()){
-					RapportDAbsence rabs = eleve.getRapportDAbsenceSeq(seq.getIdPeriodes());
-					if(rabs!=null){
-						nhaj = nhaj + rabs.getNbreheureJustifie();
-						nhanj = nhanj + rabs.getNbreheureNJustifie();
-						nhc = nhc + rabs.getConsigne();
-						nje = nje + rabs.getJourExclusion();
-					}
-				}*/
+			
 				
 				nhanj = eleve.getNbreHeureAbsenceNonJustifieTrim(trimestreConcerne);
 				nhaj = eleve.getNbreHeureAbsenceJustifieTrim(trimestreConcerne);
@@ -3103,7 +3089,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 				double total_coef_g1 = ligneTrimestrielGroupeCoursScientifique.getTotalCoefElevePourGroupeCours();
 				
 				bulletinTrim.setTotal_coef_g1(total_coef_g1);
-				//System.err.println("total_coef_g1 == "+total_coef_g1);
 				
 				double total_g1 = ligneTrimestrielGroupeCoursScientifique.getTotalNoteTrimElevePourGroupeCours();
 				
@@ -3672,14 +3657,13 @@ public class BulletinServiceImplementation implements IBulletinService {
 		//On place la liste des matieres scientifique construit
 		bulletinTrim.setMatieresGroupe3Trimestre(listofCoursDiversTrimestreBean);
 		
-		/*double moy_trimm = this.getMoyenneTrimestriel(eleve, trimestreConcerne);
-		System.err.println("moy_trimm de "+eleve.getNomsEleves()+" est de "+moy_trimm);*/
+		
 				
 				
 				
 				long finforTime = System.currentTimeMillis();
 				collectionofBulletionTrimestre.add(bulletinTrim);
-				System.err.println("bulletin "+numBull+" de  "+ eleve.getNomsEleves()+
+				System.out.println("bulletin "+numBull+" de  "+ eleve.getNomsEleves()+
 						" dans le trimestre "+trimestreConcerne.getNumeroTrim()+
 						"  ajouter avec succes en "+(finforTime-startTimeFor));
 				numBull++;
@@ -3800,7 +3784,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 		List<SousRapport1ConseilBean> listofSousRapport1ConseilBean = 
 				ub.getListofSousRapport1Conseil(classe, annee);
 		ficheCC.setSous_rapport1_conseil(listofSousRapport1ConseilBean);
-		//System.err.println("listofSousRapport1ConseilBean  "+listofSousRapport1ConseilBean.size());
 		//resultat d'ensemble
 		int g_classe = 0;
 		int f_classe = 0;
@@ -4503,7 +4486,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 		 List<BulletinAnnuelBean> collectionofBulletionAnnuel = new ArrayList<BulletinAnnuelBean>();
 		
 		 if((classeConcerne==null) || (anneeScolaire==null)) {
-			//System.err.println("les données de calcul du bean bulletin sont errone donc rien n'est possible ");
 			return null;
 		 }
 		 
@@ -4668,7 +4650,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 				 * on va essayer de charger le fichier correspondant avec la classe File de java.io
 				 */
 				File f=new File(photoElevesDir+eleve.getIdEleves());
-				//System.err.println("est ce que le fichier existe "+f.exists());
 				
 				if(f.exists()==true){
 					bulletinAn.setPhoto(photoElevesDir+eleve.getIdEleves()); 
@@ -4899,7 +4880,10 @@ public class BulletinServiceImplementation implements IBulletinService {
 				 */
 				double moy_an = ub.getMoyenneAnnuel(eleve, anneeScolaire);
 				
-				if(moy_an>=0) bulletinAn.setR_moy_an(moy_an);
+				if(moy_an>=0) {
+					bulletinAn.setR_moy_an(moy_an);
+					bulletinAn.setResult_moy_an(moy_an+"");
+				}
 				if(lang.equalsIgnoreCase("fr")==true){
 					bulletinAn.setRappel_4("Année");
 				}
@@ -4991,7 +4975,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 				double total_coef_g1 = ligneAnnuelGroupeCoursScientifique.getTotalCoefElevePourGroupeCours();
 				
 				bulletinAn.setTotal_coef_g1(total_coef_g1);
-				//System.err.println("total_coef_g1 == "+total_coef_g1);
 				
 				double total_g1 = ligneAnnuelGroupeCoursScientifique.getTotalNoteAnElevePourGroupeCours();
 				if(total_g1>0){
@@ -5553,7 +5536,7 @@ public class BulletinServiceImplementation implements IBulletinService {
 				
 				long finforTime = System.currentTimeMillis();
 				collectionofBulletionAnnuel.add(bulletinAn);
-				System.err.println("bulletin "+numBull+" de  "+ eleve.getNomsEleves()+
+				System.out.println("bulletin "+numBull+" de  "+ eleve.getNomsEleves()+
 						" dans l'année "+anneeScolaire.getIntituleAnnee()+
 						"  ajouter avec succes en "+(finforTime-startTimeFor));
 				numBull++;				
@@ -5602,7 +5585,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 				 new ArrayList<BulletinTrimAnnuelBean>();
 		
 		 if((classeConcerne==null) || (trimestreConcerne==null)) {
-			//System.err.println("les données de calcul du bean bulletin sont errone donc rien n'est possible ");
 			return null;
 		 }
 		 
@@ -5773,7 +5755,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 				 * on va essayer de charger le fichier correspondant avec la classe File de java.io
 				 */
 				File f=new File(photoElevesDir+eleve.getIdEleves());
-				//System.err.println("est ce que le fichier existe "+f.exists());
 				
 				if(f.exists()==true){
 					bulletinTrimAn.setPhoto(photoElevesDir+eleve.getIdEleves()); 
@@ -5845,7 +5826,7 @@ public class BulletinServiceImplementation implements IBulletinService {
 				}
 				double moy_an = ub.getMoyenneAnnuel(eleve, anneeScolaire);
 				
-				if(moy_an>0)	bulletinTrimAn.setMoy_an(moy_an);
+				if(moy_an>=0)	bulletinTrimAn.setMoy_an(moy_an);
 				
 				double r_moy_an = moy_an;
 				
@@ -6252,7 +6233,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 				double total_coef_g1 = ligneTrimestrielGroupeCoursScientifique.getTotalCoefElevePourGroupeCours();
 				
 				bulletinTrimAn.setTotal_coef_g1(total_coef_g1);
-				//System.err.println("total_coef_g1 == "+total_coef_g1);
 				
 				double total_g1 = ligneTrimestrielGroupeCoursScientifique.getTotalNoteTrimElevePourGroupeCours();
 				if(total_g1>0){
@@ -6781,7 +6761,7 @@ public class BulletinServiceImplementation implements IBulletinService {
 				
 				long finforTime = System.currentTimeMillis();
 				collectionofBulletionTrimAnnuel.add(bulletinTrimAn);
-				System.err.println("bulletin "+numBull+" de  "+ eleve.getNomsEleves()+
+				System.out.println("bulletin "+numBull+" de  "+ eleve.getNomsEleves()+
 						" dans le trimestre "+trimestreConcerne.getNumeroTrim()+
 						"  ajouter avec succes en "+(finforTime-startTimeFor));
 				numBull++;
@@ -6842,7 +6822,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 				 new ArrayList<BulletinTrimAnnuelBean>();
 		
 		 if((classeConcerne==null) || (trimestreConcerne==null) || (eleveConcerne==null)) {
-			//System.err.println("les données de calcul du bean bulletin sont errone donc rien n'est possible ");
 			return null;
 		 }
 		 
@@ -7014,7 +6993,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 					 * on va essayer de charger le fichier correspondant avec la classe File de java.io
 					 */
 					File f=new File(photoElevesDir+eleve.getIdEleves());
-					//System.err.println("est ce que le fichier existe "+f.exists());
 					
 					if(f.exists()==true){
 						bulletinTrimAn.setPhoto(photoElevesDir+eleve.getIdEleves()); 
@@ -7086,7 +7064,7 @@ public class BulletinServiceImplementation implements IBulletinService {
 					}
 					double moy_an = ub.getMoyenneAnnuel(eleve, anneeScolaire);
 					
-					if(moy_an>0)	bulletinTrimAn.setMoy_an(moy_an);
+					if(moy_an>=0)	bulletinTrimAn.setMoy_an(moy_an);
 					
 					double r_moy_an = moy_an;
 					
@@ -7493,7 +7471,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 					double total_coef_g1 = ligneTrimestrielGroupeCoursScientifique.getTotalCoefElevePourGroupeCours();
 					
 					bulletinTrimAn.setTotal_coef_g1(total_coef_g1);
-					//System.err.println("total_coef_g1 == "+total_coef_g1);
 					
 					double total_g1 = ligneTrimestrielGroupeCoursScientifique.getTotalNoteTrimElevePourGroupeCours();
 					if(total_g1>0){
@@ -8022,7 +7999,7 @@ public class BulletinServiceImplementation implements IBulletinService {
 					
 					long finforTime = System.currentTimeMillis();
 					collectionofBulletionTrimAnnuel.add(bulletinTrimAn);
-					System.err.println("bulletin "+numBull+" de  "+ eleve.getNomsEleves()+
+					System.out.println("bulletin "+numBull+" de  "+ eleve.getNomsEleves()+
 							" dans le trimestre "+trimestreConcerne.getNumeroTrim()+
 							"  ajouter avec succes en "+(finforTime-startTimeFor));
 					numBull++;
@@ -8054,7 +8031,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 		 Eleves eleveConcerne = usersService.findEleves(idEleve);
 		
 		 if((classeConcerne==null) || (trimestreConcerne==null) || (eleveConcerne==null)) {
-			//System.err.println("les données de calcul du bean bulletin sont errone donc rien n'est possible ");
 			return null;
 		 }
 		 String lang="";
@@ -8216,7 +8192,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 					 * on va essayer de charger le fichier correspondant avec la classe File de java.io
 					 */
 					File f=new File(photoElevesDir+eleve.getIdEleves());
-					//System.err.println("est ce que le fichier existe "+f.exists());
 					
 					if(f.exists()==true){
 						bulletinTrim.setPhoto(photoElevesDir+eleve.getIdEleves()); 
@@ -8537,7 +8512,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 					double total_coef_g1 = ligneTrimestrielGroupeCoursScientifique.getTotalCoefElevePourGroupeCours();
 					
 					bulletinTrim.setTotal_coef_g1(total_coef_g1);
-					//System.err.println("total_coef_g1 == "+total_coef_g1);
 					
 					double total_g1 = ligneTrimestrielGroupeCoursScientifique.getTotalNoteTrimElevePourGroupeCours();
 					
@@ -9106,14 +9080,12 @@ public class BulletinServiceImplementation implements IBulletinService {
 			//On place la liste des matieres scientifique construit
 			bulletinTrim.setMatieresGroupe3Trimestre(listofCoursDiversTrimestreBean);
 			
-			/*double moy_trimm = this.getMoyenneTrimestriel(eleve, trimestreConcerne);
-			System.err.println("moy_trimm de "+eleve.getNomsEleves()+" est de "+moy_trimm);*/
 					
 					
 					
 					long finforTime = System.currentTimeMillis();
 					collectionofBulletinTrim.add(bulletinTrim);
-					System.err.println("bulletin "+numBull+" de  "+ eleve.getNomsEleves()+
+					System.out.println("bulletin "+numBull+" de  "+ eleve.getNomsEleves()+
 							" dans le trimestre "+trimestreConcerne.getNumeroTrim()+
 							"  ajouter avec succes en "+(finforTime-startTimeFor));
 					numBull++;
@@ -9146,7 +9118,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 		 
 		
 		 if((classeConcerne==null) || (sequenceConcerne==null) || (eleveConcerne==null)) {
-			//System.err.println("les données de calcul du bean bulletin sont errone donc rien n'est possible ");
 			return null;
 		 }
 		 
@@ -9280,7 +9251,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 					 * on va essayer de charger le fichier correspondant avec la classe File de java.io
 					 */
 					File f=new File(photoElevesDir+eleve.getIdEleves());
-					//System.err.println("est ce que le fichier existe "+f.exists());
 					
 					if(f.exists()==true){
 						bulletinSeq.setPhoto(photoElevesDir+eleve.getIdEleves()); 
@@ -10004,7 +9974,7 @@ public class BulletinServiceImplementation implements IBulletinService {
 					
 					collectionofBulletinSeq.add(bulletinSeq);
 					
-					System.err.println("bulletin "+numBull+" de  "+ eleve.getNomsEleves()+
+					System.out.println("bulletin "+numBull+" de  "+ eleve.getNomsEleves()+
 							" de la sequence "+sequenceConcerne.getNumeroSeq()+
 							"  ajouter avec succes en "+(finforTime-startTimeFor));
 					
@@ -10034,7 +10004,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 		 List<BulletinAnnuelBean> collectionofBulletionAnnuel = new ArrayList<BulletinAnnuelBean>();
 		
 		 if((classeConcerne==null) || (anneeScolaire==null) || (eleveConcerne==null)) {
-			//System.err.println("les données de calcul du bean bulletin sont errone donc rien n'est possible ");
 			return null;
 		 }
 		 
@@ -10200,7 +10169,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 					 * on va essayer de charger le fichier correspondant avec la classe File de java.io
 					 */
 					File f=new File(photoElevesDir+eleve.getIdEleves());
-					//System.err.println("est ce que le fichier existe "+f.exists());
 					
 					if(f.exists()==true){
 						bulletinAn.setPhoto(photoElevesDir+eleve.getIdEleves()); 
@@ -10523,7 +10491,6 @@ public class BulletinServiceImplementation implements IBulletinService {
 					double total_coef_g1 = ligneAnnuelGroupeCoursScientifique.getTotalCoefElevePourGroupeCours();
 					
 					bulletinAn.setTotal_coef_g1(total_coef_g1);
-					//System.err.println("total_coef_g1 == "+total_coef_g1);
 					
 					double total_g1 = ligneAnnuelGroupeCoursScientifique.getTotalNoteAnElevePourGroupeCours();
 					if(total_g1>0){
@@ -11085,7 +11052,7 @@ public class BulletinServiceImplementation implements IBulletinService {
 					
 					long finforTime = System.currentTimeMillis();
 					collectionofBulletionAnnuel.add(bulletinAn);
-					System.err.println("bulletin "+numBull+" de  "+ eleve.getNomsEleves()+
+					System.out.println("bulletin "+numBull+" de  "+ eleve.getNomsEleves()+
 							" dans l'année "+anneeScolaire.getIntituleAnnee()+
 							"  ajouter avec succes en "+(finforTime-startTimeFor));
 					numBull++;				
